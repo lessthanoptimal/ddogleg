@@ -35,6 +35,6 @@ public class TestLeastMedianOfSquares extends GenericModelSetTests {
 															ModelGenerator<double[],Double> generator,
 															ModelFitter<double[],Double> fitter,
 															int minPoints, double fitThreshold) {
-		return new LeastMedianOfSquares<double[],Double>(4234,10,10000,fitThreshold,0.9,generator,distance);
+		return new LeastMedianOfSquares<double[],Double>(4234,10000,fitThreshold,0.9,generator,distance);
 	}
 }

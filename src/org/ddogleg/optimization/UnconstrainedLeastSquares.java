@@ -63,8 +63,9 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 * {@link #setFunction} has been called.
 	 *
 	 * @param initial Initial parameters or guess.
-	 * @param ftol Relative threshold for change in function value between iterations. 0 &le; ftol &le; 1
-	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol
+	 * @param ftol Relative threshold for change in function value between iterations. 0 &le; ftol &le; 1.  Try 1e-12
+	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
+	 *             Try 1e-12
 	 */
 	public void initialize( double initial[] , double ftol , double gtol );
 

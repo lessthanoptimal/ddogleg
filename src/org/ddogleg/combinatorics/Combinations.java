@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.ddogleg.permute;
+package org.ddogleg.combinatorics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ import java.util.List;
 
 public class Combinations< T >
 {
-	List<T> a; // the original unmoleted list
+	List<T> a; // the original unmolested list
 
 	int N; // the total number of elements in "a"
 	int k; // the number of elements in the active bucket
@@ -71,29 +71,40 @@ public class Combinations< T >
 	int c; // the last bin in "bins"
 	long num_shuff = -1; // the number of shuffles, calculated when it is needed
 
-	public Combinations(List<T> a, int k) {
-		init( a , k );
+	/**
+	 * Constructor where the list and combinations is specified
+	 *
+	 * @param a List of symbols
+	 * @param bucketSize Size of the bucket
+	 */
+	public Combinations(List<T> a, int bucketSize) {
+		init( a , bucketSize );
 	}
 
 	public Combinations(){
 	}
 
-	public void init( List<T> a , int k ) {
-		if( a.size() < k ) {
+	/**
+	 * Initialize with a new list and bucket size
+	 * @param list List which is to be symbols
+	 * @param bucketSize Size of the bucket
+	 */
+	public void init( List<T> list , int bucketSize ) {
+		if( list.size() < bucketSize ) {
 			throw new RuntimeException("There needs to be more than or equal to elements in the \"a\" that there are in the bucket");
 		}
 
-		this.k = k;
-		this.c = k - 1;
-		N = a.size();
+		this.k = bucketSize;
+		this.c = bucketSize - 1;
+		N = list.size();
 
-		bins = new int[ k ];
+		bins = new int[ bucketSize ];
 
 		for( int i = 0; i < bins.length; i++ ) {
 			bins[i] = i;
 		}
 
-		this.a = a;
+		this.a = list;
 		this.num_shuff = -1;
 	}
 

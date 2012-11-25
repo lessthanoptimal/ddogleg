@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-package org.ddogleg.solver;
+package org.ddogleg.example;
 
 /**
- * Types of polynomial root finding algorithms that can be used
- *
+ * Point in 2D space.  Used in example code.
  * @author Peter Abeles
  */
-public enum RootFinderType {
-	/**
-	 * Eigenvalue decomposition based.  Returns real and complex roots. Most accurate but slightly slower.
-	 */
-	EVD,
-	/**
-	 * Uses Sturm sequences to find roots.  Only real roots and the fastest algorithm, but slightly less accurate.
-	 */
-	STURM
+public class Point2D {
+	double x,y;
+
+	public Point2D(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	public Point2D() {
+	}
 }

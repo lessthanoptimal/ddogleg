@@ -74,17 +74,16 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	private double inlierFrac;
 
 	/**
+	 * Configures the algorithm.
 	 *
 	 * @param randSeed Random seed used internally.
-	 * @param sampleSize Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
 	 * @param totalCycles Number of random draws it will make when estimating model parameters.
 	 * @param maxMedianError If the best median error is larger than this it is considered a failure.
 	 * @param inlierFraction Data which is this fraction or lower is considered an inlier and used to recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
 	 * @param generator Creates a list of model hypotheses from a small set of points.
-	 * @param errorMetric
+	 * @param errorMetric Computes the error between a point and a model
 	 */
 	public LeastMedianOfSquares( long randSeed ,
-								 int sampleSize,
 								 int totalCycles ,
 								 double maxMedianError ,
 								 double inlierFraction ,
@@ -92,7 +91,6 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 								 DistanceFromModel<Model,Point> errorMetric )
 	{
 		this.rand = new Random(randSeed);
-		this.sampleSize = sampleSize;
 		this.totalCycles = totalCycles;
 		this.maxMedianError = maxMedianError;
 		this.inlierFrac = inlierFraction;
@@ -101,12 +99,22 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 
 		bestParam = generator.createModelInstance();
 		candidate = generator.createModelInstance();
+		this.sampleSize = generator.getMinimumPoints();
 
 		if( inlierFrac > 0.0 ) {
 			inlierSet = new ArrayList<Point>();
 		} else if( inlierFrac > 1.0 ) {
 			throw new IllegalArgumentException("Inlier fraction must be <= 1");
 		}
+	}
+
+	/**
+	 * Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
+	 *
+	 * @param sampleSize Number of points sampled when computing the model.
+	 */
+	public void setSampleSize(int sampleSize) {
+		this.sampleSize = sampleSize;
 	}
 
 	@Override

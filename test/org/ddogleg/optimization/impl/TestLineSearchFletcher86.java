@@ -20,6 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.EvaluateLineSearchFletcher86;
 import org.ddogleg.optimization.LineSearchEvaluator;
+import org.ddogleg.optimization.UtilOptimize;
 import org.ddogleg.optimization.functions.FunctionStoS;
 import org.ddogleg.optimization.wrap.WrapCoupledDerivative;
 import org.junit.Test;

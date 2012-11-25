@@ -16,20 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.solver;
+package org.ddogleg.example;
 
 /**
- * Types of polynomial root finding algorithms that can be used
+ * Line in 2D space parameterized by the closest point to the origin.
  *
  * @author Peter Abeles
  */
-public enum RootFinderType {
-	/**
-	 * Eigenvalue decomposition based.  Returns real and complex roots. Most accurate but slightly slower.
-	 */
-	EVD,
-	/**
-	 * Uses Sturm sequences to find roots.  Only real roots and the fastest algorithm, but slightly less accurate.
-	 */
-	STURM
+public class Line2D {
+	double x;
+	double y;
+
+	public String toString() {
+		return "Line2D( x="+x+" y="+y+" )";
+	}
 }

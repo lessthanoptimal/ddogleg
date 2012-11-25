@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.ddogleg.permute;
+package org.ddogleg.combinatorics;
 
 import org.junit.Test;
 

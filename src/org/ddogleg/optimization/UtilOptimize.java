@@ -16,26 +16,22 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.impl;
-
-import org.ddogleg.optimization.LineSearch;
-import org.ddogleg.optimization.UnconstrainedLeastSquares;
-import org.ddogleg.optimization.UnconstrainedMinimization;
+package org.ddogleg.optimization;
 
 /**
+ * Performs common optimization tasks.  Such as iterating until convergence.
+ *
  * @author Peter Abeles
  */
 public class UtilOptimize {
 
-	public static double leastSquaresError( double output[] , int N ) {
-		double total = 0;
-		for( int i = 0; i < output.length; i++ ) {
-			total += output[i]*output[i];
-		}
-
-		return total;
-	}
-
+	/**
+	 * Iterate until the line search converges or the maximum number of iterations has been exceeded.
+	 *
+	 * @param search Search algorithm
+	 * @param maxIterations Maximum number of iterations
+	 * @return True if it converged to a solution
+	 */
 	public static boolean process( LineSearch search , int maxIterations ) {
 		for( int i = 0; i < maxIterations; i++ ) {
 			if( search.iterate() ) {
@@ -46,6 +42,13 @@ public class UtilOptimize {
 		return true;
 	}
 
+	/**
+	 * Iterate until the search algorithm converges or the maximum number of iterations has been exceeded.
+	 *
+	 * @param alg Search algorithm
+	 * @param maxIterations Maximum number of iterations
+	 * @return True if it converged to a solution
+	 */
 	public static boolean process( UnconstrainedMinimization alg , int maxIterations ) {
 		for( int i = 0; i < maxIterations; i++ ) {
 			if( alg.iterate() ) {
@@ -56,6 +59,13 @@ public class UtilOptimize {
 		return true;
 	}
 
+	/**
+	 * Iterate until the search algorithm converges or the maximum number of iterations has been exceeded.
+	 *
+	 * @param alg Search algorithm
+	 * @param maxIterations Maximum number of iterations
+	 * @return True if it converged to a solution
+	 */
 	public static boolean process( UnconstrainedLeastSquares alg , int maxIterations ) {
 		for( int i = 0; i < maxIterations; i++ ) {
 			if( alg.iterate() ) {

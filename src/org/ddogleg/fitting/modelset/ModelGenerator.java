@@ -40,10 +40,10 @@ public interface ModelGenerator<Model,Point> {
 	 * Creates a list of hypotheses from the set of sample points.
 	 *
 	 * @param dataSet Set of sample points.  Typically the minimum number possible.
-	 * @param model Storage for generated model
+	 * @param output Storage for generated model.
 	 * @return true if a model was generated, otherwise false is none were
 	 */
-	public boolean generate( List<Point> dataSet , Model model );
+	public boolean generate( List<Point> dataSet , Model output );
 
 	/**
 	 * The minimum number of points required to fit a data set

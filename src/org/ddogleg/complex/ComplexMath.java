@@ -165,7 +165,7 @@ public class ComplexMath {
 	}
 
 	/**
-	 * Computes the N<sup>th</sup> root of a complex number in polar notation.  There are
+	 * Computes the N<sup>th</sup> root of a complex number.  There are
 	 * N distinct N<sup>th</sup> roots.
 	 *
 	 * @param a Complex number

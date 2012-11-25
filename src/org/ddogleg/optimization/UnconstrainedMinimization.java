@@ -59,8 +59,8 @@ public interface UnconstrainedMinimization extends IterativeOptimization {
 	 * {@link #setFunction} has been called.
 	 * 
 	 * @param initial Initial parameters or guess.
-	 * @param ftol Relative convergence test based on function value. 0 disables test.  0 &le; ftol < 1
-	 * @param gtol Absolute convergence test based on gradient. 0 disables test.  0 &le; gtol
+	 * @param ftol Relative convergence test based on function value. 0 disables test.  0 &le; ftol < 1,  Try 1e-12
+	 * @param gtol Absolute convergence test based on gradient. 0 disables test.  0 &le; gtol. Try 1e-12
 	 */
 	public void initialize( double initial[] , double ftol , double gtol );
 

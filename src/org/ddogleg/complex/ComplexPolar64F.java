@@ -49,4 +49,8 @@ public class ComplexPolar64F {
 		ComplexMath.convert(this,ret);
 		return ret;
 	}
+
+	public String toString() {
+		return "( r = "+r+" theta = "+theta+" )";
+	}
 }

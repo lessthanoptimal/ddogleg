@@ -20,7 +20,7 @@ package org.ddogleg.util;
 
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Peter Abeles
@@ -28,7 +28,31 @@ import static org.junit.Assert.fail;
 public class TestUtilDouble {
 
 	@Test
-	public void stuff() {
-		fail("Implement");
+	public void sum_F64() {
+		double total[] = new double[10];
+		double expected = 0;
+		for( int i = 0; i < total.length; i++ ) {
+			expected += i+1;
+			total[i] = i+1;
+		}
+
+		double found = UtilDouble.sum(total);
+
+		assertEquals(expected,found,1e-8);
 	}
+
+	@Test
+	public void sum_F32() {
+		float total[] = new float[10];
+		float expected = 0;
+		for( int i = 0; i < total.length; i++ ) {
+			expected += i+1;
+			total[i] = i+1;
+		}
+
+		float found = UtilDouble.sum(total);
+
+		assertEquals(expected,found,1e-8);
+	}
+
 }

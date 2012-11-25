@@ -21,40 +21,40 @@ package org.ddogleg.util;
 
 public class UtilDouble {
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
-    public static double sum( double[] a ) {
-        double ret = 0;
+	@SuppressWarnings({"ForLoopReplaceableByForEach"})
+	public static double sum( double[] a ) {
+		double ret = 0;
 
-        for( int i = 0; i < a.length; i++ ) {
-            ret += a[i];
-        }
+		for( int i = 0; i < a.length; i++ ) {
+			ret += a[i];
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    public static void print( double[] a , String format ) {
-        System.out.print("[ ");
-        for( int i = 0; i < a.length; i++ ) {
-            System.out.printf(format+" ",a[i]);
-        }
-        System.out.println("]");
-    }
+	public static void print( double[] a , String format ) {
+		System.out.print("[ ");
+		for( int i = 0; i < a.length; i++ ) {
+			System.out.printf(format+" ",a[i]);
+		}
+		System.out.println("]");
+	}
 
 	public static float sum( float[] a ) {
-        float ret = 0;
+		float ret = 0;
 
-        for( int i = 0; i < a.length; i++ ) {
-            ret += a[i];
-        }
+		for( int i = 0; i < a.length; i++ ) {
+			ret += a[i];
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    public static void print( float[] a , String format ) {
-        System.out.print("[ ");
-        for( int i = 0; i < a.length; i++ ) {
-            System.out.printf(format+" ",a[i]);
-        }
-        System.out.println("]");
-    }
+	public static void print( float[] a , String format ) {
+		System.out.print("[ ");
+		for( int i = 0; i < a.length; i++ ) {
+			System.out.printf(format+" ",a[i]);
+		}
+		System.out.println("]");
+	}
 }

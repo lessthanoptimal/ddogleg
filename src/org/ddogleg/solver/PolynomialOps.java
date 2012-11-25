@@ -41,12 +41,18 @@ public class PolynomialOps {
 		return -b/(2.0*a);
 	}
 
-	public static void derivative( Polynomial poly , Polynomial deriv ) {
-		deriv.size = poly.size - 1;
+	public static Polynomial derivative( Polynomial poly , Polynomial deriv ) {
+		if( deriv == null ) {
+			deriv = new Polynomial(poly.size-1);
+		} else {
+			deriv.size = poly.size - 1;
+		}
 
 		for( int i = 1; i < poly.size; i++ ) {
 			deriv.c[i-1] = poly.c[i]*i;
 		}
+
+		return deriv;
 	}
 
 	// TODO try using a linear search alg here
@@ -220,16 +226,18 @@ public class PolynomialOps {
 	 * @param which 0 = Sturm and 1 = companion matrix.
 	 * @return PolynomialRoots
 	 */
-	public static PolynomialRoots createRootFinder( int maxCoefficients , int which ) {
+	public static PolynomialRoots createRootFinder( int maxCoefficients , RootFinderType which ) {
 		switch( which ) {
-			case 0:
+			case STURM:
 				FindRealRootsSturm sturm = new FindRealRootsSturm(maxCoefficients,-1,1e-10,200,200);
 				return new WrapRealRootsSturm(sturm);
 
-			case 1:
+			case EVD:
 				return new RootFinderCompanion();
+
+			default:
+				throw new IllegalArgumentException("Unknown algorithm: "+which);
 		}
-		throw new RuntimeException("Unknown algorithm");
 	}
 
 	/**
