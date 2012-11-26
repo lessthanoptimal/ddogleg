@@ -1,0 +1,10 @@
+Change log for DDogleg Numerics
+
+Date Format: YEAR-MONTH-DAY
+
+------------------------------------------------------
+Version:  0.1
+Date:     2012-11-26
+
+- Initial public release
+- Code from other projects and cleaned up
