@@ -22,54 +22,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-   If you have a list but you want to shuffle
-   the first k-items in the list so that each combination
-   of items can be found once (independent of order) this use
-   this class.
-
-   To access the elements in the list use this function list
-   a list that is
-
-   This algorithm I developed on my own and should be
-   considered experimental.  This function is also
-   not synchronized.
-
-   example:
-
-   List = 012345
-   k = 3;
-
-   012
-   013
-   014
-   015
-   023
-   024
-   025
-   034
-   035
-   045
-   123
-   124
-   125
-   134
-   135
-   145
-   234
-   235
-   245
-   345
-*/
-
+ * <p>
+ * Computes the combinations of size k given a set S of size N.  This can be done in the forward or reverse direction.
+ * A combination is defined is a unique subset of a list in which order does not mater.  This is different from
+ * a permutation where order does matter.
+ * </p>
+ *
+ * <p>
+ * The bucket is used to refer to the output set of size k that is the current combination.  Elements outside the
+ * bucket are all elements not currently in the bucket.
+ * </p>
+ *
+ * <p>
+ * Below is an example of a combination.
+ * <pre>
+ * List = 012345
+ * k = 3;
+ *
+ * 012
+ * 013
+ * 014
+ * 015
+ * 023
+ * 024
+ * 025
+ * 034
+ * 035
+ * 045
+ * 123
+ * 124
+ * 125
+ * 134
+ * 135
+ * 145
+ * 234
+ * 235
+ * 245
+ * 345
+ * </pre>
+ * </p>
+ **/
 public class Combinations< T >
 {
-	List<T> a; // the original unmolested list
+	protected List<T> a; // the original unmolested list
 
-	int N; // the total number of elements in "a"
-	int k; // the number of elements in the active bucket
-	int []bins; // which element in "a" is in which position in the list
-	int c; // the last bin in "bins"
-	long num_shuff = -1; // the number of shuffles, calculated when it is needed
+	protected int N; // the total number of elements in "a"
+	protected int k; // the number of elements in the active bucket
+	protected int []bins; // which element in "a" is in which position in the list
+	protected int c; // the last bin in "bins"
+
+	// indicates if it is 0=at beginning, 1=middle, 2=end
+	// 0 or 2 indicate that it is actually one past the extreme, which needs to be taken into account
+	protected int state;
 
 	/**
 	 * Constructor where the list and combinations is specified
@@ -86,6 +90,7 @@ public class Combinations< T >
 
 	/**
 	 * Initialize with a new list and bucket size
+	 *
 	 * @param list List which is to be symbols
 	 * @param bucketSize Size of the bucket
 	 */
@@ -105,17 +110,23 @@ public class Combinations< T >
 		}
 
 		this.a = list;
-		this.num_shuff = -1;
+		state = 1;
 	}
 
 	/**
-	 This will shuffle the elements in and out of the
-	 bins.  When all combinations have been exhausted
-	 an ExhaustedException will be thrown.
+	 * This will shuffle the elements in and out of the
+	 * bins.  When all combinations have been exhausted
+	 * an ExhaustedException will be thrown.
+	 *
+	 * @return true if the next combination was successfully found or false is it has been exhausted
 	 */
-	public void shuffle()
-			throws ExhaustedException
+	public boolean next()
 	{
+		if( state == 2 )
+			return false;
+		else
+			state = 1;
+
 		bins[c]++;
 
 		if( bins[c] >= N ) {
@@ -132,22 +143,43 @@ public class Combinations< T >
 				}
 			}
 
-			if( allgood == false ) {
-				throw new ExhaustedException();
+			if( !allgood ) {
+				state = 2;
+				// put it back into the last combination
+				for( int j = 0; j < bins.length; j++ ) {
+					bins[j] = j+N-bins.length;
+				}
 			}
+
+			return allgood;
 		}
+		return true;
 	}
 
-	public void unshuffle()
-			throws ExhaustedException
+	/**
+	 * Undoes the previous combination computed by {@link #next()}.
+	 *
+	 * @return true if the combination was successfully undone or false is is back to the original state
+	 */
+	public boolean previous()
 	{
+		// see if it is back to the start already
+		if( state == 0 )
+			return false;
+		else
+			state = 1;
+
 		for( int i = c; i >= 0; i-- ) {
 			bins[i]--;
 
 			if( i == 0 ) {
-				if( bins[i] < 0 ) {
-					bins[i] = 0;
-					throw new ExhaustedException();
+				if( bins[0] < 0 ) {
+					state = 0;
+					// put it back into its first combination
+					for( int j = 0; j < bins.length; j++ ) {
+						bins[j] = j;
+					}
+					return false;
 				}
 				break;
 			} else if( bins[i] <= bins[i-1] ) {
@@ -156,6 +188,7 @@ public class Combinations< T >
 				break;
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -164,28 +197,45 @@ public class Combinations< T >
 	 *
 	 * @return Total number
 	 */
-	public long numShuffles() {
-		if( num_shuff != -1 )
-			return num_shuff;
+	public long computeTotalCombinations() {
 
-		// this could be speed up by caching intermediate values
-		long fact_N_div_NmK = factorial(N,N-bins.length);
-		long fac_K = factorial(bins.length);
+		long numerator = a.size();
+		long denominator = k;
 
-		num_shuff = fact_N_div_NmK/fac_K;
+		for( int i = 1; i < k; i++ ) {
+			numerator *= a.size()-i;
+			denominator *= k-i;
+		}
 
-		return num_shuff;
+		return numerator/denominator;
 	}
 
-	public int size() {
+	/**
+	 * Returns the size of the bucket/output set
+	 *
+	 * @return Size of bucket
+	 */
+	public int getBucketSize() {
 		return k;
 	}
 
+	/**
+	 * Returns element 'i' in the bucket.
+	 *
+	 * @param i which element
+	 * @return the element
+	 */
 	public T get( int i ) {
 		return a.get( bins[i] );
 	}
 
-	public List<T> getList( List<T> storage ) {
+	/**
+	 * Extracts the entire bucket.  Will add elements to the provided list or create a new one
+	 *
+	 * @param storage Optional storage.  If null a list is created.  clear() is automatically called.
+	 * @return List containing the bucket
+	 */
+	public List<T> getBucket(List<T> storage) {
 		if( storage == null )
 			storage = new ArrayList<T>();
 		else
@@ -200,48 +250,26 @@ public class Combinations< T >
 	}
 
 	/**
-	 This returns all the items that are not currently inside the
-	 'active bins'
-	 THIS CAN BE MADE FASTER
+	 * This returns all the items that are not currently inside the bucket
+	 *
+	 * @param storage Optional storage.  If null a list is created.  clear() is automatically called.
+	 * @return List containing the bucket
 	 */
-	public List<T> getOutside( List<T> ret )
+	public List<T> getOutside( List<T> storage )
 	{
-		if( ret == null ) {
-			ret = new ArrayList<T>();
+		if( storage == null ) {
+			storage = new ArrayList<T>();
+		}  else {
+			storage.clear();
 		}
 
-		ret.addAll( a );
+		storage.addAll(a);
 
 		// bins specifies elements in order of first in 'a' to last
 		for( int i = bins.length-1; i >= 0; i-- ) {
-			ret.remove( bins[i] );
+			storage.remove(bins[i]);
 		}
 
-		return ret;
-	}
-
-	/**
-	 this exception is thrown when there are no mroe combinations
-	 */
-	public static class ExhaustedException
-			extends Exception
-	{
-		public ExhaustedException(){
-
-		}
-	}
-
-	public static long factorial( long n , int start)
-	{
-		long ret = 1;
-		for (long i = start; i <= n; ++i) ret *= i;
-		return ret;
-	}
-
-	public static long factorial(long n)
-	{
-		long ret = 1;
-		for (long i = 1; i <= n; ++i) ret *= i;
-		return ret;
+		return storage;
 	}
 }

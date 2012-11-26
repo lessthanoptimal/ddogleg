@@ -23,8 +23,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
@@ -32,21 +31,18 @@ import static org.junit.Assert.fail;
 public class TestCombinations {
 	
 	@Test
-	public void shuffle_1_1() {
+	public void next_1_1() {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(1);
 		
 		Combinations<Integer> alg =new Combinations<Integer>(list,1);
 		
 		assertEquals(1, (int)alg.get(0));
-		try {
-			alg.shuffle();
-			fail("Should have thrown an exception");
-		} catch (Combinations.ExhaustedException e) {}
+		assertFalse(alg.next());
 	}
 
 	@Test
-	public void shuffle_1_2() {
+	public void next_1_2() {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(1);
 		list.add(2);
@@ -55,16 +51,13 @@ public class TestCombinations {
 
 		assertEquals(1, (int)alg.get(0));
 
-		try {
-			alg.shuffle();
-			assertEquals(2, (int) alg.get(0));
-			alg.shuffle();
-			fail("Should have thrown an exception");
-		} catch (Combinations.ExhaustedException e) {}
+		assertTrue(alg.next());
+		assertEquals(2, (int) alg.get(0));
+		assertFalse(alg.next());
 	}
 
 	@Test
-	public void shuffle_2_2() {
+	public void next_2_2() {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(1);
 		list.add(2);
@@ -74,14 +67,11 @@ public class TestCombinations {
 		assertEquals(1, (int)alg.get(0));
 		assertEquals(2, (int)alg.get(1));
 
-		try {
-			alg.shuffle();
-			fail("Should have thrown an exception");
-		} catch (Combinations.ExhaustedException e) {}
+		assertFalse(alg.next());
 	}
 
 	@Test
-	public void shuffle_2_3() {
+	public void next_2_3() {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(1);
 		list.add(2);
@@ -92,27 +82,85 @@ public class TestCombinations {
 		assertEquals(1, (int)alg.get(0));
 		assertEquals(2, (int)alg.get(1));
 
-		try {
-			alg.shuffle();
-			assertEquals(1, (int) alg.get(0));
-			assertEquals(3, (int) alg.get(1));
-			alg.shuffle();
-			assertEquals(2, (int) alg.get(0));
-			assertEquals(3, (int) alg.get(1));
-			alg.shuffle();
-
-			fail("Should have thrown an exception");
-		} catch (Combinations.ExhaustedException e) {}
-	}
-	
-	@Test
-	public void unshuffle() {
-		fail("implement");
+		assertTrue(alg.next());
+		assertEquals(1, (int) alg.get(0));
+		assertEquals(3, (int) alg.get(1));
+		assertTrue(alg.next());
+		assertEquals(2, (int) alg.get(0));
+		assertEquals(3, (int) alg.get(1));
+		assertFalse(alg.next());
 	}
 
 	@Test
-	public void numShuffles() {
-		assertEquals(1,computeNumShuffles(1,1));
+	public void previous() {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+
+		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+
+		assertTrue(alg.next());
+		// sanity check
+		assertEquals(1, (int) alg.get(0));
+		assertEquals(3, (int) alg.get(1));
+
+		// check previous now
+		assertTrue(alg.previous());
+		assertEquals(1, (int)alg.get(0));
+		assertEquals(2, (int)alg.get(1));
+
+		assertFalse(alg.previous());
+
+		// now force it past the end, see if previous still works
+		assertTrue(alg.next());
+		assertTrue(alg.next());
+		// sanity check
+		assertEquals(2, (int) alg.get(0));
+		assertEquals(3, (int) alg.get(1));
+		assertFalse(alg.next()); // <-- no change here
+		assertTrue(alg.previous());
+		assertEquals(1, (int)alg.get(0));
+		assertEquals(3, (int)alg.get(1));
+	}
+
+	@Test
+	public void getList_getOutside() {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+
+		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+
+		assertTrue(alg.next());
+
+		// test getBucket() with and without storage
+		List<Integer> a = new ArrayList<Integer>();
+		alg.getBucket(a);
+		List<Integer> b = alg.getBucket(null);
+
+		assertEquals(2,a.size());
+		assertEquals(2,b.size());
+		assertEquals(1,(int)a.get(0));
+		assertEquals(3,(int)a.get(1));
+		assertEquals(1,(int)b.get(0));
+		assertEquals(3,(int)b.get(1));
+
+		// test getOutside() with and without storage
+		a = new ArrayList<Integer>();
+		alg.getOutside(a);
+		b = alg.getOutside(null);
+
+		assertEquals(1,a.size());
+		assertEquals(1,b.size());
+		assertEquals(2,(int)a.get(0));
+		assertEquals(2,(int)b.get(0));
+	}
+
+	@Test
+	public void computeNumShuffles() {
+//		assertEquals(1,computeNumShuffles(1,1));
 		assertEquals(2,computeNumShuffles(1,2));
 		assertEquals(1,computeNumShuffles(2,2));
 		assertEquals(3,computeNumShuffles(2,3));
@@ -126,6 +174,6 @@ public class TestCombinations {
 		}
 		Combinations<Number> c = new Combinations<Number>(l,numBins);
 		
-		return c.numShuffles();
+		return c.computeTotalCombinations();
 	}
 }

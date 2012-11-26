@@ -39,34 +39,31 @@ public class ExampleCombinatorics {
 
 		Combinations<String> alg = new Combinations<String>(words,2);
 		
-		long N = alg.numShuffles(); 
-		System.out.println("Total number of shuffles = "+N);
+		long N = alg.computeTotalCombinations();
+		System.out.println("Total number of combinations = "+N);
 		List<String> bucket = new ArrayList<String>();
-		try {
-			for( int i = 0; ; i++ ) {
-				alg.getList(bucket);
-				System.out.print("i = "+i+" || ");
-				for( String s : bucket ) {
-					System.out.print(s+" ");
-				}
-				System.out.println();
+		int i = 0;
+		do {
+			alg.getBucket(bucket);
+			System.out.print("i = "+i+" || ");
+			for( String s : bucket ) {
+				System.out.print(s+" ");
+			}
+			System.out.println();
+			i++;
+		} while( alg.next() );
 
-				alg.shuffle();
-			}
-		} catch (Combinations.ExhaustedException ignored) {}
-		
 		System.out.println("\nReverse");
-		try {
-			for( int i = 0; ; i++ ) {
-				alg.unshuffle();
-				alg.getList(bucket);
+		i = 0;
+		do {
+			alg.getBucket(bucket);
 				
-				System.out.print("i = "+i+" || ");
-				for( String s : bucket ) {
-					System.out.print(s+" ");
-				}
-				System.out.println();
+			System.out.print("i = "+i+" || ");
+			for( String s : bucket ) {
+				System.out.print(s+" ");
 			}
-		} catch (Combinations.ExhaustedException ignored) {}
+			System.out.println();
+			i++;
+		} while( alg.previous() );
 	}
 }
