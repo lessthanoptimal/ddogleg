@@ -1,0 +1,23 @@
+- check ant build
+  * ant clean, ant, ant test
+- check maven build
+- commit and tag release
+- Upload to source forge (src,libs,javadoc)
+- Update website
+- Update Maven central repository
+
+-----------
+Maven
+
+- change version in pom.xml
+- rm -rf target
+- mvn package
+- mvn javadoc:jar
+- mvn source:jar
+
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION.jar
+
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION-sources.jar -Dclassifier=sources
+
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION-javadoc.jar -Dclassifier=javadoc
+

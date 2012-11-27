@@ -55,8 +55,8 @@
   </license>
   </licenses>
   <scm>
-    <connection>scm:git://github.com/lessthanoptimal/ddogleg.git</connection>
-    <developerConnection>scm:git@github.com:lessthanoptimal/ddogleg.git</developerConnection>
+    <connection>scm:git:git://github.com/lessthanoptimal/ddogleg.git</connection>
+    <developerConnection>scm:git:git@github.com:lessthanoptimal/ddogleg.git</developerConnection>
     <url>https://github.com/lessthanoptimal/ddogleg</url>
   </scm>
   <developers>
