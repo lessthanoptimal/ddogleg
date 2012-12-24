@@ -19,7 +19,7 @@
 package org.ddogleg.sorting;
 
 /**
- * An implemenation of the quick select algorithm from Numerical Recipes Third Edition
+ * An implementation of the quick select algorithm from Numerical Recipes Third Edition
  * that is specified for arrays of doubles.  See page 433.
  *
  * @author Peter Abeles
