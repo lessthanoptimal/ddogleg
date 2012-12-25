@@ -15,7 +15,6 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-// TODO recycle trees and use leafs + branches to construct new ones
 // TODO insert node
 public class KdTreeConstructor<D> {
 
@@ -30,18 +29,25 @@ public class KdTreeConstructor<D> {
 	private double tmp[] = new double[1];
 	private int indexes[] = new int[1];
 
+	// Used to recycles memory and avoid GC calls
+	KdTreeMemory memory;
 
 	/**
 	 * Declares internal storage
 	 *
+	 * @param memory Used to recycle data
 	 * @param N Number of elements/axes in each data point
 	 */
-	public KdTreeConstructor( int N ) {
+	public KdTreeConstructor( KdTreeMemory memory , int N ) {
+		this.memory = memory;
 		this.N = N;
 		mean = new double[N];
 		var = new double[N];
 	}
 
+	public KdTreeConstructor( int N ) {
+		this(new KdTreeMemory(),N);
+	}
 
 	/**
 	 * Creates a new {@link KdTree} from the provided points.
@@ -55,7 +61,8 @@ public class KdTreeConstructor<D> {
 	public KdTree construct( List<double[]> points ,
 							 List<D> data )
 	{
-		KdTree tree = new KdTree(N);
+		KdTree tree = memory.requestTree();
+		tree.N = N;
 
 		if( points.size() == 1 ) {
 			tree.root = createLeaf(points,data);
@@ -79,7 +86,7 @@ public class KdTreeConstructor<D> {
 		List<double[]> right = new ArrayList<double[]>(points.size()/2);
 		List<D> leftData,rightData;
 
-		KdTree.Node node = new KdTree.Node();
+		KdTree.Node node = memory.requestNode();
 		node.split = split;
 		node.point = points.get( indexes[medianNum] );
 
@@ -126,7 +133,7 @@ public class KdTreeConstructor<D> {
 	{
 		if( points.size() == 0 )
 			// avoid a null node by making the parent the leaf too
-			return new KdTree.Node(parent.point,parent.data);
+			return memory.requestNode(parent.point,parent.data);
 		if( points.size() == 1 ) {
 			return createLeaf(points,data);
 		} else {
@@ -139,7 +146,7 @@ public class KdTreeConstructor<D> {
 	 */
 	private KdTree.Node createLeaf( List<double[]> points , List<D> data ) {
 		D d = data == null ? null : data.get(0);
-		return new KdTree.Node(points.get(0),d);
+		return memory.requestNode(points.get(0),d);
 	}
 
 	/**
@@ -204,16 +211,5 @@ public class KdTreeConstructor<D> {
 		}
 
 		QuickSelectArray.selectIndex(tmp, medianNum, numPoints, indexes);
-
-		if( points.size()>=3) {
-			double median = tmp[medianNum];
-			for( int i = 0; i < medianNum; i++ )
-				if( points.get(indexes[i])[splitAxis] > median )
-					System.out.println("CRAP");
-
-			for( int i = medianNum; i < points.size(); i++ )
-				if( points.get(indexes[i])[splitAxis] < median )
-					System.out.println("CRAP");
-		}
 	}
 }

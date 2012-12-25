@@ -5,16 +5,23 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 /**
+ * Standard tests for {@link KdTreeSearchBbf}.
+ *
  * @author Peter Abeles
  */
-public class TestKdTreeOperations {
+public abstract class StandardKdTreeSearchTests {
+
+	/**
+	 * Creates a KdTreeSearch which will produce optimal results
+	 */
+	public abstract KdTreeSearch createAlg();
 
 	/**
 	 * Try several searches and see if they all produce good results
 	 */
 	@Test
 	public void findClosest_basic() {
-		KdTreeOperations alg = new KdTreeOperations();
+		KdTreeSearch alg = createAlg();
 
 		KdTree tree = createTreeA();
 		alg.setTree(tree);
@@ -64,7 +71,7 @@ public class TestKdTreeOperations {
 	 */
 	@Test
 	public void findClosest_empty() {
-		KdTreeOperations alg = new KdTreeOperations();
+		KdTreeSearch alg = createAlg();
 		alg.setTree( new KdTree(2) );
 
 		KdTree.Node found = alg.findClosest(new double[]{11,8});
@@ -79,7 +86,7 @@ public class TestKdTreeOperations {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2},null);
 
-		KdTreeOperations alg = new KdTreeOperations();
+		KdTreeSearch alg =createAlg();
 		alg.setTree( tree );
 
 		KdTree.Node found = alg.findClosest(new double[]{11,8});
@@ -96,7 +103,7 @@ public class TestKdTreeOperations {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2},null);
 
-		KdTreeOperations alg = new KdTreeOperations();
+		KdTreeSearch alg = createAlg();
 		alg.setTree( tree );
 		alg.setMaxDistance(2);
 
@@ -105,6 +112,4 @@ public class TestKdTreeOperations {
 		found = alg.findClosest(new double[]{1,1.5});
 		assertTrue(found == tree.root);
 	}
-
-
 }

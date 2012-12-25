@@ -31,6 +31,8 @@ public class KdTree {
 		this.N = N;
 	}
 
+	public KdTree() {
+	}
 
 	/**
 	 * Euclidean distance squared between the node's point and a point.

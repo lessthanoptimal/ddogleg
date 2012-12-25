@@ -27,14 +27,14 @@ public class BenchmarkNearestNeighbor {
 			this.alg = alg;
 			this.name = name;
 
-//			alg.init(dimen);
-//			alg.setPoints(cloud,null);
+			alg.init(dimen);
+			alg.setPoints(cloud,null);
 		}
 
 		@Override
 		public void process() {
-			alg.init(dimen);
-			alg.setPoints(cloud,null);
+//			alg.init(dimen);
+//			alg.setPoints(cloud,null);
 
 			for( double[]p : searchSet ) {
 				alg.findNearest(p,maxDistance,result);
@@ -52,6 +52,7 @@ public class BenchmarkNearestNeighbor {
 
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(),"kdtree"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(200),"kdtree P"));
 
 		return ret;
 	}
@@ -70,13 +71,13 @@ public class BenchmarkNearestNeighbor {
 		}
 	}
 
-	private List<double[]> createData( Random rand , int size , int k ) {
+	public static List<double[]> createData( Random rand , int size , int k ) {
 		List<double[]> ret = new ArrayList<double[]>();
 
 		for( int i = 0; i < size; i++ ) {
 			double []d = new double[ k ];
 			for( int j = 0; j < k; j++ ) {
-				d[j] = rand.nextGaussian()*3;
+				d[j] = rand.nextDouble()*3;
 			}
 			ret.add(d);
 		}
@@ -89,9 +90,12 @@ public class BenchmarkNearestNeighbor {
 
 		app.evaluateDataSet(3,30,20);
 		app.evaluateDataSet(3,300,200);
-		app.evaluateDataSet(3,600,200);
+		app.evaluateDataSet(3,600,500);
 		app.evaluateDataSet(5,10000,10000);
 		app.evaluateDataSet(10,10000,10000);
+		app.evaluateDataSet(20,10000,10000);
+		app.evaluateDataSet(60,10000,10000);
+		app.evaluateDataSet(120,10000,10000);
 
 	}
 }

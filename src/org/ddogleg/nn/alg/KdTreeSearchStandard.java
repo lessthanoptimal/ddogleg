@@ -7,7 +7,7 @@ package org.ddogleg.nn.alg;
  */
 // TODO Add insert
 // TODO Add N-nearest
-public class KdTreeOperations {
+public class KdTreeSearchStandard implements KdTreeSearch {
 
 	// the targeted tree
 	KdTree tree;
@@ -22,6 +22,7 @@ public class KdTreeOperations {
 
 	KdTree.Node closest;
 
+	@Override
 	public void setTree( KdTree tree ) {
 		this.tree = tree;
 	}
@@ -31,6 +32,7 @@ public class KdTreeOperations {
 	 *
 	 * @param maxDistance Maximum distance a closest point can be
 	 */
+	@Override
 	public void setMaxDistance(double maxDistance ) {
 		this.maxDistanceSq = maxDistance*maxDistance ;
 	}
@@ -41,6 +43,7 @@ public class KdTreeOperations {
 	 * @param target A point
 	 * @return Closest node or null if none is within the minimum distance.
 	 */
+	@Override
 	public KdTree.Node findClosest( double[] target ) {
 		if( tree.root == null )
 			return null;
