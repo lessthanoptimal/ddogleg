@@ -13,6 +13,11 @@ import static org.junit.Assert.*;
 public class TestKdTreeConstructor {
 
 	@Test
+	public void stuff() {
+		fail("Redesign tests since it is a skeleton now");
+	}
+
+	@Test
 	public void empty() {
 		List<double[]> points = new ArrayList<double[]>();
 

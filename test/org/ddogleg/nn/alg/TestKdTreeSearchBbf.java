@@ -3,6 +3,7 @@ package org.ddogleg.nn.alg;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Peter Abeles
@@ -25,10 +26,16 @@ public class TestKdTreeSearchBbf extends StandardKdTreeSearchTests {
 		KdTreeSearchBbf alg = new KdTreeSearchBbf(1);
 		alg.setTree(tree);
 
-		KdTree.Node found = alg.findClosest(tree.root.left.left.point);
+		KdTree.Node found = alg.findClosest(new double[]{12,2});
 
-		// The root node is the only node that is processed in the main loop, but the left child is considered
-		// and distance computed
-		assertTrue(found==tree.root.left);
+		// In one iteration it will search down to a leaf.  The point was selected such that the wrong path would
+		// be followed
+		assertTrue(found==tree.root.left.right);
 	}
+
+	@Test
+	public void multiTreeSearch() {
+		fail("implement");
+	}
+
 }

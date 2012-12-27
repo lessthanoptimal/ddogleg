@@ -43,6 +43,12 @@ public class BenchmarkNearestNeighborCorrect {
 //		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(),"kdtree"));
 		ret.add( new Subject(FactoryNearestNeighbor.kdtree(200),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(500),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(1000),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(2000),"kdtree P "));
+//		ret.add( new Subject(FactoryNearestNeighbor.kdtree(5000),"kdtree P "));
+//		ret.add( new Subject(FactoryNearestNeighbor.kdtree(10000),"kdtree P "));
 
 		return ret;
 	}
@@ -94,7 +100,7 @@ public class BenchmarkNearestNeighborCorrect {
 		app.evaluateDataSet(10,100000,1000);
 		app.evaluateDataSet(20,100000,1000);
 		app.evaluateDataSet(60,100000,1000);
-		app.evaluateDataSet(120,100000,1000);
+//		app.evaluateDataSet(120,100000,1000);
 
 		try {
 			synchronized ( app ) {

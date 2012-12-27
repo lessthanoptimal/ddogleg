@@ -15,21 +15,24 @@ public class WrapKdTree<D> implements NearestNeighbor<D> {
 
 	KdTree tree;
 	KdTreeConstructor<D> constructor;
-	KdTreeSearch ops;
+	KdTreeSearch search;
+
+	AxisSplitter<D> splitter;
 
 	KdTreeMemory memory = new KdTreeMemory();
 
-	public WrapKdTree(KdTreeSearch ops) {
-		this.ops = ops;
+	public WrapKdTree(KdTreeSearch search, AxisSplitter<D> splitter ) {
+		this.search = search;
+		this.splitter = splitter;
 	}
 
 	public WrapKdTree() {
-		this( new KdTreeSearchStandard());
+		this( new KdTreeSearchStandard(), new AxisSplitterMedian<D>());
 	}
 
 	@Override
 	public void init( int N ) {
-		constructor = new KdTreeConstructor<D>(memory,N);
+		constructor = new KdTreeConstructor<D>(memory,N,splitter);
 	}
 
 	@Override
@@ -37,13 +40,13 @@ public class WrapKdTree<D> implements NearestNeighbor<D> {
 		if( tree != null )
 			memory.recycleGraph(tree);
 		tree = constructor.construct(points,data);
-		ops.setTree(tree);
+		search.setTree(tree);
 	}
 
 	@Override
 	public boolean findNearest( double[] point , double maxDistance , NnData<D> result ) {
-		ops.setMaxDistance(maxDistance);
-		KdTree.Node found = ops.findClosest(point);
+		search.setMaxDistance(maxDistance);
+		KdTree.Node found = search.findClosest(point);
 		if( found == null )
 			return false;
 

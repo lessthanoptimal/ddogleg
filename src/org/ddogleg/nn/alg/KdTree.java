@@ -41,7 +41,7 @@ public class KdTree {
 	 * @param point A point
 	 * @return Euclidean distance squared.
 	 */
-	public double distanceSq( Node a , double[] point ) {
+	public static double distanceSq( Node a , double[] point , int N) {
 		double ret = 0;
 
 		for( int i = 0; i < N; i++ ) {

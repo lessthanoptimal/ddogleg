@@ -12,22 +12,31 @@ import java.util.PriorityQueue;
  * </p>
  *
  * <p>
+ * Searches of multiple trees are also supported.  Searches are initialized by performing a search down to a leaf
+ * of each of the trees.  As these searches are performed the unexplored regions are added to the priority queue.
+ * </p>
+ *
+ * <p>
  * [1] Beis, Jeffrey S. and Lowe, David G, "Shape Indexing Using Approximate Nearest-Neighbour Search in
  * High-Dimensional Spaces" CVPR 1997
  * </p>
  *
  * @author Peter Abeles
  */
+// TODO finish commenting
 public class KdTreeSearchBbf implements KdTreeSearch {
 
 	// the maximum number of nodes it will search
-	int maxNodes;
+	int maxNodesSearched;
+
+	// dimension of points
+	int N;
 
 	double maxDistance = Double.MAX_VALUE;
 
 	PriorityQueue<Helper> queue = new PriorityQueue<Helper>();
 
-	KdTree tree;
+	KdTree trees[];
 
 	int numNodesSearched;
 	double bestDistanceSq;
@@ -35,13 +44,19 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 
 	List<Helper> unused = new ArrayList<Helper>();
 
-	public KdTreeSearchBbf(int maxNodes) {
-		this.maxNodes = maxNodes;
+	public KdTreeSearchBbf(int maxNodesSearched) {
+		this.maxNodesSearched = maxNodesSearched;
 	}
 
 	@Override
 	public void setTree(KdTree tree) {
-		this.tree = tree;
+		this.trees = new KdTree[]{tree};
+		this.N = tree.N;
+	}
+
+	public void setTrees(KdTree []trees ){
+		this.trees = trees;
+		this.N = trees[0].N;
 	}
 
 	@Override
@@ -52,21 +67,17 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 	@Override
 	public KdTree.Node findClosest(double[] target) {
 
-		if( tree.root == null )
-			return null;
-
 		numNodesSearched = 0;
 		bestDistanceSq = maxDistance*maxDistance;
 		bestNode = null;
 
 		// start the search from the root node
-		addToQueue(0,tree.root,target);
-
-		// TODO Change so that it searches down to a leaf
-		// TODO queue based on dx*dx
+		for( int i = 0; i < trees.length; i++ ) {
+			searchNode(target,trees[i].root);
+		}
 
 		// iterate until it exhausts all options or the maximum number of nodes has been exceeded
-		while( !queue.isEmpty() && numNodesSearched++ < maxNodes ) {
+		while( !queue.isEmpty() && numNodesSearched++ < maxNodesSearched) {
 			Helper h = queue.remove();
 			KdTree.Node n = h.node;
 			recycle(h);
@@ -75,33 +86,7 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 			if( h.closestPossibleSq >= bestDistanceSq )
 				continue;
 
-			while( true) {
-				checkBestDistance(n, target);
-
-				if( n.isLeaf() )
-					break;
-
-				// select the most promising branch to investigate first
-				KdTree.Node nearer,further;
-
-				double splitValue = n.point[ n.split ];
-
-				if( target[n.split ] <= splitValue ) {
-					nearer = n.left;
-					further = n.right;
-				} else {
-					nearer = n.right;
-					further = n.left;
-				}
-
-				// See if it is possible for 'further' to contain a better node
-				double dx = splitValue - target[ n.split ];
-				if( dx*dx < bestDistanceSq ) {
-					addToQueue(dx*dx, further, target );
-				}
-
-				n = nearer;
-			}
+			searchNode(target,n);
 		}
 //		System.out.println("numNodesSearched "+numNodesSearched+"  max = "+maxNodes+" "+"  queue "+queue.size());
 
@@ -110,6 +95,36 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 		queue.clear();
 
 		return bestNode;
+	}
+
+	protected void searchNode(double[] target, KdTree.Node n) {
+		while( true) {
+			checkBestDistance(n, target);
+
+			if( n.isLeaf() )
+				break;
+
+			// select the most promising branch to investigate first
+			KdTree.Node nearer,further;
+
+			double splitValue = n.point[ n.split ];
+
+			if( target[n.split ] <= splitValue ) {
+				nearer = n.left;
+				further = n.right;
+			} else {
+				nearer = n.right;
+				further = n.left;
+			}
+
+			// See if it is possible for 'further' to contain a better node
+			double dx = splitValue - target[ n.split ];
+			if( dx*dx < bestDistanceSq ) {
+				addToQueue(dx*dx, further, target );
+			}
+
+			n = nearer;
+		}
 	}
 
 	private void addToQueue( double closestDistanceSq , KdTree.Node node , double []target ) {
@@ -132,7 +147,7 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 	}
 
 	private void checkBestDistance(KdTree.Node node, double[] target) {
-		double distanceSq = tree.distanceSq(node,target);
+		double distanceSq = KdTree.distanceSq(node,target,N);
 		if( distanceSq < bestDistanceSq ) {
 			bestDistanceSq = distanceSq;
 			bestNode = node;

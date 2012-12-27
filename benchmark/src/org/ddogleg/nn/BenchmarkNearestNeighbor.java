@@ -10,6 +10,7 @@ import java.util.Random;
 /**
  * @author Peter Abeles
  */
+// TODO spawn new JVM for each benchmark...
 public class BenchmarkNearestNeighbor {
 
 	int dimen;
@@ -27,14 +28,14 @@ public class BenchmarkNearestNeighbor {
 			this.alg = alg;
 			this.name = name;
 
-			alg.init(dimen);
-			alg.setPoints(cloud,null);
+//			alg.init(dimen);
+//			alg.setPoints(cloud,null);
 		}
 
 		@Override
 		public void process() {
-//			alg.init(dimen);
-//			alg.setPoints(cloud,null);
+			alg.init(dimen);
+			alg.setPoints(cloud,null);
 
 			for( double[]p : searchSet ) {
 				alg.findNearest(p,maxDistance,result);
@@ -52,7 +53,8 @@ public class BenchmarkNearestNeighbor {
 
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(),"kdtree"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(200),"kdtree P"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(1000),"kdtree P"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdRandomForest(200,20,5,23423432),"K-D Random Forest"));
 
 		return ret;
 	}
@@ -88,14 +90,13 @@ public class BenchmarkNearestNeighbor {
 	public static void main( String args[] ) {
 		BenchmarkNearestNeighbor app = new BenchmarkNearestNeighbor();
 
-		app.evaluateDataSet(3,30,20);
-		app.evaluateDataSet(3,300,200);
-		app.evaluateDataSet(3,600,500);
-		app.evaluateDataSet(5,10000,10000);
-		app.evaluateDataSet(10,10000,10000);
-		app.evaluateDataSet(20,10000,10000);
+//		app.evaluateDataSet(3,30,20);
+//		app.evaluateDataSet(3,300,200);
+//		app.evaluateDataSet(3,600,500);
+//		app.evaluateDataSet(5,10000,10000);
+//		app.evaluateDataSet(10,10000,10000);
+//		app.evaluateDataSet(20,10000,10000);
 		app.evaluateDataSet(60,10000,10000);
-		app.evaluateDataSet(120,10000,10000);
-
+//		app.evaluateDataSet(120,10000,10000);
 	}
 }

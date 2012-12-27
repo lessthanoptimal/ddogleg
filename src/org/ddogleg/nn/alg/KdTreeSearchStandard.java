@@ -62,7 +62,7 @@ public class KdTreeSearchStandard implements KdTreeSearch {
 	 */
 	private void stepClosest(KdTree.Node node) {
 
-		double d = tree.distanceSq(node,target);
+		double d = KdTree.distanceSq(node,target,tree.N);
 		if( d*d < bestDistanceSq ) {
 			closest = node;
 			bestDistanceSq = d*d;

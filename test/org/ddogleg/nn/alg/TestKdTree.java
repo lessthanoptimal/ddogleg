@@ -16,7 +16,7 @@ public class TestKdTree {
 		double p[] = new double[]{2,5};
 
 		double expected = 1*1 + 3*3;
-		assertEquals(expected,alg.distanceSq(n,p),1e-8);
+		assertEquals(expected,KdTree.distanceSq(n,p,2),1e-8);
 	}
 
 	@Test
