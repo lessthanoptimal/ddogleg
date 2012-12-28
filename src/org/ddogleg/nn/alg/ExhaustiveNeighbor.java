@@ -3,7 +3,7 @@ package org.ddogleg.nn.alg;
 import java.util.List;
 
 /**
- * Exhaustively finds the nearest-neighbor to a point by considering every possibility.
+ * Exhaustively finds the nearest-neighbor to a n-dimensional point by considering every possibility.
  *
  * @author Peter Abeles
  */
@@ -21,10 +21,20 @@ public class ExhaustiveNeighbor {
 	public ExhaustiveNeighbor() {
 	}
 
+	/**
+	 * Specifies the point's dimension
+	 *
+	 * @param n dimension
+	 */
 	public void setN(int n) {
 		N = n;
 	}
 
+	/**
+	 * The input list which the nearest-neighbor is to be found inside of
+	 *
+	 * @param points List od points
+	 */
 	public void setPoints( List<double[]> points ) {
 		this.points = points;
 	}

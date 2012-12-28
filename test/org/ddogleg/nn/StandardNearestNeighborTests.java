@@ -83,12 +83,12 @@ public abstract class StandardNearestNeighborTests {
 
 			List<double[]> points = new ArrayList<double[]>();
 			for( int i = 0; i < numPoints; i++ )
-				points.add(new double[]{rand.nextGaussian(),rand.nextGaussian()});
+				points.add(randPoint(2));
 
 			alg.init(2);
 			alg.setPoints(points,null);
 
-			double[] where = new double[]{rand.nextGaussian(),rand.nextGaussian()};
+			double[] where = randPoint(2);
 
 			assertTrue(alg.findNearest(where, 10, found));
 
@@ -98,5 +98,12 @@ public abstract class StandardNearestNeighborTests {
 
 			assertTrue(expected == found.point);
 		}
+	}
+
+	private double[] randPoint( int dimen ) {
+		double []ret = new double[dimen];
+		for( int i = 0; i < dimen; i++ )
+			ret[i] = rand.nextGaussian();
+		return ret;
 	}
 }

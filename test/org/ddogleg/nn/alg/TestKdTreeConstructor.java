@@ -5,186 +5,118 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
  */
 public class TestKdTreeConstructor {
 
+	/**
+	 * Makes sure a branch is created correctly given the results from the splitter
+	 */
 	@Test
-	public void stuff() {
-		fail("Redesign tests since it is a skeleton now");
+	public void computeBranch() {
+		DummySplitter splitter = createSplitter(1,1,false);
+		splitter.splitAxis = 1;
+		splitter.splitPoint = new double[]{2,3};
+
+		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,splitter);
+
+		KdTree.Node n = alg.computeBranch(new ArrayList<double[]>(),null);
+
+		assertTrue(n.point == splitter.splitPoint);
+		assertTrue(n.split == splitter.splitAxis);
+		assertTrue(n.data == null);
+		assertTrue(n.left.isLeaf());
+		assertTrue(n.right.isLeaf());
+		assertTrue(n.left.point == splitter.left.get(0));
+		assertTrue(n.left.data == null);
+		assertTrue(n.right.point == splitter.right.get(0));
+		assertTrue(n.right.data == null);
+	}
+
+	/**
+	 * Same test as above but with associated data
+	 */
+	@Test
+	public void computeBranch_widthData() {
+		DummySplitter splitter = createSplitter(1,1,true);
+		splitter.splitAxis = 1;
+		splitter.splitPoint = new double[]{2,3};
+		splitter.splitData = 2;
+
+		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,splitter);
+
+		KdTree.Node n = alg.computeBranch(new ArrayList<double[]>(),new ArrayList());
+
+		assertTrue(n.point == splitter.splitPoint);
+		assertTrue(n.split == splitter.splitAxis);
+		assertTrue(n.data == splitter.splitData);
+		assertTrue(n.left.isLeaf());
+		assertTrue(n.right.isLeaf());
+		assertTrue(n.left.point == splitter.left.get(0));
+		assertTrue(n.left.data == splitter.leftData.get(0));
+		assertTrue(n.right.point == splitter.right.get(0));
+		assertTrue(n.right.data == splitter.rightData.get(0));
 	}
 
 	@Test
-	public void empty() {
+	public void computeChild() {
+		KdTreeConstructor alg = new KdTreeConstructor(2);
+
+		List points = new ArrayList();
+		List data = new ArrayList();
+
+		// empty lists should use parent's info
+		KdTree.Node n = new KdTree.Node();
+		n.point = new double[2];
+		n.data = 1;
+		KdTree.Node found = alg.computeChild(points,data,n);
+		assertTrue(found.isLeaf());
+		assertTrue(n.point == found.point);
+		assertTrue(n.data == found.data);
+
+		// add a point
+		points.add( new double[2] );
+		data.add(2);
+		found = alg.computeChild(points,data,null);
+		assertTrue(found.isLeaf());
+		assertTrue(found.point == points.get(0));
+		assertTrue(found.data == data.get(0));
+
+		// for all the other cases it will create a branch.  testing that will require a bit more work...
+	}
+
+	/**
+	 * Basic tests to see if it can handle different sized input lists.
+	 */
+	@Test
+	public void construct() {
+		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,createSplitter(1,1,false));
+
+		// test an empty list
 		List<double[]> points = new ArrayList<double[]>();
-
-		KdTreeConstructor<?> alg = new KdTreeConstructor(2);
 		KdTree tree = alg.construct(points,null);
-
 		assertTrue(tree.N == 2);
 		assertTrue(tree.root == null);
-	}
 
-	@Test
-	public void single() {
-		List<double[]> points = createPoints(2,1,2);
-
-		KdTreeConstructor<?> alg = new KdTreeConstructor(2);
-		KdTree tree = alg.construct(points,null);
-
+		// add a point
+		points.add( new double[]{1,2});
+		tree = alg.construct(points,null);
 		assertTrue(tree.N == 2);
-		assertTrue(tree.root != null);
+		assertTrue(tree.root.point == points.get(0));
 		assertTrue(tree.root.isLeaf());
-	}
 
-	@Test
-	public void two() {
-		List<double[]> points = createPoints(2, 1,2, 1.1,4 );
-
-		KdTreeConstructor<?> alg = new KdTreeConstructor(2);
-		KdTree tree = alg.construct(points,null);
-
+		// add another point.  These input points are ignored by the dummy splitter
+		points.add( new double[]{1,2,4,5});
+		tree = alg.construct(points,null);
 		assertTrue(tree.N == 2);
-		assertTrue(tree.root != null);
-
-		// second point should be here since the median = 1
-		assertFalse(tree.root.isLeaf());
-		assertEquals(1, tree.root.split);
-		assertTrue(tree.root.point[0] == 1.1);
-		// nothing below it, so it should be the parent
 		assertTrue(tree.root.left.isLeaf());
-		assertTrue(tree.root.left.point[0] == 1);
-		// right is a leaf and the first point
 		assertTrue(tree.root.right.isLeaf());
-		assertTrue(tree.root.right.point[0] == 1.1);
 	}
 
-	@Test
-	public void three() {
-		List<double[]> points = createPoints(2, 1,2, 1.1,4 , 0.9,-2);
 
-		KdTreeConstructor<?> alg = new KdTreeConstructor(2);
-		KdTree tree = alg.construct(points,null);
-
-		assertTrue(tree.N == 2);
-		assertTrue(tree.root != null);
-
-		// sorted order should be (0.9,-2) (1,2) (1.1,4)
-
-		assertFalse(tree.root.isLeaf());
-		assertTrue(tree.root.point[0] == 1);
-		// left
-		assertTrue(tree.root.left.isLeaf());
-		assertTrue(tree.root.left.point[0] == 0.9);
-		// right
-		assertTrue(tree.root.right.isLeaf());
-		assertTrue(tree.root.right.point[0] == 1.1);
-	}
-
-	/**
-	 * Make two of the points identical and see if things blow up
-	 */
-	@Test
-	public void identical_points() {
-		List<double[]> points = createPoints(2, 1,2, 1.1,4 , 1,2);
-
-		KdTreeConstructor<?> alg = new KdTreeConstructor(2);
-		KdTree tree = alg.construct(points,null);
-
-		assertTrue(tree.N == 2);
-		assertTrue(tree.root != null);
-
-		// sorted order should be (1,2) (1,2) (1.1,4)
-
-		assertFalse(tree.root.isLeaf());
-		assertTrue(tree.root.point[0] == 1);
-		// left
-		assertTrue(tree.root.left.isLeaf());
-		assertTrue(tree.root.left.point[0] == 1);
-		// right
-		assertTrue(tree.root.right.isLeaf());
-		assertTrue(tree.root.right.point[0] == 1.1);
-	}
-
-	/**
-	 * Make sure a reference to point data is being saved
-	 */
-	@Test
-	public void savedPointReference() {
-		List<double[]> points = createPoints(2, 1,2, 1.1,4 , 0.9,-2);
-		List<Integer> data = new ArrayList<Integer>();
-		data.add(2);
-		data.add(3);
-		data.add(4);
-
-		KdTreeConstructor<Integer> alg = new KdTreeConstructor<Integer>(2);
-		KdTree tree = alg.construct(points,data);
-
-		// sorted order should be (0.9,-2) (1,2) (1.1,4)
-		assertFalse(tree.root.isLeaf());
-		assertTrue(tree.root.data == data.get(0));
-		assertTrue(tree.root.left.data == data.get(2));
-		assertTrue(tree.root.right.data == data.get(1));
-	}
-
-	/**
-	 * Make sure points which belong on the left are correctly assigned to the left
-	 */
-	@Test
-	public void checkLeftRightLists() {
-		List<double[]> points = createPoints(1, 1,15,3,13,5,6,7,8,9,10,11,12,4,14,2);
-
-		KdTreeConstructor<Integer> alg = new KdTreeConstructor<Integer>(1);
-		KdTree tree = alg.construct(points,null);
-
-		assertFalse(tree.root.isLeaf());
-		assertTrue(tree.root.point[0] == 8);
-
-		List<double[]> left = flatten(tree.root.left);
-		List<double[]> right = flatten(tree.root.right);
-
-		assertEquals(7,left.size());
-		assertEquals(7,right.size());
-
-		for( int i = 0; i < 7; i++ ) {
-			assertTrue(left.get(i)[0] < 8);
-			assertTrue(right.get(i)[0] > 8);
-		}
-	}
-
-	/**
-	 * Makes sure it selects the largest variance to split on
-	 */
-	@Test
-	public void selectLargestVariance() {
-		List<double[]> points = createPoints(3, 1,2,10,  1.1,4,10 , 0.9,-2,10 );
-
-		KdTreeConstructor<?> alg = new KdTreeConstructor(3);
-		KdTree tree = alg.construct(points,null);
-
-		assertEquals(1, tree.root.split);
-	}
-
-	public List<double[]> flatten( KdTree.Node node ) {
-		List<double[]>  ret = new ArrayList<double[]>();
-
-		List<KdTree.Node> open = new ArrayList<KdTree.Node>();
-		open.add(node);
-
-		while( open.size() > 0 ) {
-			KdTree.Node n = open.remove(0);
-
-			if( n.left != null ) open.add(n.left);
-			if( n.right != null ) open.add(n.right);
-
-			ret.add(n.point);
-		}
-
-		return ret;
-	}
 
 	public static List<double[]> createPoints( int dimen , double ...v ) {
 
@@ -199,6 +131,93 @@ public class TestKdTreeConstructor {
 		}
 
 		return ret;
+	}
+
+	private DummySplitter createSplitter( int numLeft , int numRight , boolean withData) {
+		List<double[]> left = new ArrayList<double[]>();
+		List<double[]> right = new ArrayList<double[]>();
+		List<Integer> leftData = null;
+		List<Integer> rightData = null;
+
+		for( int i = 0; i < numLeft; i++ ) {
+			left.add( new double[2] );
+		}
+		for( int i = 0; i < numRight; i++ ) {
+			right.add( new double[2] );
+		}
+
+		if( withData ) {
+			leftData = new ArrayList<Integer>();
+			rightData = new ArrayList<Integer>();
+
+			for( int i = 0; i < numLeft; i++ ) {
+				leftData.add( i );
+			}
+			for( int i = 0; i < numRight; i++ ) {
+				rightData.add( i );
+			}
+		}
+
+
+		return new DummySplitter(null,null,1,left,leftData,right,rightData);
+	}
+
+	public static class DummySplitter implements AxisSplitter<Integer> {
+
+		boolean calledSetDimension = false;
+		Integer splitData;
+		double[] splitPoint;
+		int splitAxis;
+		List<double[]> left;
+		List<Integer> leftData;
+		List<double[]> right;
+		List<Integer> rightData;
+
+		public DummySplitter(Integer splitData, double[] splitPoint, int splitAxis,
+							 List<double[]> left, List<Integer> leftData,
+							 List<double[]> right, List<Integer> rightData)
+		{
+			this.splitData = splitData;
+			this.splitPoint = splitPoint;
+			this.splitAxis = splitAxis;
+			this.left = left;
+			this.leftData = leftData;
+			this.right = right;
+			this.rightData = rightData;
+		}
+
+		@Override
+		public void setDimension(int N) {
+			calledSetDimension = true;
+		}
+
+		@Override
+		public void splitData(List<double[]> points, List<Integer> data,
+							  List<double[]> left, List<Integer> leftData,
+							  List<double[]> right, List<Integer> rightData)
+		{
+			left.addAll(this.left);
+			right.addAll(this.right);
+			if( leftData != null )
+				leftData.addAll(this.leftData);
+			if( rightData != null )
+				rightData.addAll(this.rightData);
+		}
+
+		@Override
+		public double[] getSplitPoint() {
+			return splitPoint;
+		}
+
+		@Override
+		public Integer getSplitData() {
+			return splitData;
+		}
+
+		@Override
+		public int getSplitAxis() {
+			return splitAxis;
+		}
 	}
 
 }

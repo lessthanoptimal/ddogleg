@@ -17,7 +17,7 @@ package org.ddogleg.nn.alg;
  */
 public class KdTree {
 
-	// Number of elements in each point
+	// Number of elements/dimension in each point
 	int N;
 	// tree data structure
 	Node root;

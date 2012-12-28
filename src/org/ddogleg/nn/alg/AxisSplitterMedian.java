@@ -57,8 +57,8 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 
 	@Override
 	public void splitData(List<double[]> points, List<D> data,
-						  List<double[]> left, List<D> dataLeft,
-						  List<double[]> right, List<D> dataRight) {
+						  List<double[]> left, List<D> leftData,
+						  List<double[]> right, List<D> rightData) {
 		computeAxisVariance(points);
 		splitAxis = splitRule.select(var);
 
@@ -83,12 +83,12 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 			for( int i = 0; i < medianNum; i++ ) {
 				int index = indexes[i];
 				left.add(points.get(index));
-				dataLeft.add(data.get(index));
+				leftData.add(data.get(index));
 			}
 			for( int i = medianNum+1; i < points.size(); i++ ) {
 				int index = indexes[i];
 				right.add(points.get(index));
-				dataRight.add(data.get(index));
+				rightData.add(data.get(index));
 			}
 			splitData = data.get( indexes[medianNum] );
 		}

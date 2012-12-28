@@ -1,26 +1,26 @@
 package org.ddogleg.nn.alg;
 
 /**
- * Various operations for manipulating and searching {@link KdTree}.
+ * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.  This is the algorithm
+ * which is typically described in books.
  *
  * @author Peter Abeles
  */
-// TODO Add insert
-// TODO Add N-nearest
 public class KdTreeSearchStandard implements KdTreeSearch {
 
 	// the targeted tree
-	KdTree tree;
+	private KdTree tree;
 
 	// point being searched for
-	double[] target;
+	private double[] target;
 
 	// the maximum distance a neighbor is allowed to be
-	double maxDistanceSq = Double.MAX_VALUE;
+	private double maxDistanceSq = Double.MAX_VALUE;
 	// the closest neighbor which has yet to be found
-	double bestDistanceSq;
+	private double bestDistanceSq;
 
-	KdTree.Node closest;
+	// the node which has been found to be the closest so far
+	private KdTree.Node closest;
 
 	@Override
 	public void setTree( KdTree tree ) {

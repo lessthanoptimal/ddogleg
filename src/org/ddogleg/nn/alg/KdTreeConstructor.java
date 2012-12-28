@@ -5,13 +5,11 @@ import java.util.List;
 
 /**
  *
- * Creates a new {@link KdTree KD-Tree} from a list of points and (optional) associated data. The axis with the largest
- * variance is used to split the point set at each node.
+ * Creates a new {@link KdTree KD-Tree} from a list of points and (optional) associated data. Which axis is used
+ * to split the data and how to split the data is determined by the {@link AxisSplitter} passed in.
  *
- * WARNING: A reference to the input points is saved.  Do not modify the input until the KD-Tree is no longer needed.
+ * WARNING: A reference to the input points is saved.  Do not modify the input until the K-D Tree is no longer needed.
  * This reduced memory overhead significantly.
- *
- * TODO Update
  *
  * @author Peter Abeles
  */
@@ -79,7 +77,7 @@ public class KdTreeConstructor<D> {
 	 *
 	 * @return The node associated with this region
 	 */
-	private KdTree.Node computeBranch(List<double[]> points, List<D> data ) {
+	protected KdTree.Node computeBranch(List<double[]> points, List<D> data ) {
 
 		// declare storage for the split data
 		List<double[]> left = new ArrayList<double[]>(points.size()/2);
@@ -115,7 +113,7 @@ public class KdTreeConstructor<D> {
 	/**
 	 * Creates a child by checking to see if it is a leaf or branch.
 	 */
-	private KdTree.Node computeChild( List<double[]> points , List<D> data , KdTree.Node parent )
+	protected KdTree.Node computeChild( List<double[]> points , List<D> data , KdTree.Node parent )
 	{
 		if( points.size() == 0 )
 			// avoid a null node by making the parent the leaf too

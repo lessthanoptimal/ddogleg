@@ -7,13 +7,18 @@ import org.ddogleg.nn.alg.*;
 import java.util.List;
 
 /**
+ * K-D tree search which searches through multiple trees.  The search is performed using a Best-Bin-First approach
+ *
  * @author Peter Abeles
  */
 public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 
+	// set of K-D trees which are to be searched
 	KdTree[]forest;
 
+	// creates the set of K-D trees given the same input
 	KdTreeConstructor<D> constructor;
+
 	KdTreeSearchBbf search;
 
 	AxisSplitter<D> splitter;

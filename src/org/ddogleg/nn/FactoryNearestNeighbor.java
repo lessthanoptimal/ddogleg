@@ -4,8 +4,8 @@ import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
 import org.ddogleg.nn.alg.AxisSplitterMedian;
 import org.ddogleg.nn.alg.KdTreeSearchBbf;
 import org.ddogleg.nn.wrap.KdForestBbfSearch;
+import org.ddogleg.nn.wrap.KdTreeNearestNeighbor;
 import org.ddogleg.nn.wrap.WrapExhaustiveNeighbor;
-import org.ddogleg.nn.wrap.WrapKdTree;
 
 import java.util.Random;
 
@@ -17,11 +17,11 @@ import java.util.Random;
 public class FactoryNearestNeighbor {
 
 	public static <D> NearestNeighbor<D> kdtree() {
-		return new WrapKdTree<D>();
+		return new KdTreeNearestNeighbor<D>();
 	}
 
 	public static <D> NearestNeighbor<D> kdtree( int maxNodesSearched ) {
-		return new WrapKdTree<D>(new KdTreeSearchBbf(maxNodesSearched),new AxisSplitterMedian<D>());
+		return new KdTreeNearestNeighbor<D>(new KdTreeSearchBbf(maxNodesSearched),new AxisSplitterMedian<D>());
 	}
 
 	public static <D> NearestNeighbor<D> kdRandomForest( int maxNodesSearched , int numTrees , int numConsiderSplit ,

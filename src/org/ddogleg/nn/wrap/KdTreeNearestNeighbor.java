@@ -11,22 +11,26 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class WrapKdTree<D> implements NearestNeighbor<D> {
+public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
 
+	// tree being searched
 	KdTree tree;
+	// creates a tree from data
 	KdTreeConstructor<D> constructor;
+	// searches the tree for the nearest neighbor
 	KdTreeSearch search;
-
+	// Used internally during tree construction
 	AxisSplitter<D> splitter;
 
+	// used to recycle memory
 	KdTreeMemory memory = new KdTreeMemory();
 
-	public WrapKdTree(KdTreeSearch search, AxisSplitter<D> splitter ) {
+	public KdTreeNearestNeighbor(KdTreeSearch search, AxisSplitter<D> splitter) {
 		this.search = search;
 		this.splitter = splitter;
 	}
 
-	public WrapKdTree() {
+	public KdTreeNearestNeighbor() {
 		this( new KdTreeSearchStandard(), new AxisSplitterMedian<D>());
 	}
 
