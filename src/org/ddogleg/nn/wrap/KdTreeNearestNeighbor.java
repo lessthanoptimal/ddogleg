@@ -67,13 +67,17 @@ public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
 
 	@Override
 	public boolean findNearest( double[] point , double maxDistance , NnData<D> result ) {
-		search.setMaxDistance(maxDistance);
+		if( maxDistance <= 0 )
+			search.setMaxDistance(Double.MAX_VALUE);
+		else
+			search.setMaxDistance(maxDistance);
 		KdTree.Node found = search.findClosest(point);
 		if( found == null )
 			return false;
 
 		result.point = found.point;
 		result.data = (D)found.data;
+		result.distance = search.getDistance();
 
 		return true;
 	}

@@ -75,15 +75,20 @@ public class KdTreeSearchStandard implements KdTreeSearch {
 		return closest;
 	}
 
+	@Override
+	public double getDistance() {
+		return bestDistanceSq;
+	}
+
 	/**
 	 * Recursive step for finding the closest point
 	 */
 	private void stepClosest(KdTree.Node node) {
 
-		double d = KdTree.distanceSq(node,target,tree.N);
-		if( d*d < bestDistanceSq ) {
+		double distSq = KdTree.distanceSq(node,target,tree.N);
+		if( distSq < bestDistanceSq ) {
 			closest = node;
-			bestDistanceSq = d*d;
+			bestDistanceSq = distSq;
 		}
 
 		if( node.isLeaf() ) {

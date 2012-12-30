@@ -28,4 +28,6 @@ public class NnData<D> {
 	public double[] point;
 	// data associated with point
 	public D data;
+	// the fit distance
+	public double distance;
 }

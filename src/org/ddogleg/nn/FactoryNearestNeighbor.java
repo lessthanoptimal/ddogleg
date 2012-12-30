@@ -34,14 +34,50 @@ import java.util.Random;
  */
 public class FactoryNearestNeighbor {
 
+	/**
+	 * Performs an optimal {@link NearestNeighbor} search using K-D tree.
+	 *
+	 * @see KdTreeNearestNeighbor
+	 * @see AxisSplitterMedian
+	 *
+	 * @param <D> Associated data type.
+	 * @return {@link NearestNeighbor} implementation
+	 */
 	public static <D> NearestNeighbor<D> kdtree() {
 		return new KdTreeNearestNeighbor<D>();
 	}
 
+	/**
+	 * Performs an approximate {@link NearestNeighbor} search using K-D tree.  Node are searched in Best-Bin-First
+	 * order.
+	 *
+	 * @see KdTreeNearestNeighbor
+	 * @see KdTreeSearchBbf
+	 * @see AxisSplitterMedian
+	 *
+	 * @param maxNodesSearched Maximum number of nodes it will search.  Controls speed and accuracy.
+	 * @param <D> Associated data type.
+	 * @return {@link NearestNeighbor} implementation
+	 */
 	public static <D> NearestNeighbor<D> kdtree( int maxNodesSearched ) {
 		return new KdTreeNearestNeighbor<D>(new KdTreeSearchBbf(maxNodesSearched),new AxisSplitterMedian<D>());
 	}
 
+	/**
+	 * Approximate {@link NearestNeighbor} search which uses a set of randomly generated K-D trees and a Best-Bin-First
+	 * search.  Designed to work in high dimensional space.
+	 *
+	 * @see KdForestBbfSearch
+	 * @see AxisSplitterMedian
+	 *
+	 * @param maxNodesSearched  Maximum number of nodes it will search.  Controls speed and accuracy.
+	 * @param numTrees Number of trees that are considered.  Try 10 and tune.
+	 * @param numConsiderSplit Number of nodes that are considered when generating a tree.  Must be less than the
+	 *                         point's dimension.  Try 5
+	 * @param randomSeed Seed used by random number generator
+	 * @param <D> Associated data type.
+	 * @return {@link NearestNeighbor} implementation
+	 */
 	public static <D> NearestNeighbor<D> kdRandomForest( int maxNodesSearched , int numTrees , int numConsiderSplit ,
 														 long randomSeed ) {
 
@@ -51,6 +87,14 @@ public class FactoryNearestNeighbor {
 				new AxisSplitterMedian<D>(new AxisSplitRuleRandomK(rand,numConsiderSplit)));
 	}
 
+	/**
+	 * Performs an optimal {@link NearestNeighbor} by exhaustively consider all possible solutions.
+	 *
+	 * @see org.ddogleg.nn.alg.ExhaustiveNeighbor
+	 *
+	 * @param <D> Associated data type.
+	 * @return {@link NearestNeighbor} implementation
+	 */
 	public static <D> NearestNeighbor<D> exhaustive() {
 		return new WrapExhaustiveNeighbor<D>();
 	}

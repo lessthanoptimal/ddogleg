@@ -45,4 +45,11 @@ public interface KdTreeSearch {
 	 * @return The closest point or null if there is none.
 	 */
 	public KdTree.Node findClosest( double[] target );
+
+	/**
+	 * Returns the distance of the closest node.
+	 *
+	 * @return distance to closest node.
+	 */
+	public double getDistance();
 }

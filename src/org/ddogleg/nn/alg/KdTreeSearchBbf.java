@@ -127,6 +127,11 @@ public class KdTreeSearchBbf implements KdTreeSearch {
 		return bestNode;
 	}
 
+	@Override
+	public double getDistance() {
+		return bestDistanceSq;
+	}
+
 	/**
 	 * Traverse a node down to a leaf.  Unexplored branches are added to the priority queue.
 	 */

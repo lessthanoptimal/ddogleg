@@ -25,7 +25,7 @@ import java.util.List;
  * be exact or approximate, depending on the implementation.
  *
  * WARNING: Do not modify the input lists until after the NN search is no longer needed.  If the input lists do need
- * to be modified, then pass ina copy instead.  This reduced memory overhead significantly.
+ * to be modified, then pass in a copy instead.  This reduced memory overhead significantly.
  *
  * @author Peter Abeles
  */
@@ -41,8 +41,8 @@ public interface NearestNeighbor<D> {
 	/**
 	 * Specifies the set of points which are to be searched.
 	 *
-	 * @param points
-	 * @param data
+	 * @param points Set of points.
+	 * @param data (Optional) Associated data.  Can be null.
 	 */
 	public void setPoints( List<double[]> points , List<D> data );
 
@@ -50,7 +50,8 @@ public interface NearestNeighbor<D> {
 	 * Searches for the closest neighbor to point.  The neighbor must be within maxDistance.
 	 *
 	 * @param point A point being searched for.
-	 * @param maxDistance Maximum distance the neighbor can be from point.
+	 * @param maxDistance Maximum distance the neighbor can be from point. Values <= 0 will be set to
+	 *                    the maximum distance.
 	 * @param result Storage for the result.
 	 * @return true if a match within the max distance was found.
 	 */

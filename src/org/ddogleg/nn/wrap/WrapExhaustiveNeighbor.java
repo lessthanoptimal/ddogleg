@@ -49,9 +49,13 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 
 	@Override
 	public boolean findNearest(double[] point, double maxDistance, NnData<D> result) {
+		if( maxDistance <= 0 )
+			maxDistance = Double.MAX_VALUE;
+
 		int index = alg.findClosest(point,maxDistance);
 		if( index >= 0 ) {
 			result.point = points.get(index);
+			result.distance = alg.getBestDistance();
 			if( data != null )
 				result.data = data.get(index);
 			return true;

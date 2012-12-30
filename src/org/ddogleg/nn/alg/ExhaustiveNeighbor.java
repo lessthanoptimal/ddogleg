@@ -32,6 +32,9 @@ public class ExhaustiveNeighbor {
 	// List of points
 	List<double[]> points;
 
+	// the distance to the closest node found so far
+	double bestDistance;
+
 	public ExhaustiveNeighbor(int n) {
 		N = n;
 	}
@@ -67,7 +70,7 @@ public class ExhaustiveNeighbor {
 	 */
 	public int findClosest( double[] p , double maxDistance ) {
 		int best = -1;
-		double bestDistance = maxDistance*maxDistance;
+		bestDistance = maxDistance*maxDistance;
 
 		for( int i = 0; i < points.size(); i++ ) {
 			double[] c = points.get(i);
@@ -85,5 +88,9 @@ public class ExhaustiveNeighbor {
 		}
 
 		return best;
+	}
+
+	public double getBestDistance() {
+		return bestDistance;
 	}
 }

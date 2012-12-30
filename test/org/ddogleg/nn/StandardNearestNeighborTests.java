@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
@@ -123,5 +122,52 @@ public abstract class StandardNearestNeighborTests {
 		for( int i = 0; i < dimen; i++ )
 			ret[i] = rand.nextGaussian();
 		return ret;
+	}
+
+	/**
+	 * Make sure distances <= 0 are treated as having no limit
+	 */
+	@Test
+	public void checkSetMaxDistance() {
+		List<double[]> points = new ArrayList<double[]>();
+		points.add(new double[]{3,4});
+		points.add(new double[]{6,8});
+		points.add(new double[]{-1, 3});
+		points.add(new double[]{0.9,4.5});
+
+		double target[] = new double[]{1.1,3.9};
+
+		alg.init(2);
+		alg.setPoints(points, null);
+
+		// should fail because the tolerance is too tight
+		assertFalse(alg.findNearest(target, 0.01, found));
+		// Should be treated as unconstrained
+		assertTrue(alg.findNearest(target, 0, found));
+		assertTrue(found.point==points.get(3));
+		// should find a solution
+		assertTrue(alg.findNearest(target, 10, found));
+		assertTrue(found.point==points.get(3));
+	}
+
+	@Test
+	public void checkDistance() {
+		List<double[]> points = new ArrayList<double[]>();
+		points.add(new double[]{3,4});
+		points.add(new double[]{6,8});
+		points.add(new double[]{-1, 3});
+		points.add(new double[]{0.9,4.5});
+
+		double target[] = new double[]{1.1,3.9};
+
+		alg.init(2);
+		alg.setPoints(points,null);
+
+		assertTrue(alg.findNearest(target, 10, found));
+
+		double d0 = found.point[0]-target[0];
+		double d1 = found.point[1]-target[1];
+
+		assertEquals(d0*d0 + d1*d1,found.distance,1e-8);
 	}
 }

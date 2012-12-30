@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Creates a new {@link KdTree KD-Tree} from a list of points and (optional) associated data. Which axis is used
  * to split the data and how to split the data is determined by the {@link AxisSplitter} passed in.
  *

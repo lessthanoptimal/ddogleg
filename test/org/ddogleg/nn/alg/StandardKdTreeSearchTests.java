@@ -20,6 +20,7 @@ package org.ddogleg.nn.alg;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -129,5 +130,25 @@ public abstract class StandardKdTreeSearchTests {
 		assertTrue(found == null);
 		found = alg.findClosest(new double[]{1,1.5});
 		assertTrue(found == tree.root);
+	}
+
+	/**
+	 * Make sure the distance it returns is correct
+	 */
+	@Test
+	public void checkDistance() {
+		KdTreeSearch alg = createAlg();
+
+		KdTree tree = createTreeA();
+		alg.setTree(tree);
+		alg.setMaxDistance(Double.MAX_VALUE);
+
+		double[] pt = new double[]{11.5,8.2};
+		KdTree.Node found = alg.findClosest(pt);
+
+		double d0 = found.point[0]-pt[0];
+		double d1 = found.point[1]-pt[1];
+
+		assertEquals(d0*d0 + d1*d1,alg.getDistance(),1e-8);
 	}
 }
