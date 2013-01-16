@@ -29,20 +29,20 @@ public interface ModelCodec<T> {
 	/**
 	 * Converts the parameter array into a model.
 	 *
-	 * @param param input model parameters.
+	 * @param input input model parameters.
 	 * @param outputModel Option (can be null) model.
 	 * @return Converted model
 	 */
-	void decode( double param[] , T outputModel );
+	void decode( double input[] , T outputModel );
 
 	/**
 	 * Converts the provided model into the array format.
 	 *
-	 * @param model Input model.
-	 * @param param Output parameterized model. Can be null.
+	 * @param inputModel Input model.
+	 * @param output Output parameterized model. Can be null.
 	 * @return parameterized model.
 	 */
-	void encode( T model , double param[] );
+	void encode( T inputModel , double output[] );
 
 	/**
 	 * Number of elements in array encoded parameters.

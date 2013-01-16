@@ -143,7 +143,7 @@ public class FindRealRootsSturm {
 		int iter = 0;
 
 		// increase the search region centered around 0 until at least one root has been found
-		while( iter < maxBoundIterations && (totalFound=sturm.countRealRoots(-r,r)) == 0 ) {
+		while( iter < maxBoundIterations && (totalFound=sturm.countRealRoots(-r,r)) <= 0 ) {
 			r = 2*r*r;
 		}
 		if( Double.isInfinite(r) )
@@ -257,10 +257,10 @@ public class FindRealRootsSturm {
 
 			if( iter >= maxBoundIterations ) {
 				// taking too long to bound these roots, probably multiple closely spaced roots
-				// use the current best guess as a root and skip over the problem section
-				roots[startIndex + root++ ] = m;
+				// use the current best guess as a value for those roots
+				for( int i = 0; i < lastFound; i++)
+					roots[startIndex + root++ ] = m;
 				l = lastUpper; u = lastUpper = allUpper;
-				numRoots -= lastFound-1;
 				lastFound = 0;
 				iter = 0;
 			}

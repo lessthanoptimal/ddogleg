@@ -43,8 +43,8 @@ public class TestStatisticalDistanceModelMatcher extends GenericModelSetTests {
 	{
 
 		@Override
-		public void decode(double[] param, double[] outputModel) {
-			System.arraycopy(outputModel,0,param,0,param.length);
+		public void decode(double[] input, double[] outputModel) {
+			System.arraycopy(outputModel,0, input,0, input.length);
 		}
 
 		@Override
