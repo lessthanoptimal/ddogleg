@@ -10,6 +10,7 @@ Date:     2013
  * Exhaustive
  * K-D Trees
  * K-D Random Forests
+- Fixed bug in FindRealRootsSturm where it incorrectly handled the case when the max iterations has been exceeded and no roots were found
 
 ------------------------------------------------------
 Version:  0.1

@@ -237,23 +237,31 @@ public class FindRealRootsSturm {
 		int iter = 0;
 		double allUpper = u;
 		int root = 0;
+		int lastFound = 0;
+		double lastUpper = u;
 		while( root < numRoots && iter++ < maxBoundIterations) {
 			double m = (l+u)/2.0;
 			int found = sturm.countRealRoots(l,m);
+			// there are two
 			if( found == 0 ) {
 				l = m;
 			} else if( found == 1 ) {
 				bisectionRoot(l,m,startIndex + root++);
-				l = m; u = allUpper;
+				l = m; u = lastUpper = allUpper;
+				lastFound = 0;
 				iter = 0;
 			} else {
-				u = m;
+				lastFound = found;
+				lastUpper = u = m;
 			}
 
 			if( iter >= maxBoundIterations ) {
-				// taking too long to bound these roots, just skip over these
-				l = m; u = allUpper;
-				root += found;
+				// taking too long to bound these roots, probably multiple closely spaced roots
+				// use the current best guess as a root and skip over the problem section
+				roots[startIndex + root++ ] = m;
+				l = lastUpper; u = lastUpper = allUpper;
+				numRoots -= lastFound-1;
+				lastFound = 0;
 				iter = 0;
 			}
 		}
