@@ -49,7 +49,11 @@ public class WrapRealRootsSturm implements PolynomialRoots {
 
 	@Override
 	public boolean process(Polynomial poly) {
-		alg.process(poly);
+		try {
+			alg.process(poly);
+		} catch( RuntimeException e ) {
+			return false;
+		}
 
 		roots.clear();
 

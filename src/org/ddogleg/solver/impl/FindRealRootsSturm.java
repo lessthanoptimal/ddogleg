@@ -143,7 +143,7 @@ public class FindRealRootsSturm {
 		int iter = 0;
 
 		// increase the search region centered around 0 until at least one root has been found
-		while( iter < maxBoundIterations && (totalFound=sturm.countRealRoots(-r,r)) <= 0 ) {
+		while( iter++ < maxBoundIterations && (totalFound=sturm.countRealRoots(-r,r)) <= 0 ) {
 			r = 2*r*r;
 		}
 		if( Double.isInfinite(r) )
