@@ -12,7 +12,7 @@ Date:     2013
  * K-D Random Forests
 - FindRealRootsSturm
  * Fixed bug where it incorrectly handled the case when the max iterations has been exceeded and no roots were found
- * Better handles contradictory number of real roots
+ * Better handling of contradictory number of real roots
 
 ------------------------------------------------------
 Version:  0.1

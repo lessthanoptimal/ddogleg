@@ -65,7 +65,6 @@ public class ExampleSimpleRobustFit {
 		System.out.println("Found line = "+found);
 		System.out.println("Actual line = "+found);
 		System.out.println("Match set size = "+alg.getMatchSet().size());
-
 	}
 
 	private static List<Point2D> generateObservations(Random rand, double lineX, double lineY) {

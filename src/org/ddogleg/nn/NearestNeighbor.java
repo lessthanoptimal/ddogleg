@@ -25,7 +25,7 @@ import java.util.List;
  * be exact or approximate, depending on the implementation.
  *
  * WARNING: Do not modify the input lists until after the NN search is no longer needed.  If the input lists do need
- * to be modified, then pass in a copy instead.  This reduced memory overhead significantly.
+ * to be modified, then pass in a copy instead.  This restriction reduced memory overhead significantly.
  *
  * @author Peter Abeles
  */
