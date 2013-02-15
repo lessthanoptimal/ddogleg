@@ -96,7 +96,7 @@ public class Combinations< T >
 	 */
 	public void init( List<T> list , int bucketSize ) {
 		if( list.size() < bucketSize ) {
-			throw new RuntimeException("There needs to be more than or equal to elements in the \"a\" that there are in the bucket");
+			throw new RuntimeException("There needs to be more than or equal to elements in the 'list' that there are in the bucket");
 		}
 
 		this.k = bucketSize;
