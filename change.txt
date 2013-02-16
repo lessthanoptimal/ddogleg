@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.2
-Date:     2013
+Date:     2013-02-16
 
 - Added Nearest-Neighbor Search
  * Exhaustive
