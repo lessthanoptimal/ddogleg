@@ -84,6 +84,16 @@ public class BenchMarkSort
         return ret;
     }
 
+	public static int[] createRandom_S32( Random rand , final int num ) {
+		int[] ret = new int[ num ];
+
+		for( int i = 0; i < num; i++ ) {
+			ret[i] = rand.nextInt(2000)-1000;
+		}
+
+		return ret;
+	}
+
     public static List<Double> createList( Random rand , final int num ) {
         List<Double> ret = new ArrayList<Double>(num);
 

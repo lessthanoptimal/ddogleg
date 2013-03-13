@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.3
+Date:     2013-02-16
+
+- Added QuickSort_S32
+
+------------------------------------------------------
 Version:  0.2
 Date:     2013-02-16
 

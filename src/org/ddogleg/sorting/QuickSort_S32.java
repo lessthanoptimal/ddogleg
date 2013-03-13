@@ -30,37 +30,37 @@ package org.ddogleg.sorting;
  *
  * This has slightly better performance than Arrays.sort(double[]).  Not noticeable in most applications.
  */
-public class QuickSort_F64 {
+public class QuickSort_S32 {
 	// an architecture dependent tuning parameter
 	private int M = 7;
 	private int NSTACK;
 
 	private int istack[];
 
-	public QuickSort_F64() {
+	public QuickSort_S32() {
 		NSTACK = 65;
 		istack = new int[NSTACK];
 	}
 
-	public QuickSort_F64( int NSTACK ,  int M ) {
+	public QuickSort_S32(int NSTACK, int M) {
 		this.M = M;
 		this.NSTACK = NSTACK;
 
 		istack = new int[NSTACK];
 	}
 
-	public void sort( double[] arr , int length )
+	public void sort( int[] arr , int length )
 	{
 		int i,ir,j,k;
 		int jstack = -1;
 		int l = 0;
 		// if I ever publish a book I will never use variable l in an algorithm with lots of 1
 
-		double a;
+		int a;
 
 		ir=length-1;
 
-		double temp;
+		int temp;
 
 		for(;;) {
 			if( ir-l < M) {
@@ -128,7 +128,7 @@ public class QuickSort_F64 {
 		}
 	}
 
-	public void sort( double[] arr , int length , int indexes[] )
+	public void sort( int[] arr , int length , int indexes[] )
 	{
 		for( int i = 0; i < length; i++ ) {
 			indexes[i] = i;
@@ -139,7 +139,7 @@ public class QuickSort_F64 {
 		int l = 0;
 		// if I ever publish a book I will never use variable l in an algorithm with lots of 1
 
-		double a;
+		int a;
 
 		ir=length-1;
 

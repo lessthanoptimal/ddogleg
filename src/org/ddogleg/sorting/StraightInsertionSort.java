@@ -29,27 +29,27 @@ package org.ddogleg.sorting;
  */
 public class StraightInsertionSort 
 {
-    /**
-     * Sorts data into ascending order
-     */
-    public static void sort( double[] data )
-    {
-        int i=0,j;
-        final int n = data.length;
-        double a;
+	/**
+	 * Sorts data into ascending order
+	 */
+	public static void sort( double[] data )
+	{
+		int i=0,j;
+		final int n = data.length;
+		double a;
 
-        // by doing the ugly exception catching it was 13% faster
-        // on data set of 100000
-        try {
-            for( j =1; ; j++ ) {
-                a=data[j];
-                try {
-                    for( i=j; data[i-1] > a;i-- ) {
-                        data[i]=data[i-1];
-                    }
-                }catch( ArrayIndexOutOfBoundsException e ) {}
-                data[i]=a;
-            }
-        }catch( ArrayIndexOutOfBoundsException e ) {}
-    }
+		// by doing the ugly exception catching it was 13% faster
+		// on data set of 100000
+		try {
+			for( j =1; ; j++ ) {
+				a=data[j];
+				try {
+					for( i=j; data[i-1] > a;i-- ) {
+						data[i]=data[i-1];
+					}
+				}catch( ArrayIndexOutOfBoundsException e ) {}
+				data[i]=a;
+			}
+		}catch( ArrayIndexOutOfBoundsException e ) {}
+	}
 }

@@ -28,33 +28,33 @@ package org.ddogleg.sorting;
  * Only recommended for less than 50 elements
  */
 public class ShellSort {
-    /**
-     * Sorts data into ascending order
-     */
-    public static void sort( double[] data )
-    {
-        int i,j;
-        int inc=1;
-        double v;
+	/**
+	 * Sorts data into ascending order
+	 */
+	public static void sort( double[] data )
+	{
+		int i,j;
+		int inc=1;
+		double v;
 
-        do {
-            inc *= 3;
-            inc++;
-        } while( inc <= data.length );
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= data.length );
 
-        do {
-            inc /= 3;
+		do {
+			inc /= 3;
 
-            for( i=inc; i < data.length; i++ ) {
-                v=data[i];
-                j=i;
-                while( data[j-inc] > v ) {
-                    data[j] = data[j-inc];
-                    j -= inc;
-                    if( j < inc ) break;
-                }
-                data[j]=v;
-            }
-        } while( inc > 1 );
-    }
+			for( i=inc; i < data.length; i++ ) {
+				v=data[i];
+				j=i;
+				while( data[j-inc] > v ) {
+					data[j] = data[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				data[j]=v;
+			}
+		} while( inc > 1 );
+	}
 }

@@ -39,7 +39,7 @@ public interface ModelMatcher<Model, Point> {
 	 * computes the fit parameters for the model.
 	 *
 	 * @param dataSet Set of points (with noise) that are to be fit.
-	 * @return If it found a solution or not.
+	 * @return true if it successfully found a solution or false if not.
 	 */
 	public boolean process(List<Point> dataSet );
 

@@ -27,77 +27,77 @@ package org.ddogleg.sorting;
 @SuppressWarnings({"unchecked"})
 public class QuickSelect {
 
-    /**
-     * Sorts the array such that the values in the array up to and including
-     * 'k' are sorted the least to greatest.  This implies that the array
-     * itself is modified. For convinience the 'k' element is returned.
-     *
-     * @param data The unsorted list
-     * @param k The element of the sorted list that is to be found
-     * @param maxIndex Only element up to this value are considered
-     * @return the 'k'th largest element
-     */
-    public static Comparable select( Comparable[]data , int k , int maxIndex ) {
+	/**
+	 * Sorts the array such that the values in the array up to and including
+	 * 'k' are sorted the least to greatest.  This implies that the array
+	 * itself is modified. For convinience the 'k' element is returned.
+	 *
+	 * @param data The unsorted list
+	 * @param k The element of the sorted list that is to be found
+	 * @param maxIndex Only element up to this value are considered
+	 * @return the 'k'th largest element
+	 */
+	public static Comparable select( Comparable[]data , int k , int maxIndex ) {
 
-        int i,j,mid;
-        int n = maxIndex;
-        Comparable a;
-        int l = 0;
-        int ir = n-1;
+		int i,j,mid;
+		int n = maxIndex;
+		Comparable a;
+		int l = 0;
+		int ir = n-1;
 
-        Comparable temp;
+		Comparable temp;
 
-        for(;;) {
-            if( ir <= l+1 ) {
-                if( ir == l+1 && data[ir].compareTo(data[l]) < 0 ) {
-                    temp = data[l];
-                    data[l] = data[ir];
-                    data[ir] = temp;
-                }
-                return data[k];
-            } else {
-                mid = (l+ir) >> 1;
+		for(;;) {
+			if( ir <= l+1 ) {
+				if( ir == l+1 && data[ir].compareTo(data[l]) < 0 ) {
+					temp = data[l];
+					data[l] = data[ir];
+					data[ir] = temp;
+				}
+				return data[k];
+			} else {
+				mid = (l+ir) >> 1;
 
-                int lp1 = l+1;
-                temp = data[mid];
-                data[mid] = data[lp1];
-                data[lp1] = temp;
+				int lp1 = l+1;
+				temp = data[mid];
+				data[mid] = data[lp1];
+				data[lp1] = temp;
 
-                if( data[l].compareTo(data[ir]) > 0 ) {
-                    temp = data[l];
-                    data[l] = data[ir];
-                    data[ir] = temp;
-                }
+				if( data[l].compareTo(data[ir]) > 0 ) {
+					temp = data[l];
+					data[l] = data[ir];
+					data[ir] = temp;
+				}
 
-                if( data[lp1].compareTo( data[ir] ) > 0 ) {
-                    temp = data[lp1];
-                    data[lp1] = data[ir];
-                    data[ir] = temp;
-                }
+				if( data[lp1].compareTo( data[ir] ) > 0 ) {
+					temp = data[lp1];
+					data[lp1] = data[ir];
+					data[ir] = temp;
+				}
 
-                if( data[l].compareTo(data[lp1]) > 0 ) {
-                    temp = data[lp1];
-                    data[lp1] = data[l];
-                    data[l] = temp;
-                }
+				if( data[l].compareTo(data[lp1]) > 0 ) {
+					temp = data[lp1];
+					data[lp1] = data[l];
+					data[l] = temp;
+				}
 
-                i=lp1;
-                j=ir;
-                a=data[lp1];
+				i=lp1;
+				j=ir;
+				a=data[lp1];
 
-                for(;;) {
-                    do i++; while(data[i].compareTo(a) < 0);
-                    do j--; while (data[j].compareTo(a) > 0);
-                    if( j < i) break;
-                    temp = data[i];
-                    data[i] = data[j];
-                    data[j] = temp;
-                }
-                data[lp1] = data[j];
-                data[j] = a;
-                if( j >= k ) ir=j-1;
-                if( j <= k ) l=i;
-            }
-        }
-    }
+				for(;;) {
+					do i++; while(data[i].compareTo(a) < 0);
+					do j--; while (data[j].compareTo(a) > 0);
+					if( j < i) break;
+					temp = data[i];
+					data[i] = data[j];
+					data[j] = temp;
+				}
+				data[lp1] = data[j];
+				data[j] = a;
+				if( j >= k ) ir=j-1;
+				if( j <= k ) l=i;
+			}
+		}
+	}
 }
