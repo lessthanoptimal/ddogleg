@@ -35,7 +35,7 @@ import java.util.Random;
 public class FactoryNearestNeighbor {
 
 	/**
-	 * Performs an optimal {@link NearestNeighbor} search using K-D tree. Distance measure is Euclidean squared.
+	 * Performs an optimal {@link NearestNeighbor} search using K-D tree. Distance measure is Euclidean.
 	 *
 	 * @see KdTreeNearestNeighbor
 	 * @see AxisSplitterMedian
@@ -49,7 +49,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Performs an approximate {@link NearestNeighbor} search using K-D tree.  Node are searched in Best-Bin-First
-	 * order.  Distance measure is Euclidean squared.
+	 * order.  Distance measure is Euclidean.
 	 *
 	 * @see KdTreeNearestNeighbor
 	 * @see KdTreeSearchBbf
@@ -65,7 +65,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Approximate {@link NearestNeighbor} search which uses a set of randomly generated K-D trees and a Best-Bin-First
-	 * search.  Designed to work in high dimensional space. Distance measure is Euclidean squared.
+	 * search.  Designed to work in high dimensional space. Distance measure is Euclidean.
 	 *
 	 * @see KdForestBbfSearch
 	 * @see AxisSplitterMedian
@@ -89,7 +89,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Performs an optimal {@link NearestNeighbor} by exhaustively consider all possible solutions.
-	 * Distance measure is Euclidean squared.
+	 * Distance measure is Euclidean.
 	 *
 	 * @see org.ddogleg.nn.alg.ExhaustiveNeighbor
 	 *
