@@ -62,7 +62,7 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 * Specify the initial set of parameters from which to start from. Call after
 	 * {@link #setFunction} has been called.
 	 *
-	 * @param initial Initial parameters or guess.
+	 * @param initial Initial parameters or guess with N elements..
 	 * @param ftol Relative threshold for change in function value between iterations. 0 &le; ftol &le; 1.  Try 1e-12
 	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
 	 *             Try 1e-12
