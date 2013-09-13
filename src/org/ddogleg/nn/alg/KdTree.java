@@ -21,8 +21,8 @@ package org.ddogleg.nn.alg;
 /**
  * <p>
  * K-D Tree is short for k-dimensional tree and is a binary tree data structure used for quickly finding the
- * nearest-neighbor of a k-dimensional point in a set.  Each point can have an optional data associated with it.
- * The tree is structured such that at each node has a point and two children.  All points in the set with with
+ * nearest-neighbor of a k-dimensional point in a set.  Each point can optionally have data associated with it.
+ * The tree is structured such that at each node has a point and two children.  All points in the set with
  * values <= to the node's point in the specified dimension/axis are on the the left and >= to the right.  A leaf
  * will have no children.
  * </p>

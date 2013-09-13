@@ -18,11 +18,13 @@
 
 package org.ddogleg.nn;
 
+import org.ddogleg.struct.FastQueue;
+
 import java.util.List;
 
 /**
- * Abstract interface for finding the nearest neighbor of a set of points in K-dimensional space.   Solution can
- * be exact or approximate, depending on the implementation.
+ * Abstract interface for finding the nearest neighbor to a user specified point inside of a set of points in
+ * K-dimensional space.   Solution can be exact or approximate, depending on the implementation.
  *
  * WARNING: Do not modify the input lists until after the NN search is no longer needed.  If the input lists do need
  * to be modified, then pass in a copy instead.  This restriction reduced memory overhead significantly.
@@ -47,7 +49,7 @@ public interface NearestNeighbor<D> {
 	public void setPoints( List<double[]> points , List<D> data );
 
 	/**
-	 * Searches for the closest neighbor to point.  The neighbor must be within maxDistance.
+	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
 	 *
 	 * @param point A point being searched for.
 	 * @param maxDistance Maximum distance the neighbor can be from point. Values <= 0 will be set to
@@ -56,4 +58,15 @@ public interface NearestNeighbor<D> {
 	 * @return true if a match within the max distance was found.
 	 */
 	public boolean findNearest( double[] point , double maxDistance , NnData<D> result );
+
+	/**
+	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
+	 *
+	 * @param point A point being searched for.
+	 * @param maxDistance Maximum distance the neighbor can be from point. Values <= 0 will be set to
+	 *                    the maximum distance.
+	 * @param numNeighbors The number of neighbors it will search for.
+	 * @param result Storage for the result. Must be empty before calling. Must support grow() function.
+	 */
+	public void findNearest( double[] point , double maxDistance , int numNeighbors , FastQueue<NnData<D>> result );
 }

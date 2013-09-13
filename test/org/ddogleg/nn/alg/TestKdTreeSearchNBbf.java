@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestKdTreeSearchBbf extends StandardKdTreeSearchTests {
+public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	@Override
-	public KdTreeSearch createAlg() {
+	public KdTreeSearchN createAlg() {
 		// specify so many max nodes that it will be optimal
-		return new KdTreeSearchBbf(10000);
+		return new KdTreeSearchNBbf(10000);
 	}
 
 	/**
@@ -40,10 +40,10 @@ public class TestKdTreeSearchBbf extends StandardKdTreeSearchTests {
 	public void checkMaxNodes() {
 		KdTree tree = createTreeA();
 
-		KdTreeSearchBbf alg = new KdTreeSearchBbf(0);
+		KdTreeSearch1Bbf alg = new KdTreeSearch1Bbf(0);
 		alg.setTree(tree);
 
-		KdTree.Node found = alg.findClosest(new double[]{12,2});
+		KdTree.Node found = alg.findNeighbor(new double[]{12, 2});
 
 		// The first search from the root node is not counted.  In that search it will traverse down to a leaf
 		assertTrue(found==tree.root.left.right);
@@ -59,10 +59,10 @@ public class TestKdTreeSearchBbf extends StandardKdTreeSearchTests {
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2},null);
 
-		KdTreeSearchBbf alg = new KdTreeSearchBbf(200);
+		KdTreeSearch1Bbf alg = new KdTreeSearch1Bbf(200);
 		alg.setTrees(forest);
 
-		KdTree.Node found = alg.findClosest(new double[]{12,3});
+		KdTree.Node found = alg.findNeighbor(new double[]{12, 3});
 
 		// make sure it searched some nodes besides the root ones
 		assertTrue(alg.numNodesSearched>0);

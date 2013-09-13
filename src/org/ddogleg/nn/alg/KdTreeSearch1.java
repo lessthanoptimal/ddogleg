@@ -23,7 +23,7 @@ package org.ddogleg.nn.alg;
  *
  * @author Peter Abeles
  */
-public interface KdTreeSearch {
+public interface KdTreeSearch1 {
 
 	/**
 	 * Specifies the tree which is to be searched
@@ -38,13 +38,13 @@ public interface KdTreeSearch {
 	public void setMaxDistance(double maxDistance );
 
 	/**
-	 * Searches for the closest point to target.  If no point is found that is less than maxDistance
+	 * Searches for the nearest neighbor to the target.  If no point is found that is less than maxDistance
 	 * then return null.
 	 *
 	 * @param target Point whose nearest neighbor is being searched for
 	 * @return The closest point or null if there is none.
 	 */
-	public KdTree.Node findClosest( double[] target );
+	public KdTree.Node findNeighbor(double[] target);
 
 	/**
 	 * Returns the distance of the closest node.

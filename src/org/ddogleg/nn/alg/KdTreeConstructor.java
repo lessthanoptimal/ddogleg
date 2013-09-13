@@ -25,6 +25,8 @@ import java.util.List;
  * Creates a new {@link KdTree KD-Tree} from a list of points and (optional) associated data. Which axis is used
  * to split the data and how to split the data is determined by the {@link AxisSplitter} passed in.
  *
+ * A child node can be null if it is a leaf and there was no data in that direction.
+ *
  * WARNING: A reference to the input points is saved.  Do not modify the input until the K-D Tree is no longer needed.
  * This reduced memory overhead significantly.
  *
@@ -119,10 +121,10 @@ public class KdTreeConstructor<D> {
 		node.data = splitter.getSplitData();
 
 		// Compute the left and right children
-		node.left = computeChild(left,leftData,node);
+		node.left = computeChild(left,leftData);
 		// free memory
 		left = null; leftData = null;
-		node.right = computeChild(right,rightData,node);
+		node.right = computeChild(right,rightData);
 
 		return node;
 	}
@@ -130,11 +132,10 @@ public class KdTreeConstructor<D> {
 	/**
 	 * Creates a child by checking to see if it is a leaf or branch.
 	 */
-	protected KdTree.Node computeChild( List<double[]> points , List<D> data , KdTree.Node parent )
+	protected KdTree.Node computeChild( List<double[]> points , List<D> data )
 	{
 		if( points.size() == 0 )
-			// avoid a null node by making the parent the leaf too
-			return memory.requestNode(parent.point,parent.data);
+			return null;
 		if( points.size() == 1 ) {
 			return createLeaf(points,data);
 		} else {

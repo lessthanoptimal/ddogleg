@@ -65,7 +65,7 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 			variance[i] = -variance[i];
 
 		// find the largest ones
-		QuickSelectArray.selectIndex(variance, numConsiderSplit,N,indexes);
+		QuickSelectArray.selectIndex(variance, numConsiderSplit-1,N,indexes);
 
 		// select on of the largests
 		return indexes[ rand.nextInt(numConsiderSplit) ];

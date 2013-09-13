@@ -20,11 +20,14 @@ package org.ddogleg.nn.alg;
 
 /**
  * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.  This is the algorithm
- * which is typically described in books.
+ * which is typically described in books.  At each node it examines distance of the two children and investigates
+ * the closer child.  After it reaches a leaf it steps back in the search and sees if the other child could produce
+ * a better solution, if it can it is also investigated.  The search stops when no more nodes can produce a better
+ * result.
  *
  * @author Peter Abeles
  */
-public class KdTreeSearchStandard implements KdTreeSearch {
+public class KdTreeSearch1Standard implements KdTreeSearch1 {
 
 	// the targeted tree
 	private KdTree tree;
@@ -62,7 +65,7 @@ public class KdTreeSearchStandard implements KdTreeSearch {
 	 * @return Closest node or null if none is within the minimum distance.
 	 */
 	@Override
-	public KdTree.Node findClosest( double[] target ) {
+	public KdTree.Node findNeighbor(double[] target) {
 		if( tree.root == null )
 			return null;
 
@@ -85,14 +88,25 @@ public class KdTreeSearchStandard implements KdTreeSearch {
 	 */
 	private void stepClosest(KdTree.Node node) {
 
-		double distSq = KdTree.distanceSq(node,target,tree.N);
-		if( distSq < bestDistanceSq ) {
-			closest = node;
-			bestDistanceSq = distSq;
-		}
+		if( node == null )
+			return;
 
 		if( node.isLeaf() ) {
+			// a leaf can be empty.
+			if( node.point != null ) {
+				double distSq = KdTree.distanceSq(node,target,tree.N);
+				if( distSq < bestDistanceSq ) {
+					closest = node;
+					bestDistanceSq = distSq;
+				}
+			}
 			return;
+		} else {
+			double distSq = KdTree.distanceSq(node,target,tree.N);
+			if( distSq < bestDistanceSq ) {
+				closest = node;
+				bestDistanceSq = distSq;
+			}
 		}
 
 		// select the most promising branch to investigate first

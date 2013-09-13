@@ -274,8 +274,12 @@ public class QuickSelectArray {
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
-	 * @param indexes Temporary storage and is overwritten
+	 *
+	 * @param data (Modified) The unsorted list.
+	 * @param k The element of the sorted list that is to be found
+	 * @param maxIndex Only element up to this value are considered
+	 * @param indexes (Modified) Work space which contains indexes of the original list
+	 * @return the 'k'th largest element
 	 */
 	public static int selectIndex( double []data , int k , int maxIndex ,  int []indexes) {
 
@@ -295,6 +299,8 @@ public class QuickSelectArray {
 				if( ir == l+1 && data[ir] < data[l] ) {
 					swap(data,indexes,l,ir);
 				}
+				if( k >= indexes.length )
+					System.out.println("Crap");
 				return indexes[k];
 			} else {
 				mid = (l+ir) >> 1;

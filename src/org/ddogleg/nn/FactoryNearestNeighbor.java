@@ -20,7 +20,8 @@ package org.ddogleg.nn;
 
 import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
 import org.ddogleg.nn.alg.AxisSplitterMedian;
-import org.ddogleg.nn.alg.KdTreeSearchBbf;
+import org.ddogleg.nn.alg.KdTreeSearch1Bbf;
+import org.ddogleg.nn.alg.KdTreeSearchNBbf;
 import org.ddogleg.nn.wrap.KdForestBbfSearch;
 import org.ddogleg.nn.wrap.KdTreeNearestNeighbor;
 import org.ddogleg.nn.wrap.WrapExhaustiveNeighbor;
@@ -52,7 +53,7 @@ public class FactoryNearestNeighbor {
 	 * order.  Distance measure is Euclidean.
 	 *
 	 * @see KdTreeNearestNeighbor
-	 * @see KdTreeSearchBbf
+	 * @see org.ddogleg.nn.alg.KdTreeSearch1Bbf
 	 * @see AxisSplitterMedian
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Controls speed and accuracy.
@@ -60,7 +61,8 @@ public class FactoryNearestNeighbor {
 	 * @return {@link NearestNeighbor} implementation
 	 */
 	public static <D> NearestNeighbor<D> kdtree( int maxNodesSearched ) {
-		return new KdTreeNearestNeighbor<D>(new KdTreeSearchBbf(maxNodesSearched),new AxisSplitterMedian<D>());
+		return new KdTreeNearestNeighbor<D>(new KdTreeSearch1Bbf(maxNodesSearched),
+				new KdTreeSearchNBbf(maxNodesSearched),new AxisSplitterMedian<D>());
 	}
 
 	/**

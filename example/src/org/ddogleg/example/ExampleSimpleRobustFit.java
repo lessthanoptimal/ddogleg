@@ -62,8 +62,8 @@ public class ExampleSimpleRobustFit {
 		Line2D found = alg.getModel();
 
 		// notice how all the noisy points were removed and an accurate line was estimated?
-		System.out.println("Found line = "+found);
-		System.out.println("Actual line = "+found);
+		System.out.println("Found line   "+found);
+		System.out.println("Actual line   x = "+lineX+" y = "+lineY);
 		System.out.println("Match set size = "+alg.getMatchSet().size());
 	}
 

@@ -18,6 +18,10 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.GrowQueue_I32;
+
 import java.util.List;
 
 /**
@@ -34,6 +38,10 @@ public class ExhaustiveNeighbor {
 
 	// the distance to the closest node found so far
 	double bestDistance;
+
+	GrowQueue_F64 distances = new GrowQueue_F64();
+	GrowQueue_I32 indexes = new GrowQueue_I32();
+	GrowQueue_I32 indexesSort = new GrowQueue_I32();
 
 	public ExhaustiveNeighbor(int n) {
 		N = n;
@@ -88,6 +96,55 @@ public class ExhaustiveNeighbor {
 		}
 
 		return best;
+	}
+
+	/**
+	 * Finds the index of the point which has the smallest Euclidean distance to 'p' and is < maxDistance
+	 * away.
+	 *
+	 * @param p A point.
+	 * @param maxDistance The maximum distance the neighbor can be.
+	 * @param numNeighbors the requested number of nearest neighbors it should search for
+	 * @param outputIndex Storage for the index of the closest elements
+	 * @param outputDistance Storage for the distance of the closest elements
+	 */
+	public void findClosestN( double[] p , double maxDistance , int numNeighbors ,
+							  GrowQueue_I32 outputIndex ,
+							  GrowQueue_F64 outputDistance ) {
+		maxDistance *= maxDistance;
+
+		// Compute the distance of each point and save the ones within range
+		distances.reset();
+		indexes.reset();
+
+		for( int i = 0; i < points.size(); i++ ) {
+			double[] c = points.get(i);
+
+			double distanceC = 0;
+			for( int j = 0; j < N; j++ ) {
+				double d = p[j] - c[j];
+				distanceC += d*d;
+			}
+
+			if( distanceC < maxDistance ) {
+				distances.add(distanceC);
+				indexes.add(i);
+			}
+		}
+
+		// find the N closest elements
+		numNeighbors = Math.min(distances.size,numNeighbors);
+		if( numNeighbors == 0 )
+			return;
+
+		indexesSort.resize(distances.size);
+		QuickSelectArray.selectIndex(distances.data,numNeighbors-1,distances.size,indexesSort.data);
+
+		for( int i = 0; i < numNeighbors; i++ ) {
+			int index = indexes.get(indexesSort.get(i));
+			outputIndex.add( index );
+			outputDistance.add( distances.get( i ) );
+		}
 	}
 
 	public double getBestDistance() {

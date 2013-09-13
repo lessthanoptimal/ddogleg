@@ -86,19 +86,17 @@ public class TestKdTreeConstructor {
 		List points = new ArrayList();
 		List data = new ArrayList();
 
-		// empty lists should use parent's info
+		// empty lists should be null
 		KdTree.Node n = new KdTree.Node();
 		n.point = new double[2];
 		n.data = 1;
-		KdTree.Node found = alg.computeChild(points,data,n);
-		assertTrue(found.isLeaf());
-		assertTrue(n.point == found.point);
-		assertTrue(n.data == found.data);
+		KdTree.Node found = alg.computeChild(points,data);
+		assertTrue(found == null);
 
 		// add a point
 		points.add( new double[2] );
 		data.add(2);
-		found = alg.computeChild(points,data,null);
+		found = alg.computeChild(points,data);
 		assertTrue(found.isLeaf());
 		assertTrue(found.point == points.get(0));
 		assertTrue(found.data == data.get(0));

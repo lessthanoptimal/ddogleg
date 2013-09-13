@@ -24,42 +24,42 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Standard tests for {@link KdTreeSearchBbf}.
+ * Standard tests for implemntations of {@link KdTreeSearch1}.
  *
  * @author Peter Abeles
  */
-public abstract class StandardKdTreeSearchTests {
+public abstract class StandardKdTreeSearch1Tests {
 
 	/**
 	 * Creates a KdTreeSearch which will produce optimal results
 	 */
-	public abstract KdTreeSearch createAlg();
+	public abstract KdTreeSearch1 createAlg();
 
 	/**
 	 * Try several searches and see if they all produce good results
 	 */
 	@Test
 	public void findClosest_basic() {
-		KdTreeSearch alg = createAlg();
+		KdTreeSearch1 alg = createAlg();
 
 		KdTree tree = createTreeA();
 		alg.setTree(tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		// the first decision will be incorrect and it will need to back track
-		KdTree.Node found = alg.findClosest(new double[]{11,8});
+		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertTrue(found == tree.root.right.right);
 
 		// the root will be the best match
-		found = alg.findClosest(new double[]{1.001,1.99999});
+		found = alg.findNeighbor(new double[]{1.001, 1.99999});
 		assertTrue(found == tree.root);
 
 		// a point on the left branch will be a perfect fit
-		found = alg.findClosest(new double[]{2,0.8});
+		found = alg.findNeighbor(new double[]{2, 0.8});
 		assertTrue(found == tree.root.left.right);
 
 		// a point way outside the tree's bounds
-		found = alg.findClosest(new double[]{-10000,0.5});
+		found = alg.findNeighbor(new double[]{-10000, 0.5});
 		assertTrue(found == tree.root.left.left);
 	}
 
@@ -86,14 +86,44 @@ public abstract class StandardKdTreeSearchTests {
 	}
 
 	/**
+	 * See if it can handle a null leaf
+	 */
+	@Test
+	public void findClosest_nullLeaf() {
+		KdTreeSearch1 alg = createAlg();
+
+		KdTree tree = createTreeWithNull();
+		alg.setTree(tree);
+		alg.setMaxDistance(Double.MAX_VALUE);
+
+		// the first decision will be incorrect and it will need to back track
+		KdTree.Node found = alg.findNeighbor(new double[]{2, 3});
+		assertTrue(found == tree.root);
+
+	}
+
+	public static KdTree createTreeWithNull() {
+
+		KdTree tree = new KdTree(2);
+
+		tree.root = new KdTree.Node(new double[]{1,2},null);
+		tree.root.split = 1;
+		tree.root.left = new KdTree.Node(new double[]{-0.2,1},null);
+		tree.root.left.split = -1;
+		tree.root.right = null;
+
+		return tree;
+	}
+
+	/**
 	 * The tree is empty and it should always fail
 	 */
 	@Test
 	public void findClosest_empty() {
-		KdTreeSearch alg = createAlg();
+		KdTreeSearch1 alg = createAlg();
 		alg.setTree( new KdTree(2) );
 
-		KdTree.Node found = alg.findClosest(new double[]{11,8});
+		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertTrue(found == null);
 	}
 
@@ -105,12 +135,12 @@ public abstract class StandardKdTreeSearchTests {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2},null);
 
-		KdTreeSearch alg =createAlg();
+		KdTreeSearch1 alg =createAlg();
 		alg.setTree( tree );
 
-		KdTree.Node found = alg.findClosest(new double[]{11,8});
+		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertTrue(found == tree.root);
-		found = alg.findClosest(new double[]{2,5});
+		found = alg.findNeighbor(new double[]{2, 5});
 		assertTrue(found == tree.root);
 	}
 
@@ -122,13 +152,13 @@ public abstract class StandardKdTreeSearchTests {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2},null);
 
-		KdTreeSearch alg = createAlg();
+		KdTreeSearch1 alg = createAlg();
 		alg.setTree( tree );
 		alg.setMaxDistance(2);
 
-		KdTree.Node found = alg.findClosest(new double[]{11,8});
+		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertTrue(found == null);
-		found = alg.findClosest(new double[]{1,1.5});
+		found = alg.findNeighbor(new double[]{1, 1.5});
 		assertTrue(found == tree.root);
 	}
 
@@ -137,14 +167,14 @@ public abstract class StandardKdTreeSearchTests {
 	 */
 	@Test
 	public void checkDistance() {
-		KdTreeSearch alg = createAlg();
+		KdTreeSearch1 alg = createAlg();
 
 		KdTree tree = createTreeA();
 		alg.setTree(tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		double[] pt = new double[]{11.5,8.2};
-		KdTree.Node found = alg.findClosest(pt);
+		KdTree.Node found = alg.findNeighbor(pt);
 
 		double d0 = found.point[0]-pt[0];
 		double d1 = found.point[1]-pt[1];

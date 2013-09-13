@@ -21,6 +21,9 @@ package org.ddogleg.nn.wrap;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
 import org.ddogleg.nn.alg.ExhaustiveNeighbor;
+import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.GrowQueue_I32;
 
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 	ExhaustiveNeighbor alg = new ExhaustiveNeighbor();
 	List<double[]> points;
 	List<D> data;
+
+	GrowQueue_I32 outputIndex = new GrowQueue_I32();
+	GrowQueue_F64 outputDistance = new GrowQueue_F64();
 
 	@Override
 	public void init( int N ) {
@@ -61,6 +67,25 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> result) {
+		if( maxDistance <= 0 )
+			maxDistance = Double.MAX_VALUE;
+
+		outputIndex.reset();
+		outputDistance.reset();
+		alg.findClosestN(point,maxDistance,numNeighbors,outputIndex,outputDistance);
+
+		for( int i = 0; i < outputIndex.size; i++ ) {
+			int index = outputIndex.get(i);
+			NnData<D> r = result.grow();
+			r.distance = outputDistance.get(i);
+			r.point = points.get(index);
+			if( data != null )
+				r.data = data.get( index );
 		}
 	}
 }
