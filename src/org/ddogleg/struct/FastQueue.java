@@ -165,6 +165,15 @@ public class FastQueue<T> {
 		this.data = data;
 	}
 
+	public boolean contains(Object o) {
+		for( int i = 0; i < size; i++ ) {
+			if( data[i].equals(o) )
+				return true;
+		}
+
+		return false;
+	}
+
 	protected T createInstance() {
 		try {
 			return type.newInstance();

@@ -224,7 +224,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 	}
 
 	@Override
-	public Model getModel() {
+	public Model getModelParameters() {
 		return param;
 	}
 
@@ -239,7 +239,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 	}
 
 	@Override
-	public double getError() {
+	public double getFitQuality() {
 		return centerError;
 	}
 

@@ -177,7 +177,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	}
 
 	@Override
-	public Model getModel() {
+	public Model getModelParameters() {
 		return bestParam;
 	}
 
@@ -202,7 +202,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	 * @return
 	 */
 	@Override
-	public double getError() {
+	public double getFitQuality() {
 		return bestMedian;
 	}
 

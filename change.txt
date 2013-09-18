@@ -14,6 +14,10 @@ Date:     2013
 - Changed behavior of K-D- tree constructor
   * Empty leafs will be null instead of identical to the parent.  Duplicate data caused problems when searching
     for the N nearest-neighbors
+- Refactored and tweaked documentation for ModelMatcher
+- Added ModelMatcherMulti
+  * Can be given different types of models to fit the data to
+  * RansacMulti added and only implementation of it so far
 
 ------------------------------------------------------
 Version:  0.3

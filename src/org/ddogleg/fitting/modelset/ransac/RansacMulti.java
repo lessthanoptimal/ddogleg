@@ -20,41 +20,28 @@ package org.ddogleg.fitting.modelset.ransac;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
-import org.ddogleg.fitting.modelset.ModelMatcher;
+import org.ddogleg.fitting.modelset.ModelMatcherMulti;
+import org.ddogleg.struct.FastQueue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 
 /**
  * <p>
- * RANSAC is an abbreviation for "RANdom SAmple Consensus" and is an iterative algorithm.  The model with the
- * largest set of inliers is found by randomly sampling the set of points and fitting a model.  The algorithm
- * terminates when the maximum number of iterations has been reached. An inlier is defined as a point which
- * has an error less than a user specified threshold to the estimated model being considered.  The algorithm was
- * first published by Fischler and Bolles in 1981."
- * </p>
- *
- * <p>
- * Sample Points: By default the minimum number of points are sampled.  The user to override this default and set
- * it to any number.
+ * Modification of {@link Ransac RANSAC} that finds the best fit model and model parameters to a set of data.  A model
+ * is a mathematical description of a specific object type (e.g. circle, square) and model parameters is the description
+ * (e.g. radius and center point for a circle).  The minimum (or user specified) set of points is drawn from the
+ * set of all points.  Then for each model parameters are estimated.  The model and parameter pair with the largest
+ * inliers set is returned.
  * </p>
  *
  * @author Peter Abeles
  */
-public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
+public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	// how many points are drawn to generate the model
 	protected int sampleSize;
-
-	// how close a point needs to be considered part of the model
-	protected double thresholdFit;
-
-	// generates an initial model given a set of points
-	protected ModelGenerator<Model,Point> modelGenerator;
-	// computes the distance a point is from the model
-	protected DistanceFromModel<Model,Point> modelDistance;
 
 	// used to randomly select points/samples
 	protected Random rand;
@@ -65,16 +52,23 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	// list of samples from the best fit model
 	protected List<Point> bestFitPoints = new ArrayList<Point>();
 
+	// List of information on objects which can fit the data
+	protected List<ObjectType> objectTypes;
+	// Storage for object model parameters which bestFitParam can be set to
+	protected List<Object> objectParam = new ArrayList<Object>();
+	// Storage for object model parameters which are used to compute candidate models
+	protected List<Object> objectCandidateParam = new ArrayList<Object>();
+
 	// the best model found so far
-	protected Model bestFitParam;
-	// the current model being considered
-	protected Model candidateParam;
+	protected Object bestFitParam;
+	// the index of the model which is the best fit
+	protected int bestFitModelIndex;
 
 	// the maximum number of iterations it will perform
 	protected int maxIterations;
 
 	// the set of points which were initially sampled
-	protected List<Point> initialSample = new ArrayList<Point>();
+	protected FastQueue<Point> initialSample;
 
 	// list of indexes converting it from match set to input list
 	protected int []matchToInput = new int[1];
@@ -85,34 +79,48 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 * minimum number.  To override this default invoke {@link #setSampleSize(int)}.
 	 *
 	 * @param randSeed		 The random seed used by the random number generator.
-	 * @param modelGenerator	Creates new model(s) given a small number of points.
-	 * @param modelDistance	Computes the difference between a point an a model.
 	 * @param maxIterations	The maximum number of iterations the RANSAC algorithm will perform.
-	 * @param thresholdFit	 How close of a fit a points needs to be to the model to be considered a fit.
 	 */
-	public Ransac(long randSeed,
-				  ModelGenerator<Model, Point> modelGenerator,
-				  DistanceFromModel<Model, Point> modelDistance,
-				  int maxIterations,
-				  double thresholdFit) {
-		this.modelGenerator = modelGenerator;
-		this.modelDistance = modelDistance;
-
+	public RansacMulti(long randSeed,
+					   int maxIterations,
+					   List<ObjectType> objectTypes,
+					   Class<Point> typePoint) {
 		this.rand = new Random(randSeed);
 		this.maxIterations = maxIterations;
+		this.objectTypes = objectTypes;
 
-		this.bestFitParam = modelGenerator.createModelInstance();
-		this.candidateParam = modelGenerator.createModelInstance();
+		// Set the sample size to be the largest
+		this.sampleSize = 0;
+		for( int i = 0; i < objectTypes.size(); i++ ) {
+			ObjectType o = objectTypes.get(i);
 
-		this.sampleSize = modelGenerator.getMinimumPoints();
-		this.thresholdFit = thresholdFit;
+			// add data to store solutions
+			objectParam.add( o.modelGenerator.createModelInstance() );
+			objectCandidateParam.add( o.modelGenerator.createModelInstance() );
+
+			// see if the user wants to use the default or not
+			if( o.sampleSize <= 0 ) {
+				o.sampleSize = o.modelGenerator.getMinimumPoints();
+			}
+
+			if( o.sampleSize > sampleSize ) {
+				sampleSize = o.sampleSize;
+			}
+		}
+
+		initialSample = new FastQueue<Point>(typePoint,false);
 	}
 
+	/**
+	 * TODO comment
+	 * @param dataSet
+	 * @return
+	 */
 	@Override
 	public boolean process(List<Point> dataSet ) {
 
 		// see if it has the minimum number of points
-		if (dataSet.size() < modelGenerator.getMinimumPoints() )
+		if (dataSet.size() < sampleSize )
 			return false;
 
 		// configure internal data structures
@@ -122,17 +130,31 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		// is in the inlier set
 		for (int i = 0; i < maxIterations && bestFitPoints.size() != dataSet.size(); i++) {
 			// sample the a small set of points
-			randomDraw(dataSet, sampleSize, initialSample, rand);
-			
-			// get the candidate(s) for this sample set
-			if( modelGenerator.generate(initialSample, candidateParam ) ) {
+			initialSample.reset();
+			Ransac.randomDraw(dataSet, sampleSize, initialSample.toList(), rand);
 
-				// see if it can find a model better than the current best one
-				selectMatchSet(dataSet, thresholdFit, candidateParam);
+			// try fitting all the different kinds of objects
+			for( int j = 0; j < objectTypes.size(); j++ ) {
 
-				// save this results
-				if (bestFitPoints.size() < candidatePoints.size()) {
-					swapCandidateWithBest();
+				ObjectType model = objectTypes.get(j);
+				Object param = objectCandidateParam.get(j);
+
+				// adjust the list size to what was requested by this particular model
+				initialSample.size = model.sampleSize;
+
+				// get the candidate(s) for this sample set
+				if( model.modelGenerator.generate(initialSample.toList(), param ) ) {
+
+					// see if it can find a model better than the current best one
+					selectMatchSet(model.modelDistance,dataSet, model.thresholdFit, param);
+
+					// save this results
+					if (bestFitPoints.size() < candidatePoints.size()) {
+						bestFitModelIndex = j;
+						objectCandidateParam.set(j,objectParam.get(j));
+						objectParam.set(j,param);
+						setBestModel(param);
+					}
 				}
 			}
 		}
@@ -153,33 +175,6 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	}
 
 	/**
-	 * Two different methods are used to select the initial set of points depending on
-	 * if the data set is much larger or smaller than the initial sample size
-	 */
-	public static <T> void randomDraw(List<T> dataSet, int numSample,
-									  List<T> initialSample, Random rand) {
-		initialSample.clear();
-
-		if (dataSet.size() > numSample * 10) {
-			// randomly select points until a set is found
-			while (initialSample.size() < numSample) {
-				T s = dataSet.get(rand.nextInt(dataSet.size()));
-
-				if (!initialSample.contains(s)) {
-					initialSample.add(s);
-				}
-			}
-		} else {
-			// shuffle the data set
-			Collections.shuffle(dataSet, rand);
-
-			for (int i = 0; i < numSample; i++) {
-				initialSample.add(dataSet.get(i));
-			}
-		}
-	}
-
-	/**
 	 * Looks for points in the data set which closely match the current best
 	 * fit model in the optimizer.
 	 *
@@ -187,7 +182,8 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 * @return true if enough points were matched, false otherwise
 	 */
 	@SuppressWarnings({"ForLoopReplaceableByForEach"})
-	protected void selectMatchSet(List<Point> dataSet, double threshold, Model param) {
+	protected <Model>void selectMatchSet( DistanceFromModel<Model,Point> modelDistance ,
+										  List<Point> dataSet, double threshold, Model param) {
 		candidatePoints.clear();
 		modelDistance.setModel(param);
 
@@ -205,7 +201,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	/**
 	 * Turns the current candidates into the best ones.
 	 */
-	protected void swapCandidateWithBest() {
+	protected void setBestModel( Object param ) {
 		List<Point> tempPts = candidatePoints;
 		candidatePoints = bestFitPoints;
 		bestFitPoints = tempPts;
@@ -214,12 +210,9 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		matchToInput = bestMatchToInput;
 		bestMatchToInput = tempIndex;
 
-		Model m = candidateParam;
-		candidateParam = bestFitParam;
-		bestFitParam = m;
+		bestFitParam = param;
 	}
 
-	@Override
 	public List<Point> getMatchSet() {
 		return bestFitPoints;
 	}
@@ -230,12 +223,21 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	}
 
 	@Override
-	public Model getModelParameters() {
+	public double getFitQuality() {
+		return bestFitPoints.size();
+	}
+
+	@Override
+	public Object getModelParameters() {
 		return bestFitParam;
 	}
 
 	@Override
-	public double getFitQuality() {
+	public int getModelIndex() {
+		return bestFitModelIndex;
+	}
+
+	public int getInlierSize() {
 		return bestFitPoints.size();
 	}
 
@@ -262,11 +264,21 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		this.sampleSize = sampleSize;
 	}
 
-	public double getThresholdFit() {
-		return thresholdFit;
-	}
-
-	public void setThresholdFit(double thresholdFit) {
-		this.thresholdFit = thresholdFit;
+	/**
+	 * Describes a model and RANSAC fit parameters for specific type of object.
+	 */
+	public static class ObjectType<Model,Point>
+	{
+		/** how close a point needs to be considered part of the model */
+		public double thresholdFit;
+		/**
+		 *  The number of points it samples when generating a set of model parameters..
+		 *  if <= 0 then the minimum number will be used
+ 		 */
+		public int sampleSize = -1;
+		/** generates an initial model given a set of points */
+		public ModelGenerator<Model,Point> modelGenerator;
+		/** computes the distance a point is from the model */
+		public DistanceFromModel<Model,Point> modelDistance;
 	}
 }

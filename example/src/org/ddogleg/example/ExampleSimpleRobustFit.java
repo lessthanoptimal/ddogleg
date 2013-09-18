@@ -59,7 +59,7 @@ public class ExampleSimpleRobustFit {
 			throw new RuntimeException("Robust fit failed!");
 
 		// let's look at the results
-		Line2D found = alg.getModel();
+		Line2D found = alg.getModelParameters();
 
 		// notice how all the noisy points were removed and an accurate line was estimated?
 		System.out.println("Found line   "+found);

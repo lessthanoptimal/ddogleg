@@ -68,7 +68,7 @@ public class TestFastQueueList {
 
 		queue.add( d );
 
-		assertTrue(!list.isEmpty());
+		assertTrue(list.contains(d));
 	}
 
 	@Test
@@ -109,6 +109,17 @@ public class TestFastQueueList {
 	}
 
 	@Test
+	public void add() {
+		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+		List<Double> list = queue.toList();
+
+		list.add( 5.0 );
+
+		assertEquals(1,queue.size());
+		assertEquals(5.0,queue.get(0),1e-8);
+	}
+
+	@Test
 	public void containsAll() {
 		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
 		queue.add(1.0);
@@ -123,6 +134,22 @@ public class TestFastQueueList {
 
 		list.add(5.0);
 		assertFalse(queue.toList().containsAll(list));
+	}
+
+	@Test
+	public void addAll() {
+		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+		List<Double> list = queue.toList();
+		List<Double> stuff = new ArrayList<Double>();
+
+		stuff.add(5.0);
+		stuff.add(10.0);
+
+		assertTrue(list.addAll(stuff));
+
+		assertEquals(2,queue.size());
+		assertEquals(5.0,queue.get(0),1e-8);
+		assertEquals(10.0, queue.get(1), 1e-8);
 	}
 
 	@Test

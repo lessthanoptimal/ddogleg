@@ -150,4 +150,16 @@ public class TestFastQueue {
 		alg.growArray(before+5);
 		assertEquals(10,alg.get(0).value);
 	}
+
+	@Test
+	public void contains() {
+		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+		Double d = 1.0;
+
+		assertFalse(queue.contains(d));
+
+		queue.add( d );
+
+		assertTrue(queue.contains(d));
+	}
 }

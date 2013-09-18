@@ -47,12 +47,7 @@ public class FastQueueList<T> implements List<T> {
 
 	@Override
 	public boolean contains(Object o) {
-		for( int i = 0; i < queue.size; i++ ) {
-			if( queue.data[i].equals(o) )
-				return true;
-		}
-
-		return false;
+		return queue.contains(o);
 	}
 
 	@Override
@@ -77,12 +72,13 @@ public class FastQueueList<T> implements List<T> {
 
 	@Override
 	public boolean add(T t) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		queue.add(t);
+		return true;
 	}
 
 	@Override
 	public boolean remove(Object o) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
@@ -96,27 +92,35 @@ public class FastQueueList<T> implements List<T> {
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		Iterator<T> iter = (Iterator)c.iterator();
+
+		boolean changed = iter.hasNext();
+
+		while( iter.hasNext() ) {
+			queue.add(iter.next());
+		}
+
+		return changed;
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
 	public void clear() {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		queue.reset();
 	}
 
 	@Override
@@ -131,12 +135,12 @@ public class FastQueueList<T> implements List<T> {
 
 	@Override
 	public void add(int index, T element) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
 	public T remove(int index) {
-		throw new RuntimeException("Not supported, FastQueue list interface is read only");
+		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
@@ -208,7 +212,7 @@ public class FastQueueList<T> implements List<T> {
 
 		@Override
 		public void remove() {
-			throw new RuntimeException("Not supported, FastQueue list interface is read only");
+			throw new RuntimeException("Not all list operations are supposed.");
 		}
 
 		@Override
@@ -218,7 +222,7 @@ public class FastQueueList<T> implements List<T> {
 
 		@Override
 		public void add(T t) {
-			throw new RuntimeException("Not supported, FastQueue list interface is read only");
+			queue.add(t);
 		}
 	}
 }

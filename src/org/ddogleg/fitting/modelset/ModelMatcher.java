@@ -23,8 +23,9 @@ import java.util.List;
 
 /**
  * <p>
- * Finds a set of points and parameters which fit a model.  Some of the points are assumed to be noise
- * and are pruned.  Different {@link ModelMatcher}s will do better jobs depending on the noise's characteristics.
+ * Given a set of points and it finds a set of model parameters which fit the data robustly.  Some of the points are
+ * assumed to be noise and are pruned.  The set of points which fit the found parameters and their index in the
+ * input list are returned.
  * </p>
  *
  * @param <Model> Type of model being fitted.
@@ -48,7 +49,7 @@ public interface ModelMatcher<Model, Point> {
 	 *
 	 * @return model.
 	 */
-	public Model getModel();
+	public Model getModelParameters();
 
 	/**
 	 * A set of points which match the provided parameters.
@@ -66,12 +67,12 @@ public interface ModelMatcher<Model, Point> {
 	public int getInputIndex( int matchIndex );
 
 	/**
-	 * Returns the error of the matched set of points.  No guarantee is made for a larger
-	 * or smaller value being better or worse.
+	 * Returns the metric used to evaluate the quality of fit.  Meaning is implementation specific.  Larger
+	 * or smaller values could be preferred depending on implementation..
 	 *
-	 * @return Error of matched set of points
+	 * @return Quality of fit to matched set of points
 	 */
-	public double getError();
+	public double getFitQuality();
 
 	/**
 	 * This is the minimum number of observations which can be input and produce a valid model.

@@ -37,9 +37,9 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericModelSetTests {
+public abstract class GenericModelMatcherTests {
 
-	Random rand = new Random(0x353456);
+	protected Random rand = new Random(0x353456);
 
 	// how many of the points is it expected to match
 	protected double minMatchFrac = 1.0;
@@ -79,7 +79,7 @@ public abstract class GenericModelSetTests {
 
 		if (checkInlierSet)
 			assertTrue(matchSet.size() / 90.0 >= minMatchFrac);
-		assertEquals(inlierMean, alg.getModel()[0], parameterTol);
+		assertEquals(inlierMean, alg.getModelParameters()[0], parameterTol);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public abstract class GenericModelSetTests {
 
 			List<Double> matchSet = alg.getMatchSet();
 
-			double foundMean = alg.getModel()[0];
+			double foundMean = alg.getModelParameters()[0];
 
 			if (checkInlierSet)
 				assertTrue(matchSet.size() / (N * 0.9) >= minMatchFrac);

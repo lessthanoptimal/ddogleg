@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -31,10 +30,7 @@ import static org.junit.Assert.*;
 /**
  * @author Peter Abeles
  */
-public class TestRansac extends GenericModelSetTests {
-
-	Random rand = new Random(234);
-
+public class TestRansac extends GenericModelMatcherTests {
 
 	public TestRansac() {
 		configure(0.9, 0.05, true);

@@ -16,25 +16,26 @@
  * limitations under the License.
  */
 
-package org.ddogleg.fitting.modelset.lmeds;
-
-import org.ddogleg.fitting.modelset.*;
-
+package org.ddogleg.fitting.modelset;
 
 /**
+ * <p>
+ * Given a set of points and a set of models, it selects which model and model parameters best fits the points robustly.
+ * Some of the points are assumed to be noise and should be pruned.  The set of points which fit the found
+ * parameters and their index in the input list are returned.
+ * </p>
+ *
+ * @param <Point> Type of data point being fitted.
+ *
  * @author Peter Abeles
  */
-public class TestLeastMedianOfSquares extends GenericModelMatcherTests {
+public interface ModelMatcherMulti<Point> extends ModelMatcher<Object,Point> {
 
-	public TestLeastMedianOfSquares() {
-		configure(0.9, 0.1, false);
-	}
+	/**
+	 * Indicates which model was found to best fit the points.  The index is implementation specific and is likely
+	 * to refer to the index inside a list.
+	 * @return Index of selected model.
+	 */
+	public int getModelIndex();
 
-	@Override
-	public ModelMatcher<double[],Double> createModelMatcher(DistanceFromModel<double[],Double> distance,
-															ModelGenerator<double[],Double> generator,
-															ModelFitter<double[],Double> fitter,
-															int minPoints, double fitThreshold) {
-		return new LeastMedianOfSquares<double[],Double>(4234,10000,fitThreshold,0.9,generator,distance);
-	}
 }
