@@ -84,7 +84,8 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 		ransac.matchToInput = new int[ dataSet.size()];
 		double param[] = new double[]{modelVal};
 
-		ransac.selectMatchSet(obj0.modelDistance,dataSet, 4, param);
+		ransac.dataSet = dataSet;
+		ransac.selectMatchSet(obj0.modelDistance, 4, param);
 
 		assertTrue(ransac.candidatePoints.size() == 7);
 	}

@@ -37,6 +37,15 @@ import java.util.Random;
  * inliers set is returned.
  * </p>
  *
+ * <p>
+ * To change the default behavior of the class for specific applications the child class can override internal
+ * functions.  Suggestions are shown below.
+ * <ul>
+ * <li>{@link #checkExitIteration}: Override to provide custom logic for when the RANSAC iteration should stop</li>
+ * <li>{@link #selectMatchSet}: Override to provide custom for how the inlier set is found.  Be sure to
+ * set up matchToInput[] correctly.</li>
+ * </p>
+ *
  * @author Peter Abeles
  */
 public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
@@ -45,6 +54,9 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 
 	// used to randomly select points/samples
 	protected Random rand;
+
+	// list of Points passed in by the user
+	protected List<Point> dataSet;
 
 	// list of points which are a candidate for the best fit set
 	protected List<Point> candidatePoints = new ArrayList<Point>();
@@ -64,6 +76,8 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	// the index of the model which is the best fit
 	protected int bestFitModelIndex;
 
+	// which iteration is it on
+	protected int iteration;
 	// the maximum number of iterations it will perform
 	protected int maxIterations;
 
@@ -80,6 +94,8 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	 *
 	 * @param randSeed		 The random seed used by the random number generator.
 	 * @param maxIterations	The maximum number of iterations the RANSAC algorithm will perform.
+	 * @param objectTypes Description of the different types of objects it can detect
+	 * @param typePoint Class of Point
 	 */
 	public RansacMulti(long randSeed,
 					   int maxIterations,
@@ -112,12 +128,11 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	}
 
 	/**
-	 * TODO comment
-	 * @param dataSet
-	 * @return
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean process(List<Point> dataSet ) {
+		this.dataSet = dataSet;
 
 		// see if it has the minimum number of points
 		if (dataSet.size() < sampleSize )
@@ -128,7 +143,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 
 		// iterate until it has exhausted all iterations or stop if the entire data set
 		// is in the inlier set
-		for (int i = 0; i < maxIterations && bestFitPoints.size() != dataSet.size(); i++) {
+		for (iteration = 0; checkExitIteration(); iteration++) {
 			// sample the a small set of points
 			initialSample.reset();
 			Ransac.randomDraw(dataSet, sampleSize, initialSample.toList(), rand);
@@ -146,7 +161,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 				if( model.modelGenerator.generate(initialSample.toList(), param ) ) {
 
 					// see if it can find a model better than the current best one
-					selectMatchSet(model.modelDistance,dataSet, model.thresholdFit, param);
+					selectMatchSet(model.modelDistance, model.thresholdFit, param);
 
 					// save this results
 					if (bestFitPoints.size() < candidatePoints.size()) {
@@ -163,9 +178,23 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	}
 
 	/**
-	 * Initialize internal data structures
+	 * Checks to see if it should stop the RANSAC iterations.  A child class can override this class to perform
+	 * a custom behavior.  The default code is shown below:
+	 *
+	 * <pre>
+	 * iteration < maxIterations && bestFitPoints.size() != dataSet.size()
+	 * </pre>
+	 *
+	 * @return if true RANSAC should continue iterating if false then RANSAC will stop.
 	 */
-	public void initialize( List<Point> dataSet ) {
+	protected boolean checkExitIteration() {
+		return iteration < maxIterations && bestFitPoints.size() != dataSet.size();
+	}
+
+	/**
+	 * Initialize internal data structures before performing RANSAC iterations
+	 */
+	protected void initialize( List<Point> dataSet ) {
 		bestFitPoints.clear();
 
 		if( dataSet.size() > matchToInput.length ) {
@@ -175,15 +204,15 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	}
 
 	/**
-	 * Looks for points in the data set which closely match the current best
-	 * fit model in the optimizer.
+	 * Exhaustively searches through the list of points contained in 'dataSet' for the set of inliers which match
+	 * the provided model.  It keeps track of the mapping between the index of the inlier list and the 'dataSet' list
+	 * using the matchToInput[] array.   If there is no corresponding (can't happen by default) match then -1
+	 * should be set in matchToInput..
 	 *
-	 * @param dataSet The points being considered
-	 * @return true if enough points were matched, false otherwise
+	 * @param modelDistance Computes
 	 */
-	@SuppressWarnings({"ForLoopReplaceableByForEach"})
 	protected <Model>void selectMatchSet( DistanceFromModel<Model,Point> modelDistance ,
-										  List<Point> dataSet, double threshold, Model param) {
+										  double threshold, Model param) {
 		candidatePoints.clear();
 		modelDistance.setModel(param);
 
@@ -249,6 +278,14 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		this.maxIterations = maxIterations;
 	}
 
+	protected List<Point> getCandidatePoints() {
+		return candidatePoints;
+	}
+
+	protected FastQueue<Point> getInitialSample() {
+		return initialSample;
+	}
+
 	@Override
 	public int getMinimumSize() {
 		return sampleSize;
@@ -262,6 +299,10 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	 */
 	public void setSampleSize(int sampleSize) {
 		this.sampleSize = sampleSize;
+	}
+
+	public int getIteration() {
+		return iteration;
 	}
 
 	/**
