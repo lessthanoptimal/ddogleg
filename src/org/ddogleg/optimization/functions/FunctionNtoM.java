@@ -19,6 +19,11 @@
 package org.ddogleg.optimization.functions;
 
 /**
+ * Function which takes in N parameters as input and outputs M elements.  The number N is typically determined
+ * by the number of parameters in a model, say 2 for a line in 2D (slope and intercept).  The number M is determined
+ * by the number of observations, for M 2D points the output would be M variables representing the distance of
+ * each point from the line.
+ *
  * @author Peter Abeles
  */
 public interface FunctionNtoM {
@@ -33,5 +38,11 @@ public interface FunctionNtoM {
 	 */
 	public int getM();
 
+	/**
+	 * Processes the input to compute the values found in the output array.
+	 *
+	 * @param input Parameters for input model.
+	 * @param output Values of output give the model.
+	 */
 	public void process(double input[], double[] output);
 }

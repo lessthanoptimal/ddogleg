@@ -21,6 +21,7 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ejml.UtilEjml;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.MatrixFeatures;
 
@@ -34,7 +35,13 @@ public class JacobianChecker {
 	public static void jacobianPrint( FunctionNtoM func , FunctionNtoMxN jacobian ,
 									  double param[] , double tol )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func);
+		jacobianPrint(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
+	}
+
+	public static void jacobianPrint( FunctionNtoM func , FunctionNtoMxN jacobian ,
+									  double param[] , double tol , double differenceScale )
+	{
+		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
 		DenseMatrix64F found = new DenseMatrix64F(func.getM(),func.getN());
 		DenseMatrix64F expected = new DenseMatrix64F(func.getM(),func.getN());
@@ -63,11 +70,17 @@ public class JacobianChecker {
 			System.out.println();
 		}
 	}
-	
+
 	public static boolean jacobian( FunctionNtoM func , FunctionNtoMxN jacobian ,
 									double param[] , double tol )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func);
+		return jacobian(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
+	}
+
+	public static boolean jacobian( FunctionNtoM func , FunctionNtoMxN jacobian ,
+									double param[] , double tol ,  double differenceScale )
+	{
+		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
 		if( numerical.getM() != jacobian.getM() )
 			throw new RuntimeException("M is not equal "+numerical.getM()+"  "+jacobian.getM());

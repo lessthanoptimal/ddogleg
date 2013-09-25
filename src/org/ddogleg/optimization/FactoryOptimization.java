@@ -75,7 +75,7 @@ public class FactoryOptimization {
 
 	/**
 	 * <p>
-	 * Unconstrained least squares Levenberg optimizer for dense problems.  Some times works better than
+	 * Unconstrained least squares Levenberg optimizer for dense problems.
 	 * </p>
 	 *
 	 * @param dampInit Initial value of dampening parameter.  Tune.  Start at around 1e-3.
