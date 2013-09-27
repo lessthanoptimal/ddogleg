@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of Project BUBO.
+ * This file is part of DDogleg (http://ddogleg.org).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
