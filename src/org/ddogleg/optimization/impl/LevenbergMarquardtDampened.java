@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of DDogleg (http://ddogleg.org).
+ * This file is part of Project BUBO.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ddogleg.optimization.OptimizationException;
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
 import org.ejml.alg.dense.mult.VectorVectorMult;
 import org.ejml.data.DenseMatrix64F;
@@ -93,7 +92,8 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 
 		// compute the change in step.
 		if( !solver.setA(B) ) {
-			throw new OptimizationException("Singularity encountered.  Try a more robust solver line pseudo inverse");
+//			addToMessage("Singularity encountered.  Try a more robust solver line pseudo inverse");
+			return false;
 		}
 		// solve for change in x
 		solver.solve(gradientNegative, step);

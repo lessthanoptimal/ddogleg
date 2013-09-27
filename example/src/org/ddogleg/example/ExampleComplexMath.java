@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of DDogleg (http://ddogleg.org).
+ * This file is part of Project BUBO.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package org.ddogleg.example;
 
-import org.ddogleg.complex.ComplexMath;
+import org.ddogleg.complex.ComplexMath64F;
 import org.ddogleg.complex.ComplexPolar64F;
 import org.ejml.data.Complex64F;
 
@@ -39,22 +39,22 @@ public class ExampleComplexMath {
 		System.out.println("b = "+b);
 		System.out.println("------------------");
 
-		ComplexMath.plus(a,b,c);
+		ComplexMath64F.plus(a, b, c);
 		System.out.println("a + b = "+c);
-		ComplexMath.minus(a,b,c);
+		ComplexMath64F.minus(a, b, c);
 		System.out.println("a - b = "+c);
-		ComplexMath.mult(a, b, c);
+		ComplexMath64F.mult(a, b, c);
 		System.out.println("a * b = "+c);
-		ComplexMath.div(a, b, c);
+		ComplexMath64F.div(a, b, c);
 		System.out.println("a / b = "+c);
 
 		System.out.println("------------------");
 		ComplexPolar64F polarA = new ComplexPolar64F();
-		ComplexMath.convert(a,polarA);
+		ComplexMath64F.convert(a, polarA);
 		System.out.println("polar notation of a = "+polarA);
-		ComplexMath.pow(polarA, 3, polarC);
+		ComplexMath64F.pow(polarA, 3, polarC);
 		System.out.println("a ** 3 = "+polarC);
-		ComplexMath.convert(polarC,c);
+		ComplexMath64F.convert(polarC, c);
 		System.out.println("a ** 3 = "+c);
 	}
 }

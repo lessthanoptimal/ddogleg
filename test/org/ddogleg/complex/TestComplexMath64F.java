@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of DDogleg (http://ddogleg.org).
+ * This file is part of Project BUBO.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestComplexMath {
+public class TestComplexMath64F
+{
 
 	@Test
 	public void plus() {
@@ -34,7 +35,7 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F c = new Complex64F();
 
-		ComplexMath.plus(a,b,c);
+		ComplexMath64F.plus(a, b, c);
 
 		assertEquals(-1, c.real, 1e-8);
 		assertEquals(9, c.imaginary, 1e-8);
@@ -46,7 +47,7 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F c = new Complex64F();
 
-		ComplexMath.minus(a, b, c);
+		ComplexMath64F.minus(a, b, c);
 
 		assertEquals(5, c.real, 1e-8);
 		assertEquals(-3, c.imaginary, 1e-8);
@@ -58,7 +59,7 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F c = new Complex64F();
 
-		ComplexMath.mult(a, b, c);
+		ComplexMath64F.mult(a, b, c);
 
 		assertEquals(-24, c.real, 1e-8);
 		assertEquals(3, c.imaginary, 1e-8);
@@ -70,7 +71,7 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F c = new Complex64F();
 
-		ComplexMath.div(a, b, c);
+		ComplexMath64F.div(a, b, c);
 
 		assertEquals(0.26666666666, c.real, 1e-8);
 		assertEquals(-0.466666666666, c.imaginary, 1e-8);
@@ -85,8 +86,8 @@ public class TestComplexMath {
 		ComplexPolar64F b = new ComplexPolar64F();
 		Complex64F c = new Complex64F();
 
-		ComplexMath.convert(a,b);
-		ComplexMath.convert(b,c);
+		ComplexMath64F.convert(a, b);
+		ComplexMath64F.convert(b, c);
 
 		assertEquals(a.real, c.real, 1e-8);
 		assertEquals(a.imaginary, c.imaginary, 1e-8);
@@ -98,13 +99,13 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F expected = new Complex64F();
 
-		ComplexMath.mult(a, b, expected);
+		ComplexMath64F.mult(a, b, expected);
 
 		ComplexPolar64F pa = new ComplexPolar64F(a);
 		ComplexPolar64F pb = new ComplexPolar64F(b);
 		ComplexPolar64F pc = new ComplexPolar64F();
 
-		ComplexMath.mult(pa, pb, pc);
+		ComplexMath64F.mult(pa, pb, pc);
 
 		Complex64F found = pc.toStandard();
 
@@ -118,13 +119,13 @@ public class TestComplexMath {
 		Complex64F b = new Complex64F(-3,6);
 		Complex64F expected = new Complex64F();
 
-		ComplexMath.div(a, b, expected);
+		ComplexMath64F.div(a, b, expected);
 
 		ComplexPolar64F pa = new ComplexPolar64F(a);
 		ComplexPolar64F pb = new ComplexPolar64F(b);
 		ComplexPolar64F pc = new ComplexPolar64F();
 
-		ComplexMath.div(pa, pb, pc);
+		ComplexMath64F.div(pa, pb, pc);
 
 		Complex64F found = pc.toStandard();
 
@@ -138,10 +139,10 @@ public class TestComplexMath {
 		ComplexPolar64F expected = new ComplexPolar64F();
 		ComplexPolar64F found = new ComplexPolar64F();
 
-		ComplexMath.mult(a,a,expected);
-		ComplexMath.mult(a,expected,expected);
+		ComplexMath64F.mult(a, a, expected);
+		ComplexMath64F.mult(a, expected, expected);
 
-		ComplexMath.pow(a,3,found);
+		ComplexMath64F.pow(a, 3, found);
 
 		assertEquals(expected.r,found.r,1e-8);
 		assertEquals(expected.theta, found.theta,1e-8);
@@ -156,9 +157,9 @@ public class TestComplexMath {
 		// compute the square root of a complex number then see if the
 		// roots equal the output
 		for( int i = 0; i < 2; i++ ) {
-			ComplexMath.root(expected ,2 , 0 , root);
+			ComplexMath64F.root(expected, 2, 0, root);
 
-			ComplexMath.mult(root,root,found);
+			ComplexMath64F.mult(root, root, found);
 
 			Complex64F e = expected.toStandard();
 			Complex64F f = found.toStandard();
@@ -177,9 +178,9 @@ public class TestComplexMath {
 		// compute the square root of a complex number then see if the
 		// roots equal the output
 		for( int i = 0; i < 2; i++ ) {
-			ComplexMath.root(expected ,2 , 0 , root);
+			ComplexMath64F.root(expected, 2, 0, root);
 
-			ComplexMath.mult(root,root,found);
+			ComplexMath64F.mult(root, root, found);
 
 			assertEquals(expected.real, found.real, 1e-8);
 			assertEquals(expected.imaginary, found.imaginary, 1e-8);

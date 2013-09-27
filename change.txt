@@ -18,6 +18,7 @@ Date:     2013
 - Added ModelMatcherMulti
   * Can be given different types of models to fit the data to
   * RansacMulti added and only implementation of it so far
+- Added graph related data structure
 
 ------------------------------------------------------
 Version:  0.3

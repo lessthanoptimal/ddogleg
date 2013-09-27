@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of DDogleg (http://ddogleg.org).
+ * This file is part of Project BUBO.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package org.ddogleg.solver;
 
-import org.ddogleg.complex.ComplexMath;
+import org.ddogleg.complex.ComplexMath64F;
 import org.ddogleg.solver.impl.FindRealRootsSturm;
 import org.ddogleg.solver.impl.RootFinderCompanion;
 import org.ddogleg.solver.impl.WrapRealRootsSturm;
@@ -122,7 +122,7 @@ public class PolynomialSolver {
 			Complex64F inside = new Complex64F(0.5*insideLeft,0.5*Math.sqrt(-insideOfSqrt ));
 			Complex64F root = new Complex64F();
 
-			ComplexMath.root(inside,3,2,root);
+			ComplexMath64F.root(inside, 3, 2, root);
 
 			// imaginary components cancel out
 			double ret = c + 2*root.getReal();

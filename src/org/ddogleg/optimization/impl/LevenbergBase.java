@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of DDogleg (http://ddogleg.org).
+ * This file is part of Project BUBO.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,6 +149,8 @@ public abstract class LevenbergBase {
 		dampParam = initialDampParam;
 		nu = 2;
 		iterationCount = 0;
+
+		message = "";
 	}
 
 	protected abstract void setFunctionParameters( double []param );
@@ -302,7 +304,7 @@ public abstract class LevenbergBase {
 			}
 		}
 		if( failed ) {
-			message = "Failed to find dampParam which cold be solved";
+			addToMessage("Failed to find dampParam which cold be solved");
 			return false;
 		}
 
@@ -333,6 +335,10 @@ public abstract class LevenbergBase {
 
 	public int getIterationCount() {
 		return iterationCount;
+	}
+
+	public void addToMessage(String message) {
+		this.message += message+"\n";
 	}
 
 	public String getMessage() {

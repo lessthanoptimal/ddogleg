@@ -16,41 +16,16 @@
  * limitations under the License.
  */
 
-package org.ddogleg.complex;
+package org.ddogleg.graph;
 
-import org.ejml.data.Complex64F;
+import org.ddogleg.struct.FastQueue;
 
 /**
- * <p>
- * {@link Complex64F} number in polar notation.<br>
- * z = r*(cos(&theta;) + i*sin(&theta;))<br>
- * where r and &theta; are polar coordinate parameters
- * </p>
  * @author Peter Abeles
  */
-public class ComplexPolar64F {
-	double r;
-	double theta;
+public class Node<N,E>
+{
+   N data;
+   FastQueue<Edge<N,E>> edges = new FastQueue<Edge<N, E>>((Class)Edge.class,false);
 
-	public ComplexPolar64F(double r, double theta) {
-		this.r = r;
-		this.theta = theta;
-	}
-
-	public ComplexPolar64F( Complex64F n ) {
-		ComplexMath64F.convert(n, this);
-	}
-
-	public ComplexPolar64F() {
-	}
-
-	public Complex64F toStandard() {
-		Complex64F ret = new Complex64F();
-		ComplexMath64F.convert(this, ret);
-		return ret;
-	}
-
-	public String toString() {
-		return "( r = "+r+" theta = "+theta+" )";
-	}
 }

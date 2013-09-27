@@ -16,41 +16,13 @@
  * limitations under the License.
  */
 
-package org.ddogleg.complex;
-
-import org.ejml.data.Complex64F;
+package org.ddogleg.graph;
 
 /**
- * <p>
- * {@link Complex64F} number in polar notation.<br>
- * z = r*(cos(&theta;) + i*sin(&theta;))<br>
- * where r and &theta; are polar coordinate parameters
- * </p>
  * @author Peter Abeles
  */
-public class ComplexPolar64F {
-	double r;
-	double theta;
-
-	public ComplexPolar64F(double r, double theta) {
-		this.r = r;
-		this.theta = theta;
-	}
-
-	public ComplexPolar64F( Complex64F n ) {
-		ComplexMath64F.convert(n, this);
-	}
-
-	public ComplexPolar64F() {
-	}
-
-	public Complex64F toStandard() {
-		Complex64F ret = new Complex64F();
-		ComplexMath64F.convert(this, ret);
-		return ret;
-	}
-
-	public String toString() {
-		return "( r = "+r+" theta = "+theta+" )";
-	}
+public class Edge<N,E>
+{
+   E data;
+   Node<N,E> dest;
 }
