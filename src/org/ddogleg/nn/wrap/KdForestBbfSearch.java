@@ -99,6 +99,7 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 		else
 			searchN.setMaxDistance(maxDistance);
 
+		found.reset();
 		searchN.findNeighbor(point, numNeighbors, found);
 
 		for( int i = 0; i < found.size; i++ ) {

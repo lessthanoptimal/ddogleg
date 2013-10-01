@@ -33,7 +33,7 @@ public class TestKdTreeSearchBestBinFirst {
 	 */
 	@Test
 	public void checkMaxNodes() {
-		KdTree tree = StandardKdTreeSearchNTests.createTreeA();
+		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
 		BBF alg = new BBF(0);
 		alg.setTree(tree);
@@ -50,7 +50,7 @@ public class TestKdTreeSearchBestBinFirst {
 	@Test
 	public void multiTreeSearch() {
 		KdTree forest[] = new KdTree[2];
-		forest[0] = StandardKdTreeSearchNTests.createTreeA();
+		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2},null);
 
