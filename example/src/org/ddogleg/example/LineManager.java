@@ -16,41 +16,22 @@
  * limitations under the License.
  */
 
-package org.ddogleg.fitting.modelset;
+package org.ddogleg.example;
 
-import java.util.List;
-
+import org.ddogleg.fitting.modelset.ModelManager;
 
 /**
- * Computes the mean of a set of points.
- *
  * @author Peter Abeles
  */
-public class MeanModelFitter implements ModelFitter<double[],Double> ,
-		ModelGenerator<double[],Double>{
-
+public class LineManager implements ModelManager<Line2D> {
 	@Override
-	public boolean generate(List<Double> dataSet, double[] param ) {
-		return fitModel(dataSet,null,param);
+	public Line2D createModelInstance() {
+		return new Line2D();
 	}
 
 	@Override
-	public boolean fitModel(List<Double> dataSet, double[] initParam, double[] foundParam) {
-		double mean = 0;
-
-		for (double d : dataSet) {
-			mean += d;
-		}
-
-		mean /= dataSet.size();
-
-		foundParam[0] = mean;
-
-		return true;
-	}
-
-	@Override
-	public int getMinimumPoints() {
-		return 1;
+	public void copyModel(Line2D src, Line2D dst) {
+		dst.x = src.x;
+		dst.y = src.y;
 	}
 }

@@ -194,8 +194,8 @@ public class QuickSelectArray {
 
    /**
 	 * Sorts the array such that the values in the array up to and including
-	 * 'k' are sorted the least to greatest.  This implies that the array
-	 * itself is modified. For convinience the 'k' element is returned.
+	 * 'k' are sorted from the least to greatest.  This implies that the array
+	 * itself is modified. For convenience the value of the 'k'th element is returned.
 	 *
 	 * @param data The unsorted list.  Is modified.
 	 * @param k The element of the sorted list that is to be found
@@ -354,9 +354,9 @@ public class QuickSelectArray {
 	}
 
    /**
-	 * Sorts the array such that the values in the array up to and including
-	 * 'k' are sorted the least to greatest.  This implies that the array
-	 * itself is modified. For convinience the 'k' element is returned.
+	* Sorts the array such that the values in the array up to and including
+	* 'k' are sorted from the least to greatest.  This implies that the array
+	* itself is modified. For convenience the value of the 'k'th element is returned.
 	 *
 	 * @param data The unsorted list.  Is modified.
 	 * @param k The element of the sorted list that is to be found
@@ -510,8 +510,9 @@ public class QuickSelectArray {
 
    /**
 	 * Sorts the array such that the values in the array up to and including
-	 * 'k' are sorted the least to greatest.  This implies that the array
-	 * itself is modified. For convinience the 'k' element is returned.
+	* Sorts the array such that the values in the array up to and including
+	* 'k' are sorted from the least to greatest.  This implies that the array
+	* itself is modified. For convenience the value of the 'k'th element is returned.
 	 *
 	 * @param data The unsorted list.  Is modified.
 	 * @param k The element of the sorted list that is to be found
@@ -665,9 +666,10 @@ public class QuickSelectArray {
 
    /**
 	 * Sorts the array such that the values in the array up to and including
-	 * 'k' are sorted the least to greatest.  This implies that the array
-	 * itself is modified. For convinience the 'k' element is returned.
-	 *
+	* Sorts the array such that the values in the array up to and including
+	* 'k' are sorted from the least to greatest.  This implies that the array
+	* itself is modified. For convenience the value of the 'k'th element is returned.
+	*
 	 * @param data The unsorted list.  Is modified.
 	 * @param k The element of the sorted list that is to be found
 	 * @param maxIndex Only element up to this value are considered
@@ -819,9 +821,9 @@ public class QuickSelectArray {
 	}
 
    /**
-	 * Sorts the array such that the values in the array up to and including
-	 * 'k' are sorted the least to greatest.  This implies that the array
-	 * itself is modified. For convinience the 'k' element is returned.
+	* Sorts the array such that the values in the array up to and including
+	* 'k' are sorted from the least to greatest.  This implies that the array
+	* itself is modified. For convenience the value of the 'k'th element is returned.
 	 *
 	 * @param data The unsorted list.  Is modified.
 	 * @param k The element of the sorted list that is to be found

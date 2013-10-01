@@ -20,6 +20,7 @@ package org.ddogleg.fitting.modelset.ransac;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
+import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcherMulti;
 import org.ddogleg.struct.FastQueue;
 
@@ -111,8 +112,8 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 			ObjectType o = objectTypes.get(i);
 
 			// add data to store solutions
-			objectParam.add( o.modelGenerator.createModelInstance() );
-			objectCandidateParam.add( o.modelGenerator.createModelInstance() );
+			objectParam.add( o.modelManager.createModelInstance() );
+			objectCandidateParam.add( o.modelManager.createModelInstance() );
 
 			// see if the user wants to use the default or not
 			if( o.sampleSize <= 0 ) {
@@ -321,5 +322,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		public ModelGenerator<Model,Point> modelGenerator;
 		/** computes the distance a point is from the model */
 		public DistanceFromModel<Model,Point> modelDistance;
+		/** Used to create new models and copy models */
+		public ModelManager<Model> modelManager;
 	}
 }

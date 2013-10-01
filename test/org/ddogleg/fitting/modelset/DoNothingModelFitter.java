@@ -38,11 +38,6 @@ public class DoNothingModelFitter implements ModelFitter<double[],Double> ,
 	}
 
 	@Override
-	public double[] createModelInstance() {
-		return new double[1];
-	}
-
-	@Override
 	public boolean generate(List<Double> dataSet, double[] param ) {
 		return fitModel(dataSet,null,param);
 	}

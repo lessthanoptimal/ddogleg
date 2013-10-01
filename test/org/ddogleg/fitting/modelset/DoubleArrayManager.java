@@ -18,39 +18,24 @@
 
 package org.ddogleg.fitting.modelset;
 
-import java.util.List;
-
-
 /**
- * Computes the mean of a set of points.
- *
  * @author Peter Abeles
  */
-public class MeanModelFitter implements ModelFitter<double[],Double> ,
-		ModelGenerator<double[],Double>{
+public class DoubleArrayManager implements ModelManager<double[]>{
 
-	@Override
-	public boolean generate(List<Double> dataSet, double[] param ) {
-		return fitModel(dataSet,null,param);
+	int length;
+
+	public DoubleArrayManager(int length) {
+		this.length = length;
 	}
 
 	@Override
-	public boolean fitModel(List<Double> dataSet, double[] initParam, double[] foundParam) {
-		double mean = 0;
-
-		for (double d : dataSet) {
-			mean += d;
-		}
-
-		mean /= dataSet.size();
-
-		foundParam[0] = mean;
-
-		return true;
+	public double[] createModelInstance() {
+		return new double[length];
 	}
 
 	@Override
-	public int getMinimumPoints() {
-		return 1;
+	public void copyModel(double[] src, double[] dst) {
+		System.arraycopy(src,0,dst,0,length);
 	}
 }

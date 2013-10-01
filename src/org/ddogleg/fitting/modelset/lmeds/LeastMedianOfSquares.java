@@ -21,6 +21,7 @@ package org.ddogleg.fitting.modelset.lmeds;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
+import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcher;
 import org.ddogleg.fitting.modelset.ransac.Ransac;
 import org.ddogleg.sorting.QuickSelectArray;
@@ -87,6 +88,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 								 int totalCycles ,
 								 double maxMedianError ,
 								 double inlierFraction ,
+								 ModelManager<Model> modelManager,
 								 ModelGenerator<Model,Point> generator,
 								 DistanceFromModel<Model,Point> errorMetric )
 	{
@@ -97,8 +99,8 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		this.generator = generator;
 		this.errorMetric = errorMetric;
 
-		bestParam = generator.createModelInstance();
-		candidate = generator.createModelInstance();
+		bestParam = modelManager.createModelInstance();
+		candidate = modelManager.createModelInstance();
 		this.sampleSize = generator.getMinimumPoints();
 
 		if( inlierFrac > 0.0 ) {

@@ -28,18 +28,11 @@ import java.util.List;
 public interface ModelFitter<Model,Point> {
 
 	/**
-	 * Creates a new instance of the model
-	 *
-	 * @return New model instance
-	 */
-	public Model createModelInstance();
-
-	/**
-	 * Fits a model to a set of points.
+	 * Fits a model to a set of points.  Note that initial and found can be the same instance.
 	 *
 	 * @param dataSet Set of points the model is being fit to.
 	 * @param initial Initial hypothesis
-	 * @param found The found model.
+	 * @param found The found model. Can be the same instance as initial.
 	 * @return true if a model was found and false if one was not.
 	 */
 	public boolean fitModel(List<Point> dataSet, Model initial, Model found);

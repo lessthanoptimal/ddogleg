@@ -18,10 +18,7 @@
 
 package org.ddogleg.fitting.modelset.distance;
 
-import org.ddogleg.fitting.modelset.DistanceFromModel;
-import org.ddogleg.fitting.modelset.ModelCodec;
-import org.ddogleg.fitting.modelset.ModelFitter;
-import org.ddogleg.fitting.modelset.ModelMatcher;
+import org.ddogleg.fitting.modelset.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -105,6 +102,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 										   int minFitPoints,
 										   StatisticalDistance statistics,
 										   double pruneThreshold,
+										   ModelManager<Model> modelManager ,
 										   ModelFitter<Model,Point> modelFitter,
 										   DistanceFromModel<Model,Point> modelError,
 										   ModelCodec<Model> codec ) {
@@ -117,8 +115,8 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 		this.modelError = modelError;
 		this.codec = codec;
 
-		param = modelFitter.createModelInstance();
-		currParam = modelFitter.createModelInstance();
+		param = modelManager.createModelInstance();
+		currParam = modelManager.createModelInstance();
 
 		switch (statistics) {
 			case MEAN:

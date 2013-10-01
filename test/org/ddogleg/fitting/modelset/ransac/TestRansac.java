@@ -37,12 +37,13 @@ public class TestRansac extends GenericModelMatcherTests {
 	}
 
 	@Override
-	public ModelMatcher<double[],Double> createModelMatcher(DistanceFromModel<double[],Double> distance,
+	public ModelMatcher<double[],Double> createModelMatcher(ModelManager<double[]> manager,
+															DistanceFromModel<double[],Double> distance,
 															ModelGenerator<double[],Double> generator,
 															ModelFitter<double[],Double> fitter,
 															int minPoints,
 															double fitThreshold) {
-		Ransac<double[],Double> ret = new Ransac<double[],Double>(344, generator, distance, 200, fitThreshold);
+		Ransac<double[],Double> ret = new Ransac<double[],Double>(344, manager,generator, distance, 200, fitThreshold);
 		ret.setSampleSize(minPoints);
 
 		return ret;
@@ -147,7 +148,7 @@ public class TestRansac extends GenericModelMatcherTests {
 		}
 
 		DebugModelStuff stuff = new DebugModelStuff((int) modelVal);
-		Ransac<double[],Integer> ransac = new Ransac<double[],Integer>(234,stuff,stuff,20,1);
+		Ransac<double[],Integer> ransac = new Ransac<double[],Integer>(234,stuff,stuff,stuff,20,1);
 		ransac.setSampleSize(5);
 		// declare the array so it doesn't blow up when accessed
 		ransac.matchToInput = new int[ dataSet.size()];
@@ -159,7 +160,7 @@ public class TestRansac extends GenericModelMatcherTests {
 	}
 
 	public static class DebugModelStuff implements
-			DistanceFromModel<double[],Integer>, ModelGenerator<double[],Integer> {
+			ModelManager<double[]>,DistanceFromModel<double[],Integer>, ModelGenerator<double[],Integer> {
 
 		int threshold;
 
@@ -189,6 +190,11 @@ public class TestRansac extends GenericModelMatcherTests {
 		@Override
 		public double[] createModelInstance() {
 			return new double[1];
+		}
+
+		@Override
+		public void copyModel(double[] src, double[] dst) {
+			System.arraycopy(src,0,dst,0,1);
 		}
 
 		@Override

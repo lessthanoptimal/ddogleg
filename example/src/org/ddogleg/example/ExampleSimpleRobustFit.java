@@ -20,6 +20,7 @@ package org.ddogleg.example;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
+import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcher;
 import org.ddogleg.fitting.modelset.ransac.Ransac;
 
@@ -46,12 +47,13 @@ public class ExampleSimpleRobustFit {
 
 		//------------------------ Compute the solution
 		// Let it know how to compute the model and fit errors
+		ModelManager<Line2D> manager = new LineManager();
 		ModelGenerator<Line2D,Point2D> generator = new LineGenerator();
 		DistanceFromModel<Line2D,Point2D> distance = new DistanceFromLine();
 
 		// RANSAC or LMedS work well here
 		ModelMatcher<Line2D,Point2D> alg =
-				new Ransac<Line2D,Point2D>(234234,generator,distance,500,0.01);
+				new Ransac<Line2D,Point2D>(234234,manager,generator,distance,500,0.01);
 //		ModelMatcher<Line2D,Point2D> alg =
 //				new LeastMedianOfSquares<Line2D, Point2D>(234234,100,0.1,0.5,generator,distance);
 

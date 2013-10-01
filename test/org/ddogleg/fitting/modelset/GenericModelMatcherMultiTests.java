@@ -40,6 +40,7 @@ public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherT
 	 */
 	@Override
 	public ModelMatcher<double[],Double> createModelMatcher(
+			ModelManager<double[]> manager,
 			DistanceFromModel<double[],Double> distance,
 			ModelGenerator<double[],Double> generator,
 			ModelFitter<double[],Double> fitter,
@@ -48,10 +49,12 @@ public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherT
 		List<ModelInfo> models = new ArrayList<ModelInfo>();
 
 		ModelInfo model0 = new ModelInfo();
+		model0.manager = manager;
 		model0.distance = distance;
 		model0.generator = generator;
 		model0.minPoints = minPoints;
 		model0.fitThreshold = fitThreshold;
+		model0.fitter = fitter;
 
 		models.add( model0 );
 
@@ -66,12 +69,14 @@ public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherT
 		List<ModelInfo> models = new ArrayList<ModelInfo>();
 
 		ModelInfo model0 = new ModelInfo();
+		model0.manager = new DoubleArrayManager(1);
 		model0.distance = new RandomDistanceModel(5,0.3);
 		model0.generator = new DoNothingModelFitter(2);
 		model0.minPoints = -1;
 		model0.fitThreshold = 0.1;
 
 		ModelInfo model1 = new ModelInfo();
+		model1.manager = new DoubleArrayManager(1);
 		model1.distance = new RandomDistanceModel(0,0.05);
 		model1.generator = new DoNothingModelFitter(3);
 		model1.minPoints = -1;
@@ -95,6 +100,7 @@ public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherT
 	public abstract ModelMatcherMulti<Double> createModelMatcher( List<ModelInfo> models );
 
 	public static class ModelInfo {
+		public ModelManager<double[]> manager;
 		public DistanceFromModel<double[],Double> distance;
 		public ModelGenerator<double[],Double> generator;
 		public ModelFitter<double[],Double> fitter;

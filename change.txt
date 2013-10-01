@@ -19,6 +19,8 @@ Date:     2013
   * Can be given different types of models to fit the data to
   * RansacMulti added and only implementation of it so far
 - Added graph related data structure
+- Created ModelManager for making new instances and copying a model
+  * removed similar functions from ModelGenerator and ModelFitter
 
 ------------------------------------------------------
 Version:  0.3

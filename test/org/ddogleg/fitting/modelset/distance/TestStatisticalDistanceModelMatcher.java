@@ -30,13 +30,14 @@ public class TestStatisticalDistanceModelMatcher extends GenericModelMatcherTest
 	}
 
 	@Override
-	public ModelMatcher<double[],Double> createModelMatcher(DistanceFromModel<double[],Double> distance,
+	public ModelMatcher<double[],Double> createModelMatcher(ModelManager<double[]> manager,
+															DistanceFromModel<double[],Double> distance,
 															ModelGenerator<double[],Double> generator,
 															ModelFitter<double[],Double> fitter,
 															int minPoints, double fitThreshold) {
 		return new StatisticalDistanceModelMatcher<double[],Double>(5, 0, 0, 10000, minPoints,
 				StatisticalDistance.PERCENTILE,
-				0.95, fitter, distance, new ArrayCodec());
+				0.95, manager,fitter, distance, new ArrayCodec());
 	}
 
 	private static class ArrayCodec implements ModelCodec<double[]>

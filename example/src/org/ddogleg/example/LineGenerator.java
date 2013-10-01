@@ -33,11 +33,6 @@ public class LineGenerator implements ModelGenerator<Line2D,Point2D> {
 	Point2D origin = new Point2D();
 
 	@Override
-	public Line2D createModelInstance() {
-		return new Line2D();
-	}
-
-	@Override
 	public boolean generate(List<Point2D> dataSet, Line2D output) {
 		Point2D p1 = dataSet.get(0);
 		Point2D p2 = dataSet.get(1);

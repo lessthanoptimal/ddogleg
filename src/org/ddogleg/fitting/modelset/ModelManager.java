@@ -18,30 +18,26 @@
 
 package org.ddogleg.fitting.modelset;
 
-import java.util.List;
-
 /**
- * Given a set of points create a model hypothesis.  In most applications just a single hypothesis
- * will be generated.  In SFM applications geometric ambiguities can cause multiple hypotheses to be
- * created.
+ * Can be used to create new instances of a model and copy the value of one model into another
  *
  * @author Peter Abeles
  */
-public interface ModelGenerator<Model,Point> {
-	
-	/**
-	 * Creates a list of hypotheses from the set of sample points.
-	 *
-	 * @param dataSet Set of sample points.  Typically the minimum number possible.
-	 * @param output Storage for generated model.
-	 * @return true if a model was generated, otherwise false is none were
-	 */
-	public boolean generate( List<Point> dataSet , Model output );
+public interface ModelManager<Model> {
 
 	/**
-	 * The minimum number of points required to fit a data set
+	 * Creates a new instance of the model
 	 *
-	 * @return Number of points.
+	 * @return New model instance
 	 */
-	public int getMinimumPoints();
+	public Model createModelInstance();
+
+	/**
+	 * Turns 'dst' into an exact copy of 'src'.  If the model has a variable structure
+	 * then it is assumed that the two models have the same structure.
+	 *
+	 * @param src Original model.  Not modified.
+	 * @param dst Where the copy is written to.  Modified.
+	 */
+	public void copyModel( Model src, Model dst );
 }

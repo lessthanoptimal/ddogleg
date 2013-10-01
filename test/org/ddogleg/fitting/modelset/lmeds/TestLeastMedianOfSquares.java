@@ -31,10 +31,11 @@ public class TestLeastMedianOfSquares extends GenericModelMatcherTests {
 	}
 
 	@Override
-	public ModelMatcher<double[],Double> createModelMatcher(DistanceFromModel<double[],Double> distance,
+	public ModelMatcher<double[],Double> createModelMatcher(ModelManager<double[]> manager,
+															DistanceFromModel<double[],Double> distance,
 															ModelGenerator<double[],Double> generator,
 															ModelFitter<double[],Double> fitter,
 															int minPoints, double fitThreshold) {
-		return new LeastMedianOfSquares<double[],Double>(4234,10000,fitThreshold,0.9,generator,distance);
+		return new LeastMedianOfSquares<double[],Double>(4234,10000,fitThreshold,0.9,manager,generator,distance);
 	}
 }

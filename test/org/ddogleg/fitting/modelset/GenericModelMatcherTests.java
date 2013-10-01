@@ -191,13 +191,15 @@ public abstract class GenericModelMatcherTests {
 	}
 
 	private ModelMatcher<double[],Double> createModel(int minPoints, double fitThreshold) {
+		DoubleArrayManager manager = new DoubleArrayManager(1);
 		DistanceFromMeanModel dist = new DistanceFromMeanModel();
 		MeanModelFitter fitter = new MeanModelFitter();
 
-		return createModelMatcher(dist, fitter,fitter, minPoints, fitThreshold);
+		return createModelMatcher(manager,dist, fitter,fitter, minPoints, fitThreshold);
 	}
 
 	public abstract ModelMatcher<double[],Double> createModelMatcher(
+			ModelManager<double[]> manager,
 			DistanceFromModel<double[],Double> distance,
 			ModelGenerator<double[],Double> generator,
 			ModelFitter<double[],Double> fitter,

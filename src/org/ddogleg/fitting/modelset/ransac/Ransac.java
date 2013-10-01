@@ -20,6 +20,7 @@ package org.ddogleg.fitting.modelset.ransac;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
+import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcher;
 
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 * @param thresholdFit	 How close of a fit a points needs to be to the model to be considered a fit.
 	 */
 	public Ransac(long randSeed,
+				  ModelManager<Model> modelManager,
 				  ModelGenerator<Model, Point> modelGenerator,
 				  DistanceFromModel<Model, Point> modelDistance,
 				  int maxIterations,
@@ -101,8 +103,8 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		this.rand = new Random(randSeed);
 		this.maxIterations = maxIterations;
 
-		this.bestFitParam = modelGenerator.createModelInstance();
-		this.candidateParam = modelGenerator.createModelInstance();
+		this.bestFitParam = modelManager.createModelInstance();
+		this.candidateParam = modelManager.createModelInstance();
 
 		this.sampleSize = modelGenerator.getMinimumPoints();
 		this.thresholdFit = thresholdFit;

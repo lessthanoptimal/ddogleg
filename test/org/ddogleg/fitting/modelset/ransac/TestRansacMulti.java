@@ -45,6 +45,7 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 			RansacMulti.ObjectType rm0 = new RansacMulti.ObjectType();
 			ModelInfo mo = models.get(i);
 
+			rm0.modelManager = mo.manager;
 			rm0.modelGenerator = mo.generator;
 			rm0.modelDistance = mo.distance;
 			rm0.thresholdFit = mo.fitThreshold;
@@ -72,6 +73,7 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 		List<RansacMulti.ObjectType> objectTypes = new ArrayList<RansacMulti.ObjectType>();
 
 		RansacMulti.ObjectType obj0 = new RansacMulti.ObjectType();
+		obj0.modelManager = new TestRansac.DebugModelStuff((int) modelVal);
 		obj0.modelDistance = new TestRansac.DebugModelStuff((int) modelVal);
 		obj0.modelGenerator = new TestRansac.DebugModelStuff((int) modelVal);
 		obj0.thresholdFit = 1;
