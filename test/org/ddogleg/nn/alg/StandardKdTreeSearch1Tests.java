@@ -77,7 +77,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		tree.root.left.right.split = -1;
 		tree.root.right = new KdTree.Node(new double[]{10,5},null);
 		tree.root.right.split = 0;
-		tree.root.right.left = new KdTree.Node(tree.root.right.point,null);
+		tree.root.right.left = new KdTree.Node(new double[]{10,5},null); // duplicate
 		tree.root.right.left.split = -1;
 		tree.root.right.right = new KdTree.Node(new double[]{12,10},null);
 		tree.root.right.right.split = -1;

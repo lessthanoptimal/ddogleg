@@ -38,7 +38,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void checkMaxNodes() {
-		KdTree tree = createTreeA();
+		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
 		KdTreeSearch1Bbf alg = new KdTreeSearch1Bbf(0);
 		alg.setTree(tree);
@@ -55,7 +55,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	@Test
 	public void multiTreeSearch() {
 		KdTree forest[] = new KdTree[2];
-		forest[0] = createTreeA();
+		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2},null);
 

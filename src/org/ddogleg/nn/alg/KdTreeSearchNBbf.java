@@ -60,7 +60,6 @@ public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTree
 	 */
 	protected void checkBestDistance(KdTree.Node node, double[] target) {
 
-
 		double distanceSq = KdTree.distanceSq(node,target,N);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distanceSq <= bestDistanceSq ) {

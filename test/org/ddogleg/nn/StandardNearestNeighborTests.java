@@ -241,6 +241,9 @@ public abstract class StandardNearestNeighborTests {
 			foundN.reset();
 			alg.findNearest(where, 10.0, numNeighbors, foundN);
 
+			// see if it found more points than expected
+			assertTrue(foundN.size <= numNeighbors);
+
 			ExhaustiveNeighbor exhaustive = new ExhaustiveNeighbor(2);
 			exhaustive.setPoints(points);
 
@@ -248,7 +251,7 @@ public abstract class StandardNearestNeighborTests {
 			outputDistance.reset();
 			exhaustive.findClosestN(where, 10.0, numNeighbors, outputIndex,outputDistance);
 
-			assertEquals(foundN.size(),outputIndex.getSize());
+			assertEquals(outputIndex.getSize(),foundN.size());
 
 			for( int j = 0; j < outputIndex.getSize(); j++ ) {
 				double[] expected = points.get(outputIndex.get(j) );
