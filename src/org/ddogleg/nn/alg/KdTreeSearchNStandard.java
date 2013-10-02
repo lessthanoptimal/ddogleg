@@ -38,6 +38,8 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 	private double maxDistanceSq = Double.MAX_VALUE;
 	// distance of the farthest neighbor
 	private double mostDistantNeighborSq;
+	// index of most distant neighbor
+	private int mostDistantNeighborIndex;
 
 	// then number of nearest-neighbors it's searching for
 	private int searchN;
@@ -66,6 +68,9 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 	 */
 	@Override
 	public void findNeighbor(double[] target, int searchN, FastQueue<KdTreeResult> results) {
+		if( searchN <= 0 )
+			throw new IllegalArgumentException("I'm sorry, but I refuse to search for less than or equal to 0 neighbors.");
+
 		if( tree.root == null )
 			return;
 
@@ -127,34 +132,31 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 				r.node = node;
 				if( neighbors.size() == searchN ) {
 					// find the most distant
-					mostDistantNeighborSq = 0;
+					mostDistantNeighborSq = -1;
 					for( int i = 0; i < searchN; i++ ) {
 						r = neighbors.get(i);
 
 						if( r.distance > mostDistantNeighborSq ) {
 							mostDistantNeighborSq = r.distance;
+							mostDistantNeighborIndex = i;
 						}
 					}
 				}
 			} else {
-				// find the most distant neighbor and write over it since we known this node most be closer
+				// Write over the most distant neighbor since we known this node most be closer
 				// and update the maximum distance
-				for( int i = 0; i < searchN; i++ ) {
-					KdTreeResult r = neighbors.get(i);
-					if( r.distance == mostDistantNeighborSq ) {
-						r.node = node;
-						r.distance = distSq;
-						break;
-					}
-				}
+				KdTreeResult r = neighbors.get(mostDistantNeighborIndex);
+				r.node = node;
+				r.distance = distSq;
 
 				// If there are multiple points then there can be more than one point with the value of
 				// 'bestDistanceSq', which is why two searches are required
-				mostDistantNeighborSq = 0;
+				mostDistantNeighborSq = -1;
 				for( int i = 0; i < searchN; i++ ) {
-					KdTreeResult r = neighbors.get(i);
+					r = neighbors.get(i);
 					if( r.distance > mostDistantNeighborSq ) {
 						mostDistantNeighborSq = r.distance;
+						mostDistantNeighborIndex = i;
 					}
 				}
 			}

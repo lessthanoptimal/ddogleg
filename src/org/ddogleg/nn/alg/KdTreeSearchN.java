@@ -43,7 +43,7 @@ public interface KdTreeSearchN {
 	 * Searches for the N nearest-neighbors to the target.  The results are added to the 'results' list.
 	 *
 	 * @param target Point whose nearest neighbor is being searched for
-	 * @param searchN Number of closest points it will find
+	 * @param searchN Number of closest points it will find.  Must be >= 1
 	 * @param results Storage for the found neighbors.
 	 */
 	public void findNeighbor(double[] target, int searchN, FastQueue<KdTreeResult> results);

@@ -117,7 +117,7 @@ public class FastQueue<T> {
 	 */
 	public T get( int index ) {
 		if( index >= size )
-			throw new IllegalArgumentException("Index out of bounds");
+			throw new IllegalArgumentException("Index out of bounds: index "+index+" size "+size);
 		return data[index];
 	}
 

@@ -111,7 +111,7 @@ public abstract class StandardKdTreeSearchNTests {
 		flattenTree(tree.root,data);
 
 		for( int i = 0; i < 100; i++ ) {
-			int searchN = rand.nextInt(data.size()+5);
+			int searchN = rand.nextInt(data.size()+5)+1;
 
 			double[] target = data.get( rand.nextInt(data.size()));
 
