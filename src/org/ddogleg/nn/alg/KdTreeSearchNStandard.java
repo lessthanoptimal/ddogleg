@@ -135,7 +135,6 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 					mostDistantNeighborSq = -1;
 					for( int i = 0; i < searchN; i++ ) {
 						r = neighbors.get(i);
-
 						if( r.distance > mostDistantNeighborSq ) {
 							mostDistantNeighborSq = r.distance;
 							mostDistantNeighborIndex = i;
@@ -143,6 +142,13 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 					}
 				}
 			} else {
+				for( int i = 0; i < searchN; i++ ) {
+					KdTreeResult r = neighbors.get(i);
+					if( r.distance > mostDistantNeighborSq ) {
+						throw new RuntimeException("Most distant isn't the most distant");
+					}
+				}
+
 				// Write over the most distant neighbor since we known this node most be closer
 				// and update the maximum distance
 				KdTreeResult r = neighbors.get(mostDistantNeighborIndex);

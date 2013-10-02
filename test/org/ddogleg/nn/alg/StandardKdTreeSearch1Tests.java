@@ -69,7 +69,7 @@ public abstract class StandardKdTreeSearch1Tests {
 
 		tree.root = new KdTree.Node(new double[]{1,2},null);
 		tree.root.split = 1;
-		tree.root.left = new KdTree.Node(new double[]{-0.2,1},null);
+		tree.root.left = new KdTree.Node(new double[]{-0.21,1},null);
 		tree.root.left.split = 0;
 		tree.root.left.left = new KdTree.Node(new double[]{-2,0.5},null);
 		tree.root.left.left.split = -1;
