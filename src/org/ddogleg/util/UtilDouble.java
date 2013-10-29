@@ -21,6 +21,13 @@ package org.ddogleg.util;
 
 public class UtilDouble {
 
+	public static void normalize( double[] a ) {
+		double total = sum(a);
+		for( int i = 0; i < a.length; i++ ) {
+			a[i] /= total;
+		}
+	}
+
 	@SuppressWarnings({"ForLoopReplaceableByForEach"})
 	public static double sum( double[] a ) {
 		double ret = 0;
@@ -38,6 +45,13 @@ public class UtilDouble {
 			System.out.printf(format+" ",a[i]);
 		}
 		System.out.println("]");
+	}
+
+	public static void normalize( float[] a ) {
+		float total = sum(a);
+		for( int i = 0; i < a.length; i++ ) {
+			a[i] /= total;
+		}
 	}
 
 	public static float sum( float[] a ) {

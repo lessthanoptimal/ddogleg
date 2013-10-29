@@ -314,7 +314,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		/** how close a point needs to be considered part of the model */
 		public double thresholdFit;
 		/**
-		 *  The number of points it samples when generating a set of model parameters..
+		 *  The number of points it samples when generating a set of model parameters.
 		 *  if <= 0 then the minimum number will be used
  		 */
 		public int sampleSize = -1;

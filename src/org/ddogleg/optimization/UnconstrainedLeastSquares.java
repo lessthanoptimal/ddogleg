@@ -25,8 +25,9 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * <p>
  * Non-linear least squares problems have a special structure which can be taken advantage of for optimization.
  * The least squares problem is defined below:<br>
- * F(x) = 0.5*sum( i=1:m , f<sub>i</sub>(x)^2 )<br>
- * where f_i(x) is a function from &real;<sup>N</sup> to &real;. m > n
+ * F(x) = 0.5*sum( i=1:M ; f<sub>i</sub>(x)<sup>2</sup> )<br>
+ * where f<sub>i</sub>(x) is a function from &real;<sup>N</sup> to &real;. M is number of functions, and N
+ * is number of fit parameters. M &ge; N
  * </p>
  *
  * <p>
@@ -34,6 +35,11 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * G-test:    gtol &le; ||g(x)||<sub>inf</sub><br>
  * A relative f-test is not provided since that test breaks down when the expected function output
  * is zero. An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
+ * </p>
+ *
+ * <p>
+ * NOTE: The input function computes the M outputs of the f<sub>i</sub>(x) functions NOT
+ * [f<sub>i</sub>(x)]<sup>2</sup>
  * </p>
  *
  * <p>
@@ -53,8 +59,8 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
 	 * on output data format.
 	 *
-	 * @param function Computes the output of M functions which take in M inputs.
-	 * @param jacobian Computes the Jacobian.  If null a numerical Jacobian will be used.
+	 * @param function Computes the output of M functions f<sub>i</sub>(x) which take in N fit parameters as input.
+	 * @param jacobian Computes the Jacobian of the M functions.  If null a numerical Jacobian will be used.
 	 */
 	public void setFunction( FunctionNtoM function , FunctionNtoMxN jacobian );
 
