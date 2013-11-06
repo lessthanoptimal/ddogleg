@@ -28,13 +28,17 @@ public class UtilOptimize {
 	/**
 	 * Iterate until the line search converges or the maximum number of iterations has been exceeded.
 	 *
+	 * The maximum number of steps is specified.  A step is defined as the number of times the
+	 * optimization parameters are changed.
+	 *
 	 * @param search Search algorithm
-	 * @param maxIterations Maximum number of iterations
-	 * @return True if it converged to a solution
+	 * @param maxSteps Maximum number of steps.
+	 * @return Value returned by {@link IterativeOptimization#iterate}
 	 */
-	public static boolean process( LineSearch search , int maxIterations ) {
-		for( int i = 0; i < maxIterations; i++ ) {
-			if( search.iterate() ) {
+	public static boolean process( IterativeOptimization search , int maxSteps ) {
+		for( int i = 0; i < maxSteps; i++ ) {
+			boolean converged = step(search);
+			if( converged ) {
 				return search.isConverged();
 			}
 		}
@@ -43,36 +47,18 @@ public class UtilOptimize {
 	}
 
 	/**
-	 * Iterate until the search algorithm converges or the maximum number of iterations has been exceeded.
+	 * Performs a single step by iterating until the parameters are updated.
 	 *
-	 * @param alg Search algorithm
-	 * @param maxIterations Maximum number of iterations
-	 * @return True if it converged to a solution
+	 * @param search Search algorithm
+	 * @return Value returned by {@link IterativeOptimization#iterate}
 	 */
-	public static boolean process( UnconstrainedMinimization alg , int maxIterations ) {
-		for( int i = 0; i < maxIterations; i++ ) {
-			if( alg.iterate() ) {
-				return alg.isConverged();
+	public static boolean step( IterativeOptimization search ) {
+		for( int i = 0; i < 10000; i++ ) {
+			boolean converged = search.iterate();
+			if( converged || !search.isUpdated() ) {
+				return converged;
 			}
 		}
-
-		return true;
-	}
-
-	/**
-	 * Iterate until the search algorithm converges or the maximum number of iterations has been exceeded.
-	 *
-	 * @param alg Search algorithm
-	 * @param maxIterations Maximum number of iterations
-	 * @return True if it converged to a solution
-	 */
-	public static boolean process( UnconstrainedLeastSquares alg , int maxIterations ) {
-		for( int i = 0; i < maxIterations; i++ ) {
-			if( alg.iterate() ) {
-				return alg.isConverged();
-			}
-		}
-
-		return true;
+		throw new RuntimeException("After 10,000 iterations it failed to take a step! Probably a bug.");
 	}
 }

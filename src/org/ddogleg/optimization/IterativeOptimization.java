@@ -35,15 +35,22 @@ import java.io.Serializable;
  * resumed.
  * </p>
  *
+ * @see UtilOptimize
+ *
  * @author Peter Abeles
  */
 public interface IterativeOptimization extends Serializable {
 
 	/**
+	 * <p>
 	 * Updates the search. If the search has terminated true is returned.  After the
 	 * search has terminated invoke {@link #isConverged} to see if a solution has been
 	 * converged to or if it stopped for some other reason.
-	 *
+	 * </p>
+	 * <p>
+	 * NOTE: The optimization parameters might not be modified after iterate() is called.  An internal book keeping
+	 * step might have been done.  To see if parameters have changed call {@link #isUpdated()}.
+	 * </p>
 	 * @return true if it has converged or that no more progress can be made.
 	 */
 	public boolean iterate() throws OptimizationException;
