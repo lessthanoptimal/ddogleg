@@ -19,7 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened;
-import org.ddogleg.optimization.wrap.WrapLevenbergDampened;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.LinearSolver;
 import org.ejml.factory.LinearSolverFactory;
@@ -47,7 +47,7 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
-		return new WrapLevenbergDampened(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 
 	public static void main( String args[] ) {

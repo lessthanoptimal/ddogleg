@@ -28,6 +28,11 @@ import org.ejml.data.DenseMatrix64F;
  * Difference equation, f'(x) = (f(x+h)-f(x-h))/(2*h).  Scaling is taken in account by h based
  * upon the magnitude of the elements in variable x.
  *
+ * <p>
+ * NOTE: If multiple input parameters are modified by the function when a single one is changed numerical
+ * derivatives aren't reliable.
+ * </p>
+ *
  * @author Peter Abeles
  */
 public class NumericalJacobianFB implements FunctionNtoMxN

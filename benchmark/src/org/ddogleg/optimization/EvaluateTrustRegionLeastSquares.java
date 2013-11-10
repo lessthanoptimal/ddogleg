@@ -20,7 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.DoglegStepF;
 import org.ddogleg.optimization.impl.TrustRegionLeastSquares;
-import org.ddogleg.optimization.wrap.WrapTrustRegion;
+import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 
 /**
  * @author Peter Abeles
@@ -36,7 +36,7 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepF());
 //		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepFtF());
 //		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new CauchyStep());
-		return new WrapTrustRegion(alg);
+		return new TrustRegionLeastSquares_to_UnconstrainedLeastSquares(alg);
 	}
 
 	public static void main( String args[] ) {

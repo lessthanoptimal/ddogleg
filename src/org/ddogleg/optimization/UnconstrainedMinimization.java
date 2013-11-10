@@ -38,6 +38,10 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
  * An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
  * </p>
  *
+ * <p>
+ * NOTE: If you need to modify the optimization parameters this can be done inside the 'function'.
+ * </p>
+ *
  * @author Peter Abeles
  */
 public interface UnconstrainedMinimization extends IterativeOptimization {

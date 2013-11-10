@@ -16,27 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.functions;
+package org.ddogleg.optimization.wrap;
+
+import org.ddogleg.optimization.FactoryOptimization;
+import org.ddogleg.optimization.UnconstrainedMinimization;
 
 /**
- * Function for non-linear optimization that has a single output and N inputs.
- *
  * @author Peter Abeles
  */
-public interface FunctionNtoS {
+public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends GenericUnconstrainedMinimizationTests{
 
-	/**
-	 * The number of inputs.  Typically the parameters you are optimizing.
-	 *
-	 * @return Number of inputs.
-	 */
-	public int getN();
-
-	/**
-	 * Computes the output given an array of inputs.
-	 *
-	 * @param input Array containing input values
-	 * @return The output.
-	 */
-	public double process( double input[] );
+	@Override
+	public UnconstrainedMinimization createAlgorithm() {
+		return FactoryOptimization.unconstrained();
+	}
 }

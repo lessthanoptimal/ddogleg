@@ -27,14 +27,14 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * 
  * @author Peter Abeles
  */
-public class WrapCoupledJacobian implements CoupledJacobian {
+public class Individual_to_CoupledJacobian implements CoupledJacobian {
 	
 	FunctionNtoM func;
 	FunctionNtoMxN jacobian;
 
 	double[] x;
 	
-	public WrapCoupledJacobian(FunctionNtoM func, FunctionNtoMxN jacobian) {
+	public Individual_to_CoupledJacobian(FunctionNtoM func, FunctionNtoMxN jacobian) {
 		if( func.getM() != jacobian.getM() )
 			throw new IllegalArgumentException("M not equal");
 

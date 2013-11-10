@@ -27,18 +27,26 @@ public interface FunctionNtoMxN {
 
 	/**
 	 * Number of input parameters and columns in output matrix.
+	 * Typically the parameters you are optimizing.
 	 */
 	public int getN();
 
 	/**
 	 * Number of rows in output matrix.
+	 * Typically the functions that are being optimized.
 	 */
 	public int getM();
 
 	/**
+	 * <p>
 	 * Processes the input vector to output a 2D a matrix.  The matrix has a dimension of M rows and N columns
 	 * and is formatted as a row major 1D-array.  EJML can be used to provide a matrix wrapper around
 	 * the output array: DenseMatrix J = DenseMatrix.wrap(m,n,output);
+	 * </p>
+	 *
+	 * <p>
+	 * The user can modify the input parameters here and the optimizer must use those changes.
+	 * </p>
 	 *
 	 * @param input Vector with input parameters.
 	 * @param output Row major array with M rows and N columns.

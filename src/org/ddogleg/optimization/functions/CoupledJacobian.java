@@ -24,7 +24,7 @@ package org.ddogleg.optimization.functions;
 public interface CoupledJacobian {
 
 	/**
-	 * Number of inputs.
+	 * Number of input parameters being optimized.
 	 */
 	public int getN();
 
@@ -32,10 +32,29 @@ public interface CoupledJacobian {
 	 * Number of functions.
 	 */
 	public int getM();
-	
+
+	/**
+	 * Specifies the input parameters.  The user can modify these values and they will be modified inside the
+	 * optimization function too.
+	 *
+	 * @param x Optimization parameters.
+	 */
 	public void setInput(double[] x);
 	
 	public void computeFunctions( double[] output );
-	
+
+	/**
+	 * <p>
+	 * Processes the input parameters into the 2D Jacobian matrix.  The matrix has a dimension of M rows and N columns
+	 * and is formatted as a row major 1D-array.  EJML can be used to provide a matrix wrapper around
+	 * the output array: DenseMatrix J = DenseMatrix.wrap(m,n,output);
+	 * </p>
+	 *
+	 * <p>
+	 * The user can modify the input parameters here and the optimizer must use those changes.
+	 * </p>
+	 *
+	 * @param jacobian Row major array with M rows and N columns.
+	 */
 	public void computeJacobian( double[] jacobian );
 }

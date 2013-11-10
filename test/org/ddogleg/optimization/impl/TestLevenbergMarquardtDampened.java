@@ -22,7 +22,7 @@ import org.ddogleg.optimization.EvaluateLevenbergMarquardtDampened;
 import org.ddogleg.optimization.NonlinearResults;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.wrap.WrapCoupledJacobian;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.LinearSolver;
 import org.ejml.factory.LinearSolverFactory;
@@ -69,7 +69,7 @@ public class TestLevenbergMarquardtDampened {
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,1e-3);
 
 		alg.setConvergence(1e-6,1e-6);
-		alg.setFunction(new WrapCoupledJacobian(residual,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian(residual,jacobian));
 
 		return alg;
 	}

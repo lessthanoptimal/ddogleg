@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestWrapCoupledDerivative {
+public class TestIndividual_to_CoupledDerivative {
 
 	/**
 	 * Sanity check to see if it blows up
@@ -35,7 +35,7 @@ public class TestWrapCoupledDerivative {
 	public void trivial() {
 		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
 		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
-		WrapCoupledDerivative alg = new WrapCoupledDerivative(f,g);
+		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);
 
 		double x = 2.1;
 		alg.setInput(x);

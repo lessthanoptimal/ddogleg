@@ -171,8 +171,9 @@ public class QuasiNewtonBFGS
 		// save the initial value of x
 		System.arraycopy(initial, 0, x.data, 0, N);
 
-		function.setInput(initial);
+		function.setInput(x.data);
 		fx = function.computeFunction();
+		updated = false;
 	}
 
 
@@ -226,6 +227,8 @@ public class QuasiNewtonBFGS
 			CommonOps.mult(-1,B,g, searchVector);
 			setupLineSearch(fx, x.data, g.data, searchVector.data, 1);
 		} else if(Math.abs(derivAtZero) < gtol ) {
+			// the input might have been modified by the function.  So copy it
+			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
 			return terminateSearch(true,null);
 		}
 
@@ -298,9 +301,12 @@ public class QuasiNewtonBFGS
 			// update variables
 			double step = lineSearch.getStep();
 
-			// compute the new x and the change in the x
+			// save the new x
+			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
+			// compute the change in the x
 			for( int i = 0; i < N; i++ )
-				x.data[i] += s.data[i] = step * searchVector.data[i];
+				s.data[i] = step * searchVector.data[i];
+			updated = true;
 
 			// convergence tests
 			// function value at end of line search
@@ -315,7 +321,6 @@ public class QuasiNewtonBFGS
 			fx = fstp;
 
 			// start the loop again
-			updated = true;
 			mode = 0;
 		}
 		return false;

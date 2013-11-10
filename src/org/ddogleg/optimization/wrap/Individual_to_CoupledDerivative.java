@@ -22,15 +22,18 @@ import org.ddogleg.optimization.functions.CoupledDerivative;
 import org.ddogleg.optimization.functions.FunctionStoS;
 
 /**
+ * Takes two functions which independently computes the function's value and derivative and allows them
+ * to be used in a coupled function.
+ *
  * @author Peter Abeles
  */
-public class WrapCoupledDerivative implements CoupledDerivative {
+public class Individual_to_CoupledDerivative implements CoupledDerivative {
 
 	double input;
 	FunctionStoS function;
 	FunctionStoS derivative;
 
-	public WrapCoupledDerivative(FunctionStoS function, FunctionStoS derivative) {
+	public Individual_to_CoupledDerivative(FunctionStoS function, FunctionStoS derivative) {
 		this.function = function;
 		this.derivative = derivative;
 	}

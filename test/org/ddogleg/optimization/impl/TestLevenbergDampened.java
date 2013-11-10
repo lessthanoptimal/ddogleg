@@ -22,7 +22,7 @@ import org.ddogleg.optimization.EvaluateLevenbergDampened;
 import org.ddogleg.optimization.NonlinearResults;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.wrap.WrapCoupledJacobian;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +64,7 @@ public class TestLevenbergDampened {
 		LevenbergDampened alg = new LevenbergDampened(1e-3);
 
 		alg.setConvergence(1e-6,1e-6);
-		alg.setFunction(new WrapCoupledJacobian(residual,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian(residual,jacobian));
 
 		return alg;
 	}

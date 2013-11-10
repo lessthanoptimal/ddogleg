@@ -32,7 +32,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class ExampleSimpleMinimization {
+public class ExampleMinimization {
 
 	public static void main( String args[] ) {
 

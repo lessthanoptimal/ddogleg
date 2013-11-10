@@ -19,7 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergDampened;
-import org.ddogleg.optimization.wrap.WrapLevenbergDampened;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 
 /**
  * @author Peter Abeles
@@ -36,7 +36,7 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 
 		LevenbergDampened alg = new LevenbergDampened(dampInit);
-		return new WrapLevenbergDampened(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 
 	public static void main( String args[] ) {

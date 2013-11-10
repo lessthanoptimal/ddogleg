@@ -30,11 +30,11 @@ import org.ddogleg.optimization.impl.NumericalJacobianForward;
  *
  * @author Peter Abeles
  */
-public class WrapLevenbergDampened implements UnconstrainedLeastSquares {
+public class LevenbergDampened_to_UnconstrainedLeastSquares implements UnconstrainedLeastSquares {
 
 	LevenbergDenseBase alg;
 
-	public WrapLevenbergDampened(LevenbergDenseBase alg) {
+	public LevenbergDampened_to_UnconstrainedLeastSquares(LevenbergDenseBase alg) {
 		this.alg = alg;
 	}
 
@@ -44,7 +44,7 @@ public class WrapLevenbergDampened implements UnconstrainedLeastSquares {
 		if( jacobian == null )
 			jacobian = new NumericalJacobianForward(function);
 
-		alg.setFunction(new WrapCoupledJacobian(function,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian(function,jacobian));
 	}
 
 	@Override

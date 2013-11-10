@@ -30,7 +30,7 @@ import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
 /**
  * @author Peter Abeles
  */
-public class WrapQuasiNewtonBFGS implements UnconstrainedMinimization {
+public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements UnconstrainedMinimization {
 
 	// line search parmeters
 	private static final double line_gtol = 0.9;

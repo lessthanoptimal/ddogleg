@@ -29,17 +29,21 @@ package org.ddogleg.optimization.functions;
 public interface FunctionNtoM {
 
 	/**
-	 * Number of input elements.
+	 * Number of input elements.  Typically the parameters you are optimizing.
 	 */
 	public int getN();
 
 	/**
-	 * Number of output elements.
+	 * Number of output elements. Typically the functions that are being optimized.
 	 */
 	public int getM();
 
 	/**
 	 * Processes the input to compute the values found in the output array.
+	 *
+	 * <p>
+	 * The user can modify the input parameters here and the optimizer must use those changes.
+	 * </p>
 	 *
 	 * @param input Parameters for input model.
 	 * @param output Values of output give the model.

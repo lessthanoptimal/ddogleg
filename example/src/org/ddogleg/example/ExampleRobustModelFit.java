@@ -34,7 +34,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class ExampleSimpleRobustFit {
+public class ExampleRobustModelFit {
 
 	public static void main( String args[] ) {
 		Random rand = new Random(234);

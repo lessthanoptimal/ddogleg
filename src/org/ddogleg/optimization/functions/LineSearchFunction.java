@@ -24,4 +24,6 @@ package org.ddogleg.optimization.functions;
 public interface LineSearchFunction extends CoupledDerivative {
 
 	public void setLine( double []start , double[] direction );
+
+	public double[] getCurrentState();
 }

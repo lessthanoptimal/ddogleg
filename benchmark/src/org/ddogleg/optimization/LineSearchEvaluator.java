@@ -19,7 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionStoS;
-import org.ddogleg.optimization.wrap.WrapCoupledDerivative;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledDerivative;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public abstract class LineSearchEvaluator {
 		CallCounterStoS d = new CallCounterStoS(deriv);
 
 		LineSearch alg = createSearch();
-		alg.setFunction(new WrapCoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 
 		double valueZero = func.process(0);
 		double derivZero = deriv.process(0);

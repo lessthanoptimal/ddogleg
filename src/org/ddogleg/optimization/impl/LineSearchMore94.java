@@ -106,6 +106,9 @@ public class LineSearchMore94 implements LineSearch {
 	// Indicates if it converged to a solution
 	private boolean converged;
 
+	// if true the estimated parameters have been updated
+	boolean updated;
+
 	/**
 	 * Configures the line search.
 	 *
@@ -171,6 +174,7 @@ public class LineSearchMore94 implements LineSearch {
 		message = null;
 		firstIteration = true;
 		converged = false;
+		updated = false;
 	}
 
 	@Override
@@ -267,6 +271,7 @@ public class LineSearchMore94 implements LineSearch {
 		if( bracket && (stp <= stmin || stp >= stmax ) ||  (bracket && stmax-stmin <= xtol*stmax))
 			stp=stx;
 
+		updated = true;
 		return false;
 	}
 
@@ -308,6 +313,7 @@ public class LineSearchMore94 implements LineSearch {
 		}
 		
 		stp = stpf;
+		updated = true;
 	}
 
 	/**
@@ -425,6 +431,6 @@ public class LineSearchMore94 implements LineSearch {
 
 	@Override
 	public boolean isUpdated() {
-		throw new RuntimeException("Not supported yet");
+		return updated;
 	}
 }

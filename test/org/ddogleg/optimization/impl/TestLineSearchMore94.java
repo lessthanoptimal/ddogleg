@@ -22,7 +22,7 @@ import org.ddogleg.optimization.EvaluateLineSearchMore94;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.UtilOptimize;
 import org.ddogleg.optimization.functions.FunctionStoS;
-import org.ddogleg.optimization.wrap.WrapCoupledDerivative;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledDerivative;
 import org.junit.Test;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class TestLineSearchMore94 {
 
 		// the initial value should pass all the tests with this setting
 		LineSearch alg = new LineSearchMore94(0.0001,0.1,0.001);
-		alg.setFunction(new WrapCoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 
 		double valueZero = f.process(0);
 		double derivZero = d.process(0);
@@ -68,7 +68,7 @@ public class TestLineSearchMore94 {
 
 		// now try it with tighter bounds
 		alg = new LineSearchMore94(0.00001,0.000001,0.001);
-		alg.setFunction(new WrapCoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));
 		assertTrue(alg.getWarning() == null);

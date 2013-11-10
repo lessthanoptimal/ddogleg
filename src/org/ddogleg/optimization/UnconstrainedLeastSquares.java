@@ -51,6 +51,10 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * for F(i,j) would be stored at index = i*N+j in the data array.
  * </p>
  *
+ * <p>
+ * NOTE: If you need to modify the optimization parameters this can be done inside the 'function'.
+ * </p>
+ *
  * @author Peter Abeles
  */
 public interface UnconstrainedLeastSquares extends IterativeOptimization {

@@ -137,7 +137,7 @@ public abstract class LevenbergBase {
 		System.arraycopy(initial,0,x.data,0,N);
 
 		// calculate residuals
-		setFunctionParameters(initial);
+		setFunctionParameters(x.data);
 		computeResiduals(funcVals.data);
 
 		// error at this point

@@ -67,6 +67,11 @@ public class CachedGradientLineFunction implements GradientLineFunction {
 	}
 
 	@Override
+	public double[] getCurrentState() {
+		return currentInput;
+	}
+
+	@Override
 	public void setInput(double x) {
 		for( int i = 0; i < N; i++ ) {
 			currentInput[i] = start[i] + x*direction[i];

@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.wrap.WrapCoupledJacobian;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
@@ -60,7 +60,7 @@ public class TestTrustRegionLeastSquares {
 		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(2,stepAlg);
 
 		alg.setConvergence(1e-6,1e-6);
-		alg.setFunction(new WrapCoupledJacobian(residual,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian(residual,jacobian));
 
 		return alg;
 	}

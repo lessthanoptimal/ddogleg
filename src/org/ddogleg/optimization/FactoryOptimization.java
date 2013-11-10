@@ -19,9 +19,9 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.*;
-import org.ddogleg.optimization.wrap.WrapLevenbergDampened;
-import org.ddogleg.optimization.wrap.WrapQuasiNewtonBFGS;
-import org.ddogleg.optimization.wrap.WrapTrustRegion;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
+import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
+import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.LinearSolver;
 import org.ejml.factory.LinearSolverFactory;
@@ -44,7 +44,7 @@ public class FactoryOptimization {
 	 */
 	public static UnconstrainedMinimization unconstrained()
 	{
-		return new WrapQuasiNewtonBFGS();
+		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class FactoryOptimization {
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
-		return new WrapLevenbergDampened(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class FactoryOptimization {
 	public static UnconstrainedLeastSquares leastSquareLevenberg( double dampInit )
 	{
 		LevenbergDampened alg = new LevenbergDampened(dampInit);
-		return new WrapLevenbergDampened(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 
 	/**
@@ -128,6 +128,6 @@ public class FactoryOptimization {
 		
 		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(regionSize,stepAlg);
 
-		return new WrapTrustRegion(alg);
+		return new TrustRegionLeastSquares_to_UnconstrainedLeastSquares(alg);
 	}
 }

@@ -30,11 +30,11 @@ import org.ddogleg.optimization.impl.TrustRegionLeastSquares;
  *
  * @author Peter Abeles
  */
-public class WrapTrustRegion implements UnconstrainedLeastSquares {
+public class TrustRegionLeastSquares_to_UnconstrainedLeastSquares implements UnconstrainedLeastSquares {
 
 	TrustRegionLeastSquares alg;
 
-	public WrapTrustRegion(TrustRegionLeastSquares alg) {
+	public TrustRegionLeastSquares_to_UnconstrainedLeastSquares(TrustRegionLeastSquares alg) {
 		this.alg = alg;
 	}
 
@@ -43,7 +43,7 @@ public class WrapTrustRegion implements UnconstrainedLeastSquares {
 		if( jacobian == null )
 			jacobian = new NumericalJacobianForward(function);
 
-		alg.setFunction(new WrapCoupledJacobian(function,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian(function,jacobian));
 	}
 
 	@Override

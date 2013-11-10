@@ -22,7 +22,7 @@ import org.ddogleg.optimization.EvaluateLineSearchFletcher86;
 import org.ddogleg.optimization.LineSearchEvaluator;
 import org.ddogleg.optimization.UtilOptimize;
 import org.ddogleg.optimization.functions.FunctionStoS;
-import org.ddogleg.optimization.wrap.WrapCoupledDerivative;
+import org.ddogleg.optimization.wrap.Individual_to_CoupledDerivative;
 import org.junit.Test;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class TestLineSearchFletcher86 {
 
 		// the initial value should pass all the tests with this setting
 		LineSearchFletcher86 alg = new LineSearchFletcher86(0.1,0.9,0,9,0.1,0.5);
-		alg.setFunction(new WrapCoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 
 		double valueZero = f.process(0);
 		double derivZero = d.process(0);
@@ -61,7 +61,7 @@ public class TestLineSearchFletcher86 {
 
 		// now try it with tighter bounds
 		alg = new LineSearchFletcher86(1e-5,0.1,0,9,0.05,0.5);
-		alg.setFunction(new WrapCoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));
 		double foundTight = alg.getStep();

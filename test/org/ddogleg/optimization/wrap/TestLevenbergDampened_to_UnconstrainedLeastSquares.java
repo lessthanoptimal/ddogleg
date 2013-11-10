@@ -16,27 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.functions;
+package org.ddogleg.optimization.wrap;
+
+import org.ddogleg.optimization.FactoryOptimization;
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 
 /**
- * Function for non-linear optimization that has a single output and N inputs.
- *
  * @author Peter Abeles
  */
-public interface FunctionNtoS {
+public class TestLevenbergDampened_to_UnconstrainedLeastSquares extends GenericUnconstrainedLeastSquaresTests {
 
-	/**
-	 * The number of inputs.  Typically the parameters you are optimizing.
-	 *
-	 * @return Number of inputs.
-	 */
-	public int getN();
-
-	/**
-	 * Computes the output given an array of inputs.
-	 *
-	 * @param input Array containing input values
-	 * @return The output.
-	 */
-	public double process( double input[] );
+	@Override
+	public UnconstrainedLeastSquares createAlgorithm() {
+		return FactoryOptimization.leastSquareLevenberg(1e-3);
+	}
 }

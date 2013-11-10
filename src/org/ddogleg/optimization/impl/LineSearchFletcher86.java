@@ -94,6 +94,9 @@ public class LineSearchFletcher86 implements LineSearch {
 	double pHi;
 	double fLow; // the value at pLow
 
+	// if true the estimated parameters have been updated
+	boolean updated;
+
 	String message;
 	boolean converged;
 	
@@ -154,6 +157,8 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		this.stmax = (fmin-fzero)/(ftol*gzero);
 		this.stpmax = stepMax;
+
+		this.updated = false;
 	}
 
 	protected void initializeSearch( final double valueZero , final double derivZero ,
@@ -176,6 +181,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	@Override
 	public boolean iterate()
 	{
+		updated = false;
 		boolean ret;
 		if( mode <= 1 ) {
 			ret = converged = bracket();
@@ -227,6 +233,7 @@ public class LineSearchFletcher86 implements LineSearch {
 			gprev = gp;
 			fprev = fp;
 			stp = stmax;
+			updated = true;
 		} else {
 			// use interpolation to pick the next sample point
 			double temp = stp;
@@ -234,6 +241,7 @@ public class LineSearchFletcher86 implements LineSearch {
 			stprev = temp;
 			gprev = gp;
 			fprev = fp;
+			updated = true;
 		}
 
 		// see if it is taking significant steps
@@ -262,6 +270,7 @@ public class LineSearchFletcher86 implements LineSearch {
 		// compute the value at the new sample point
 		double temp = stp;
 		stp = interpolate(pLow +t2*(pHi - pLow), pHi -t3*(pHi - pLow));
+		updated = true;
 		// save the previous step
 		if( !Double.isNaN(gp)) {
 			// needs to keep a step with a derivative
@@ -367,6 +376,6 @@ public class LineSearchFletcher86 implements LineSearch {
 
 	@Override
 	public boolean isUpdated() {
-		throw new RuntimeException("Not supported yet");
+		return updated;
 	}
 }
