@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,30 +26,26 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestNumericalJacobianForward {
+public class TestNumericalGradientFB {
 
-	double tol = 1e-6;
+	double tol = 1e-16;
 
 	@Test
 	public void simple() {
 		// give it a function where one variable does not effect the output
 		// to make the test more interesting
 		SimpleFunction f = new SimpleFunction();
-		NumericalJacobianForward alg = new NumericalJacobianForward(f);
-
-		double output[] = new double[]{1,1,1,1,1,1};
+		NumericalGradientFB alg = new NumericalGradientFB(f);
+		
+		double output[] = new double[]{1,1,1};
 		alg.process(new double[]{2,3,7},output);
-
+		
 		assertEquals(3, output[0], tol);
 		assertEquals(-36, output[1], tol);
 		assertEquals(0, output[2], tol);
-
-		assertEquals(3, output[3], tol);
-		assertEquals(2, output[4], tol);
-		assertEquals(1, output[5], tol);
 	}
-
-	private static class SimpleFunction implements FunctionNtoM
+	
+	private static class SimpleFunction implements FunctionNtoS
 	{
 		@Override
 		public int getN() {
@@ -57,18 +53,11 @@ public class TestNumericalJacobianForward {
 		}
 
 		@Override
-		public int getM() {
-			return 2;
-		}
-
-		@Override
-		public void process(double[] input, double output[]) {
+		public double process(double[] input) {
 			double x1 = input[0];
 			double x2 = input[1];
-			double x3 = input[2];
 
-			output[0] = 3*x1 - 6*x2*x2;
-			output[1] = x1*x2+x3;
+			return 3*x1 - 6*x2*x2;
 		}
 	}
 }

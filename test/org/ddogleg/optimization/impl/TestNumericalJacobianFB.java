@@ -26,16 +26,16 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestNumericalJacobianForward {
+public class TestNumericalJacobianFB {
 
-	double tol = 1e-6;
+	double tol = 1e-16;
 
 	@Test
 	public void simple() {
 		// give it a function where one variable does not effect the output
 		// to make the test more interesting
 		SimpleFunction f = new SimpleFunction();
-		NumericalJacobianForward alg = new NumericalJacobianForward(f);
+		NumericalJacobianFB alg = new NumericalJacobianFB(f);
 
 		double output[] = new double[]{1,1,1,1,1,1};
 		alg.process(new double[]{2,3,7},output);
@@ -71,4 +71,5 @@ public class TestNumericalJacobianForward {
 			output[1] = x1*x2+x3;
 		}
 	}
+
 }

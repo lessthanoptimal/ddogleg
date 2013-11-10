@@ -22,6 +22,7 @@ Date:     2013
 - Created ModelManager for making new instances and copying a model
   * removed similar functions from ModelGenerator and ModelFitter
 - Added UtilOptimize.step() and changed behavior of UtilOptimize.process()
+- Added forwards + backwards numerical differentiation
 
 ------------------------------------------------------
 Version:  0.3
