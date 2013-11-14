@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
  *
- * This file is part of Project BUBO.
+ * This file is part of DDogleg (http://ddogleg.org).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,16 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestComplexMath64F
 {
+	@Test
+	public void conj() {
+		Complex64F a = new Complex64F(2,3);
+		Complex64F b = new Complex64F(-3,6);
+
+		ComplexMath64F.conj(a, b);
+
+		assertEquals(a.real, b.real, 1e-8);
+		assertEquals(-a.imaginary, b.imaginary, 1e-8);
+	}
 
 	@Test
 	public void plus() {

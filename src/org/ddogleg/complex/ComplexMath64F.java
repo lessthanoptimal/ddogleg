@@ -29,6 +29,16 @@ public class ComplexMath64F
 {
 
 	/**
+	 * Complex conjugate
+	 * @param input Input complex number
+	 * @param conj Complex conjugate of the input number
+	 */
+	public static void conj( Complex64F input , Complex64F conj ) {
+		conj.real = input.real;
+		conj.imaginary = -input.imaginary;
+	}
+
+	/**
 	 * <p>
 	 * Addition: result = a + b
 	 * </p>
