@@ -69,6 +69,13 @@ public class GrowQueue_I32 {
 		return data[index];
 	}
 
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
+	}
+
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];

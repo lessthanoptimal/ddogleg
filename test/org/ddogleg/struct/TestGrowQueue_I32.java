@@ -99,4 +99,21 @@ public class TestGrowQueue_I32 {
 		assertTrue(1==alg.pop());
 		assertEquals(0, alg.size);
 	}
+
+	@Test
+	public void remove() {
+
+		GrowQueue_I32 alg = new GrowQueue_I32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.remove(1);
+		assertEquals(3,alg.size);
+		assertEquals(1,alg.get(0));
+		assertEquals(4,alg.get(1));
+		assertEquals(5,alg.get(2));
+	}
 }

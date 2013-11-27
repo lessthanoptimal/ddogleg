@@ -71,7 +71,14 @@ public class GrowQueue_F64 {
 			data = temp;
 		}
 		data[size++] = val;
-    }
+	}
+
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
+	}
 
 	public double get( int index ) {
 		return data[index];

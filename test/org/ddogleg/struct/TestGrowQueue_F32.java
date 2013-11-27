@@ -100,4 +100,21 @@ public class TestGrowQueue_F32 {
 		assertEquals(0,alg.size);
 	}
 
+	@Test
+	public void remove() {
+
+		GrowQueue_F32 alg = new GrowQueue_F32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.remove(1);
+		assertEquals(3,alg.size);
+		assertEquals(1,alg.get(0),1e-8f);
+		assertEquals(4,alg.get(1),1e-8f);
+		assertEquals(5,alg.get(2),1e-8f);
+	}
+
 }

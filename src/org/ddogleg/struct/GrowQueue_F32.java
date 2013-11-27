@@ -61,6 +61,13 @@ public class GrowQueue_F32 {
 		data[size++] = val;
     }
 
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
+	}
+
 	public float get( int index ) {
 		return data[index];
 	}
