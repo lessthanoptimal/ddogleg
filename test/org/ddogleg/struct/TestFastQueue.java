@@ -60,7 +60,7 @@ public class TestFastQueue {
 		assertEquals(1,l.get(0).value);
 		assertEquals(1,l.get(1).value);
 	}
-	
+
 	@Test
 	public void removeTail() {
 		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
@@ -69,6 +69,38 @@ public class TestFastQueue {
 		assertEquals(1,alg.size);
 		alg.removeTail();
 		assertEquals(0,alg.size);
+	}
+
+	@Test
+	public void remove() {
+		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+
+		List<DummyData> l = alg.toList();
+		assertEquals(0,l.size());
+
+		alg.grow().value = 1;
+		alg.grow().value = 2;
+		alg.grow().value = 3;
+
+		alg.remove(1);
+
+		assertEquals(2,alg.size());
+		assertEquals(1,alg.get(0).value);
+		assertEquals(3,alg.get(1).value);
+		// make sure the data was shifted to the end
+		assertEquals(2,alg.data[2].value);
+
+		alg.remove(1);
+		assertEquals(1,alg.size());
+		assertEquals(1,alg.get(0).value);
+		assertEquals(3,alg.data[1].value);
+		assertEquals(2,alg.data[2].value);
+
+		alg.remove(0);
+		assertEquals(0,alg.size());
+		assertEquals(1,alg.data[0].value);
+		assertEquals(3,alg.data[1].value);
+		assertEquals(2,alg.data[2].value);
 	}
 
 	@Test

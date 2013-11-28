@@ -23,6 +23,8 @@ Date:     2013
   * removed similar functions from ModelGenerator and ModelFitter
 - Added UtilOptimize.step() and changed behavior of UtilOptimize.process()
 - Added forwards + backwards numerical differentiation
+- Added remove(index)
+  * FastQueue and GrowQueue*
 
 ------------------------------------------------------
 Version:  0.3

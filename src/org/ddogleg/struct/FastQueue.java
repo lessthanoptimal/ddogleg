@@ -136,6 +136,21 @@ public class FastQueue<T> {
 		}
 	}
 
+	/**
+	 * Removes an element from the queue by shifting elements in the array down one and placing the removed element
+	 * at the old end of the list.
+	 *
+	 * @param index
+	 */
+	public void remove( int index ) {
+		T removed = data[index];
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		data[size-1] = removed;
+		size--;
+	}
+
 	public void add( T object ) {
 		if( size >= data.length ) {
 			growArray((data.length+1)*2);
