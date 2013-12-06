@@ -70,12 +70,12 @@ public class EvalFuncVariablyDimensioned implements EvalFuncLeastSquares {
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return N;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return N+2;
 		}
 

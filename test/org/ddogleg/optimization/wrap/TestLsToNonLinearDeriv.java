@@ -56,12 +56,12 @@ public class TestLsToNonLinearDeriv {
 	public static class FuncLS implements FunctionNtoM
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 3;
 		}
 
@@ -79,12 +79,12 @@ public class TestLsToNonLinearDeriv {
 	public static class DerivLS implements FunctionNtoMxN
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 3;
 		}
 

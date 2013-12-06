@@ -52,12 +52,12 @@ public class TestNumericalJacobianForward {
 	private static class SimpleFunction implements FunctionNtoM
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 3;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 2;
 		}
 

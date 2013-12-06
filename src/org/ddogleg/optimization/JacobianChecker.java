@@ -43,8 +43,8 @@ public class JacobianChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getM(),func.getN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getM(),func.getN());
+		DenseMatrix64F found = new DenseMatrix64F(func.getOutputsM(),func.getInputsN());
+		DenseMatrix64F expected = new DenseMatrix64F(func.getOutputsM(),func.getInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -82,14 +82,14 @@ public class JacobianChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		if( numerical.getM() != jacobian.getM() )
-			throw new RuntimeException("M is not equal "+numerical.getM()+"  "+jacobian.getM());
+		if( numerical.getOutputsM() != jacobian.getOutputsM() )
+			throw new RuntimeException("M is not equal "+numerical.getOutputsM()+"  "+jacobian.getOutputsM());
 
-		if( numerical.getN() != jacobian.getN() )
-			throw new RuntimeException("N is not equal: "+numerical.getN()+"  "+jacobian.getN());
+		if( numerical.getInputsN() != jacobian.getInputsN() )
+			throw new RuntimeException("N is not equal: "+numerical.getInputsN()+"  "+jacobian.getInputsN());
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getM(),func.getN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getM(),func.getN());
+		DenseMatrix64F found = new DenseMatrix64F(func.getOutputsM(),func.getInputsN());
+		DenseMatrix64F expected = new DenseMatrix64F(func.getOutputsM(),func.getInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);

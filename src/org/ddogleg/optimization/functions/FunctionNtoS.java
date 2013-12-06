@@ -30,7 +30,7 @@ public interface FunctionNtoS {
 	 *
 	 * @return Number of inputs.
 	 */
-	public int getN();
+	public int getInputsN();
 
 	/**
 	 * Computes the output given an array of inputs.

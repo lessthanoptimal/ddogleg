@@ -55,7 +55,7 @@ public class CachedGradientLineFunction implements GradientLineFunction {
 	public CachedGradientLineFunction(FunctionNtoS function, FunctionNtoN gradient) {
 		this.function = function;
 		this.gradient = gradient;
-		this.N = function.getN();
+		this.N = function.getInputsN();
 		currentInput = new double[N];
 		currentGradient = new double[N];
 	}

@@ -55,10 +55,10 @@ public class EvalFuncBadlyScaledBrown implements EvalFuncLeastSquares {
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getN() {return 2;}
+		public int getInputsN() {return 2;}
 
 		@Override
-		public int getM() {return 3;}
+		public int getOutputsM() {return 3;}
 
 		@Override
 		public void process(double[] input, double[] output) {
@@ -74,10 +74,10 @@ public class EvalFuncBadlyScaledBrown implements EvalFuncLeastSquares {
 	public class Deriv implements FunctionNtoMxN
 	{
 		@Override
-		public int getN() {return 2;}
+		public int getInputsN() {return 2;}
 
 		@Override
-		public int getM() {return 3;}
+		public int getOutputsM() {return 3;}
 
 		@Override
 		public void process(double[] input, double[] output) {

@@ -28,7 +28,7 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
  */
 public class TrivialFunctionNtoS implements FunctionNtoS {
 	@Override
-	public int getN() {
+	public int getInputsN() {
 		return 3;
 	}
 

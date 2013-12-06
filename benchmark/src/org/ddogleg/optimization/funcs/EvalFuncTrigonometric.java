@@ -65,10 +65,10 @@ public class EvalFuncTrigonometric implements EvalFuncLeastSquares {
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getN() {return N;}
+		public int getInputsN() {return N;}
 
 		@Override
-		public int getM() {return N;}
+		public int getOutputsM() {return N;}
 
 		@Override
 		public void process(double[] input, double[] output) {

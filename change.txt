@@ -25,6 +25,7 @@ Date:     2013
 - Added forwards + backwards numerical differentiation
 - Added remove(index)
   * FastQueue and GrowQueue*
+- Renamed some optimization functions for getting size of input and output.  Less confusing now.
 
 ------------------------------------------------------
 Version:  0.3

@@ -47,7 +47,7 @@ public class NumericalGradientFB implements FunctionNtoN
 	public NumericalGradientFB(FunctionNtoS function, double differenceScale) {
 		this.function = function;
 		this.differenceScale = differenceScale;
-		this.N = function.getN();
+		this.N = function.getInputsN();
 	}
 
 	public NumericalGradientFB(FunctionNtoS function) {

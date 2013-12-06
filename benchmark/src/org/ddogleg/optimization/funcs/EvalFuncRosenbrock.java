@@ -55,12 +55,12 @@ public class EvalFuncRosenbrock implements EvalFuncLeastSquares {
 	public static class Func implements FunctionNtoM
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 2;
 		}
 
@@ -77,12 +77,12 @@ public class EvalFuncRosenbrock implements EvalFuncLeastSquares {
 	public static class Deriv implements FunctionNtoMxN
 	{
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 2;
 		}
 

@@ -48,12 +48,12 @@ public class TestIndividual_to_CoupledJacobian {
 		double []input;
 
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 5;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 4;
 		}
 
@@ -68,12 +68,12 @@ public class TestIndividual_to_CoupledJacobian {
 		double []input;
 
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 5;
 		}
 
 		@Override
-		public int getM() {
+		public int getOutputsM() {
 			return 4;
 		}
 

@@ -138,7 +138,7 @@ public abstract class GenericUnconstrainedMinimizationTests {
 	private class ModifyInputFunctions implements FunctionNtoS {
 
 		@Override
-		public int getN() {
+		public int getInputsN() {
 			return 3;
 		}
 

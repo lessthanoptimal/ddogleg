@@ -35,13 +35,13 @@ public class CallCounterNtoMxN implements FunctionNtoMxN {
 	}
 
 	@Override
-	public int getN() {
-		return func.getN();
+	public int getInputsN() {
+		return func.getInputsN();
 	}
 
 	@Override
-	public int getM() {
-		return func.getM();
+	public int getOutputsM() {
+		return func.getOutputsM();
 	}
 
 	@Override

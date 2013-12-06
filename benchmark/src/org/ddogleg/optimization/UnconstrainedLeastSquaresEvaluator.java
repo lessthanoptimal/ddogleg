@@ -84,7 +84,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator {
 			double dist = Double.NaN;
 			if( optimal != null ) {
 				dist = 0;
-				for( int i = 0; i < func.getN(); i++ ) {
+				for( int i = 0; i < func.getInputsN(); i++ ) {
 					dist += Math.pow(found[i]-optimal[i],2);
 				}
 				dist = Math.sqrt(dist);
