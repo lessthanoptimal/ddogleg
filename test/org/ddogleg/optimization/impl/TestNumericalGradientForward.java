@@ -46,7 +46,7 @@ public class TestNumericalGradientForward {
 	private static class SimpleFunction implements FunctionNtoS
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 3;
 		}
 

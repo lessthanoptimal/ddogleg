@@ -34,7 +34,7 @@ public class TestLsToNonLinear {
 		FunctionNtoS func = new LsToNonLinear(funcLS);
 
 		double point[] = new double[]{1,2};
-		double output[] = new double[funcLS.getOutputsM()];
+		double output[] = new double[funcLS.getNumOfOutputsM()];
 		funcLS.process(point,output);
 
 		double found = func.process(point);

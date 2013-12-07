@@ -34,12 +34,12 @@ public class TrivialLeastSquaresResidual implements FunctionNtoM {
 	}
 
 	@Override
-	public int getInputsN() {
+	public int getNumOfInputsN() {
 		return 2;
 	}
 
 	@Override
-	public int getOutputsM() {
+	public int getNumOfOutputsM() {
 		return 3;
 	}
 

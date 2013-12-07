@@ -31,12 +31,12 @@ public interface FunctionNtoM {
 	/**
 	 * Number of input elements.  Typically the parameters you are optimizing.
 	 */
-	public int getInputsN();
+	public int getNumOfInputsN();
 
 	/**
 	 * Number of output elements. Typically the functions that are being optimized.
 	 */
-	public int getOutputsM();
+	public int getNumOfOutputsM();
 
 	/**
 	 * Processes the input to compute the values found in the output array.

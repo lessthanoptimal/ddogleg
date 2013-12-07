@@ -57,12 +57,12 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 	public static class Func implements FunctionNtoM
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 3;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return 3;
 		}
 
@@ -91,12 +91,12 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 	public static class Deriv implements FunctionNtoMxN
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 3;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return 3;
 		}
 

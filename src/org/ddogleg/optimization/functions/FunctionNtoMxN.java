@@ -29,13 +29,13 @@ public interface FunctionNtoMxN {
 	 * Number of input parameters and columns in output matrix.
 	 * Typically the parameters you are optimizing.
 	 */
-	public int getInputsN();
+	public int getNumOfInputsN();
 
 	/**
 	 * Number of rows in output matrix.
 	 * Typically the functions that are being optimized.
 	 */
-	public int getOutputsM();
+	public int getNumOfOutputsM();
 
 	/**
 	 * <p>

@@ -61,7 +61,7 @@ public class CachedNumericalGradientLineFunction implements GradientLineFunction
 
 	public CachedNumericalGradientLineFunction(FunctionNtoS function ) {
 		this.function = function;
-		this.N = function.getInputsN();
+		this.N = function.getNumOfInputsN();
 	
 		this.gradient = new NumericalGradientForward(function);
 		FunctionStoS lineFunction = new LineFunction();

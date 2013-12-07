@@ -35,13 +35,13 @@ public class CallCounterNtoM implements FunctionNtoM {
 	}
 
 	@Override
-	public int getInputsN() {
-		return func.getInputsN();
+	public int getNumOfInputsN() {
+		return func.getNumOfInputsN();
 	}
 
 	@Override
-	public int getOutputsM() {
-		return func.getOutputsM();
+	public int getNumOfOutputsM() {
+		return func.getNumOfOutputsM();
 	}
 
 	@Override

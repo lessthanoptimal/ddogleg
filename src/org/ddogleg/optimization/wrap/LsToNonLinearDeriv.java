@@ -41,13 +41,13 @@ public class LsToNonLinearDeriv implements FunctionNtoN {
 	public LsToNonLinearDeriv(FunctionNtoM func,FunctionNtoMxN deriv) {
 		this.func = func;
 		this.deriv = deriv;
-		funcOutput = new double[ deriv.getOutputsM() ];
-		jacobian = new double[ deriv.getOutputsM()*deriv.getInputsN() ];
+		funcOutput = new double[ deriv.getNumOfOutputsM() ];
+		jacobian = new double[ deriv.getNumOfOutputsM()*deriv.getNumOfInputsN() ];
 	}
 
 	@Override
 	public int getN() {
-		return deriv.getInputsN();
+		return deriv.getNumOfInputsN();
 	}
 
 	@Override
@@ -55,10 +55,10 @@ public class LsToNonLinearDeriv implements FunctionNtoN {
 		func.process(input,funcOutput);
 		deriv.process(input,jacobian);
 
-		DenseMatrix64F J = DenseMatrix64F.wrap(deriv.getOutputsM(),deriv.getInputsN(),jacobian);
+		DenseMatrix64F J = DenseMatrix64F.wrap(deriv.getNumOfOutputsM(),deriv.getNumOfInputsN(),jacobian);
 		
-		int N = deriv.getInputsN();
-		int M = deriv.getOutputsM();
+		int N = deriv.getNumOfInputsN();
+		int M = deriv.getNumOfOutputsM();
 		for( int i = 0; i < N; i++ ) {
 			output[i] = 0;
 		}

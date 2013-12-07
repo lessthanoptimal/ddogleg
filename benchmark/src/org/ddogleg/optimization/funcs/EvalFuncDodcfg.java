@@ -108,7 +108,7 @@ public class EvalFuncDodcfg implements EvalFuncMinimization {
 	public class Func implements FunctionNtoS
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return nx*ny;
 		}
 

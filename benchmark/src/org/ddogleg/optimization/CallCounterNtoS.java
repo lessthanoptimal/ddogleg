@@ -35,8 +35,8 @@ public class CallCounterNtoS implements FunctionNtoS {
 	}
 
 	@Override
-	public int getInputsN() {
-		return func.getInputsN();
+	public int getNumOfInputsN() {
+		return func.getNumOfInputsN();
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class FunctionLineDistanceEuclidean implements FunctionNtoM {
 	 * Number of parameters used to define the line.
 	 */
 	@Override
-	public int getInputsN() {
+	public int getNumOfInputsN() {
 		return 2;
 	}
 
@@ -49,7 +49,7 @@ public class FunctionLineDistanceEuclidean implements FunctionNtoM {
 	 * Number of output error functions.  Two for each point.
 	 */
 	@Override
-	public int getOutputsM() {
+	public int getNumOfOutputsM() {
 		return data.size()*2;
 	}
 

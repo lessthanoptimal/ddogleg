@@ -35,10 +35,10 @@ public class Individual_to_CoupledJacobian implements CoupledJacobian {
 	double[] x;
 	
 	public Individual_to_CoupledJacobian(FunctionNtoM func, FunctionNtoMxN jacobian) {
-		if( func.getOutputsM() != jacobian.getOutputsM() )
+		if( func.getNumOfOutputsM() != jacobian.getNumOfOutputsM() )
 			throw new IllegalArgumentException("M not equal");
 
-		if( func.getInputsN() != jacobian.getInputsN() )
+		if( func.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new IllegalArgumentException("N not equal");
 
 		this.func = func;
@@ -47,12 +47,12 @@ public class Individual_to_CoupledJacobian implements CoupledJacobian {
 
 	@Override
 	public int getN() {
-		return func.getInputsN();
+		return func.getNumOfInputsN();
 	}
 
 	@Override
 	public int getM() {
-		return func.getOutputsM();
+		return func.getNumOfOutputsM();
 	}
 
 	@Override

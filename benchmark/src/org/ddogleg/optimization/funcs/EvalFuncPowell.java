@@ -54,12 +54,12 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 	public static class Func implements FunctionNtoM
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return 2;
 		}
 
@@ -76,12 +76,12 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 	public static class Deriv implements FunctionNtoMxN
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return 2;
 		}
 

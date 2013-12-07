@@ -47,7 +47,7 @@ public class NumericalGradientForward implements FunctionNtoN
 	public NumericalGradientForward(FunctionNtoS function, double differenceScale) {
 		this.function = function;
 		this.differenceScale = differenceScale;
-		this.N = function.getInputsN();
+		this.N = function.getNumOfInputsN();
 	}
 
 	public NumericalGradientForward(FunctionNtoS function) {

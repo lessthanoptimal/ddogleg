@@ -54,8 +54,8 @@ public class NumericalJacobianFB implements FunctionNtoMxN
 	public NumericalJacobianFB(FunctionNtoM function, double differenceScale) {
 		this.function = function;
 		this.differenceScale = differenceScale;
-		this.N = function.getInputsN();
-		this.M = function.getOutputsM();
+		this.N = function.getNumOfInputsN();
+		this.M = function.getNumOfOutputsM();
 		output0 = new double[M];
 		output1 = new double[M];
 	}
@@ -65,12 +65,12 @@ public class NumericalJacobianFB implements FunctionNtoMxN
 	}
 
 	@Override
-	public int getInputsN() {
+	public int getNumOfInputsN() {
 		return N;
 	}
 
 	@Override
-	public int getOutputsM() {
+	public int getNumOfOutputsM() {
 		return M;
 	}
 

@@ -68,12 +68,12 @@ public class EvalFuncCurveFit implements EvalFuncLeastSquares {
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 4;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return t.length;
 		}
 
@@ -93,12 +93,12 @@ public class EvalFuncCurveFit implements EvalFuncLeastSquares {
 	public class Deriv implements FunctionNtoMxN
 	{
 		@Override
-		public int getInputsN() {
+		public int getNumOfInputsN() {
 			return 2;
 		}
 
 		@Override
-		public int getOutputsM() {
+		public int getNumOfOutputsM() {
 			return t.length;
 		}
 

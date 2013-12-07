@@ -36,12 +36,12 @@ public class LsToNonLinear implements FunctionNtoS {
 
 	public LsToNonLinear(FunctionNtoM func) {
 		this.func = func;
-		output = new double[ func.getOutputsM() ];
+		output = new double[ func.getNumOfOutputsM() ];
 	}
 
 	@Override
-	public int getInputsN() {
-		return func.getInputsN();
+	public int getNumOfInputsN() {
+		return func.getNumOfInputsN();
 	}
 
 	@Override
