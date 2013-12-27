@@ -125,7 +125,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 
 </script>
 <br>
-<b>Copyright &copy; 2012-2013 Peter Abeles</b>
+<b>Copyright &copy; 2012-2014 Peter Abeles</b>
 ]]>
 </bottom>
  
@@ -152,7 +152,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
                 <include name="org/ddogleg/**"/>
             </packageset>
 
-            <bottom><![CDATA[<i>Copyright &#169; 2012-2013 Peter Abeles All Rights Reserved.</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright &#169; 2012-2015 Peter Abeles All Rights Reserved.</i>]]></bottom>
 
         </javadoc>
     </target>
