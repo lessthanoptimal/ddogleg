@@ -155,6 +155,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
             <bottom><![CDATA[<i>Copyright &#169; 2012-2015 Peter Abeles All Rights Reserved.</i>]]></bottom>
 
         </javadoc>
+		<jar compress="true" destfile="docs/${ant.project.name}-doc.jar" basedir="docs/api" />
     </target>
 
 
