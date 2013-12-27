@@ -4,14 +4,14 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.4
-Date:     2013
+Date:     2013/12/26
 
 - Added N nearest-neighbor search.
   * Modified NearestNeighbor interface
   * Standard K-D tree
   * Best-Bin-First K-D tree
   * Random Forest K-D tree
-- Changed behavior of K-D- tree constructor
+- Changed behavior of K-D tree constructor
   * Empty leafs will be null instead of identical to the parent.  Duplicate data caused problems when searching
     for the N nearest-neighbors
 - Refactored and tweaked documentation for ModelMatcher
