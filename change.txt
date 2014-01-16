@@ -3,6 +3,11 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.5
+Date:     2014
+- Added missing functions to GrowQueue_F32
+
+------------------------------------------------------
 Version:  0.4
 Date:     2013/12/26
 

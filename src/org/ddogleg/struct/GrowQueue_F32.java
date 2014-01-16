@@ -26,13 +26,17 @@ package org.ddogleg.struct;
  */
 public class GrowQueue_F32 {
 
-    public float data[];
-    public int size;
+	public float data[];
+	public int size;
 
-    public GrowQueue_F32( int maxSize ) {
-        data = new float[ maxSize ];
-        this.size = 0;
-    }
+	public GrowQueue_F32( int maxSize ) {
+		data = new float[ maxSize ];
+		this.size = 0;
+	}
+
+	public GrowQueue_F32() {
+		this(10);
+	}
 
 	public void reset() {
 		size = 0;
@@ -70,6 +74,10 @@ public class GrowQueue_F32 {
 
 	public float get( int index ) {
 		return data[index];
+	}
+
+	public void set( int index, float value  ) {
+		data[index] = value;
 	}
 
 	public void resize( int size ) {
