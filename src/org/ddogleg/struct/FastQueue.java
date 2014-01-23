@@ -164,6 +164,13 @@ public class FastQueue<T> {
 		}
 	}
 
+	/**
+	 * Increases the size of the internal array without changing the shape's size. If the array
+	 * is already larger than the specified length then nothing is done.  Elements previously
+	 * stored in the array are copied over is a new internal array is declared.
+	 *
+	 * @param length Requested size of internal array.
+	 */
 	public void growArray( int length) {
 		// now need to grow since it is already larger
 		if( this.data.length >= length)
@@ -178,6 +185,15 @@ public class FastQueue<T> {
 			}
 		}
 		this.data = data;
+	}
+
+	/**
+	 * Changes the size to the specified length. Equivalent to calling {@link #growArray} and this.size = N.
+	 * @param length The new size of the queue
+	 */
+	public void resize(int length) {
+		growArray(length);
+		this.size = length;
 	}
 
 	public boolean contains(Object o) {

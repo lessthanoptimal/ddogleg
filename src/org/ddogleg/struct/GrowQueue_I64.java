@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import java.util.Arrays;
+
 /**
  * This is a queue that is composed of integers.  Elements are added and removed from the tail
  *
@@ -81,6 +83,10 @@ public class GrowQueue_I64 {
 			data = new long[size];
 		}
 		this.size = size;
+	}
+
+	public void fill( long value ) {
+		Arrays.fill(data, 0, size, value);
 	}
 
 	public void setMaxSize( int size ) {

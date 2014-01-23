@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import java.util.Arrays;
+
 /**
  * This is a queue that is composed of booleans.  Elements are added and removed from the tail
  *
@@ -57,6 +59,14 @@ public class GrowQueue_B {
 
 	public boolean get( int index ) {
 		return data[index];
+	}
+
+	public void set( int index, boolean value  ) {
+		data[index] = value;
+	}
+
+	public void fill( boolean value ) {
+		Arrays.fill(data, 0, size, value);
 	}
 
 	public void resize( int size ) {

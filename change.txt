@@ -5,7 +5,8 @@ Date Format: YEAR-MONTH-DAY
 ------------------------------------------------------
 Version:  0.5
 Date:     2014
-- Added missing functions to GrowQueue_F32
+
+- Added missing functions to GrowQueue_*
 
 ------------------------------------------------------
 Version:  0.4

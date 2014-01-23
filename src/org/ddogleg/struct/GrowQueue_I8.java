@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import java.util.Arrays;
+
 /**
  * This is a queue that is composed of bytes.  Elements are added and removed from the tail
  *
@@ -67,6 +69,10 @@ public class GrowQueue_I8 {
 
 	public int get( int index ) {
 		return data[index];
+	}
+
+	public void fill( byte value ) {
+		Arrays.fill(data, 0, size, value);
 	}
 
 	public void resize( int size ) {

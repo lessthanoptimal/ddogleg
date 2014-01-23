@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import java.util.Arrays;
+
 /**
  * This is a queue that is composed of integers.  Elements are added and removed from the tail
  *
@@ -78,6 +80,10 @@ public class GrowQueue_F32 {
 
 	public void set( int index, float value  ) {
 		data[index] = value;
+	}
+
+	public void fill( float value ) {
+		Arrays.fill(data, 0, size, value);
 	}
 
 	public void resize( int size ) {
