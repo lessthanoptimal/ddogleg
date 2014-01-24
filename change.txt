@@ -7,6 +7,9 @@ Version:  0.5
 Date:     2014
 
 - Added missing functions to GrowQueue_*
+- Nearest-neighbor search
+  * Maximum distance for is specified as inclusive
+  * Maximum distance is specified as Euclidean squared
 
 ------------------------------------------------------
 Version:  0.4

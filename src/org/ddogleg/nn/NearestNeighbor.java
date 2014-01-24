@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,8 +52,8 @@ public interface NearestNeighbor<D> {
 	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
 	 *
 	 * @param point A point being searched for.
-	 * @param maxDistance Maximum distance the neighbor can be from point. Values <= 0 will be set to
-	 *                    the maximum distance.
+	 * @param maxDistance Maximum distance (inclusive, e.g. d <= maxDistance) a neighbor can be from point.
+	 *                    Values < 0 will be set to the maximum distance.
 	 * @param result Storage for the result.
 	 * @return true if a match within the max distance was found.
 	 */
@@ -63,8 +63,8 @@ public interface NearestNeighbor<D> {
 	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
 	 *
 	 * @param point A point being searched for.
-	 * @param maxDistance Maximum distance the neighbor can be from point. Values <= 0 will be set to
-	 *                    the maximum distance.
+	 * @param maxDistance Maximum distance (inclusive, e.g. d <= maxDistance) the neighbor can be from point.
+	 *                    Values < 0 will be set to the maximum distance.
 	 * @param numNeighbors The number of neighbors it will search for.
 	 * @param result Storage for the result. Must be empty before calling. Must support grow() function.
 	 */

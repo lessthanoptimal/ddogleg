@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,7 +36,7 @@ import java.util.Random;
 public class FactoryNearestNeighbor {
 
 	/**
-	 * Performs an optimal {@link NearestNeighbor} search using K-D tree. Distance measure is Euclidean.
+	 * Performs an optimal {@link NearestNeighbor} search using K-D tree. Distance measure is Euclidean squared.
 	 *
 	 * @see KdTreeNearestNeighbor
 	 * @see AxisSplitterMedian
@@ -50,7 +50,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Performs an approximate {@link NearestNeighbor} search using K-D tree.  Node are searched in Best-Bin-First
-	 * order.  Distance measure is Euclidean.
+	 * order.  Distance measure is Euclidean squared.
 	 *
 	 * @see KdTreeNearestNeighbor
 	 * @see org.ddogleg.nn.alg.KdTreeSearch1Bbf
@@ -67,7 +67,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Approximate {@link NearestNeighbor} search which uses a set of randomly generated K-D trees and a Best-Bin-First
-	 * search.  Designed to work in high dimensional space. Distance measure is Euclidean.
+	 * search.  Designed to work in high dimensional space. Distance measure is Euclidean squared.
 	 *
 	 * @see KdForestBbfSearch
 	 * @see AxisSplitterMedian
@@ -91,7 +91,7 @@ public class FactoryNearestNeighbor {
 
 	/**
 	 * Performs an optimal {@link NearestNeighbor} by exhaustively consider all possible solutions.
-	 * Distance measure is Euclidean.
+	 * Distance measure is Euclidean squared.
 	 *
 	 * @see org.ddogleg.nn.alg.ExhaustiveNeighbor
 	 *

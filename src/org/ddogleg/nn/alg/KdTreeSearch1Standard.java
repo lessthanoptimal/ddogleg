@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -51,11 +51,11 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 	/**
 	 * Specifies the greatest distance it will search
 	 *
-	 * @param maxDistance Maximum distance a closest point can be
+	 * @param maxDistance Maximum distance (Euclidean squared) a closest point can be
 	 */
 	@Override
 	public void setMaxDistance(double maxDistance ) {
-		this.maxDistanceSq = maxDistance*maxDistance ;
+		this.maxDistanceSq = maxDistance ;
 	}
 
 	/**
@@ -95,17 +95,21 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 			// a leaf can be empty.
 			if( node.point != null ) {
 				double distSq = KdTree.distanceSq(node,target,tree.N);
-				if( distSq < bestDistanceSq ) {
-					closest = node;
-					bestDistanceSq = distSq;
+				if( distSq <= bestDistanceSq ) {
+					if( closest == null || distSq < bestDistanceSq ) {
+						closest = node;
+						bestDistanceSq = distSq;
+					}
 				}
 			}
 			return;
 		} else {
 			double distSq = KdTree.distanceSq(node,target,tree.N);
-			if( distSq < bestDistanceSq ) {
-				closest = node;
-				bestDistanceSq = distSq;
+			if( distSq <= bestDistanceSq ) {
+				if( closest == null || distSq < bestDistanceSq ) {
+					closest = node;
+					bestDistanceSq = distSq;
+				}
 			}
 		}
 
@@ -126,8 +130,10 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 
 		// See if it is possible for 'further' to contain a better node
 		double dx = splitValue - target[ node.split ];
-		if( dx*dx < bestDistanceSq ) {
-			stepClosest(further);
+		double dx2 = dx*dx;
+		if( dx2 <= bestDistanceSq ) {
+			if( closest == null || dx2 < bestDistanceSq )
+				stepClosest(further);
 		}
 	}
 

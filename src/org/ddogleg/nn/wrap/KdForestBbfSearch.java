@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -77,7 +77,7 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 
 	@Override
 	public boolean findNearest(double[] point, double maxDistance, NnData<D> result) {
-		if( maxDistance <= 0 )
+		if( maxDistance < 0 )
 			search1.setMaxDistance(Double.MAX_VALUE);
 		else
 			search1.setMaxDistance(maxDistance);

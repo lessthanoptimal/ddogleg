@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -87,10 +87,15 @@ public class TestKdTreeSearchBestBinFirst {
 		@Override
 		protected void checkBestDistance(KdTree.Node node, double[] target) {
 			double distanceSq = KdTree.distanceSq(node,target,N);
-			if( distanceSq < bestDistanceSq ) {
+			if( distanceSq <= bestDistanceSq ) {
 				bestDistanceSq = distanceSq;
 				bestNode = node;
 			}
+		}
+
+		@Override
+		protected boolean canImprove(double distanceSq) {
+			return distanceSq <= bestDistanceSq;
 		}
 	}
 

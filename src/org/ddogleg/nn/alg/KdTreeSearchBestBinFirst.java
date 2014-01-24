@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -96,7 +96,7 @@ public abstract class KdTreeSearchBestBinFirst {
 	public void _findClosest(double[] target) {
 
 		numNodesSearched = 0;
-		bestDistanceSq = maxDistance*maxDistance;
+		bestDistanceSq = maxDistance;
 
 		// start the search from the root node
 		for( int i = 0; i < trees.length; i++ ) {
@@ -112,7 +112,7 @@ public abstract class KdTreeSearchBestBinFirst {
 			recycle(h);
 
 			// use new information to prune nodes
-			if( h.closestPossibleSq >= bestDistanceSq )
+			if( !canImprove(h.closestPossibleSq) )
 				continue;
 
 			searchNode(target,n);
@@ -149,7 +149,7 @@ public abstract class KdTreeSearchBestBinFirst {
 
 			// See if it is possible for 'further' to contain a better node
 			double dx = splitValue - target[ n.split ];
-			if( further != null && dx*dx < bestDistanceSq ) {
+			if( further != null && canImprove(dx*dx) ) {
 				addToQueue(dx*dx, further, target );
 			}
 
@@ -185,6 +185,13 @@ public abstract class KdTreeSearchBestBinFirst {
 	 * Checks to see if the current node's point is the closet point found so far
 	 */
 	protected abstract void checkBestDistance(KdTree.Node node, double[] target);
+
+	/**
+	 * Checks to see if it is possible for this distance to improve upon the current best
+	 * @param distanceSq The distance being considered
+	 * @return true if it can be better or false if not
+	 */
+	protected abstract boolean canImprove( double distanceSq );
 
 	/**
 	 * Recycles data for future use

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -129,7 +129,7 @@ public abstract class StandardNearestNeighborTests {
 	}
 
 	/**
-	 * Make sure distances <= 0 are treated as having no limit
+	 * Make sure distances < 0 are treated as having no limit and other properties
 	 */
 	@Test
 	public void checkSetMaxDistance() {
@@ -146,14 +146,70 @@ public abstract class StandardNearestNeighborTests {
 
 		// should fail because the tolerance is too tight
 		assertFalse(alg.findNearest(target, 0.01, found));
+		// Should search for a perfect match
+		assertFalse(alg.findNearest(target, 0, found));
+		assertTrue(alg.findNearest(points.get(3), 0, found));
+		assertTrue(found.point==points.get(3));
 		// Should be treated as unconstrained
-		assertTrue(alg.findNearest(target, 0, found));
+		assertTrue(alg.findNearest(target, -1, found));
 		assertTrue(found.point==points.get(3));
 		// should find a solution
 		assertTrue(alg.findNearest(target, 10, found));
 		assertTrue(found.point==points.get(3));
 	}
 
+	/**
+	 * Makes sure the maximum distance is inclusive for findNearest()
+	 */
+	@Test
+	public void checkSetMaxDistance_inclusive() {
+		List<double[]> points = new ArrayList<double[]>();
+		points.add(new double[]{3,4});
+		points.add(new double[]{6,8});
+		points.add(new double[]{-1, 3});
+		points.add(new double[]{0.9,4.5});
+
+		double target[] = new double[]{-2,3};
+
+		alg.init(2);
+		alg.setPoints(points, null);
+
+		assertTrue(alg.findNearest(target, 1.00000001, found));
+		assertTrue(found.point==points.get(2));
+		assertTrue(alg.findNearest(target, 1, found));
+		assertTrue(found.point==points.get(2));
+		assertFalse(alg.findNearest(target, 0.99999999, found));
+	}
+
+	/**
+	 * Makes sure the maximum distance is inclusive for findNearestN()
+	 */
+	@Test
+	public void checkSetMaxDistance_inclusiveN() {
+		List<double[]> points = new ArrayList<double[]>();
+		points.add(new double[]{3,4});
+		points.add(new double[]{6,8});
+		points.add(new double[]{-1, 3});
+		points.add(new double[]{-3, 3});
+		points.add(new double[]{0.9,4.5});
+
+		double target[] = new double[]{-2,3};
+
+		alg.init(2);
+		alg.setPoints(points, null);
+
+		foundN.reset();
+		alg.findNearest(target, 1.00000001, 2, foundN);
+		assertEquals(2, foundN.size());
+		foundN.reset();
+		alg.findNearest(target, 1, 2, foundN);
+		assertEquals(2, foundN.size());
+		foundN.reset();
+		alg.findNearest(target, 0.99999999, 2, foundN);
+		assertEquals(0, foundN.size());
+	}
+
+	// make sure the return distance is correct
 	@Test
 	public void findNearest_checkDistance() {
 		List<double[]> points = new ArrayList<double[]>();
@@ -175,6 +231,7 @@ public abstract class StandardNearestNeighborTests {
 		assertEquals(d0*d0 + d1*d1,found.distance,1e-8);
 	}
 
+	// make sure the return distance is correct
 	@Test
 	public void findNearestN_checkDistance() {
 		List<double[]> points = new ArrayList<double[]>();

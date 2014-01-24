@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -90,7 +90,7 @@ public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTree
 					}
 				}
 			} else {
-				// find the most distant neighbor and write over it since we known this node most be closer
+				// find the most distant neighbor and write over it since we known this node must be closer
 				// and update the maximum distance
 				for( int i = 0; i < searchN; i++ ) {
 					KdTreeResult r = neighbors.get(i);
@@ -112,5 +112,13 @@ public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTree
 				}
 			}
 		}
+	}
+
+	@Override
+	protected boolean canImprove(double distanceSq) {
+		if( distanceSq <= bestDistanceSq ) {
+			return neighbors.size() < searchN || distanceSq < bestDistanceSq;
+		}
+		return false;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -73,12 +73,12 @@ public class ExhaustiveNeighbor {
 	 * away.
 	 *
 	 * @param p A point.
-	 * @param maxDistance The maximum distance the neighbor can be.
+	 * @param maxDistance The maximum distance (Euclidean squared) the neighbor can be.
 	 * @return Index of the closest point.
 	 */
 	public int findClosest( double[] p , double maxDistance ) {
 		int best = -1;
-		bestDistance = maxDistance*maxDistance;
+		bestDistance = maxDistance;
 
 		for( int i = 0; i < points.size(); i++ ) {
 			double[] c = points.get(i);
@@ -89,7 +89,7 @@ public class ExhaustiveNeighbor {
 				distanceC += d*d;
 			}
 
-			if( distanceC < bestDistance ) {
+			if( distanceC <= bestDistance ) {
 				bestDistance = distanceC;
 				best = i;
 			}
@@ -103,7 +103,7 @@ public class ExhaustiveNeighbor {
 	 * away.
 	 *
 	 * @param p A point.
-	 * @param maxDistance The maximum distance the neighbor can be.
+	 * @param maxDistance The maximum distance (Euclidean squared) the neighbor can be.
 	 * @param numNeighbors the requested number of nearest neighbors it should search for
 	 * @param outputIndex Storage for the index of the closest elements
 	 * @param outputDistance Storage for the distance of the closest elements
@@ -111,7 +111,6 @@ public class ExhaustiveNeighbor {
 	public void findClosestN( double[] p , double maxDistance , int numNeighbors ,
 							  GrowQueue_I32 outputIndex ,
 							  GrowQueue_F64 outputDistance ) {
-		maxDistance *= maxDistance;
 
 		// Compute the distance of each point and save the ones within range
 		distances.reset();
@@ -126,7 +125,7 @@ public class ExhaustiveNeighbor {
 				distanceC += d*d;
 			}
 
-			if( distanceC < maxDistance ) {
+			if( distanceC <= maxDistance ) {
 				distances.add(distanceC);
 				indexes.add(i);
 			}

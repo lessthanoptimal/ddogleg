@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -280,7 +280,7 @@ public abstract class StandardKdTreeSearchNTests {
 			double dx = d[0] - target[0];
 			double dy = d[1] - target[1];
 
-			double dist = Math.sqrt(dx*dx + dy*dy);
+			double dist = dx*dx + dy*dy;
 			if( dist <= maxDistance ) {
 				distances.add(dist);
 				found.add(d);

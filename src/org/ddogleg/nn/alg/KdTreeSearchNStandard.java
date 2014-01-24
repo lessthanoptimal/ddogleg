@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,11 +52,11 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 	/**
 	 * Specifies the greatest distance it will search
 	 *
-	 * @param maxDistance Maximum distance a closest point can be
+	 * @param maxDistance Maximum distance (Euclidean squared) a closest point can be
 	 */
 	@Override
 	public void setMaxDistance(double maxDistance ) {
-		this.maxDistanceSq = maxDistance*maxDistance ;
+		this.maxDistanceSq = maxDistance;
 	}
 
 	/**
@@ -111,9 +111,12 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 		stepClosest(nearer,neighbors);
 
 		// See if it is possible for 'further' to contain a better node
+		// Or if N matches have yet to be find, if it is possible to meet the maximum distance requirement
 		double dx = splitValue - target[ node.split ];
-		if( dx*dx < mostDistantNeighborSq) {
-			stepClosest(further,neighbors);
+		if( dx*dx <= mostDistantNeighborSq) {
+			if( neighbors.size() < searchN || dx*dx < mostDistantNeighborSq) {
+				stepClosest(further,neighbors);
+			}
 		}
 	}
 
@@ -149,7 +152,7 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 					}
 				}
 
-				// Write over the most distant neighbor since we known this node most be closer
+				// Write over the most distant neighbor since we known this node must be closer
 				// and update the maximum distance
 				KdTreeResult r = neighbors.get(mostDistantNeighborIndex);
 				r.node = node;

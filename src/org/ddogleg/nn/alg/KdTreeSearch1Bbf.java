@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -60,10 +60,20 @@ public class KdTreeSearch1Bbf extends KdTreeSearchBestBinFirst implements KdTree
 	@Override
 	protected void checkBestDistance(KdTree.Node node, double[] target) {
 		double distanceSq = KdTree.distanceSq(node,target,N);
-		if( distanceSq < bestDistanceSq ) {
-			bestDistanceSq = distanceSq;
-			bestNode = node;
+		if( distanceSq <= bestDistanceSq ) {
+			if( bestNode == null || distanceSq < bestDistanceSq ) {
+				bestDistanceSq = distanceSq;
+				bestNode = node;
+			}
 		}
+	}
+
+	@Override
+	protected boolean canImprove(double distanceSq) {
+		if( distanceSq <= bestDistanceSq ) {
+			return bestNode == null || distanceSq < bestDistanceSq;
+		}
+		return false;
 	}
 
 }

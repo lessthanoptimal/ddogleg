@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -55,7 +55,7 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 
 	@Override
 	public boolean findNearest(double[] point, double maxDistance, NnData<D> result) {
-		if( maxDistance <= 0 )
+		if( maxDistance < 0 )
 			maxDistance = Double.MAX_VALUE;
 
 		int index = alg.findClosest(point,maxDistance);
@@ -72,7 +72,7 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 
 	@Override
 	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> result) {
-		if( maxDistance <= 0 )
+		if( maxDistance < 0 )
 			maxDistance = Double.MAX_VALUE;
 
 		outputIndex.reset();
