@@ -18,7 +18,6 @@
 
 package org.ddogleg.sorting;
 
-import org.ddogleg.util.UtilDouble;
 import org.junit.Test;
 
 import java.util.Random;
@@ -26,27 +25,31 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class TestQuickSort_F32 {
+/**
+ * @author Peter Abeles
+ */
+public class TestQuickSortObj_F64 {
+
 	Random rand = new Random(0xfeed4);
 
 	@Test
 	public void testSortingRandom() {
-		float[] ret = createRandom(rand,200);
+		SortableParameter_F64[] ret = createRandom(rand,200);
 
-		float preTotal = UtilDouble.sum(ret);
+		double preTotal = sum(ret);
 
-		QuickSort_F32 sorter = new QuickSort_F32();
+		QuickSortObj_F64 sorter = new QuickSortObj_F64();
 
 		sorter.sort(ret,ret.length);
 
-		float postTotal = UtilDouble.sum(ret);
+		double postTotal = sum(ret);
 
 		// make sure it didn't modify the list, in an unexpected way
 		assertEquals(preTotal,postTotal,1e-2);
 
-		float prev = ret[0];
+		SortableParameter_F64 prev = ret[0];
 		for( int i = 1; i < ret.length; i++ ) {
-			if( ret[i] < prev )
+			if( ret[i].sortValue < prev.sortValue )
 				fail("Not ascending");
 			prev = ret[i];
 		}
@@ -55,32 +58,51 @@ public class TestQuickSort_F32 {
 	@Test
 	public void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
-			float[] normal = createRandom(rand,20);
-			float[] original = normal.clone();
-			float[] withIndexes = normal.clone();
+			SortableParameter_F64[] normal = createRandom(rand,20);
+			SortableParameter_F64[] original = copy(normal);
+			SortableParameter_F64[] withIndexes = copy(normal);
 			int[] indexes = new int[ normal.length ];
 
-			QuickSort_F32 sorter = new QuickSort_F32();
+			QuickSortObj_F64 sorter = new QuickSortObj_F64();
 
 			sorter.sort(normal,normal.length);
 			sorter.sort(withIndexes,normal.length,indexes);
 
 			for( int i = 0; i < normal.length; i++ ) {
 				// make sure the original hasn't been modified
-				assertEquals(original[i],withIndexes[i],1e-4);
+				assertEquals(original[i].sortValue,withIndexes[i].sortValue,1e-8);
 				// see if it produced the same results as the normal one
-				assertEquals(normal[i],withIndexes[indexes[i]],1e-4);
+				assertEquals(normal[i].sortValue,withIndexes[indexes[i]].sortValue,1e-8);
 			}
 		}
 	}
 
-	public static float[] createRandom( Random rand , final int num ) {
-		float[] ret = new float[ num ];
+	public static SortableParameter_F64[] copy( SortableParameter_F64[] list ) {
+		SortableParameter_F64[] ret = new SortableParameter_F64[ list.length ];
+		for( int i = 0; i < list.length; i++ ) {
+			ret[i] = new SortableParameter_F64();
+			ret[i].sortValue = list[i].sortValue;
+		}
+		return ret;
+	}
+
+	public static double sum( SortableParameter_F64[] list ) {
+		double total = 0;
+		for( int i = 0; i < list.length; i++ ) {
+			total += list[i].sortValue;
+		}
+		return total;
+	}
+
+	public static SortableParameter_F64[] createRandom( Random rand , final int num ) {
+		SortableParameter_F64[] ret = new SortableParameter_F64[ num ];
 
 		for( int i = 0; i < num; i++ ) {
-			ret[i] = (rand.nextFloat()-0.5f)*2000.0f;
+			ret[i] = new SortableParameter_F64();
+			ret[i].sortValue = (rand.nextDouble()-0.5)*2000.0;
 		}
 
 		return ret;
 	}
+
 }

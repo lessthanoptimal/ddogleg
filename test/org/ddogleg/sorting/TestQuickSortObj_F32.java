@@ -25,59 +25,84 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class TestQuickSort_S32 {
+/**
+ * @author Peter Abeles
+ */
+public class TestQuickSortObj_F32 {
+
 	Random rand = new Random(0xfeed4);
 
 	@Test
 	public void testSortingRandom() {
-		int[] ret = BenchMarkSort.createRandom_S32(rand,200);
+		SortableParameter_F32[] ret = createRandom(rand,200);
 
-		int preTotal = sum(ret);
+		float preTotal = sum(ret);
 
-		QuickSort_S32 sorter = new QuickSort_S32();
+		QuickSortObj_F32 sorter = new QuickSortObj_F32();
 
 		sorter.sort(ret,ret.length);
 
-		int postTotal = sum(ret);
+		float postTotal = sum(ret);
 
 		// make sure it didn't modify the list, in an unexpected way
-		assertEquals(preTotal,postTotal,1e-8);
+		assertEquals(preTotal,postTotal,1e-2);
 
-		double prev = ret[0];
+		SortableParameter_F32 prev = ret[0];
 		for( int i = 1; i < ret.length; i++ ) {
-			if( ret[i] < prev )
+			if( ret[i].sortValue < prev.sortValue )
 				fail("Not ascending");
 			prev = ret[i];
 		}
 	}
 
-	private int sum( int a[] ) {
-		int total = 0;
-		for( int i = 0; i < a.length; i++ ) {
-			total += a[i];
-		}
-		return total;
-	}
-
 	@Test
 	public void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
-			int[] normal = BenchMarkSort.createRandom_S32(rand,20);
-			int[] original = normal.clone();
-			int[] withIndexes = normal.clone();
+			SortableParameter_F32[] normal = createRandom(rand,20);
+			SortableParameter_F32[] original = copy(normal);
+			SortableParameter_F32[] withIndexes = copy(normal);
 			int[] indexes = new int[ normal.length ];
 
-			QuickSort_S32 sorter = new QuickSort_S32();
+			QuickSortObj_F32 sorter = new QuickSortObj_F32();
 
 			sorter.sort(normal,normal.length);
 			sorter.sort(withIndexes,normal.length,indexes);
 
 			for( int i = 0; i < normal.length; i++ ) {
 				// make sure the original hasn't been modified
-				assertEquals(original[i],withIndexes[i],1e-8);
+				assertEquals(original[i].sortValue,withIndexes[i].sortValue,1e-4);
 				// see if it produced the same results as the normal one
-				assertEquals(normal[i],withIndexes[indexes[i]],1e-8);
+				assertEquals(normal[i].sortValue,withIndexes[indexes[i]].sortValue,1e-4);
 			}
 		}
 	}
+
+	public static SortableParameter_F32[] copy( SortableParameter_F32[] list ) {
+		SortableParameter_F32[] ret = new SortableParameter_F32[ list.length ];
+		for( int i = 0; i < list.length; i++ ) {
+			ret[i] = new SortableParameter_F32();
+			ret[i].sortValue = list[i].sortValue;
+		}
+		return ret;
+	}
+
+	public static float sum( SortableParameter_F32[] list ) {
+		float total = 0;
+		for( int i = 0; i < list.length; i++ ) {
+			total += list[i].sortValue;
+		}
+		return total;
+	}
+
+	public static SortableParameter_F32[] createRandom( Random rand , final int num ) {
+		SortableParameter_F32[] ret = new SortableParameter_F32[ num ];
+
+		for( int i = 0; i < num; i++ ) {
+			ret[i] = new SortableParameter_F32();
+			ret[i].sortValue = (rand.nextFloat()-0.5f)*2000.0f;
+		}
+
+		return ret;
+	}
+
 }
