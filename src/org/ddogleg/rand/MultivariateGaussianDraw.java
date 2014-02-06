@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,11 @@
 
 package org.ddogleg.rand;
 
-import org.ejml.alg.dense.decomposition.chol.CholeskyDecompositionInner;
+import org.ejml.alg.dense.decomposition.chol.CholeskyDecompositionInner_D64;
 import org.ejml.alg.dense.linsol.chol.LinearSolverChol;
 import org.ejml.alg.dense.mult.VectorVectorMult;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps;
 
 import java.util.Random;
@@ -60,7 +60,7 @@ public class MultivariateGaussianDraw {
         r = new DenseMatrix64F(cov.numRows,1);
         Q_inv = new DenseMatrix64F(cov.numRows,cov.numCols);
 
-        CholeskyDecompositionInner cholesky = new CholeskyDecompositionInner(true);
+        CholeskyDecompositionInner_D64 cholesky = new CholeskyDecompositionInner_D64(true);
         solver = new LinearSolverChol(cholesky);
 
         // will invoke decompose in cholesky

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,7 +24,7 @@ import org.ddogleg.solver.PolynomialRoots;
 import org.ejml.data.Complex64F;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
-import org.ejml.factory.EigenDecomposition;
+import org.ejml.interfaces.decomposition.EigenDecomposition;
 
 import java.util.ArrayList;
 import java.util.List;
