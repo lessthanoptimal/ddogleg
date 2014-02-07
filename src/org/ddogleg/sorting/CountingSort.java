@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 
 /**
@@ -29,6 +30,8 @@ import org.ddogleg.struct.GrowQueue_I32;
 public class CountingSort {
 
 	GrowQueue_I32 histogram = new GrowQueue_I32();
+
+	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<GrowQueue_I32>(GrowQueue_I32.class,true);
 
 	int minValue,maxValue;
 
@@ -50,6 +53,7 @@ public class CountingSort {
 		this.minValue = minValue;
 
 		histogram.resize(maxValue-minValue+1);
+		histIndexes.resize(maxValue-minValue+1);
 	}
 
 	/**
@@ -98,6 +102,37 @@ public class CountingSort {
 			int value = i+minValue;
 			for( int j = 0; j < N; j++ ) {
 				output[index++] = value;
+			}
+		}
+	}
+
+	/**
+	 * Sort routine which does not modify the input array and instead maintains a list of indexes.
+	 *
+	 * @param input (Input) Data which is to be sorted. Not modified.
+	 * @param start First element in input list
+	 * @param length Length of the input list
+	 * @param indexes Number of elements
+	 */
+	public void sortIndex( int input[] , int start , int length , int indexes[] ) {
+		for( int i = 0; i < length; i++ )
+			indexes[i] = i;
+
+		for( int i = 0; i < histogram.size; i++ ) {
+			histIndexes.get(i).reset();
+		}
+
+		for( int i = 0; i < length; i++ ) {
+			int indexInput = i+start;
+			histIndexes.data[input[indexInput]-minValue].add(indexInput);
+		}
+
+		// over wrist the input data with sorted elements
+		int index = 0;
+		for( int i = 0; i < histIndexes.size; i++ ) {
+			GrowQueue_I32 matches = histIndexes.get(i);
+			for( int j = 0; j < matches.size; j++ ) {
+				indexes[index++] = matches.data[j];
 			}
 		}
 	}

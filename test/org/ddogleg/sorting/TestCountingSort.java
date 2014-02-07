@@ -59,4 +59,21 @@ public class TestCountingSort {
 			assertEquals(copy[i], b[i]);
 		}
 	}
+
+	@Test
+	public void sortIndex() {
+		int a[] = new int[]{123,66,4,2,9,5,4,5,72,20,4,56,94,53,2,55,5,5,5,5,5,7,89,4,3,2};
+		int indexes[] = new int[a.length-1];
+
+		int copy[] = a.clone();
+
+		Arrays.sort(copy,1,a.length);
+
+		CountingSort alg = new CountingSort(0,100);
+		alg.sortIndex(a, 1, indexes.length, indexes);
+
+		for( int i = 0; i < indexes.length; i++ ) {
+			assertEquals(copy[i+1], a[indexes[i]]);
+		}
+	}
 }

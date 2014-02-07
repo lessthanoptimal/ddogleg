@@ -25,4 +25,11 @@ package org.ddogleg.sorting;
  */
 public class SortableParameter_F32 {
 	public float sortValue;
+
+	public SortableParameter_F32(float sortValue) {
+		this.sortValue = sortValue;
+	}
+
+	public SortableParameter_F32() {
+	}
 }
