@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -32,10 +33,51 @@ public class TestApproximateSort_F64 {
 	Random rand = new Random(234);
 
 	@Test
+	public void computeRange_primitive() {
+		ApproximateSort_F64 alg = new ApproximateSort_F64(12);
+
+		double[] data = random(-5,10,4,200);
+		double min = Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE;
+
+		for( int i = 4; i < data.length; i++ ) {
+			if( data[i] < min )
+				min = data[i];
+			if( data[i] > max )
+				max = data[i];
+		}
+
+		alg.computeRange(data,4,200);
+		assertEquals(min,alg.minValue,1e-8);
+		assertEquals(max,alg.maxValue,1e-8);
+	}
+
+	@Test
+	public void computeRange_object() {
+		ApproximateSort_F64 alg = new ApproximateSort_F64(12);
+
+		double[] data = random(-5,10,4,200);
+		SortableParameter_F64[] objs = convert(data);
+		double min = Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE;
+
+		for( int i = 4; i < data.length; i++ ) {
+			if( data[i] < min )
+				min = data[i];
+			if( data[i] > max )
+				max = data[i];
+		}
+
+		alg.computeRange(objs,4,200);
+		assertEquals(min,alg.minValue,1e-8);
+		assertEquals(max,alg.maxValue,1e-8);
+	}
+
+	@Test
 	public void sortIndex() {
 		int numBins = 150;
 		double tolerance = 15.0/numBins;
-		double[] data = random(-5,10,4,200);
+		double[] data = random(-5, 10, 4, 200);
 	    int indexes[] = new int[ 200 ];
 
 		ApproximateSort_F64 alg = new ApproximateSort_F64(-5,10,numBins);

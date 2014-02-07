@@ -33,11 +33,15 @@ public class ApproximateSort_F64 {
 
 	double minValue,maxValue,divisor;
 
-	public ApproximateSort_F64() {
+	int numBins;
+
+	public ApproximateSort_F64( int numBins ) {
+		this.numBins = numBins;
 	}
 
-	public ApproximateSort_F64(int minValue, int maxValue, int numBins) {
-		setRange(minValue,maxValue,numBins);
+	public ApproximateSort_F64(double minValue, double maxValue, int numBins) {
+		this.numBins = numBins;
+		setRange(minValue,maxValue);
 	}
 
 	/**
@@ -45,9 +49,8 @@ public class ApproximateSort_F64 {
 	 *
 	 * @param minValue Minimum allowed value.  (inclusive)
 	 * @param maxValue Maximum allowed value.  (inclusive)
-	 * @param numBins Number of bins
 	 */
-	public void setRange( int minValue , int maxValue , int numBins ) {
+	public void setRange( double minValue , double maxValue ) {
 		this.maxValue = maxValue;
 		this.minValue = minValue;
 
@@ -61,6 +64,54 @@ public class ApproximateSort_F64 {
 				histObjs[i] = new FastQueue<SortableParameter_F64>(SortableParameter_F64.class,true);
 			}
 		}
+	}
+
+	/**
+	 * Examines the list and computes the range from it
+	 */
+	public void computeRange( double input[] , int start , int length ) {
+		if( length == 0 ) {
+			divisor = 0;
+			return;
+		}
+
+		double min,max;
+
+		min = max = input[start];
+
+		for( int i = 1; i < length; i++ ) {
+			double val = input[start+i];
+			if( val < min )
+				min = val;
+			else if( val > max )
+				max = val;
+		}
+
+		setRange(min,max);
+	}
+
+	/**
+	 * Examines the list and computes the range from it
+	 */
+	public void computeRange( SortableParameter_F64 input[] , int start , int length ) {
+		if( length == 0 ) {
+			divisor = 0;
+			return;
+		}
+
+		double min,max;
+
+		min = max = input[start].sortValue;
+
+		for( int i = 1; i < length; i++ ) {
+			double val = input[start+i].sortValue;
+			if( val < min )
+				min = val;
+			else if( val > max )
+				max = val;
+		}
+
+		setRange(min,max);
 	}
 
 	/**

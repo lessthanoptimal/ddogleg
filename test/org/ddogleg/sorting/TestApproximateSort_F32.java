@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -30,6 +31,47 @@ import static org.junit.Assert.assertTrue;
 public class TestApproximateSort_F32 {
 
 	Random rand = new Random(234);
+
+	@Test
+	public void computeRange_primitive() {
+		ApproximateSort_F32 alg = new ApproximateSort_F32(12);
+
+		float[] data = random(-5,10,4,200);
+		float min = Float.MAX_VALUE;
+		float max = -Float.MAX_VALUE;
+
+		for( int i = 4; i < data.length; i++ ) {
+			if( data[i] < min )
+				min = data[i];
+			if( data[i] > max )
+				max = data[i];
+		}
+
+		alg.computeRange(data,4,200);
+		assertEquals(min,alg.minValue,1e-8);
+		assertEquals(max,alg.maxValue,1e-8);
+	}
+
+	@Test
+	public void computeRange_object() {
+		ApproximateSort_F32 alg = new ApproximateSort_F32(12);
+
+		float[] data = random(-5,10,4,200);
+		SortableParameter_F32[] objs = convert(data);
+		float min = Float.MAX_VALUE;
+		float max = -Float.MAX_VALUE;
+
+		for( int i = 4; i < data.length; i++ ) {
+			if( data[i] < min )
+				min = data[i];
+			if( data[i] > max )
+				max = data[i];
+		}
+
+		alg.computeRange(objs,4,200);
+		assertEquals(min,alg.minValue,1e-8);
+		assertEquals(max,alg.maxValue,1e-8);
+	}
 
 	@Test
 	public void sortIndex() {

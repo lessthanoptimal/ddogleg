@@ -32,12 +32,15 @@ public class ApproximateSort_F32 {
 	FastQueue<SortableParameter_F32> histObjs[] = new FastQueue[0];
 
 	double minValue,maxValue,divisor;
+	int numBins;
 
-	public ApproximateSort_F32() {
+	public ApproximateSort_F32(int numBins) {
+		this.numBins = numBins;
 	}
 
 	public ApproximateSort_F32(int minValue, int maxValue, int numBins) {
-		setRange(minValue,maxValue,numBins);
+		this.numBins = numBins;
+		setRange(minValue,maxValue);
 	}
 
 	/**
@@ -45,9 +48,8 @@ public class ApproximateSort_F32 {
 	 *
 	 * @param minValue Minimum allowed value.  (inclusive)
 	 * @param maxValue Maximum allowed value.  (inclusive)
-	 * @param numBins Number of bins
 	 */
-	public void setRange( int minValue , int maxValue , int numBins ) {
+	public void setRange( float minValue , float maxValue ) {
 		this.maxValue = maxValue;
 		this.minValue = minValue;
 
@@ -61,6 +63,54 @@ public class ApproximateSort_F32 {
 				histObjs[i] = new FastQueue<SortableParameter_F32>(SortableParameter_F32.class,true);
 			}
 		}
+	}
+
+	/**
+	 * Examines the list and computes the range from it
+	 */
+	public void computeRange( float input[] , int start , int length ) {
+		if( length == 0 ) {
+			divisor = 0;
+			return;
+		}
+
+		float min,max;
+
+		min = max = input[start];
+
+		for( int i = 1; i < length; i++ ) {
+			float val = input[start+i];
+			if( val < min )
+				min = val;
+			else if( val > max )
+				max = val;
+		}
+
+		setRange(min,max);
+	}
+
+	/**
+	 * Examines the list and computes the range from it
+	 */
+	public void computeRange( SortableParameter_F32 input[] , int start , int length ) {
+		if( length == 0 ) {
+			divisor = 0;
+			return;
+		}
+
+		float min,max;
+
+		min = max = input[start].sortValue;
+
+		for( int i = 1; i < length; i++ ) {
+			float val = input[start+i].sortValue;
+			if( val < min )
+				min = val;
+			else if( val > max )
+				max = val;
+		}
+
+		setRange(min,max);
 	}
 
 	/**
