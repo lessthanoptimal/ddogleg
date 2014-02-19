@@ -82,6 +82,18 @@ public class GrowQueue_I32 {
 		size--;
 	}
 
+	/**
+	 * Removes the first 'where' pixels from the queue.
+	 *
+	 * @param where Where the new start of the queue should be
+	 */
+	public void removeHead( int where ) {
+		for( int j = where; j < size; j++ ) {
+			data[j-where] = data[j];
+		}
+		size -= where;
+	}
+
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];

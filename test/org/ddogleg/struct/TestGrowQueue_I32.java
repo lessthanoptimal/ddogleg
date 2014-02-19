@@ -20,8 +20,7 @@ package org.ddogleg.struct;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**
@@ -115,5 +114,10 @@ public class TestGrowQueue_I32 {
 		assertEquals(1,alg.get(0));
 		assertEquals(4,alg.get(1));
 		assertEquals(5,alg.get(2));
+	}
+
+	@Test
+	public void removeHead() {
+		fail("Implement");
 	}
 }
