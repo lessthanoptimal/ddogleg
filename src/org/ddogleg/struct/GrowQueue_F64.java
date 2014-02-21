@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -103,7 +103,7 @@ public class GrowQueue_F64 {
 		}
 	}
 
-	public int getSize() {
+	public int size() {
 		return size;
 	}
 

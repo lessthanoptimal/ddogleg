@@ -308,9 +308,9 @@ public abstract class StandardNearestNeighborTests {
 			outputDistance.reset();
 			exhaustive.findClosestN(where, 10.0, numNeighbors, outputIndex,outputDistance);
 
-			assertEquals(outputIndex.getSize(),foundN.size());
+			assertEquals(outputIndex.size(),foundN.size());
 
-			for( int j = 0; j < outputIndex.getSize(); j++ ) {
+			for( int j = 0; j < outputIndex.size(); j++ ) {
 				double[] expected = points.get(outputIndex.get(j) );
 
 				boolean failed = true;
