@@ -57,6 +57,15 @@ public class BenchMarkSort
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort Indexes = "+(after-before));
 
+		data = createRandom(new Random(0x344),num);
+		ApproximateSort_F64 approx = new ApproximateSort_F64(2000);
+		before = System.currentTimeMillis();
+		approx.computeRange(data,0,data.length);
+//		approx.setRange(-1000,1000);
+		approx.sortIndex(data,0,data.length,indexes);
+		after = System.currentTimeMillis();
+		System.out.println("Approx Indexes = "+(after-before));
+
 		obj = createRandomObj(new Random(0x344), num);
 		QuickSortObj_F64 quicksortObj = new QuickSortObj_F64();
 		before = System.currentTimeMillis();
