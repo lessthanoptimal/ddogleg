@@ -111,6 +111,17 @@ public class FastQueue<T> {
 	}
 
 	/**
+	 * Reverse the item order in this queue.
+	 */
+	public void reverse() {
+		for (int i = 0; i < size / 2; i++) {
+			T tmp = data[i];
+			data[i] = data[size - i - 1];
+			data[size - i - 1] = tmp;
+		}
+	}
+
+	/**
 	 * Returns the element at the specified index.  Bounds checking is performed.
 	 * @param index
 	 * @return
