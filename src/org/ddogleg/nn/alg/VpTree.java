@@ -8,6 +8,20 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+/**
+ * Vantage point tree implementation for nearest neighbor search.
+ * The implementation is based on the paper
+ * "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces" from Peter N. Yianilos
+ * (see http://aidblab.cse.iitm.ac.in/cs625/vptree.pdf) and the C++ implementation from Steve Hanov
+ * (see http://stevehanov.ca/blog/index.php?id=130). This implementation avoids recursion when searching
+ * to avoid a possible stack overflow for pathological cases.
+ *
+ * The vp-tree is usually 2-3x slower than a kd-tree for a random set of points but it excels in
+ * datasets that the kd-tree is weak in - for example points lying on a circle, line or plane.
+ * The vp-tree is up to an order of magnitude faster than a kd-tree for these cases.
+ * Use this data structure if you hit a pathological case for a kd-tree.
+ * @param <PointData> Type of user data attached to each point
+ */
 public class VpTree<PointData> implements NearestNeighbor<PointData> {
 	private PointData[] itemData;
 	private double[][] items;
