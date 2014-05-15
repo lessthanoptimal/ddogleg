@@ -222,7 +222,7 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../ejml/trunk" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../ejml/trunk" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
