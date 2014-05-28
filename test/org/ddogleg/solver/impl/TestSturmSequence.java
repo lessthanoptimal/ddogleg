@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -179,6 +179,24 @@ public class TestSturmSequence {
 		assertTrue(M <= N);
 	}
 
+
+
+
+	/**
+	 * Examine a case which was found to cause problems.  It would get stuck in a loop indefinitely
+	 */
+	@Test
+	public void checkSpecificPoly02() {
+		Polynomial poly = Polynomial.wrap(-0.3497655753671151,2.9621784756210587,-12.9131723419964320,
+				8.0038345403612960,31.0841473414231300,-90.1765840283034800,62.2630323196965500,
+				-17.4634213565573200,1.4562328842432635,0.1227493996590678,-0.0133645583045475);
+
+		FindRealRootsSturm sturm = new FindRealRootsSturm(11,-1,1e-10,20,20);
+
+		try {
+			sturm.process(poly);
+		} catch( RuntimeException ignore ) {}
+	}
 
 // This test is commented out because the equation is so degenerate it would require a significant change to the Sturm
 // sequence algorithm to work.

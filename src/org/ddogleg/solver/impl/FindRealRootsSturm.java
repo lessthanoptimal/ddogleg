@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -254,6 +254,8 @@ public class FindRealRootsSturm {
 				lastFound = found;
 				lastUpper = u = m;
 			}
+			if( l == u )
+				throw new RuntimeException("Lower and upper bounds are the same");
 
 			if( iter >= maxBoundIterations ) {
 				// taking too long to bound these roots, probably multiple closely spaced roots

@@ -12,6 +12,7 @@ Date:     2014
   * Maximum distance is specified as Euclidean squared
 - Added Counting Sort.  Sorts integer valued elements in O(N) time
 - Added approximate sort.  Counting sort for continuous valued data
+- Fixed bug in SturmSequence where it would get stuck in an infinite loop while bounding the roots
 
 ------------------------------------------------------
 Version:  0.4
