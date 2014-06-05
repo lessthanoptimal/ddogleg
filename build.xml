@@ -39,7 +39,7 @@
     <target name="compile">
 
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" debug="true" >
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" debug="true" target="1.6" source="1.6">
             <classpath refid="project.classpath"/>
         </javac>
     </target>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -222,5 +222,38 @@ public class FastQueue<T> {
 			ret.add(data[i]);
 		}
 		return ret;
+	}
+
+	// -------- These are only around so that it can be a java bean
+	public T[] getData() {
+		return data;
+	}
+
+	public void setData(T[] data) {
+		this.data = data;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public boolean isDeclareInstances() {
+		return declareInstances;
+	}
+
+	public void setDeclareInstances(boolean declareInstances) {
+		this.declareInstances = declareInstances;
+	}
+
+	public Class<T> getType() {
+		return type;
+	}
+
+	public void setType(Class<T> type) {
+		this.type = type;
 	}
 }

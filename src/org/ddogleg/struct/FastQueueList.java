@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.ListIterator;
  *
  * @author Peter Abeles
  */
-public class FastQueueList<T> implements List<T> {
+public class FastQueueList<T> implements List<T> , Serializable {
 	FastQueue<T> queue;
 
 	public FastQueueList(FastQueue<T> queue) {
@@ -224,5 +225,13 @@ public class FastQueueList<T> implements List<T> {
 		public void add(T t) {
 			queue.add(t);
 		}
+	}
+
+	public FastQueue<T> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(FastQueue<T> queue) {
+		this.queue = queue;
 	}
 }
