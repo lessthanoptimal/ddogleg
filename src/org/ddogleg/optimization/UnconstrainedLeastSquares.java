@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,11 +44,11 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  *
  * <p>
  * FORMATS:<br>
- * Input functions are specified using {@link org.ddogleg.optimization.functions.FunctionNtoM} for the set of M functions, and {@link FunctionNtoMxN}
- * for the Jacobian.  The function's output is a vector of length M, where element i correspond to function i's output.
- * The Jacobian is an array containing the partial derivatives of each function.  Element J(i,j) corresponds
- * to the partial of function i and parameter j.   The array is stored in a row major format.  The partial
- * for F(i,j) would be stored at index = i*N+j in the data array.
+ * Input functions are specified using {@link org.ddogleg.optimization.functions.FunctionNtoM} for the set of M
+ * functions, and {@link FunctionNtoMxN} for the Jacobian.  The function's output is a vector of length M,
+ * where element i correspond to function i's output. The Jacobian is an array containing the partial
+ * derivatives of each function.  Element J(i,j) corresponds to the partial of function i and parameter j.
+ * The array is stored in a row major format.  The partial for F(i,j) would be stored at index = i*N+j in the data array.
  * </p>
  *
  * <p>

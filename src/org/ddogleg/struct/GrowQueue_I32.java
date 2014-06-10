@@ -83,15 +83,15 @@ public class GrowQueue_I32 {
 	}
 
 	/**
-	 * Removes the first 'where' pixels from the queue.
+	 * Removes the first 'total' elements from the queue. Element 'total' will be the new start of the queue
 	 *
-	 * @param where Where the new start of the queue should be
+	 * @param total Number of elements to remove from the head of the queue
 	 */
-	public void removeHead( int where ) {
-		for( int j = where; j < size; j++ ) {
-			data[j-where] = data[j];
+	public void removeHead( int total ) {
+		for( int j = total; j < size; j++ ) {
+			data[j-total] = data[j];
 		}
-		size -= where;
+		size -= total;
 	}
 
 	public void resize( int size ) {

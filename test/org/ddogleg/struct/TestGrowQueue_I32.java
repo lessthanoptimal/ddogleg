@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,7 +20,8 @@ package org.ddogleg.struct;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -118,6 +119,20 @@ public class TestGrowQueue_I32 {
 
 	@Test
 	public void removeHead() {
-		fail("Implement");
+
+		GrowQueue_I32 alg = new GrowQueue_I32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.removeHead(0);
+		assertEquals(4,alg.size);
+		assertEquals(1,alg.get(0));
+
+		alg.removeHead(2);
+		assertEquals(2,alg.size);
+		assertEquals(4,alg.get(0));
 	}
 }
