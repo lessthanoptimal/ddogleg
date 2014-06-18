@@ -3,7 +3,7 @@
 	<groupId>org.ddogleg</groupId>
 	<artifactId>ddogleg</artifactId>
 	<packaging>jar</packaging>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 	<name>DDogleg Numerics</name>
 	<url>http://ddogleg.org/</url>
 	<description>DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.</description>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.googlecode.efficient-java-matrix-library</groupId>
 			<artifactId>ejml</artifactId>
-			<version>0.25-SNAPSHOT</version>
+			<version>0.25</version>
 		</dependency>
 	</dependencies>
 
