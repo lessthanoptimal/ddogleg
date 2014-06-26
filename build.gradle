@@ -50,6 +50,13 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+javadoc {
+    configure(options) {
+        links = [ 'http://docs.oracle.com/javase/7/docs/api/',
+                  'http://ejml.org/javadoc/']
+    }
+}
+
 jar {
     manifest { // the manifest of the default jar is of type OsgiManifest
         instruction 'Bundle-Vendor', 'DDogleg'
