@@ -98,7 +98,7 @@ if( project.hasProperty('ossrhUsername') ) {
                 }
 
                 pom.project {
-                    name 'BoofCV'
+                    name 'DDogleg'
                     packaging 'pom'
                     // optionally artifactId can be defined here
                     description 'DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.'
@@ -127,6 +127,30 @@ if( project.hasProperty('ossrhUsername') ) {
                 }
             }
         }
+    }
+}
+
+// Creates a directory with all the compiled jars and the dependencies
+task createLibraryDirectory( dependsOn: ['jar','sourcesJar'] ) << {
+
+    ext.listExternal = files(project.configurations.compile)
+    ext.listInternal = files(project.tasks.jar.archivePath)
+    ext.listSource = files(project.tasks.sourcesJar.archivePath)
+
+    ext.listExternal = ext.listExternal - ext.listInternal
+
+    file('libraries').deleteDir()
+    file('libraries').mkdir()
+
+    copy {
+        from ext.listExternal
+        into 'libraries'
+    }
+
+    copy {
+        from ext.listInternal
+        from ext.listSource
+        into 'libraries'
     }
 }
 
