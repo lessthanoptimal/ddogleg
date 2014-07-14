@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.6
+Date:
+
+- Added CircularQueue
+
+------------------------------------------------------
 Version:  0.5
 Date:     2014-06-18
 
