@@ -6,6 +6,7 @@ Date Format: YEAR-MONTH-DAY
 Version:  0.6
 Date:
 
+- Switched build to Gradle
 - Added CircularQueue
 
 ------------------------------------------------------
