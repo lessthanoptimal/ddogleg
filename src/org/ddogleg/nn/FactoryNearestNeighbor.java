@@ -18,10 +18,7 @@
 
 package org.ddogleg.nn;
 
-import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
-import org.ddogleg.nn.alg.AxisSplitterMedian;
-import org.ddogleg.nn.alg.KdTreeSearch1Bbf;
-import org.ddogleg.nn.alg.KdTreeSearchNBbf;
+import org.ddogleg.nn.alg.*;
 import org.ddogleg.nn.wrap.KdForestBbfSearch;
 import org.ddogleg.nn.wrap.KdTreeNearestNeighbor;
 import org.ddogleg.nn.wrap.WrapExhaustiveNeighbor;
@@ -100,5 +97,9 @@ public class FactoryNearestNeighbor {
 	 */
 	public static <D> NearestNeighbor<D> exhaustive() {
 		return new WrapExhaustiveNeighbor<D>();
+	}
+
+	public static <D> NearestNeighbor<D> vptree() {
+		return new VpTree<D>();
 	}
 }
