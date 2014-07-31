@@ -142,7 +142,7 @@ public class ExhaustiveNeighbor {
 		for( int i = 0; i < numNeighbors; i++ ) {
 			int index = indexes.get(indexesSort.get(i));
 			outputIndex.add( index );
-			outputDistance.add( distances.get( i ) );
+			outputDistance.add( distances.get( indexesSort.get(i) ) );
 		}
 	}
 

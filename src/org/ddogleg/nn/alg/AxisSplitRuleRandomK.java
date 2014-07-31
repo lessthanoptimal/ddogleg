@@ -37,6 +37,8 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 	int N;
 	// number of elements it will consider when randomly selecting split index
 	int numConsiderSplit;
+	// number it will consider, but limited by the DOF
+	int actualConsiderSplit;
 
 	// stores the original indexes of the 'numConsider' largest elements
 	int indexes[];
@@ -55,6 +57,7 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 	public void setDimension(int N) {
 		this.N = N;
 		indexes = new int[N];
+		actualConsiderSplit = Math.min(numConsiderSplit,N);
 	}
 
 	@Override
@@ -65,9 +68,9 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 			variance[i] = -variance[i];
 
 		// find the largest ones
-		QuickSelect.selectIndex(variance, numConsiderSplit-1,N,indexes);
+		QuickSelect.selectIndex(variance, actualConsiderSplit-1,N,indexes);
 
 		// select on of the largests
-		return indexes[ rand.nextInt(numConsiderSplit) ];
+		return indexes[ rand.nextInt(actualConsiderSplit) ];
 	}
 }

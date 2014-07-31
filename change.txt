@@ -10,6 +10,10 @@ Date:
 - Added CircularQueue
 - QuickSort and QuickSortArray have been combined into one class
 - QuickSort comparable index has been added
+- Fixed a bug in AxisSplitRuleRandomK where is the number of consider was greater than the DOF it would throw
+  an out of bounds exception.
+- Added vantage point tree (VpTree).
+  * Thanks Karel Petránek
 
 ------------------------------------------------------
 Version:  0.5

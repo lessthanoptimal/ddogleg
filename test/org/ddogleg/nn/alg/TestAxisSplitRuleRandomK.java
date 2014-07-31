@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,10 +33,7 @@ public class TestAxisSplitRuleRandomK {
 	@Test
 	public void basic() {
 
-
-
 		AxisSplitRuleRandomK alg = new AxisSplitRuleRandomK(new Random(234),3);
-
 
 		// results are random.  Test to see if only the expected numbers are returned
 		int num10 = 0;
@@ -68,6 +65,19 @@ public class TestAxisSplitRuleRandomK {
 		assertTrue(num10 > 2);
 		assertTrue(num11 > 2);
 		assertTrue(num12 > 2);
+	}
+
+	/**
+	 * It's told to consider more options than the dimension of the data point.  If this isn't handled an out
+	 * of bounds exception will be thrown.
+	 */
+	@Test
+	public void splitExceedsDimension() {
+		AxisSplitRuleRandomK alg = new AxisSplitRuleRandomK(new Random(234),10);
+
+		alg.setDimension(3);
+
+		alg.select(new double[3]);
 	}
 
 }

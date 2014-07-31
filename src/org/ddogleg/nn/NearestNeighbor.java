@@ -23,11 +23,16 @@ import org.ddogleg.struct.FastQueue;
 import java.util.List;
 
 /**
+ * <p>
  * Abstract interface for finding the nearest neighbor to a user specified point inside of a set of points in
- * K-dimensional space.   Solution can be exact or approximate, depending on the implementation.
+ * K-dimensional space.   Solution can be exact or approximate, depending on the implementation. The distance
+ * metric is intentionally left undefined and is implementation dependent.
+ * </p>
  *
+ * <p>
  * WARNING: Do not modify the input lists until after the NN search is no longer needed.  If the input lists do need
  * to be modified, then pass in a copy instead.  This restriction reduced memory overhead significantly.
+ * </p>
  *
  * @author Peter Abeles
  */

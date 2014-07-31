@@ -99,7 +99,17 @@ public class FactoryNearestNeighbor {
 		return new WrapExhaustiveNeighbor<D>();
 	}
 
-	public static <D> NearestNeighbor<D> vptree() {
-		return new VpTree<D>();
+	/**
+	 * {@link VpTree Vantage point} tree implementation for nearest neighbor search.  Slower than KD-Tree on
+	 * random data, but faster than it for some pathological cases.
+	 *
+	 * @see VpTree
+	 *
+	 * @param randSeed Random seed
+	 * @param <D> Associated data type.
+	 * @return {@link NearestNeighbor} implementation
+	 */
+	public static <D> NearestNeighbor<D> vptree( long randSeed ) {
+		return new VpTree<D>(randSeed);
 	}
 }

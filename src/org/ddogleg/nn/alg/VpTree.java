@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ *
+ * This file is part of DDogleg (http://ddogleg.org).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.NearestNeighbor;
@@ -9,26 +27,45 @@ import java.util.PriorityQueue;
 import java.util.Random;
 
 /**
- * Vantage point tree implementation for nearest neighbor search.
- * The implementation is based on the paper
- * "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces" from Peter N. Yianilos
- * (see http://aidblab.cse.iitm.ac.in/cs625/vptree.pdf) and the C++ implementation from Steve Hanov
- * (see http://stevehanov.ca/blog/index.php?id=130). This implementation avoids recursion when searching
- * to avoid a possible stack overflow for pathological cases.
+ * <p>
+ * Vantage point tree implementation for nearest neighbor search. The implementation is based on the paper [1] and
+ * the C++ implementation from Steve Hanov [2]. This implementation avoids recursion when searching to avoid a
+ * possible stack overflow for pathological cases.
+ * </p>
  *
+ * <p>
  * The vp-tree is usually 2-3x slower than a kd-tree for a random set of points but it excels in
  * datasets that the kd-tree is weak in - for example points lying on a circle, line or plane.
  * The vp-tree is up to an order of magnitude faster than a kd-tree for these cases.
  * Use this data structure if you hit a pathological case for a kd-tree.
+ * </p>
+ *
+ * <p>
+ * [1] Peter N. Yianilo "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces"<br>
+ *     http://aidblab.cse.iitm.ac.in/cs625/vptree.pdf<br>
+ * [2] Steve Hanov.  see http://stevehanov.ca/blog/index.php?id=130<br>
+ * </p>
+ *
+ * @author Karel Petránek
+ *
  * @param <PointData> Type of user data attached to each point
  */
 public class VpTree<PointData> implements NearestNeighbor<PointData> {
 	private PointData[] itemData;
 	private double[][] items;
 	private Node root;
-	private Random random = new Random();
+	private Random random;
 
-	@Override
+	/**
+	 * Constructor
+	 *
+	 * @param randSeed Random seed
+	 */
+   public VpTree( long randSeed ) {
+		random = new Random(randSeed);
+   }
+
+   @Override
 	public void findNearest(double[] target, double maxDistance, int numNeighbors, FastQueue<NnData<PointData>> results) {
 		PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);
 
@@ -175,8 +212,7 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 		nodes.add(root);
 
 		while (nodes.size() > 0) {
-			final Node node = nodes.getTail();
-			nodes.removeTail();
+			final Node node = nodes.removeTail();
 			final double dist = distance(items[node.index], target);
 
 			if (dist <= tau) {
@@ -255,7 +291,7 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 	public void setPoints(List<double[]> points, List<PointData> data) {
 		// Make a copy because we mutate the lists
 		this.items = points.toArray(new double[0][]);
-		this.itemData = data == null ? (PointData[])new Object[points.size()] : (PointData[])data.toArray();
+		this.itemData = data == null ? (PointData[])new Object[points.size()] : (PointData[])data.toArray();  // todo remove pointless list if null?
 		this.root = buildFromPoints(0, items.length);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -73,6 +73,7 @@ public class BenchmarkNearestNeighbor {
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(),"kdtree"));
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(1000),"kdtree P"));
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdRandomForest(200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.vptree(0xDEADBEEF),"VP-Tree"));
 
 		return ret;
 	}
@@ -81,10 +82,19 @@ public class BenchmarkNearestNeighbor {
 		Random rand = new Random(234);
 
 		this.dimen = dimen;
-		this.cloud = createData(rand,cloudSize,dimen);
-		this.searchSet = createData(rand,searchSize,dimen);
 		this.maxDistance = 10;
+		this.searchSet = createData(rand,searchSize,dimen);
 
+		System.out.println("Uniform data");
+		this.cloud = createData(rand, cloudSize, dimen);
+		System.out.println("K = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
+		for( Performer alg : createAlg() ) {
+			ProfileOperation.printOpsPerSec(alg,100);
+		}
+
+		System.out.println();
+		System.out.println("Linear data");
+		this.cloud = createLinearData(rand, cloudSize, dimen);
 		System.out.println("K = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
 		for( Performer alg : createAlg() ) {
 			ProfileOperation.printOpsPerSec(alg,100);
@@ -98,6 +108,25 @@ public class BenchmarkNearestNeighbor {
 			double []d = new double[ k ];
 			for( int j = 0; j < k; j++ ) {
 				d[j] = rand.nextDouble()*3;
+			}
+			ret.add(d);
+		}
+		return ret;
+	}
+
+	public static List<double[]> createLinearData(Random rand, int size, int k) {
+		List<double[]> ret = new ArrayList<double[]>();
+
+		double v[] = new double[k];
+		for( int j = 0; j < k; j++ ) {
+			v[j] = (rand.nextDouble()-0.5)*2;
+		}
+
+		for( int i = 0; i < size; i++ ) {
+			double []d = new double[ k ];
+			double l =  rand.nextDouble()*3;
+			for( int j = 0; j < k; j++ ) {
+				d[j] = v[j]*l;
 			}
 			ret.add(d);
 		}
