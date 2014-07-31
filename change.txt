@@ -8,6 +8,8 @@ Date:
 
 - Switched build to Gradle
 - Added CircularQueue
+- QuickSort and QuickSortArray have been combined into one class
+- QuickSort comparable index has been added
 
 ------------------------------------------------------
 Version:  0.5

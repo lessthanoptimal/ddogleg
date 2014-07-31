@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
 import org.ddogleg.struct.GrowQueue_I32;
@@ -291,7 +291,7 @@ public abstract class StandardKdTreeSearchNTests {
 
 		maxN = Math.min(maxN,distances.size);
 
-		QuickSelectArray.selectIndex(distances.data,maxN,distances.size,indexes.data);
+		QuickSelect.selectIndex(distances.data,maxN,distances.size,indexes.data);
 
 		for( int i = 0; i < maxN; i++ ) {
 			ret.add( found.get( indexes.data[i]));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,7 +24,7 @@ import org.ddogleg.fitting.modelset.ModelGenerator;
 import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcher;
 import org.ddogleg.fitting.modelset.ransac.Ransac;
-import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.sorting.QuickSelect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +141,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 				errorMetric.setModel(candidate);
 				errorMetric.computeDistance(dataSet,errors);
 
-				double median = QuickSelectArray.select(errors, N / 2, N);
+				double median = QuickSelect.select(errors, N / 2, N);
 
 				if( median < bestMedian ) {
 					bestMedian = median;
@@ -167,7 +167,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 			errorMetric.computeDistance(dataSet,errors);
 
 			int []indexes = new int[n];
-			QuickSelectArray.selectIndex(errors,numPts, n,indexes);
+			QuickSelect.selectIndex(errors,numPts, n,indexes);
 			for( int i = 0; i < numPts; i++ ) {
 				int origIndex = indexes[i];
 				inlierSet.add( dataSet.get(origIndex) );

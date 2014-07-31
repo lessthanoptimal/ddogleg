@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -46,13 +46,13 @@ public class BenchMarkSelect {
         indexes = new int[ data.length ];
 
         before = System.currentTimeMillis();
-        QuickSelectArray.select(data,13,data.length);
+        QuickSelect.select(data,13,data.length);
         after = System.currentTimeMillis();
         System.out.println("Select double = "+(after-before));
 
         data = createRandom(new Random(0x344),num);
         before = System.currentTimeMillis();
-        QuickSelectArray.selectIndex(data,13,data.length,indexes);
+        QuickSelect.selectIndex(data,13,data.length,indexes);
         after = System.currentTimeMillis();
         System.out.println("Select double with indexes = "+(after-before));
 

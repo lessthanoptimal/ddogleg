@@ -153,4 +153,6 @@ public class CircularQueue_I32 {
 	public boolean isEmpty() {
 		return size == 0;
 	}
+
+	public boolean isFull(){ return size == data.length;}
 }

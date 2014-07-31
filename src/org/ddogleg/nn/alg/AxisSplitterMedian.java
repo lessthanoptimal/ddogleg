@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.sorting.QuickSelect;
 
 import java.util.List;
 
@@ -176,6 +176,6 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 			tmp[i] = points.get(i)[splitAxis];
 		}
 
-		QuickSelectArray.selectIndex(tmp, medianNum, numPoints, indexes);
+		QuickSelect.selectIndex(tmp, medianNum, numPoints, indexes);
 	}
 }
