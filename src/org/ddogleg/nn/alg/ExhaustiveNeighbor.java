@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.GrowQueue_F64;
 import org.ddogleg.struct.GrowQueue_I32;
 
@@ -137,7 +137,7 @@ public class ExhaustiveNeighbor {
 			return;
 
 		indexesSort.resize(distances.size);
-		QuickSelectArray.selectIndex(distances.data,numNeighbors-1,distances.size,indexesSort.data);
+		QuickSelect.selectIndex(distances.data,numNeighbors-1,distances.size,indexesSort.data);
 
 		for( int i = 0; i < numNeighbors; i++ ) {
 			int index = indexes.get(indexesSort.get(i));

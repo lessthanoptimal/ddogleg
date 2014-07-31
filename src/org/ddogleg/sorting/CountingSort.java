@@ -35,8 +35,7 @@ public class CountingSort {
 
 	int minValue,maxValue;
 
-	public CountingSort() {
-	}
+	public CountingSort() {}
 
 	public CountingSort(int minValue, int maxValue) {
 		setRange(minValue,maxValue);

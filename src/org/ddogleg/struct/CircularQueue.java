@@ -204,6 +204,8 @@ public class CircularQueue<T> {
 		return size == 0;
 	}
 
+	public boolean isFull(){ return size == data.length;}
+
 	protected T createInstance() {
 		try {
 			return type.newInstance();

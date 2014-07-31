@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.sorting.QuickSelectArray;
+import org.ddogleg.sorting.QuickSelect;
 
 import java.util.Random;
 
@@ -65,7 +65,7 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 			variance[i] = -variance[i];
 
 		// find the largest ones
-		QuickSelectArray.selectIndex(variance, numConsiderSplit-1,N,indexes);
+		QuickSelect.selectIndex(variance, numConsiderSplit-1,N,indexes);
 
 		// select on of the largests
 		return indexes[ rand.nextInt(numConsiderSplit) ];
