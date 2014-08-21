@@ -45,7 +45,8 @@ sourceSets {
 }
 
 dependencies {
-    compile group: 'com.googlecode.efficient-java-matrix-library', name: 'ejml', version: '0.25'
+    ['equation','core'].each { String a ->
+        compile group: 'com.googlecode.efficient-java-matrix-library', name: a, version: '0.26-SNAPSHOT'}
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
