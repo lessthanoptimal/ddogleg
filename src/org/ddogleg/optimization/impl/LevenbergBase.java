@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -231,7 +231,7 @@ public abstract class LevenbergBase {
 		// xtest = x + delta x
 		CommonOps.add(x, xdelta, xtest);
 		// take in account rounding error
-		CommonOps.sub(xtest, x, xdelta);
+		CommonOps.subtract(xtest, x, xdelta);
 
 		// compute the residuals at x
 		setFunctionParameters(xtest.data);
