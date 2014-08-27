@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -110,7 +110,20 @@ public class TestKdTreeMemory {
 		assertEquals(0,alg.open.size());
 		assertEquals(1,alg.unusedTrees.size());
 		assertEquals(5,alg.unusedNodes.size());
+	}
 
+	@Test
+	public void recycleGraph_nullRoot() {
+		KdTreeMemory alg = new KdTreeMemory();
+
+		KdTree tree = new KdTree();
+		tree.root = null;
+
+		alg.recycleGraph(tree);
+
+		assertEquals(0,alg.open.size());
+		assertEquals(1,alg.unusedTrees.size());
+		assertEquals(0,alg.unusedNodes.size());
 	}
 
 
