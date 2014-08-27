@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,12 +41,15 @@ public interface FunctionNtoM {
 	/**
 	 * Processes the input to compute the values found in the output array.
 	 *
+	 * The output's meaning depends on the application.  For least-squares it is the residual error. See
+	 * {@link org.ddogleg.optimization.UnconstrainedLeastSquares}.
+	 *
 	 * <p>
 	 * The user can modify the input parameters here and the optimizer must use those changes.
 	 * </p>
 	 *
 	 * @param input Parameters for input model.
-	 * @param output Values of output give the model.
+	 * @param output Storage for the output give the model.
 	 */
 	public void process(double input[], double[] output);
 }

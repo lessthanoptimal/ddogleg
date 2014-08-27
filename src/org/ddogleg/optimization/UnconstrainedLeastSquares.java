@@ -27,7 +27,8 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * The least squares problem is defined below:<br>
  * F(x) = 0.5*sum( i=1:M ; f<sub>i</sub>(x)<sup>2</sup> )<br>
  * where f<sub>i</sub>(x) is a function from &real;<sup>N</sup> to &real;. M is number of functions, and N
- * is number of fit parameters. M &ge; N
+ * is number of fit parameters. M &ge; N<br>
+ * f<sub>i</sub>(x) = observed - predicted, which is known as the residual error.
  * </p>
  *
  * <p>
@@ -38,7 +39,7 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  * </p>
  *
  * <p>
- * NOTE: The input function computes the M outputs of the f<sub>i</sub>(x) functions NOT
+ * NOTE: The function computes the M outputs of the f<sub>i</sub>(x), residual error functions, NOT
  * [f<sub>i</sub>(x)]<sup>2</sup>
  * </p>
  *
