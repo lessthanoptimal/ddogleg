@@ -13,7 +13,16 @@ benchmark/  Internal benchmarks used to evaluate speed and stability
 
 ------------ Building
 
-Both Ant and Maven scripts have.  Any standard Java build environment should be able to compile the code without any problems
+Gradle is the recommended way to build DDogleg.  The Gradle script can be imported into Eclipse and IntelliJ IDEs
+
+To build compiled jars using Gradle do the following:
+
+--- BEGIN ----
+cd ddogleg
+gradle createLibraryDirectory
+---  END ----
+
+Then look inside the ddogleg/libraries directory created by the script.  It will include jars for this library and anything it depends on.
 
 ------------ Repository
 

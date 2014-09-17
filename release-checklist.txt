@@ -3,7 +3,7 @@
 - Update version in build.gradle
 - Commit and tag release
 - Create .zip of source code
-  - remove .svn
+  - remove .git
 - Create jar file "gradle createLibraryDirectory"
 - Update documentation on website
 
