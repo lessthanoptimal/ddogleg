@@ -94,9 +94,10 @@
                 version="true"
                 use="true"
                 windowtitle="DDogleg Numerics"
-				sourcepathref="source.classpath">
+                sourcepathref="source.classpath">
 
-			<link offline="false" href="http://ejml.org/javadoc/" packagelistloc="package-list" />
+            <link offline="false" href="http://docs.oracle.com/javase/7/docs/api/" packagelistloc="package-list" />
+            <link offline="false" href="http://ejml.org/javadoc/" packagelistloc="package-list" />
 
 	    <header><![CDATA[
 <script type="text/javascript"><!--
@@ -146,13 +147,16 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
                 windowtitle="DDogleg Numerics"
                 overview="src/overview.html">
 
+            <link offline="false" href="http://docs.oracle.com/javase/7/docs/api/" packagelistloc="package-list" />
+            <link offline="false" href="http://ejml.org/javadoc/" packagelistloc="package-list" />
+
             <packageset dir="src" defaultexcludes="yes">
                 <include name="org/ddogleg/**"/>
             </packageset>
 
 			<link offline="false" href="http://ejml.org/javadoc/" packagelistloc="package-list" />
 
-            <bottom><![CDATA[<i>Copyright &#169; 2012-2015 Peter Abeles All Rights Reserved.</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright &#169; 2012-2014 Peter Abeles All Rights Reserved.</i>]]></bottom>
 
         </javadoc>
 		<jar compress="true" destfile="docs/${ant.project.name}-doc.jar" basedir="docs/api" />
