@@ -155,6 +155,21 @@ task createLibraryDirectory( dependsOn: ['jar','sourcesJar'] ) << {
     }
 }
 
+task alljavadoc(type: Javadoc) {
+    // only include source code in src directory to avoid including 3rd party code which some projects do as a hack
+    source = project.fileTree('src').include('**/*.java')
+    classpath = project.sourceSets.main.compileClasspath
+
+    destinationDir = file("${buildDir}/docs/javadoc")
+    configure(options) {
+        docTitle = "DDogleg ($project.version)"
+        links = [ 'http://docs.oracle.com/javase/7/docs/api/',
+                  'http://ejml.org/javadoc/' ]
+//        header = file('misc/header.txt').text
+//        bottom = file('misc/bottom.txt').text
+    }
+}
+
 idea {
     project {
         jdkName = '1.6 (64bit)'
