@@ -111,6 +111,23 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	}
 
 	/**
+	 * Configures the algorithm.
+	 *
+	 * @param randSeed Random seed used internally.
+	 * @param totalCycles Number of random draws it will make when estimating model parameters.
+	 * @param generator Creates a list of model hypotheses from a small set of points.
+	 * @param errorMetric Computes the error between a point and a model
+	 */
+	public LeastMedianOfSquares( long randSeed ,
+								 int totalCycles ,
+								 ModelManager<Model> modelManager,
+								 ModelGenerator<Model,Point> generator,
+								 DistanceFromModel<Model,Point> errorMetric )
+	{
+		this(randSeed,totalCycles,Double.MAX_VALUE,0,modelManager,generator,errorMetric);
+	}
+
+	/**
 	 * Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
 	 *
 	 * @param sampleSize Number of points sampled when computing the model.
