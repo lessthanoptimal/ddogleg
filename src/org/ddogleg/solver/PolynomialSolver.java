@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,11 @@
 
 package org.ddogleg.solver;
 
-import org.ddogleg.complex.ComplexMath64F;
 import org.ddogleg.solver.impl.FindRealRootsSturm;
 import org.ddogleg.solver.impl.RootFinderCompanion;
 import org.ddogleg.solver.impl.WrapRealRootsSturm;
 import org.ejml.data.Complex64F;
+import org.ejml.ops.ComplexMath64F;
 
 import java.util.List;
 
