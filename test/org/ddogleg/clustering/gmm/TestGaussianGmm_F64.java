@@ -27,7 +27,27 @@ import static org.junit.Assert.fail;
  */
 public class TestGaussianGmm_F64 {
 	@Test
-	public void stuff() {
+	public void zero() {
+		fail("Implement");
+	}
+
+	@Test
+	public void addMean() {
+		fail("Implement");
+	}
+
+	@Test
+	public void addCovariance() {
+		fail("Implement");
+	}
+
+	@Test
+	public void setMean() {
+		fail("Implement");
+	}
+
+	@Test
+	public void likelihood() {
 		fail("Implement");
 	}
 }

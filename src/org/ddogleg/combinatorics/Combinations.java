@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,8 +33,7 @@ import java.util.List;
  * bucket are all elements not currently in the bucket.
  * </p>
  *
- * <p>
- * Below is an example of a combination.
+ * <p>Below is an example of a combination.</p>
  * <pre>
  * List = 012345
  * k = 3;
@@ -60,7 +59,6 @@ import java.util.List;
  * 245
  * 345
  * </pre>
- * </p>
  **/
 public class Combinations< T >
 {

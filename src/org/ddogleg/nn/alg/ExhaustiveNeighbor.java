@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -99,7 +99,7 @@ public class ExhaustiveNeighbor {
 	}
 
 	/**
-	 * Finds the index of the point which has the smallest Euclidean distance to 'p' and is < maxDistance
+	 * Finds the index of the point which has the smallest Euclidean distance to 'p' and is {@code <} maxDistance
 	 * away.
 	 *
 	 * @param p A point.

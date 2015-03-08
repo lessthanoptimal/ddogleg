@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ package org.ddogleg.nn.alg;
  * K-D Tree is short for k-dimensional tree and is a binary tree data structure used for quickly finding the
  * nearest-neighbor of a k-dimensional point in a set.  Each point can optionally have data associated with it.
  * The tree is structured such that at each node has a point and two children.  All points in the set with
- * values <= to the node's point in the specified dimension/axis are on the the left and >= to the right.  A leaf
+ * values {@code <=} to the node's point in the specified dimension/axis are on the the left and {@code >=} to the right.  A leaf
  * will have no children.
  * </p>
  *
@@ -71,7 +71,7 @@ public class KdTree {
 
 	/**
 	 * Data type for each node in the binary tree.  A branch will have two non-null left and right children
-	 * and the value for split will be >= 0.  If any of those conditions are not meet then it is a leaf.
+	 * and the value for split will be {@code >= 0}.  If any of those conditions are not meet then it is a leaf.
 	 */
 	public static class Node {
 
@@ -83,9 +83,9 @@ public class KdTree {
 		public Object data;
 		/** axis used to split the data. -1 for leafs */
 		public int split = -1;
-		/** Branch <= point[split] */
+		/** Branch {@code <=} point[split] */
 		public Node left;
-		/** Branch >= point[split] */
+		/** Branch {@code >=} point[split] */
 		public Node right;
 
 		public Node( double[] point , Object data ) {

@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public abstract class StandardInitialSeedsChecks {
+public abstract class StandardInitializeKMeansChecks {
 
 	public abstract InitializeKMeans_F64 createAlg();
 

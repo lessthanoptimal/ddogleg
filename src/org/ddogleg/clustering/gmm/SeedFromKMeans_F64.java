@@ -110,8 +110,5 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 			// compute the weights now
 			seeds.get(i).weight = totals.get(i)/(double)points.size();
 		}
-
-
-
 	}
 }

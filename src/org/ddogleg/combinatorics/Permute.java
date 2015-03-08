@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,9 +28,10 @@ import java.util.List;
  * </p>
  *
  * <p>
- * <pre>
  * Partially worked example for the set "1234".
- *
+ * </p>
+ * <pre>
+ * {@code
  * 1234
  * 2134
  * 3124
@@ -40,12 +41,14 @@ import java.util.List;
  * 3241
  * 2341
  * 4321
+ * }
  * </pre>
- * </p>
  *
  * <p>
  * Algorithm was originally lifted from some website years ago.  Here is its pseudo-code.
+ * </p>
  * <pre>
+ * {@code
  * let a[] represent an arbitrary list of objects to permute
  *   let N equal the length of a[]
  *   create an integer array p[] of size N+1 to control the iteration
@@ -61,8 +64,8 @@ import java.util.List;
  *         increment i by 1
  *      } // end while (p[i] is equal to 0)
  *   } // end while (i < N)
+ * }
  * </pre>
- * </p>
  *
  * @param <T>
  */
