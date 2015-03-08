@@ -30,13 +30,13 @@ import static org.junit.Assert.assertTrue;
  */
 public abstract class StandardInitialSeedsChecks {
 
-	public abstract InitialSeedsKMeans_F64 createAlg();
+	public abstract InitializeKMeans_F64 createAlg();
 
 	@Test
 	public void selectSeeds() {
 		int DOF = 20;
 
-		InitialSeedsKMeans_F64 alg = createAlg();
+		InitializeKMeans_F64 alg = createAlg();
 
 		alg.init(DOF,0xBEEF);
 

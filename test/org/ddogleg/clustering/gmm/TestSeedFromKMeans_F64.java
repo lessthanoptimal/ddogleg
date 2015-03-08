@@ -16,14 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.clustering.gmm;
+
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /**
  * @author Peter Abeles
  */
-public class TestStandardSeeds_F64 extends StandardInitialSeedsChecks {
-	@Override
-	public InitializeKMeans_F64 createAlg() {
-		return new StandardSeeds_F64();
+public class TestSeedFromKMeans_F64 {
+	@Test
+	public void stuff() {
+		fail("Implement");
 	}
 }

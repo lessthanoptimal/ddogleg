@@ -16,14 +16,28 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.clustering.gmm;
+
+import java.util.List;
 
 /**
+ * Selects initial Gaussians for EM algorithm.
+ *
  * @author Peter Abeles
  */
-public class TestStandardSeeds_F64 extends StandardInitialSeedsChecks {
-	@Override
-	public InitializeKMeans_F64 createAlg() {
-		return new StandardSeeds_F64();
-	}
+public interface InitializeGmm_F64 {
+
+	/**
+	 * Initializes internal data structures.  Must be called first.
+	 * @param pointDimension Number of degrees of freedom in each point.
+	 * @param randomSeed Seed for any random number generators used internally.
+	 */
+	public void init( int pointDimension, long randomSeed );
+
+	/**
+	 *
+	 * @param points (input) Set of points which is to be clustered.
+	 * @param seeds (output) List containing storage for the initial Gaussians.
+	 */
+	public void selectSeeds( List<double[]> points, List<GaussianGmm_F64> seeds );
 }

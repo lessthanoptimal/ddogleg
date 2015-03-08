@@ -26,7 +26,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class StandardSeeds_F64 implements InitialSeedsKMeans_F64 {
+public class StandardSeeds_F64 implements InitializeKMeans_F64 {
 
 	Random rand;
 

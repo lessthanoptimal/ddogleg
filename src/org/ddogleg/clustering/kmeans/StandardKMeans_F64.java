@@ -31,7 +31,7 @@ import java.util.List;
  * Standard implementation of k-means [1], summary is provided below:
  * <ol>
  * <li> The initial seeds for each cluster is selected by the provided
- * {@link org.ddogleg.clustering.kmeans.InitialSeedsKMeans_F64}.
+ * {@link InitializeKMeans_F64}.
  * <li> Each point is assigned to a cluster which minimizes the euclidean distance squared.
  * <li> New cluster centers are computed from the average of all points assigned to it.
  * </ol>
@@ -53,21 +53,43 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	// maximum number of iterations
 	int maxIterations;
 
-	// If all point centers move less than this distance squared then it is
-	// considered to have converged
-	double minimumChangeSq;
+	// It is considered to be converged when the change in sum score is <= than this amount.
+	double threshScoreChange;
 
 	// selects the initial locations of each seed
-	InitialSeedsKMeans_F64 seedSelector;
+	InitializeKMeans_F64 seedSelector;
 	// Storage for the seeds
 	FastQueue<double[]> clusters;
+
+	// labels for all the points
+	GrowQueue_I32 labels = new GrowQueue_I32();
 
 	// work space for computing the new cluster centers.  The sum for points in a cluster is computed on the fly
 	// instead of labeling each point and computing it later.  Should save memory and maybe slightly faster.
 	FastQueue<double[]> workClusters;
 	GrowQueue_I32 memberCount = new GrowQueue_I32();
 
+	// reference to the assigning algorithm which is returned
 	AssignKMeans_F64 assign;
+
+	// distance of the best match to the point
+	double bestDistance;
+	// sum of distances for all the points
+	double sumDistance;
+
+	/**
+	 * Configures k-means parameters
+	 *
+	 * @param maxIterations Maximum number of iterations
+	 * @param threshScoreChange It is considered to be converged when the change in sum score is <= than this amount.
+	 * @param seedSelector Used to select initial seeds for the clusters
+	 */
+	public StandardKMeans_F64(int maxIterations, double threshScoreChange,
+							  InitializeKMeans_F64 seedSelector) {
+		this.maxIterations = maxIterations;
+		this.threshScoreChange = threshScoreChange;
+		this.seedSelector = seedSelector;
+	}
 
 	@Override
 	public void init(final int pointDimension, long randomSeed) {
@@ -94,11 +116,15 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	public void process(List<double[]> points, int numCluster) {
 		// declare data
 		clusters.resize(numCluster);
+		workClusters.resize(numCluster);
+		memberCount.resize(numCluster);
+		labels.resize(points.size());
 
 		// select the initial seeds
 		seedSelector.selectSeeds(points, clusters.toList());
 
 		// run standard k-means
+		double previousSum = Double.MAX_VALUE;
 		for (int iteration = 0; iteration < maxIterations; iteration++) {
 			// zero the work seeds.  These will be used
 			for (int i = 0; i < workClusters.size(); i++) {
@@ -108,13 +134,15 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 			matchPointsToClusters(points);
 
-			if( !updateClusterCenters() )
-				break; // exit if the centers haven't moved
+			updateClusterCenters();
+
+			// check for convergence
+			double fractionalChange = 1.0-sumDistance/previousSum;
+			if( fractionalChange > 0 && fractionalChange <= threshScoreChange )
+				break;
+
+			previousSum = sumDistance;
 		}
-
-		// TODO create cluster assignment
-
-		// TODO code up potential function
 	}
 
 	/**
@@ -122,20 +150,12 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	 * and its member count incremented
 	 */
 	protected void matchPointsToClusters(List<double[]> points) {
+		sumDistance = 0;
 		for (int i = 0; i < points.size(); i++) {
 			double[]p = points.get(i);
 
 			// find the cluster which is closest to the point
-			int bestCluster = -1;
-			double bestDistance = Double.MAX_VALUE;
-
-			for (int j = 0; j < clusters.size; j++) {
-				double d = distanceSq(p,clusters.get(i));
-				if( d < bestDistance ) {
-					bestDistance = d;
-					bestCluster = j;
-				}
-			}
+			int bestCluster = findBestMatch(p);
 
 			// sum up all the points which are members of this cluster
 			double[] c = workClusters.get(bestCluster);
@@ -143,39 +163,42 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 				c[j] += p[j];
 			}
 			memberCount.data[bestCluster]++;
+			labels.data[i] = bestCluster;
+			sumDistance += bestDistance;
 		}
 	}
 
 	/**
-	 * Sets the location of each cluster to the average location of all its members.
-	 *
-	 * @return true if the cluster centers have moved significantly.
+	 * Searches for this cluster which is the closest to p
 	 */
-	protected boolean updateClusterCenters() {
+	protected int findBestMatch(double[] p) {
+		int bestCluster = -1;
+		bestDistance = Double.MAX_VALUE;
+
+		for (int j = 0; j < clusters.size; j++) {
+			double d = distanceSq(p,clusters.get(j));
+			if( d < bestDistance ) {
+				bestDistance = d;
+				bestCluster = j;
+			}
+		}
+		return bestCluster;
+	}
+
+	/**
+	 * Sets the location of each cluster to the average location of all its members.
+	 */
+	protected void updateClusterCenters() {
 		// compute the new centers of each cluster
 		for (int i = 0; i < clusters.size; i++) {
 			double mc = memberCount.get(i);
-			double[] c = workClusters.get(i);
-
-			for (int j = 0; j < c.length; j++) {
-				c[j] /= mc;
-			}
-		}
-
-		// see if the centers have changed significantly and update their values
-		boolean changed = false;
-		for (int i = 0; i < clusters.size; i++) {
-			double[] c = clusters.get(i);
 			double[] w = workClusters.get(i);
-			if( !changed ) {
-				if( distanceSq(c,w) > minimumChangeSq ) {
-					changed = true;
-				}
-			}
-			System.arraycopy(w,0,c,0,c.length);
-		}
+			double[] c = clusters.get(i);
 
-		return changed;
+			for (int j = 0; j < w.length; j++) {
+				c[j] = w[j] / mc;
+			}
+		}
 	}
 
 	/**
@@ -190,6 +213,20 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 		return sum;
 	}
 
+	/**
+	 * Returns the labels assigned to each point
+	 */
+	public GrowQueue_I32 getPointLabels() {
+		return labels;
+	}
+
+	/**
+	 * Returns the mean of each cluster
+	 */
+	public FastQueue<double[]> getClusterMeans() {
+		return clusters;
+	}
+
 	@Override
 	public AssignCluster<double[]> getAssignment() {
 		return assign;
@@ -199,7 +236,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	 * Computes the potential function.  The sum of distance for each point from their cluster centers.\
 	 */
 	@Override
-	public double computeDistance() {
-		return 0;  // TODO
+	public double getDistanceMeasure() {
+		return sumDistance;
 	}
 }

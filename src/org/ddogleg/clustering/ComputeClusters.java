@@ -40,7 +40,7 @@ public interface ComputeClusters<D> {
 	/**
 	 * Computes a set of clusters which segment the points into numCluster sets.
 	 *
-	 * @param points Set of points which are to be clustered.
+	 * @param points Set of points which are to be clustered. Not modified.
 	 * @param numCluster Number of clusters it will use to split the points.
 	 */
 	public void process( List<D> points , int numCluster );
@@ -58,10 +58,14 @@ public interface ComputeClusters<D> {
 	public AssignCluster<D> getAssignment();
 
 	/**
+	 * <p>
 	 * Returns the sum of all the distances between each point in the set.  Can be used to evaluate
-	 * the quality of each cluster.
+	 * the quality of fit for all the clusters.
+	 * </p>
+	 *
+	 * NOTE: The specific distance measure is not specified and is application specific.
 	 *
 	 * @return sum of distance between each point and their respective clusters.
 	 */
-	public double computeDistance();
+	public double getDistanceMeasure();
 }

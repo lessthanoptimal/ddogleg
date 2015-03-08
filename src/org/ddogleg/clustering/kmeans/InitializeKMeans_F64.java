@@ -16,10 +16,28 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.gmm;
+package org.ddogleg.clustering.kmeans;
+
+import java.util.List;
 
 /**
+ * Selects the initial cluster positions for k-means
+ *
  * @author Peter Abeles
  */
-public class ClusterGMM {
+public interface InitializeKMeans_F64 {
+
+	/**
+	 * Initializes internal data structures.  Must be called first.
+	 * @param pointDimension NUmber of degrees of freedom in each point.
+	 * @param randomSeed Seed for any random number generators used internally.
+	 */
+	public void init( int pointDimension, long randomSeed );
+
+	/**
+	 *
+	 * @param points Set of points which is to be clustered.
+	 * @param seeds List full of points which will act as the initial seed for k-means.
+	 */
+	public void selectSeeds( List<double[]> points, List<double[]> seeds );
 }
