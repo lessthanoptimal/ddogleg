@@ -70,7 +70,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 		for (int i = 0; i < seeds.size(); i++) {
 			GaussianGmm_F64 g = seeds.get(i);
 			g.setMean(means.get(i));
-			CommonOps.fill(g.covariance,0);
+			CommonOps.fill(g.covariance, 0);
 		}
 
 		// Perform the summation part of the covariance calculation and tally how many points are
@@ -102,24 +102,25 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 			DenseMatrix64F cov = seeds.get(i).covariance;
 			for (int j = 0; j < N; j++) {
 				for (int k = 0; k < j; k++) {
-					cov.data[j*N+k] = cov.data[k*N+j];
+					cov.data[k*N+j] = cov.data[j*N+k];
 				}
 			}
 		}
-
 
 		// Perform the division part of covariance calculation and compute the weight
 		for (int i = 0; i < seeds.size(); i++) {
 			DenseMatrix64F cov = seeds.get(i).covariance;
 
 			int M = totals.get(i)-1;
-			if( M <= 0 )
-				throw new RuntimeException("Total for a cluster is <= 1");
+			if( M <= 0 ) {
+				// will this is a bit distressing. The covariance is already zero so that's what
+				// it should be in this pathological case
+			} else {
+				CommonOps.divide(cov, M);
 
-			CommonOps.divide(cov, M);
-
-			// compute the weights now
-			seeds.get(i).weight = totals.get(i)/(double)points.size();
+				// compute the weights now
+				seeds.get(i).weight = totals.get(i) / (double) points.size();
+			}
 		}
 	}
 }

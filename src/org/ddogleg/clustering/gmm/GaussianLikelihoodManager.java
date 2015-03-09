@@ -66,13 +66,11 @@ public class GaussianLikelihoodManager {
 	/**
 	 * Precomputes likelihood for all the mixtures
 	 */
-	public boolean precomputeAll() {
+	public void precomputeAll() {
 		precomputes.resize(mixtures.size());
 		for (int i = 0; i < precomputes.size; i++) {
-			if( !precomputes.get(i).setGaussian(mixtures.get(i)) )
-				return false;
+			precomputes.get(i).setGaussian(mixtures.get(i));
 		}
-		return true;
 	}
 
 	/**
@@ -95,6 +93,8 @@ public class GaussianLikelihoodManager {
 
 		public double chisq; // chi-sq (x-mu)'*inv(Sigma)*(x-mu)
 
+		public boolean valid = false; // is there a valid distribution?  e.g. more than 1 point matched to it
+
 		public Likelihood(int N) {
 			invCov = new DenseMatrix64F(N,N);
 		}
@@ -102,24 +102,23 @@ public class GaussianLikelihoodManager {
 		/**
 		 * Precomputes the parts of the likelihood functions which can be.  Matrix inversion and determinant are the
 		 * main parts.
-		 *
-		 * @return true if successful or false if it fails.
 		 */
-		public boolean setGaussian(GaussianGmm_F64 gaussian) {
+		public void setGaussian(GaussianGmm_F64 gaussian) {
 			this.gaussian = gaussian;
 
-			if (!solver.setA(gaussian.covariance))
-				return false;
+			if (!solver.setA(gaussian.covariance)) {
+				valid = false;
+				return;
+			} else {
+				valid = true;
+			}
 			solver.invert(invCov);
-
 
 			CholeskyDecomposition<DenseMatrix64F> decomposition = solver.getDecomposition();
 			double det = decomposition.computeDeterminant().real;
 
 			// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out
 			leftSide = 1.0 / Math.sqrt(det);
-
-			return true;
 		}
 
 		/**
@@ -129,6 +128,9 @@ public class GaussianLikelihoodManager {
 		 * @return likelihood of the point
 		 */
 		public double likelihood(double[] point) {
+			if( !valid )
+				return 0;
+
 			int N = gaussian.mean.numRows;
 			// x - mu
 			for (int i = 0; i < N; i++) {

@@ -24,7 +24,6 @@ import org.ejml.equation.Equation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -57,7 +56,7 @@ public class TestGaussianLikelihoodManager {
 
 		GaussianLikelihoodManager manager = new GaussianLikelihoodManager(DOF,mixtures.toList());
 
-		assertTrue(manager.precomputeAll());
+		manager.precomputeAll();
 
 		double p[] = new double[]{4,3,-1};
 

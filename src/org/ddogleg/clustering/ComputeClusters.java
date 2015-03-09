@@ -60,7 +60,8 @@ public interface ComputeClusters<D> {
 	/**
 	 * <p>
 	 * Returns the sum of all the distances between each point in the set.  Can be used to evaluate
-	 * the quality of fit for all the clusters.
+	 * the quality of fit for all the clusters.  Can only be used to compare when the same number of clusters
+	 * is uesd.
 	 * </p>
 	 *
 	 * NOTE: The specific distance measure is not specified and is application specific.

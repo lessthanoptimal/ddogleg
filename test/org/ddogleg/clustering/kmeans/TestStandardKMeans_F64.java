@@ -134,9 +134,14 @@ public class TestStandardKMeans_F64 extends GenericClusterChecks_F64{
 	}
 
 	@Override
-	public ComputeClusters<double[]> createClustersAlg() {
-		// assume the first 3 are in different groups for the seeds
-		return new StandardKMeans_F64(1000,1e-8,new FixedSeeds());
+	public ComputeClusters<double[]> createClustersAlg( boolean hint ) {
+		if( hint ) {
+			// assume the first 3 are in different groups for the seeds
+			return new StandardKMeans_F64(1000, 1e-8, new FixedSeeds());
+		} else {
+			StandardSeeds_F64 seeds = new StandardSeeds_F64();
+			return new StandardKMeans_F64(1000, 1e-8, seeds );
+		}
 	}
 
 	public static class FixedSeeds implements InitializeKMeans_F64 {

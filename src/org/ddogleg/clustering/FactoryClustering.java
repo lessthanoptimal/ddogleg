@@ -16,28 +16,25 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.gmm;
+package org.ddogleg.clustering;
 
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
+import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64;
+import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 
 /**
+ * Factory for creating clustering algorithms.
+ *
  * @author Peter Abeles
  */
-public class TestAssignGmm_F64 {
-	@Test
-	public void assign() {
-		fail("implement");
+public class FactoryClustering {
+
+	// todo move number of iterations and convergence threshold into high level interface?
+
+	public static ExpectationMaximizationGmm_F64 expectMaximGmm( ) {
+		return null;
 	}
 
-	@Test
-	public void assign_soft() {
-		fail("implement");
-	}
-
-	@Test
-	public void copy() {
-		fail("implement");
+	public static StandardKMeans_F64 kMeans_F64( ) {
+		return null;
 	}
 }

@@ -22,10 +22,15 @@ import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.GenericClusterChecks_F64;
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.equation.Equation;
 import org.ejml.ops.CommonOps;
+import org.ejml.ops.MatrixFeatures;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.ddogleg.clustering.gmm.TestGaussianLikelihoodManager.computeLikelihood;
@@ -134,10 +139,13 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		// compute the density and compare against ground truth
 		alg.maximization();
 
-		assertEquals(1,a.mean.get(0,0),0.1);
-		assertEquals(0.5,a.mean.get(1,0),0.1);
+		GaussianGmm_F64 expectedA = computeGaussian(0,alg.info.toList());
+		GaussianGmm_F64 expectedB = computeGaussian(1,alg.info.toList());
 
-		// TODO check mean and covariance
+		assertTrue(MatrixFeatures.isIdentical(expectedA.mean, a.mean, 1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedB.mean, b.mean, 1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedA.covariance,a.covariance,1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedB.covariance,b.covariance,1e-8));
 
 	}
 
@@ -163,9 +171,49 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		}
 	}
 
-	@Override
-	public ComputeClusters<double[]> createClustersAlg() {
+	private GaussianGmm_F64 computeGaussian( int which , List<PointInfo> points ) {
 
-		return new ExpectationMaximizationGmm_F64(1000,1e-8,seeds);
+		int N = points.get(0).point.length;
+		GaussianGmm_F64 out = new GaussianGmm_F64(N);
+
+		// compute the mean
+		double total = 0;
+		for (int i = 0; i < points.size(); i++) {
+			PointInfo p = points.get(i);
+			double w = p.weights.data[which];
+			total += w;
+
+			for (int j = 0; j < N; j++) {
+				out.mean.data[j] += w*p.point[j];
+			}
+		}
+		CommonOps.divide(out.mean,total);
+
+		// compute the covariance
+		Equation eq = new Equation();
+		eq.alias(out.mean, "mu", out.covariance, "Q");
+		for (int i = 0; i < points.size(); i++) {
+			PointInfo p = points.get(i);
+			double w = p.weights.data[which];
+
+			DenseMatrix64F x = DenseMatrix64F.wrap(N,1,p.point);
+			eq.alias(x,"x",w,"w");
+			eq.process("Q = Q + w*(x-mu)*(x-mu)'");
+		}
+		CommonOps.divide(out.covariance,total);
+		return out;
+	}
+
+	@Override
+	public ComputeClusters<double[]> createClustersAlg( boolean hint ) {
+
+		if( hint ) {
+			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
+		} else {
+			StandardSeeds_F64 kseeds = new StandardSeeds_F64();
+			StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1e-8,kseeds);
+			SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
+			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
+		}
 	}
 }

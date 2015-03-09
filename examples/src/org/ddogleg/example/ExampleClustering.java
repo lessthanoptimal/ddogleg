@@ -16,28 +16,14 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.gmm;
-
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
+package org.ddogleg.example;
 
 /**
+ * Demonstration of how to cluster a N-dimensional points into clusters.  The high level interface provides
+ * the capability to do hard and soft assignments.  Hard assignments select a single best match for a point
+ * and soft assignments compute a weight for each cluster, high weights mean better matches.
+ *
  * @author Peter Abeles
  */
-public class TestAssignGmm_F64 {
-	@Test
-	public void assign() {
-		fail("implement");
-	}
-
-	@Test
-	public void assign_soft() {
-		fail("implement");
-	}
-
-	@Test
-	public void copy() {
-		fail("implement");
-	}
+public class ExampleClustering {
 }

@@ -20,6 +20,10 @@ package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.equation.Equation;
+import org.ejml.ops.CommonOps;
+import org.ejml.ops.MatrixFeatures;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -34,7 +39,6 @@ import static org.junit.Assert.assertEquals;
 public class TestSeedFromKMeans_F64 {
 
 	Random rand = new Random(234);
-
 
 	@Test
 	public void selectSeeds() {
@@ -76,20 +80,39 @@ public class TestSeedFromKMeans_F64 {
 		assertEquals(0.5,a.weight,0.91);
 		assertEquals(0.5,b.weight,0.01);
 
-		assertEquals(x0,a.mean.get(0,0),0.1);
-		assertEquals(y0,a.mean.get(1,0),0.1);
-		assertEquals(x1,b.mean.get(0,0),0.1);
-		assertEquals(y1,b.mean.get(1,0),0.1);
+		GaussianGmm_F64 expectedA = computeGaussian(0,points);
+		GaussianGmm_F64 expectedB = computeGaussian(1,points);
 
-		assertEquals(sigmaX*sigmaX,a.covariance.get(0,0),0.1);
-		assertEquals(0,a.covariance.get(0,1),0.1);
-		assertEquals(0,a.covariance.get(1,0),0.1);
-		assertEquals(sigmaY*sigmaY,a.covariance.get(1,1),0.05);
+		assertTrue(MatrixFeatures.isIdentical(expectedA.mean,a.mean,1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedB.mean,b.mean,1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedA.covariance,a.covariance,1e-8));
+		assertTrue(MatrixFeatures.isIdentical(expectedB.covariance,b.covariance,1e-8));
+	}
 
-		assertEquals(sigmaX*sigmaX,b.covariance.get(0,0),0.1);
-		assertEquals(0,b.covariance.get(0,1),0.1);
-		assertEquals(0,b.covariance.get(1,0),0.1);
-		assertEquals(sigmaY*sigmaY,b.covariance.get(1,1),0.05);
+	private GaussianGmm_F64 computeGaussian( int offset , List<double[]> points ) {
+
+		GaussianGmm_F64 out = new GaussianGmm_F64(2);
+
+		// compute the mean
+		for (int i = offset; i < points.size(); i += 2) {
+			double[] p = points.get(i);
+
+			out.mean.data[0] += p[0];
+			out.mean.data[1] += p[1];
+		}
+		CommonOps.divide(out.mean,points.size()/2);
+
+		// compute the covariance
+		Equation eq = new Equation();
+		eq.alias(out.mean, "mu", out.covariance, "Q");
+		for (int i = offset; i < points.size(); i += 2) {
+			double[] p = points.get(i);
+			DenseMatrix64F x = DenseMatrix64F.wrap(2,1,p);
+			eq.alias(x,"x");
+			eq.process("Q = Q + (x-mu)*(x-mu)'");
+		}
+		CommonOps.divide(out.covariance,points.size()/2-1);
+		return out;
 	}
 
 	private StandardKMeans_F64 createKMeans() {

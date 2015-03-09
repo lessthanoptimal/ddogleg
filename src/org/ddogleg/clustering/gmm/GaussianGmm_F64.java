@@ -69,7 +69,13 @@ public class GaussianGmm_F64 {
 		int N = mean.numRows;
 		for (int i = 0; i < N; i++) {
 			for (int j = i; j < N; j++) {
-				covariance.data[i*N+j] = covariance.data[j*N+i] = responsibility*difference[i]*difference[j];
+				covariance.data[i*N+j] += responsibility*difference[i]*difference[j];
+			}
+		}
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < i; j++) {
+				covariance.data[i*N+j] = covariance.data[j*N+i];
 			}
 		}
 	}

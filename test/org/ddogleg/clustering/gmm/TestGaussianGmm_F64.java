@@ -18,15 +18,25 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.equation.Equation;
 import org.ejml.ops.CommonOps;
+import org.ejml.ops.MatrixFeatures;
+import org.ejml.ops.RandomMatrices;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
  */
 public class TestGaussianGmm_F64 {
+
+	Random rand = new Random(234);
+
 	@Test
 	public void zero() {
 		GaussianGmm_F64 g = new GaussianGmm_F64(3);
@@ -39,7 +49,7 @@ public class TestGaussianGmm_F64 {
 
 		assertTrue(CommonOps.elementSumAbs(g.mean)==0);
 		assertTrue(CommonOps.elementSumAbs(g.covariance)==0);
-		assertTrue(g.weight==0);
+		assertTrue(g.weight == 0);
 	}
 
 	@Test
@@ -52,12 +62,27 @@ public class TestGaussianGmm_F64 {
 		assertEquals(3*0.7 + 1*1.2,g.mean.data[1],1e-8);
 		assertEquals(-1*0.7 + 0.5*1.2,g.mean.data[2],1e-8);
 
-		assertEquals(0.7+1.2,g.weight,1e-8);
+		assertEquals(0.7 + 1.2, g.weight, 1e-8);
 	}
 
 	@Test
 	public void addCovariance() {
-		fail("Implement");
+
+		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+		g.setMean(new double[]{4,3,6});
+
+		Equation eq = new Equation();
+		eq.process("Q = zeros(3,3)");
+		for (int i = 0; i < 5; i++) {
+			DenseMatrix64F x = RandomMatrices.createRandom(3,1,rand);
+			eq.alias(x,"x",0.4+i*0.1,"w");
+			eq.process("Q = Q + w*x*x'");
+
+			g.addCovariance(x.data,0.4+i*0.1);
+		}
+		DenseMatrix64F Q = eq.lookupMatrix("Q");
+
+		assertTrue(MatrixFeatures.isIdentical(Q, g.covariance, 1e-8));
 	}
 
 	@Test

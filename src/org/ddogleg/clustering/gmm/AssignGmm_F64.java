@@ -33,6 +33,9 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 	List<GaussianGmm_F64> mixture;
 	GaussianLikelihoodManager glm;
 
+	/**
+	 * Use reference to provided mixtures
+	 */
 	public AssignGmm_F64(List<GaussianGmm_F64> mixture) {
 		this.mixture = mixture;
 		int N = mixture.get(0).mean.getNumElements();
@@ -40,6 +43,9 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 		glm.precomputeAll();
 	}
 
+	/**
+	 * Copy constructor
+	 */
 	public AssignGmm_F64( AssignGmm_F64 original ) {
 		mixture = new ArrayList<GaussianGmm_F64>();
 
@@ -83,11 +89,11 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 
 	@Override
 	public int getNumberOfClusters() {
-		return 0;
+		return mixture.size();
 	}
 
 	@Override
 	public AssignCluster<double[]> copy() {
-		return null;
+		return new AssignGmm_F64(this);
 	}
 }

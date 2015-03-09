@@ -24,14 +24,16 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
  */
 public abstract class GenericClusterChecks_F64 {
-	public abstract ComputeClusters<double[]> createClustersAlg();
+	/**
+	 * If hint is true then the first 3 elements are good initial seeds for clustering
+	 */
+	public abstract ComputeClusters<double[]> createClustersAlg(boolean seedHint);
 
 	/**
 	 * Very simple and obvious clustering problem
@@ -46,7 +48,7 @@ public abstract class GenericClusterChecks_F64 {
 			points.add( new double[]{200+i});
 		}
 
-		ComputeClusters<double[]> alg = createClustersAlg();
+		ComputeClusters<double[]> alg = createClustersAlg(true);
 
 		alg.init(1,243234);
 
@@ -79,7 +81,7 @@ public abstract class GenericClusterChecks_F64 {
 
 		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,200,true);
 
-		ComputeClusters<double[]> alg = createClustersAlg();
+		ComputeClusters<double[]> alg = createClustersAlg(false);
 
 		alg.init(DOF,243234);
 
@@ -88,7 +90,12 @@ public abstract class GenericClusterChecks_F64 {
 		alg.process(points,10);
 		double second = alg.getDistanceMeasure();
 
-		// since there are more clusters the distance should be shorter
-		assertTrue(second<first);
+		// it's actually difficult to come up with meaningful tests for distance which don't make
+		// assumptions about the algorithm.  So there's only these really simple tests
+		assertTrue(first!=second);
+		assertFalse(Double.isNaN(first));
+		assertFalse(Double.isNaN(second));
+		assertFalse(Double.isInfinite(first));
+		assertFalse(Double.isInfinite(second));
 	}
 }

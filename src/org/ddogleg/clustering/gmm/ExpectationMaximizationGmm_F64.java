@@ -119,11 +119,9 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			}
 			errorBefore = errorChiSquare;
 
+			// update the Gaussian distributions
 			maximization();
-			if( !likelihoodManager.precomputeAll() ) {
-				// if this fails something seriously went wrong
-				throw new RuntimeException("EM GMM - precompute likelihood failed!");
-			}
+			likelihoodManager.precomputeAll();
 		}
 
 		// clean up
@@ -144,17 +142,32 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		for (int i = 0; i < info.size(); i++) {
 			PointInfo p = info.get(i);
 
+			// identify the best cluster match and save it's chi-square for convergence testing
+			double bestLikelihood = 0;
+			double bestChiSq = Double.MAX_VALUE;
+
 			double total = 0;
 			for (int j = 0; j < mixture.size; j++) {
 				GaussianLikelihoodManager.Likelihood g = likelihoodManager.getLikelihood(j);
-				total += p.weights.data[j] = g.likelihood(p.point);
-				sumChiSq += g.getChisq();
+				double likelihood = g.likelihood(p.point);
+				total += p.weights.data[j] = likelihood;
+
+				if( likelihood > bestLikelihood ) {
+					bestLikelihood = likelihood;
+					bestChiSq = g.getChisq();
+				}
 			}
 
 			// make sure it sums up to 1
-			for (int j = 0; j < mixture.size; j++) {
-				p.weights.data[j] /= total;
+			if( total > 0 ) {
+				for (int j = 0; j < mixture.size; j++) {
+					p.weights.data[j] /= total;
+				}
 			}
+
+			// only add the best chi-square since the other mixtures might be far away
+			// I guess I could use the weights to do this too.
+			sumChiSq += bestChiSq;
 		}
 
 		return sumChiSq;
@@ -180,14 +193,14 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		}
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
-			CommonOps.divide(g.mean,g.weight);
+			if( g.weight > 0 )
+				CommonOps.divide(g.mean,g.weight);
 		}
 
 		// compute new covariance
 		for (int i = 0; i < info.size; i++) {
 			PointInfo pp = info.get(i);
 			double[] p = pp.point;
-
 
 			for (int j = 0; j < mixture.size; j++) {
 				GaussianGmm_F64 g = mixture.get(j);
@@ -202,8 +215,10 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		double totalMixtureWeight = 0;
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
-			CommonOps.divide(g.covariance,g.weight);
-			totalMixtureWeight += g.weight;
+			if( g.weight > 0 ) {
+				CommonOps.divide(g.covariance, g.weight);
+				totalMixtureWeight += g.weight;
+			}
 		}
 
 		// update the weight
