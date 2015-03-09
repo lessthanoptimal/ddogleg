@@ -18,14 +18,12 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.interfaces.decomposition.CholeskyDecomposition;
-import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps;
 
 /**
- * A Gaussian in a Gaussian Mixture Model.  Contains a mean, covariance, and weight.
+ * A Gaussian in a Gaussian Mixture Model.  Contains a mean, covariance, and weight.  Additional functions
+ * are provided to help compute the Gaussian's parameters.
  *
  * @author Peter Abeles
  */
@@ -35,23 +33,27 @@ public class GaussianGmm_F64 {
 	public DenseMatrix64F covariance;
 	public double weight;
 
-	// used to precompute parts of the likelihood function
-	public DenseMatrix64F invCov;
-	public double chisq; // chi-sq (x-mu)'*inv(Sigma)*(x-mu)
-	public double leftSide; // precomputed left side of likelihood
-
+	/**
+	 * Declares internal data strucures
+	 * @param DOF Number of degrees-of-freedom in the sampled points.
+	 */
 	public GaussianGmm_F64( int DOF ) {
 		mean = new DenseMatrix64F(DOF,1);
 		covariance = new DenseMatrix64F(DOF,DOF);
-		invCov = new DenseMatrix64F(DOF,DOF);
 	}
 
+	/**
+	 * Sets the mean, covariance, and weight to zero
+	 */
 	public void zero() {
 		CommonOps.fill(mean,0);
 		CommonOps.fill(covariance,0);
 		weight = 0;
 	}
 
+	/**
+	 * Helper function for computing Gaussian parameters.  Adds the point to mean and weight.
+	 */
 	public void addMean( double[] point , double responsibility ) {
 		for (int i = 0; i < mean.numRows; i++) {
 			mean.data[i] += responsibility*point[i];
@@ -59,6 +61,10 @@ public class GaussianGmm_F64 {
 		weight += responsibility;
 	}
 
+	/**
+	 * Helper function for computing Gaussian parameters.  Adds the difference between point and mean to covariance,
+	 * adjusted by the weight.
+	 */
 	public void addCovariance( double[] difference , double responsibility ) {
 		int N = mean.numRows;
 		for (int i = 0; i < N; i++) {
@@ -68,47 +74,21 @@ public class GaussianGmm_F64 {
 		}
 	}
 
+	/**
+	 * Sets the mean to be the same as the provided point\
+	 */
 	public void setMean( double[] point ) {
 		System.arraycopy(point,0,mean.data,0,mean.numRows);
 	}
 
-	/**
-	 * Precomputes everything in the likelihood calculation which can be to make it run faster.
-	 *
-	 * @param solver Solver used to invert the matrix.  Must not modify the passed in covariance
-	 */
-	public boolean preprocessLikelihood( LinearSolver<DenseMatrix64F> solver ) {
-		if( !solver.setA(covariance) )
-			return false;
-		solver.invert(invCov);
+	public GaussianGmm_F64 copy() {
+		GaussianGmm_F64 out = new GaussianGmm_F64(mean.getNumElements());
 
-		CholeskyDecomposition<DenseMatrix64F> decomposition = solver.getDecomposition();
-		double det = decomposition.computeDeterminant().real;
+		out.mean.set(mean);
+		out.covariance.set(covariance);
+		out.weight = weight;
 
-		// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out
-		leftSide = 1.0/Math.sqrt(det);
+		return out;
 
-		return true;
-	}
-
-	public double getChiSq() {
-		return chisq;
-	}
-
-	/**
-	 * Computes p(x|mu,Sigma) where x is the point.
-	 * @param point The point being examined
-	 * @param workSpace row vector with a length of DOF
-	 * @return likelihood of the point
-	 */
-	public double likelihood( double[] point , DenseMatrix64F workSpace) {
-		int N = mean.numRows;
-		// x - mu
-		for (int i = 0; i < N; i++) {
-			workSpace.data[i] = point[i]-mean.data[i];
-		}
-		chisq = VectorVectorMult.innerProdA(workSpace,invCov,workSpace);
-
-		return leftSide*Math.exp(-0.5*chisq);
 	}
 }

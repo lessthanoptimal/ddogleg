@@ -92,10 +92,21 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
 			for (int j = 0; j < N; j++) {
 				for (int k = j; k < N; k++) {
-					cov.data[j*N+k] = cov.data[k*N+j] = dx[j]*dx[k];
+					cov.data[k*N+j] += dx[j]*dx[k];
 				}
 			}
 		}
+
+		// fill in the lower half
+		for (int i = 0; i < seeds.size(); i++) {
+			DenseMatrix64F cov = seeds.get(i).covariance;
+			for (int j = 0; j < N; j++) {
+				for (int k = 0; k < j; k++) {
+					cov.data[j*N+k] = cov.data[k*N+j];
+				}
+			}
+		}
+
 
 		// Perform the division part of covariance calculation and compute the weight
 		for (int i = 0; i < seeds.size(); i++) {

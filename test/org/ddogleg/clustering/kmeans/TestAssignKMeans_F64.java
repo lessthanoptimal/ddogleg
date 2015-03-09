@@ -42,7 +42,38 @@ public class TestAssignKMeans_F64 {
 		AssignKMeans_F64 alg = new AssignKMeans_F64(clusters);
 
 		assertEquals(1,alg.assign(new double[]{0,0,9}));
-		assertEquals(0,alg.assign(new double[]{12,0,0}));
+		assertEquals(0, alg.assign(new double[]{12, 0, 0}));
+	}
+
+	@Test
+	public void assign_soft() {
+
+		List<double[]> clusters = new ArrayList<double[]>();
+
+		clusters.add( new double[]{10,0,0});
+		clusters.add( new double[]{5,0,0});
+
+		AssignKMeans_F64 alg = new AssignKMeans_F64(clusters);
+
+		double histogram[] = new double[2];
+
+		alg.assign(new double[]{10,0,0},histogram);
+		assertEquals(1.0, histogram[0], 1e-8);
+		assertEquals(0.0, histogram[1],1e-8);
+
+		// see if much more weight is given to the second one
+		alg.assign(new double[]{6, 0, 0}, histogram);
+		assertTrue(histogram[0]*10 < histogram[1]);
+
+		// this is actually a difficult case for using this type of distance metric
+		// one cluster is much farther away and as a result the weight is equality split between the two closer points
+		// which might not be desirable
+		clusters.add( new double[]{5000,0,0});
+		histogram = new double[3];
+		alg.assign(new double[]{6,0,0},histogram);
+		assertTrue(histogram[0]/30.0 > histogram[2]);
+		assertEquals(histogram[0], histogram[1], 0.01);
+
 	}
 
 	@Test

@@ -18,9 +18,10 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ejml.ops.CommonOps;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
@@ -28,12 +29,30 @@ import static org.junit.Assert.fail;
 public class TestGaussianGmm_F64 {
 	@Test
 	public void zero() {
-		fail("Implement");
+		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+
+		CommonOps.fill(g.mean,1);
+		CommonOps.fill(g.covariance,2);
+		g.weight = 4;
+
+		g.zero();
+
+		assertTrue(CommonOps.elementSumAbs(g.mean)==0);
+		assertTrue(CommonOps.elementSumAbs(g.covariance)==0);
+		assertTrue(g.weight==0);
 	}
 
 	@Test
 	public void addMean() {
-		fail("Implement");
+		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+		g.addMean(new double[]{2,3,-1},0.7);
+		g.addMean(new double[]{4,1,0.5},1.2);
+
+		assertEquals(2*0.7 + 4*1.2,g.mean.data[0],1e-8);
+		assertEquals(3*0.7 + 1*1.2,g.mean.data[1],1e-8);
+		assertEquals(-1*0.7 + 0.5*1.2,g.mean.data[2],1e-8);
+
+		assertEquals(0.7+1.2,g.weight,1e-8);
 	}
 
 	@Test
@@ -43,11 +62,13 @@ public class TestGaussianGmm_F64 {
 
 	@Test
 	public void setMean() {
-		fail("Implement");
+		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+
+		g.setMean(new double[]{1,2,3});
+
+		for (int i = 0; i < 3; i++) {
+			assertEquals(i+1,g.mean.get(i,0),1e-8);
+		}
 	}
 
-	@Test
-	public void likelihood() {
-		fail("Implement");
-	}
 }

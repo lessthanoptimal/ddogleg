@@ -22,9 +22,6 @@ import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
-import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps;
 
 import java.util.List;
@@ -57,12 +54,14 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	// ||prev-curr||/prev
 	double threshScoreChange;
 
+	// Used to compute the likelihood for each Gaussian
+	GaussianLikelihoodManager likelihoodManager;
+
 	// internal work space for computing the difference between the mean and point
 	double dx[] = new double[1];
-	DenseMatrix64F workspace = new DenseMatrix64F(1,1);
 
-	// used to compute likelihood
-	LinearSolver<DenseMatrix64F> solver;
+	// compute chi-square error
+	double errorChiSquare;
 
 	/**
 	 * Configures EM parameters
@@ -91,9 +90,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 		if( dx.length < pointDimension )
 			dx = new double[pointDimension];
-		workspace.reshape(pointDimension,1);
-		// this will produce a cholesky decomposition
-		solver = LinearSolverFactory.symmPosDef(pointDimension);
+		likelihoodManager = new GaussianLikelihoodManager(pointDimension,mixture.toList());
 	}
 
 	@Override
@@ -108,13 +105,25 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 		// Select initial distributions
 		selectInitial.selectSeeds(points,mixture.toList());
+		likelihoodManager.precomputeAll();
 
 		// perform EM iteration
+		double errorBefore = Double.MAX_VALUE;
 		for (int iteration = 0; iteration < maxIterations; iteration++) {
-			expectation();
-			maximization();
+			// compute the expectation for each point and compute the chi-square error
+			errorChiSquare = expectation();
 
-			// TODO compute distance and check for convergence
+			// check for convergence
+			if( 1.0 - errorChiSquare/errorBefore <= threshScoreChange ) {
+				break;
+			}
+			errorBefore = errorChiSquare;
+
+			maximization();
+			if( !likelihoodManager.precomputeAll() ) {
+				// if this fails something seriously went wrong
+				throw new RuntimeException("EM GMM - precompute likelihood failed!");
+			}
 		}
 
 		// clean up
@@ -126,14 +135,20 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	/**
 	 * For each point compute the "responsibility" for each Gaussian
+	 *
+	 * @return The sum of chi-square.  Can be used to estimate the total error.
 	 */
-	protected void expectation() {
+	protected double expectation() {
+		double sumChiSq = 0;
+
 		for (int i = 0; i < info.size(); i++) {
 			PointInfo p = info.get(i);
 
 			double total = 0;
 			for (int j = 0; j < mixture.size; j++) {
-				total += p.weights.data[j] = mixture.get(j).likelihood(p.point,workspace);
+				GaussianLikelihoodManager.Likelihood g = likelihoodManager.getLikelihood(j);
+				total += p.weights.data[j] = g.likelihood(p.point);
+				sumChiSq += g.getChisq();
 			}
 
 			// make sure it sums up to 1
@@ -141,10 +156,12 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 				p.weights.data[j] /= total;
 			}
 		}
+
+		return sumChiSq;
 	}
 
 	/**
-	 * Using points with responsibility information recompute the Gaussians and their weights, maximizing
+	 * Using points responsibility information to recompute the Gaussians and their weights, maximizing
 	 * the likelihood of the mixture.
 	 */
 	protected void maximization() {
@@ -187,8 +204,6 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			GaussianGmm_F64 g = mixture.get(i);
 			CommonOps.divide(g.covariance,g.weight);
 			totalMixtureWeight += g.weight;
-
-			g.preprocessLikelihood(solver);
 		}
 
 		// update the weight
@@ -199,15 +214,15 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	@Override
 	public AssignCluster<double[]> getAssignment() {
-		return null; // TODO implement
+		return new AssignGmm_F64(mixture.toList());
 	}
 
 	@Override
 	public double getDistanceMeasure() {
-		return 0; // todo implement
+		return errorChiSquare;
 	}
 
-	private static class PointInfo
+	public static class PointInfo
 	{
 		public double[] point; // reference to the original input point
 		public GrowQueue_F64 weights = new GrowQueue_F64();
