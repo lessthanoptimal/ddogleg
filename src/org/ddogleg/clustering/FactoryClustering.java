@@ -19,7 +19,10 @@
 package org.ddogleg.clustering;
 
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64;
+import org.ddogleg.clustering.gmm.SeedFromKMeans_F64;
+import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
 
 /**
  * Factory for creating clustering algorithms.
@@ -28,13 +31,16 @@ import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
  */
 public class FactoryClustering {
 
-	// todo move number of iterations and convergence threshold into high level interface?
+	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(int maxIterations, double convergeTol) {
 
-	public static ExpectationMaximizationGmm_F64 expectMaximGmm( ) {
-		return null;
+		StandardKMeans_F64 kmeans = kMeans_F64(maxIterations,convergeTol);
+		SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
+
+		return new ExpectationMaximizationGmm_F64(maxIterations,convergeTol,seeds);
 	}
 
-	public static StandardKMeans_F64 kMeans_F64( ) {
-		return null;
+	public static StandardKMeans_F64 kMeans_F64( int maxIterations, double convergeTol) {
+		InitializeKMeans_F64 seeds = new StandardSeeds_F64();
+		return new StandardKMeans_F64(maxIterations,convergeTol,seeds);
 	}
 }

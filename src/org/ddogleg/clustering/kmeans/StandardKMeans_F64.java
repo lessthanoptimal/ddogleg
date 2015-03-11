@@ -38,6 +38,12 @@ import java.util.List;
  * This will find a locally optimal solution which minimizes the sum of the distance-squared of each point
  * to the cluster they are assigned to.
  * </p>
+ *
+ * <p>
+ * Converged if, {@code(D[i] - D[i-1])/D[i] <= tol}, where D is the sum of point from cluster distance at iteration 'i',
+ * and tol is the convergence tolerance threshold.
+ * </p>
+ *
  * <p>
  * [1] Lloyd, S. P. (1957). "Least square quantization in PCM". Bell Telephone Laboratories Paper.
  * Published in journal much later: Lloyd., S. P. (1982)
@@ -54,7 +60,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	int maxIterations;
 
 	// It is considered to be converged when the change in sum score is <= than this amount.
-	double threshScoreChange;
+	double convergeTol;
 
 	// selects the initial locations of each seed
 	InitializeKMeans_F64 seedSelector;
@@ -81,13 +87,13 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	 * Configures k-means parameters
 	 *
 	 * @param maxIterations Maximum number of iterations
-	 * @param threshScoreChange It is considered to be converged when the change in sum score is <= than this amount.
+	 * @param convergeTol Clusters have converged if the change in score is <= to this amount.
 	 * @param seedSelector Used to select initial seeds for the clusters
 	 */
-	public StandardKMeans_F64(int maxIterations, double threshScoreChange,
+	public StandardKMeans_F64(int maxIterations, double convergeTol,
 							  InitializeKMeans_F64 seedSelector) {
 		this.maxIterations = maxIterations;
-		this.threshScoreChange = threshScoreChange;
+		this.convergeTol = convergeTol;
 		this.seedSelector = seedSelector;
 	}
 
@@ -138,7 +144,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 			// check for convergence
 			double fractionalChange = 1.0-sumDistance/previousSum;
-			if( fractionalChange > 0 && fractionalChange <= threshScoreChange )
+			if( fractionalChange > 0 && fractionalChange <= convergeTol)
 				break;
 
 			previousSum = sumDistance;

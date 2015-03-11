@@ -31,6 +31,11 @@ import java.util.List;
  * A locally optimal maximum likelihood estimate is found.  The full covariance is found.  Some other
  * variants will estimate just diagonal elements or a single covariance, but that isn't yet supported.
  *
+ * <p>
+ * Converged if, {@code(D[i] - D[i-1])/D[i] <= tol}, where D is the sum of point from cluster distance at iteration 'i',
+ * and tol is the convergence tolerance threshold.
+ * </p>
+ *
  * @author Peter Abeles
  */
 // TODO Unconstrained covariance
@@ -52,7 +57,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	// If the fractional change in score is less or equal to this value then it has converged.
 	// ||prev-curr||/prev
-	double threshScoreChange;
+	double convergeTol;
 
 	// Used to compute the likelihood for each Gaussian
 	GaussianLikelihoodManager likelihoodManager;
@@ -67,14 +72,14 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	 * Configures EM parameters
 	 *
 	 * @param maxIterations Maximum number of iterations
-	 * @param threshScoreChange If the relative change in score is less or equal than this amount it has converged
+	 * @param convergeTol If the relative change in score is less or equal than this amount it has converged
 	 * @param selectInitial Used to select initial seeds for the clusters
 	 */
 	public ExpectationMaximizationGmm_F64(int maxIterations,
-										  double threshScoreChange,
+										  double convergeTol,
 										  InitializeGmm_F64 selectInitial) {
 		this.maxIterations = maxIterations;
-		this.threshScoreChange = threshScoreChange;
+		this.convergeTol = convergeTol;
 		this.selectInitial = selectInitial;
 	}
 
@@ -114,7 +119,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			errorChiSquare = expectation();
 
 			// check for convergence
-			if( 1.0 - errorChiSquare/errorBefore <= threshScoreChange ) {
+			if( 1.0 - errorChiSquare/errorBefore <= convergeTol) {
 				break;
 			}
 			errorBefore = errorChiSquare;

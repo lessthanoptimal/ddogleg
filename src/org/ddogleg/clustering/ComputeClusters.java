@@ -30,9 +30,9 @@ import java.util.List;
 public interface ComputeClusters<D> {
 
 	/**
-	 * First function which must be called.  Initializes internal data structures.
+	 * Must be called first to initializes internal data structures.  Only needs to be called once.
 	 *
-	 * @param pointDimension NUmber of degrees of freedom in each point.
+	 * @param pointDimension Number of degrees of freedom in each point.
 	 * @param randomSeed Seed for any random number generators used internally.
 	 */
 	public void init( int pointDimension , long randomSeed );
