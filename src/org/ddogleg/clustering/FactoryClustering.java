@@ -21,6 +21,7 @@ package org.ddogleg.clustering;
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64;
 import org.ddogleg.clustering.gmm.SeedFromKMeans_F64;
 import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
+import org.ddogleg.clustering.kmeans.InitializePlusPlus;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
 
@@ -31,16 +32,51 @@ import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
  */
 public class FactoryClustering {
 
+	/**
+	 * High level interface for creating GMM cluster.  If more flexibility is needed (e.g. custom seeds)
+	 * then create and instance of {@link ExpectationMaximizationGmm_F64} directly
+	 *
+	 * @param maxIterations Maximum number of iterations it will perform.
+	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
+	 * @return ExpectationMaximizationGmm_F64
+	 */
 	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(int maxIterations, double convergeTol) {
 
-		StandardKMeans_F64 kmeans = kMeans_F64(maxIterations,convergeTol);
+		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,convergeTol);
 		SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 
 		return new ExpectationMaximizationGmm_F64(maxIterations,convergeTol,seeds);
 	}
 
-	public static StandardKMeans_F64 kMeans_F64( int maxIterations, double convergeTol) {
-		InitializeKMeans_F64 seeds = new StandardSeeds_F64();
-		return new StandardKMeans_F64(maxIterations,convergeTol,seeds);
+	/**
+	 * High level interface for creating k-means cluster.  If more flexibility is needed (e.g. custom seeds)
+	 * then create and instance of {@link org.ddogleg.clustering.kmeans.StandardKMeans_F64} directly
+	 *
+	 * @param initializer Specify which method should be used to select the initial seeds for the clusters.  null means default.
+	 * @param maxIterations Maximum number of iterations it will perform.
+	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
+	 * @return StandardKMeans_F64
+	 */
+	public static StandardKMeans_F64 kMeans_F64( KMeansInitializers initializer,
+												 int maxIterations, double convergeTol) {
+		InitializeKMeans_F64 seed;
+
+		if( initializer == null ) {
+			seed = new InitializePlusPlus();
+		} else {
+			switch (initializer) {
+				case PLUS_PLUS:
+					seed = new InitializePlusPlus();
+					break;
+
+				case STANDARD:
+					seed = new StandardSeeds_F64();
+					break;
+
+				default:
+					throw new RuntimeException("Unknown initializer " + initializer);
+			}
+		}
+		return new StandardKMeans_F64(maxIterations,convergeTol,seed);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -69,6 +69,10 @@ public class GrowQueue_I8 {
 
 	public int get( int index ) {
 		return data[index];
+	}
+
+	public void set( int index , int value ) {
+		data[index] = (byte)value;
 	}
 
 	public void fill( byte value ) {

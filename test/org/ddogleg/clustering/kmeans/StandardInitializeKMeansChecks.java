@@ -20,10 +20,10 @@ package org.ddogleg.clustering.kmeans;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
@@ -60,6 +60,50 @@ public abstract class StandardInitializeKMeansChecks {
 			// make sure it wasn't swapped with one of the points
 			for (int j = 0; j < points.size(); j++) {
 				assertTrue(points.get(j) != s);
+			}
+		}
+	}
+
+	/**
+	 * Makes sure the seeds that it selects are unique
+	 */
+	@Test
+	public void uniqueSeeds() {
+		int DOF = 20;
+
+		InitializeKMeans_F64 alg = createAlg();
+
+		alg.init(DOF,0xBEEF);
+
+		// 4 points and 4 seeds.  Each point must be a seed
+		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,4,true);
+		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,4,false);
+
+		boolean matched[] = new boolean[4];
+
+		for (int i = 0; i < 10; i++) {
+			alg.selectSeeds(points,seeds);
+
+			Arrays.fill(matched,false);
+
+			for (int j = 0; j < seeds.size(); j++) {
+				double[] a = seeds.get(j);
+
+				for (int k = j+1; k < seeds.size(); k++) {
+					double[] b = seeds.get(k);
+
+					// see if they are identical
+					boolean identical = true;
+					for (int l = 0; l < a.length; l++) {
+						if( a[l] != b[l]) {
+							identical = false;
+							break;
+						}
+					}
+					if( identical ) {
+						fail("Seed is not unique");
+					}
+				}
 			}
 		}
 	}

@@ -7,6 +7,15 @@ Version:  0.7
 Date:     2014
 
 - Moved complex math into the EJML project
+- Added clustering algorithms
+  * k-means
+     - Random initialization
+     - k-means++ initialization
+     - TODO look at [1]
+  * Gaussian Mixture Model
+
+[1] P. S. Bradley, U. Fayyad, Refining Initial Points for K-Means Clustering, in: Proc. of the 15th Int. Conf. on
+    Machine Learning, 1998, pp. 91–99.
 
 ------------------------------------------------------
 Version:  0.6

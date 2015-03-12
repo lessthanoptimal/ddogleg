@@ -46,7 +46,8 @@ public interface ComputeClusters<D> {
 	public void process( List<D> points , int numCluster );
 
 	/**
-	 * <p>Returns a class which is used to assign a point to a cluster.</p>
+	 * <p>Returns a class which is used to assign a point to a cluster.  Only invoked after
+	 * {@link #process} has been called.</p>
 	 *
 	 * <p>
 	 * WARNING: The returned data structure is recycled each time compute clusters is called.  Create a copy
