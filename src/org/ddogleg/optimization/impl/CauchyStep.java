@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,8 +32,8 @@ import org.ejml.ops.NormOps;
  * The negative definite case is not considered because it is impossible when the Hessian is
  * approximated by squaring the Jacobian.  For a matrix to be negative definite there must be a
  * vector 'x' which will produce a negative result:<br>
- * x'*H*x < 0  --> x'*J'*J*x --> (J*x)'*(J*x)<br>
- * which is clearly always >= 0
+ * {@code x'*H*x < 0  --> x'*J'*J*x --> (J*x)'*(J*x)}<br>
+ * which is clearly always &ge; 0
  * </p>
  *
  * @author Peter Abeles

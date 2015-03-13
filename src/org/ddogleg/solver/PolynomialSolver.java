@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -39,7 +39,7 @@ public class PolynomialSolver {
 	 *
 	 * @param type Which algorithm is to be returned.
 	 * @param maxDegree Maximum degree of the polynomial being considered.
-	 * @return Root finding algorihtm.
+	 * @return Root finding algorithm.
 	 */
 	public static PolynomialRoots createRootFinder( RootFinderType type , int maxDegree ) {
 		switch ( type ) {
@@ -139,17 +139,15 @@ public class PolynomialSolver {
 	}
 
 	/**
-	 * <p>
-	 * The cubic discriminant is used to determine the type of roots.
+	 * <p>The cubic discriminant is used to determine the type of roots.</p>
 	 * <ul>
-	 * <li>if d > 0, then three distinct real roots</li>
+	 * <li>if d {@code >} 0, then three distinct real roots</li>
 	 * <li>if d = 0, then it has a multiple root and all will be real</li>
-	 * <li>if d < 0, then one real and two non-real complex conjugate roots</li>
+	 * <li>if d {@code <} 0, then one real and two non-real complex conjugate roots</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * <p>
-	 * From http://en.wikipedia.org/wiki/Cubic_function Novemeber 17, 2011
+	 * From http://en.wikipedia.org/wiki/Cubic_function November 17, 2011
 	 * </p>
 	 *
 	 * @param a polynomial coefficient.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,22 +23,24 @@ package org.ddogleg.stats;
  */
 public class UtilStatisticsInt 
 {
-    /**
-     * Finds the index in 'a' with the largest value.
-     */
-    public static int findMaxIndex( int[] a ) {
-        int max = a[0];
-        int index = 0;
+	/**
+	 * Finds the index in 'a' with the largest value.
+	 * @param a Input array
+	 * @return Index of largest value
+	 */
+	public static int findMaxIndex( int[] a ) {
+		int max = a[0];
+		int index = 0;
 
-        for( int i = 1; i< a.length; i++ ) {
-            int val = a[i];
+		for( int i = 1; i< a.length; i++ ) {
+			int val = a[i];
 
-            if( val > max ) {
-                max = val;
-                index = i;
-            }
-        }
+			if( val > max ) {
+				max = val;
+				index = i;
+			}
+		}
 
-        return index;
-    }
+		return index;
+	}
 }

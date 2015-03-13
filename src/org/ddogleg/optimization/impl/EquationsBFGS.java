@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,29 +28,24 @@ import org.ejml.simple.SimpleMatrix;
  * Equations for updating the approximate Hessian matrix using BFGS equations.
  * </p>
  *
- * <p>
- * Forward:
+ * <p>Forward:</p>
  * <pre>
  *  B(k+1) = B(k) + [B(k)*s*s'*B(k)]/[s'*B*s]
  *                + y*y'/[y'*s]
  * </pre>
- * </p>
- * <p>
- * Inverse:
+ *
+ * <p>Inverse:</p>
  * <pre>
  *  H(k+1) = (I-p*s*y')*H(k)*(I-p*y*s') + p*s*s'
  * </pre>
- * </p>
- * 
- * <p>
+ *
  * <ul>
  * <li>B = symmetric positive definite forward n by n matrix.</li>
  * <li>H = symmetric positive definite inverse n by n matrix.</li>
  * <li>s = x(k+1)-x(k) vector change in state.</li>
  * <li>y = x'(k+1)-x'(k) vector change in gradient.</li>
- * <li>p = 1/(y'*s) > 0
+ * <li>p = 1/(y'*s) {@code >} 0</li>
  * </ul>
- * </p>
  *
  *
  * @author Peter Abeles

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -108,7 +108,7 @@ public class TrustRegionLeastSquares {
 	/**
 	 * Specify convergence tolerances
 	 *
-	 * @param gtol absolute convergence tolerance based on gradient norm. 0 <= gtol
+	 * @param gtol absolute convergence tolerance based on gradient norm. 0 {@code <=} gtol
 	 */
 	public void setConvergence( double ftol , double gtol ) {
 		if( ftol < 0 || ftol >= 1 )

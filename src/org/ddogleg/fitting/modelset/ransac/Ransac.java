@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -85,11 +85,11 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 * Creates a new instance of the ransac algorithm.  The number of points sampled will default to the
 	 * minimum number.  To override this default invoke {@link #setSampleSize(int)}.
 	 *
-	 * @param randSeed		 The random seed used by the random number generator.
-	 * @param modelGenerator	Creates new model(s) given a small number of points.
-	 * @param modelDistance	Computes the difference between a point an a model.
-	 * @param maxIterations	The maximum number of iterations the RANSAC algorithm will perform.
-	 * @param thresholdFit	 How close of a fit a points needs to be to the model to be considered a fit.
+	 * @param randSeed The random seed used by the random number generator.
+	 * @param modelGenerator Creates new model(s) given a small number of points.
+	 * @param modelDistance Computes the difference between a point an a model.
+	 * @param maxIterations The maximum number of iterations the RANSAC algorithm will perform.
+	 * @param thresholdFit How close of a fit a points needs to be to the model to be considered a fit.
 	 */
 	public Ransac(long randSeed,
 				  ModelManager<Model> modelManager,
@@ -186,7 +186,6 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 * fit model in the optimizer.
 	 *
 	 * @param dataSet The points being considered
-	 * @return true if enough points were matched, false otherwise
 	 */
 	@SuppressWarnings({"ForLoopReplaceableByForEach"})
 	protected void selectMatchSet(List<Point> dataSet, double threshold, Model param) {

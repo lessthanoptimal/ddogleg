@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,12 +38,10 @@ import org.ejml.ops.NormOps;
  * have been modified for simplicity and correctness.
  * </p>
  *
- * <p>
  * <ul>
  * <li>[1] K. Madsen, H.B. Nielson,and O. Tingleff, "Methods for Non-Linear Least Squares Problems" 2nd Ed, April 2004</li>
  * <li>[2] Jorge Nocedal,and Stephen J. Wright "Numerical Optimization" 2nd Ed. Springer 2006
  * </ul>
- * </p>
  *
  * @author Peter Abeles
  */

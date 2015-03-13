@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,7 +25,7 @@ import org.ejml.UtilEjml;
 /**
  * <p>
  * Line search which meets the strong Wolfe line condition.  The Wolfe condition stipulates that &alpha;<sub>k</sub> (the step size)
- * should give sufficient decrease in the objective function below. The two parameters 0 < ftol &le; gtol < 1
+ * should give sufficient decrease in the objective function below. The two parameters 0 {@code <} ftol &le; gtol {@code <} 1
  * determine how stringent the search is. For a full description of optimization parameters see [1].
  * </p>
  * <p>
@@ -106,7 +106,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	 * @param gtol Controls decrease in derivative magnitude. Try 0.9
 	 * @param fmin Minimum acceptable value of f(x). zero for least squares.
 	 * @param t1 Prevents alpha from growing too large during bracket phase.  Try 9
-	 * @param t2 Prevents alpha from being too close to bounds during sectioning.  Recommend t2 < c2. Try 0.1
+	 * @param t2 Prevents alpha from being too close to bounds during sectioning.  Recommend t2 {@code <} c2. Try 0.1
 	 * @param t3 Prevents alpha from being too close to bounds during sectioning.  Try 0.5
 
 	 */

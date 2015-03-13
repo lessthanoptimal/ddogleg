@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -123,8 +123,8 @@ public class FastQueue<T> {
 
 	/**
 	 * Returns the element at the specified index.  Bounds checking is performed.
-	 * @param index
-	 * @return
+	 * @param index Index of the element being retrieved
+	 * @return The retrieved element
 	 */
 	public T get( int index ) {
 		if( index >= size )
@@ -151,7 +151,7 @@ public class FastQueue<T> {
 	 * Removes an element from the queue by shifting elements in the array down one and placing the removed element
 	 * at the old end of the list.
 	 *
-	 * @param index
+	 * @param index Index of the element being removed
 	 */
 	public void remove( int index ) {
 		T removed = data[index];

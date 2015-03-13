@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,7 +31,7 @@ public class PolynomialOps {
 	/**
 	 * Given the coefficients compute the vertex (minimum/maximum) of the quadratic.
 	 *
-	 * y = a*x<sup>2</sp> + b*x + c
+	 * y = a*x<sup>2</sup> + b*x + c
 	 *
 	 * @param a quadratic coefficient.
 	 * @param b quadratic coefficient.

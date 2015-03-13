@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -112,9 +112,9 @@ public class LineSearchMore94 implements LineSearch {
 	/**
 	 * Configures the line search.
 	 *
-	 * @param ftol Tolerance for sufficient decrease. ftol > 0. Smaller value for loose tolerance.  Try 1e-4
-	 * @param gtol Tolerance for curvature condition. gtol >= 0. Larger value for loose tolerance.  Try 1e-3
-	 * @param xtol Relative tolerance for acceptable step. xtol >= 0. Larger value for loose tolerance.  Try 1e-4.
+	 * @param ftol Tolerance for sufficient decrease. ftol {@code >} 0. Smaller value for loose tolerance.  Try 1e-4
+	 * @param gtol Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 1e-3
+	 * @param xtol Relative tolerance for acceptable step. xtol &ge; 0. Larger value for loose tolerance.  Try 1e-4.
 	 */
 	public LineSearchMore94(double ftol, double gtol, double xtol ) {
 		if( stpmax < stpmin )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -91,7 +91,7 @@ public abstract class LevenbergBase {
 	/**
 	 * Specify convergence tolerances
 	 *
-	 * @param gtol absolute convergence tolerance based on gradient norm. 0 <= gtol
+	 * @param gtol absolute convergence tolerance based on gradient norm. 0 &le; gtol
 	 */
 	public void setConvergence( double ftol , double gtol ) {
 		if( ftol < 0 || ftol >= 1 )

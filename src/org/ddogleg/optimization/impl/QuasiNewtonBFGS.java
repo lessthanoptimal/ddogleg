@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -131,9 +131,9 @@ public class QuasiNewtonBFGS
 	/**
 	 * Specify convergence tolerances
 	 *
-	 * @param ftol Relative error tolerance for function value  0 <= ftol <= 1
-	 * @param gtol Absolute convergence based on gradient norm  0 <= gtol
-	 * @param lineGTol Slope coefficient for wolfe condition used in line search. 0 < lineGTol <= 1
+	 * @param ftol Relative error tolerance for function value  0 {@code <=} ftol {@code <=} 1
+	 * @param gtol Absolute convergence based on gradient norm  0 {@code <=} gtol
+	 * @param lineGTol Slope coefficient for wolfe condition used in line search. 0 {@code <} lineGTol {@code <=} 1
 	 */
 	public void setConvergence( double ftol , double gtol , double lineGTol ) {
 		if( ftol < 0 )

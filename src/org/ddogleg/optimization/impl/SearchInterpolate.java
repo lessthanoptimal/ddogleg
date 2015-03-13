@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -76,7 +76,7 @@ public class SearchInterpolate {
 	 * the equation below. Designed to minimize the number of times the derivative
 	 * needs to be computed.  Care has been taken reduce overflow/underflow by normalizing.
 	 *
-	 * &phi;(&alpha;) =  a*&alpha;<sup>3</sup>  + b*&alpha;<sup>2</sup> + &alpha;<sup>3</sup>  + &alpha;*&phi;'(0) + &phi(0)
+	 * &phi;(&alpha;) =  a*&alpha;<sup>3</sup>  + b*&alpha;<sup>2</sup> + &alpha;<sup>3</sup>  + &alpha;*&phi;'(0) + &phi;(0)
 	 *
 	 * @param f0 Function value at f(0)
 	 * @param g0 Derivative value at g(0)
@@ -145,7 +145,7 @@ public class SearchInterpolate {
 	/**
 	 * <p>
 	 * Use cubic interpolation only if the cubic tends to infinity in the direction of the step or if the minim of the
-	 * cubic is beyond x1.  Otherwise the the step will be max if x0 > x1 else it will be min.
+	 * cubic is beyond x1.  Otherwise the the step will be max if x0 {@code >} x1 else it will be min.
 	 * </p>
 	 * <p>
 	 * [1] MINPACK-2 source code http://ftp.mcs.anl.gov/pub/MINPACK-2/dcstep.f

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,12 +23,14 @@ import org.ejml.factory.LinearSolverFactory;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
- * Fits the coefficients for a quadratic polynomial to a set of even spaced data in an array.
+ * <p></p>Fits the coefficients for a quadratic polynomial to a set of even spaced data in an array.</p>
  *
- * y = a*x<sup>2</sp> + b*x + c
+ * <p>y = a*x<sup>2</sup> + b*x + c</p>
  *
+ * <p>
  * The coefficients (a,b,c) of the polynomial are found the solving a system of linear
  * equations that minimizes the least squares error.
+ * </p>
  *
  * @author Peter Abeles
  */

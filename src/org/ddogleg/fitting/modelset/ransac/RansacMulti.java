@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,11 +41,12 @@ import java.util.Random;
  * <p>
  * To change the default behavior of the class for specific applications the child class can override internal
  * functions.  Suggestions are shown below.
+ * </p>
  * <ul>
  * <li>{@link #checkExitIteration}: Override to provide custom logic for when the RANSAC iteration should stop</li>
  * <li>{@link #selectMatchSet}: Override to provide custom for how the inlier set is found.  Be sure to
  * set up matchToInput[] correctly.</li>
- * </p>
+ * </ul>
  *
  * @author Peter Abeles
  */
@@ -183,7 +184,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	 * a custom behavior.  The default code is shown below:
 	 *
 	 * <pre>
-	 * iteration < maxIterations && bestFitPoints.size() != dataSet.size()
+	 * {@code iteration < maxIterations && bestFitPoints.size() != dataSet.size()}
 	 * </pre>
 	 *
 	 * @return if true RANSAC should continue iterating if false then RANSAC will stop.
@@ -315,7 +316,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		public double thresholdFit;
 		/**
 		 *  The number of points it samples when generating a set of model parameters.
-		 *  if <= 0 then the minimum number will be used
+		 *  if &le; 0 then the minimum number will be used
  		 */
 		public int sampleSize = -1;
 		/** generates an initial model given a set of points */
