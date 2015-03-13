@@ -65,10 +65,43 @@ public abstract class StandardInitializeKMeansChecks {
 	}
 
 	/**
+	 * Request more seeds than there are points.  This is impossible to do and ensure the seeds are
+	 * unique.
+	 */
+	@Test
+	public void impossible() {
+		try {
+			int DOF = 20;
+
+			InitializeKMeans_F64 alg = createAlg();
+
+			alg.init(DOF,0xBEEF);
+
+			// 4 points and 4 seeds.  Each point must be a seed
+			List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,3,true);
+			List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,4,false);
+
+			alg.selectSeeds(points,seeds);
+
+			fail("Should have thrown an exception!");
+		} catch( Exception e ) {
+
+		}
+	}
+
+	/**
 	 * Makes sure the seeds that it selects are unique
 	 */
 	@Test
 	public void uniqueSeeds() {
+		// extremely unlikely that it will select each one uniquely if random
+		uniqueSeeds(4,4);
+		// The standard algorithm switches technique when the ratio of points to seeds become
+		// more extreme.  This might not have a collision
+		uniqueSeeds(10,4);
+	}
+
+	public void uniqueSeeds( int numPoints , int numSeeds) {
 		int DOF = 20;
 
 		InitializeKMeans_F64 alg = createAlg();
@@ -76,13 +109,17 @@ public abstract class StandardInitializeKMeansChecks {
 		alg.init(DOF,0xBEEF);
 
 		// 4 points and 4 seeds.  Each point must be a seed
-		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,4,true);
-		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,4,false);
+		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,numPoints,true);
+		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,numSeeds,false);
 
 		boolean matched[] = new boolean[4];
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			alg.selectSeeds(points,seeds);
+
+			// quick test to see if it modified the inputs by adding/removing
+			assertEquals(numPoints,points.size());
+			assertEquals(numSeeds,seeds.size());
 
 			Arrays.fill(matched,false);
 

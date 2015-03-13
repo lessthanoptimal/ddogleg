@@ -52,6 +52,9 @@ public class InitializePlusPlus implements InitializeKMeans_F64{
 
 	@Override
 	public void selectSeeds(List<double[]> points, List<double[]> seeds) {
+		if( seeds.size() > points.size() )
+			throw new IllegalArgumentException("More seeds requested than points!");
+
 		distance.resize(points.size());
 
 		// the first seed is randomly selected from the list of points

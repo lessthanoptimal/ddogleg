@@ -21,8 +21,8 @@ package org.ddogleg.clustering.gmm;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.GenericClusterChecks_F64;
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
+import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
-import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.equation.Equation;
@@ -210,7 +210,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		if( hint ) {
 			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
 		} else {
-			StandardSeeds_F64 kseeds = new StandardSeeds_F64();
+			InitializeStandard_F64 kseeds = new InitializeStandard_F64();
 			StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1e-8,kseeds);
 			SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);

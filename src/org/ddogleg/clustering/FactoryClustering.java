@@ -22,8 +22,8 @@ import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64;
 import org.ddogleg.clustering.gmm.SeedFromKMeans_F64;
 import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.InitializePlusPlus;
+import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
-import org.ddogleg.clustering.kmeans.StandardSeeds_F64;
 
 /**
  * Factory for creating clustering algorithms.
@@ -70,7 +70,7 @@ public class FactoryClustering {
 					break;
 
 				case STANDARD:
-					seed = new StandardSeeds_F64();
+					seed = new InitializeStandard_F64();
 					break;
 
 				default:

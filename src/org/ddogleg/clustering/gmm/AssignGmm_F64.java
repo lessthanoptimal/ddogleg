@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class AssignGmm_F64 implements AssignCluster<double[]> {
 
-	List<GaussianGmm_F64> mixture;
+	protected List<GaussianGmm_F64> mixture;
 	GaussianLikelihoodManager glm;
 
 	/**

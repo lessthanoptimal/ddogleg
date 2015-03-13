@@ -21,9 +21,9 @@ package org.ddogleg.clustering.kmeans;
 /**
  * @author Peter Abeles
  */
-public class TestStandardSeeds_F64 extends StandardInitializeKMeansChecks {
+public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
 	@Override
 	public InitializeKMeans_F64 createAlg() {
-		return new StandardSeeds_F64();
+		return new InitializeStandard_F64();
 	}
 }
