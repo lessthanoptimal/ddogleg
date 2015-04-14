@@ -63,7 +63,11 @@ public class FastQueue<T> {
 		data = (T[]) Array.newInstance(type, initialMaxSize);
 		if( declareInstances ) {
 			for( int i = 0; i < initialMaxSize; i++ ) {
-				data[i] = createInstance();
+				try {
+					data[i] = createInstance();
+				} catch( RuntimeException e ) {
+					throw new RuntimeException("declareInstances is true, but createInstance() can't create a new instance.  Maybe override createInstance()?");
+				}
 			}
 		}
 	}
