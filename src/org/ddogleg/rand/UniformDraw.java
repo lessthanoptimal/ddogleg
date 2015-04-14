@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,59 +24,59 @@ import java.util.Random;
  * Used to draw numbers from an uniform distibution.
  */
 public class UniformDraw {
-    double min;
-    double max;
-    Random rand;
+	double min;
+	double max;
+	Random rand;
 
-    public UniformDraw( Random rand  , double min , double max )
-    {
-        if( max < min ) {
-            throw new IllegalArgumentException("max must be greater than or equal min");
-        } else if( Double.isInfinite(min) || Double.isInfinite(max)) {
-            throw new IllegalArgumentException("Must be finite");
-        } else if( Double.isNaN(min) || Double.isNaN(max)) {
-            throw new IllegalArgumentException("Must not be NaN");
-        }
+	public UniformDraw( Random rand  , double min , double max )
+	{
+		if( max < min ) {
+			throw new IllegalArgumentException("max must be greater than or equal min");
+		} else if( Double.isInfinite(min) || Double.isInfinite(max)) {
+			throw new IllegalArgumentException("Must be finite");
+		} else if( Double.isNaN(min) || Double.isNaN(max)) {
+			throw new IllegalArgumentException("Must not be NaN");
+		}
 
-        this.min = min;
-        this.max = max;
-        this.rand = rand;
-    }
+		this.min = min;
+		this.max = max;
+		this.rand = rand;
+	}
 
-    public UniformDraw( double min , double max )
-    {
-        if( max < min ) {
-            throw new IllegalArgumentException("max must be greater than or equal min");
-        } else if( Double.isInfinite(min) || Double.isInfinite(max)) {
-            throw new IllegalArgumentException("Must be finite");
-        } else if( Double.isNaN(min) || Double.isNaN(max)) {
-            throw new IllegalArgumentException("Must not be NaN");
-        }
+	public UniformDraw( double min , double max )
+	{
+		if( max < min ) {
+			throw new IllegalArgumentException("max must be greater than or equal min");
+		} else if( Double.isInfinite(min) || Double.isInfinite(max)) {
+			throw new IllegalArgumentException("Must be finite");
+		} else if( Double.isNaN(min) || Double.isNaN(max)) {
+			throw new IllegalArgumentException("Must not be NaN");
+		}
 
-        this.min = min;
-        this.max = max;
-    }
+		this.min = min;
+		this.max = max;
+	}
 
-    public double getMin() {
-        return min;
-    }
+	public double getMin() {
+		return min;
+	}
 
-    public void setRand(Random rand) {
-        this.rand = rand;
-    }
+	public void setRand(Random rand) {
+		this.rand = rand;
+	}
 
-    public double getMax() {
-        return max;
-    }
+	public double getMax() {
+		return max;
+	}
 
-    public double next() {
-        return rand.nextDouble()*(max-min)+min;
-    }
+	public double next() {
+		return rand.nextDouble()*(max-min)+min;
+	}
 
-    public static double draw( Random rand , double min , double max  )
-    {
-        return rand.nextDouble()*(max-min)+min;
-    }
+	public static double draw( Random rand , double min , double max  )
+	{
+		return rand.nextDouble()*(max-min)+min;
+	}
 
 
 }
