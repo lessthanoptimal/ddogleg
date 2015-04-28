@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -95,5 +95,104 @@ public class JacobianChecker {
 		numerical.process(param,expected.data);
 
 		return MatrixFeatures.isIdentical(expected,found,tol);
+	}
+
+	/**
+	 * Prints out the difference using a relative error threshold
+	 * @param tol fractional difference
+	 */
+	public static void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+									  double param[] , double tol )
+	{
+		jacobianPrint(func, jacobian, param, tol, Math.sqrt(UtilEjml.EPS));
+	}
+
+	public static void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+									  double param[] , double tol , double differenceScale )
+	{
+		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+
+		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+
+		jacobian.process(param,found.data);
+		numerical.process(param,expected.data);
+
+		System.out.println("FOUND:");
+		found.print();
+		System.out.println("-----------------------------");
+		System.out.println("Numerical");
+		expected.print();
+
+		System.out.println("-----------------------------");
+		System.out.println("Large Differences");
+		for( int y = 0; y < found.numRows; y++ ) {
+			for( int x = 0; x < found.numCols; x++ ) {
+				double f = found.get(y,x);
+				double e = expected.get(y,x);
+
+				double max = Math.max(Math.abs(f),Math.abs(e));
+				if( max == 0 ) {
+					max = 1;
+				}
+
+				double diff = Math.abs(f-e)/max;
+				if( diff > tol ) {
+					System.out.print("1");
+				} else
+					System.out.print("0");
+			}
+			System.out.println();
+		}
+	}
+
+	/**
+	 * Checks the jacobian using a relative error threshold.
+	 * @param tol fractional difference
+	 */
+	public static boolean jacobianR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+								 double param[] , double tol )
+	{
+		return jacobian(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
+	}
+
+	/**
+	 * Checks the jacobian using a relative error threshold.
+	 * @param tol fractional difference
+	 */
+	public static boolean jacobianR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+								 double param[] , double tol ,  double differenceScale )
+	{
+		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+
+		if( numerical.getNumOfOutputsM() != jacobian.getNumOfOutputsM() )
+			throw new RuntimeException("M is not equal "+numerical.getNumOfOutputsM()+"  "+jacobian.getNumOfOutputsM());
+
+		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
+			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
+
+		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+
+		jacobian.process(param, found.data);
+		numerical.process(param, expected.data);
+
+		for( int y = 0; y < found.numRows; y++ ) {
+			for( int x = 0; x < found.numCols; x++ ) {
+				double f = found.get(y,x);
+				double e = expected.get(y,x);
+
+				double max = Math.max(Math.abs(f),Math.abs(e));
+				if( max == 0 ) {
+					max = 1;
+				}
+
+				double diff = Math.abs(f-e)/max;
+				if( diff > tol ) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }
