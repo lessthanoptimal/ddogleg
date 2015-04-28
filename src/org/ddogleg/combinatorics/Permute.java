@@ -73,7 +73,7 @@ public class Permute< T >
 {
 	protected List<T> list;
 	private int bins[];
-	protected int N; // this is 'i' in the pseudocode above
+	protected int i; // this is 'i' in the pseudocode above
 	private int end; // total number of permutations
 
 	/**
@@ -99,7 +99,7 @@ public class Permute< T >
 			bins[i] = i;
 		}
 
-		N=1;
+		i = 1;
 		end = 1;
 		for( int i = 1; i < bins.length ; i++ ) {
 			end *= i;
@@ -119,19 +119,19 @@ public class Permute< T >
 	 */
 	public boolean next()
 	{
-		if( bins[N] >= list.size() ) {
+		if( bins[i] >= list.size() ) {
 			return false;
 		}
 
-		bins[ N ]--;
+		bins[i]--;
 
-		int j = N % 2 * bins[N]; // if N is odd then j = bin[N] else 0
-		swap( N , j );
+		int j = (i % 2) * bins[i]; // if N is odd then j = bin[N] else 0
+		swap(i, j );
 
-		N = 1;
-		while( bins[N] == 0 ) {
-			bins[N] = N;
-			N++;
+		i = 1;
+		while( bins[i] == 0 ) {
+			bins[i] = i;
+			i++;
 		}
 
 		return true;
@@ -155,25 +155,25 @@ public class Permute< T >
 	 */
 	public boolean previous()
 	{
-		if( N == 1 ) {
+		if( i == 1 ) {
 			for( int i = 0; i < bins.length; i++ ) {
 				if( bins[i] != i ) {
 					bins[i]++;
-					N = i;
+					this.i = i;
 					break;
 				}
 			}
-			if( N == 1 )
+			if( i == 1 )
 				return false;
 		} else {
-			for( int i = 2; i < N; i++ ) {
+			for( int i = 2; i < this.i; i++ ) {
 				bins[i] = 0;
 			}
-			N = 1;
+			i = 1;
 		}
 
-		int j = N % 2 * (bins[N] - 1); // if N is odd then j = bin[N] else 0
-		swap( N , j );
+		int j = i % 2 * (bins[i] - 1); // if N is odd then j = bin[N] else 0
+		swap(i, j );
 
 		return true;
 	}

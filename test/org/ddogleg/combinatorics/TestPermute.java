@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,7 +52,7 @@ public class TestPermute {
 
 		assertEquals(2, alg.getTotalPermutations());
 
-		checkList(alg,2);
+		checkList(alg, 2);
 	}
 
 	@Test
@@ -67,6 +67,22 @@ public class TestPermute {
 		assertEquals(6, alg.getTotalPermutations());
 
 		checkList(alg, 6);
+	}
+
+
+	@Test
+	public void testSetSize4() {
+		List<Integer> l = new ArrayList<Integer>();
+		l.add(1);
+		l.add(2);
+		l.add(3);
+		l.add(4);
+
+		Permute<Integer> alg = new Permute<Integer>(l);
+
+		assertEquals(24, alg.getTotalPermutations());
+
+		checkList(alg, 24);
 	}
 
 	@Test
@@ -98,7 +114,15 @@ public class TestPermute {
 		List<List> all = new ArrayList<List>();
 
 		do {
-			all.add(p.getAll(null));
+			List l = p.getAll(null);
+			for (int i = 0; i < l.size(); i++) {
+				Object o = l.get(i);
+				for (int j = i+1; j < l.size(); j++) {
+					if( o == l.get(j))
+						fail("duplicate");
+				}
+			}
+			all.add(l);
 		} while( p.next() );
 
 		assertEquals(expected,all.size());
