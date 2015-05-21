@@ -244,7 +244,7 @@ public class DerivativeChecker {
 		return gradient(func, gradient, param, tol, Math.sqrt(UtilEjml.EPS));
 	}
 
-	public static boolean gradirentR( FunctionNtoS func , FunctionNtoN gradient ,
+	public static boolean gradientR( FunctionNtoS func , FunctionNtoN gradient ,
 									double param[] , double tol ,  double differenceScale )
 	{
 		NumericalGradientForward numerical = new NumericalGradientForward(func,differenceScale);
