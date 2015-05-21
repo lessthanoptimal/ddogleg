@@ -20,6 +20,9 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.functions.FunctionNtoN;
+import org.ddogleg.optimization.functions.FunctionNtoS;
+import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
 import org.ejml.data.DenseMatrix64F;
@@ -30,7 +33,7 @@ import org.ejml.ops.MatrixFeatures;
  *
  * @author Peter Abeles
  */
-public class JacobianChecker {
+public class DerivativeChecker {
 
 	public static void jacobianPrint( FunctionNtoM func , FunctionNtoMxN jacobian ,
 									  double param[] , double tol )
@@ -191,6 +194,83 @@ public class JacobianChecker {
 				if( diff > tol ) {
 					return false;
 				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Compares the passed in gradient function to a numerical calculation.  Comparison is done using
+	 * an absolute value.
+	 * @return true for within tolerance and false otherwise
+	 */
+	public static boolean gradient( FunctionNtoS func , FunctionNtoN gradient ,
+									double param[] , double tol )
+	{
+		return gradient(func, gradient, param, tol, Math.sqrt(UtilEjml.EPS));
+	}
+
+	public static boolean gradient( FunctionNtoS func , FunctionNtoN gradient ,
+									double param[] , double tol ,  double differenceScale )
+	{
+		NumericalGradientForward numerical = new NumericalGradientForward(func,differenceScale);
+
+		if( numerical.getN() != gradient.getN() )
+			throw new RuntimeException("N is not equal: "+numerical.getN()
+					+"  "+gradient.getN());
+
+		int N = numerical.getN();
+		double[] found = new double[N];
+		double[] expected = new double[N];
+
+		gradient.process(param, found);
+		numerical.process(param,expected);
+
+		for (int i = 0; i < N; i++) {
+			if(Math.abs(found[i]-expected[i]) > tol)
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Compares the passed in gradient function to a numerical calculation.  Comparison is done using
+	 * an absolute value.
+	 * @return true for within tolerance and false otherwise
+	 */
+	public static boolean gradientR( FunctionNtoS func , FunctionNtoN gradient ,
+									double param[] , double tol )
+	{
+		return gradient(func, gradient, param, tol, Math.sqrt(UtilEjml.EPS));
+	}
+
+	public static boolean gradirentR( FunctionNtoS func , FunctionNtoN gradient ,
+									double param[] , double tol ,  double differenceScale )
+	{
+		NumericalGradientForward numerical = new NumericalGradientForward(func,differenceScale);
+
+		if( numerical.getN() != gradient.getN() )
+			throw new RuntimeException("N is not equal: "+numerical.getN()
+					+"  "+gradient.getN());
+
+		int N = numerical.getN();
+		double[] found = new double[N];
+		double[] expected = new double[N];
+
+		gradient.process(param, found);
+		numerical.process(param,expected);
+
+		for (int i = 0; i < N; i++) {
+			double f = found[i];
+			double e = expected[i];
+			double max = Math.max(Math.abs(f),Math.abs(e));
+			if( max == 0 ) {
+				max = 1;
+			}
+
+			double diff = Math.abs(f-e)/max;
+			if( diff > tol ) {
+				return false;
 			}
 		}
 		return true;

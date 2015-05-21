@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,11 +19,22 @@
 package org.ddogleg.optimization.functions;
 
 /**
+ * Function with N inputs and N outputs.  The gradient of a function with N inputs and 1 output is the typical usage.
+ *
  * @author Peter Abeles
  */
 public interface FunctionNtoN {
 
+	/**
+	 * Returns the number of inputs and outputs for this function.
+	 */
 	public int getN();
 
+	/**
+	 * Processes the function.
+	 *
+	 * @param input Array with the inputs of length N.  Not modified.
+	 * @param output Array for storing the output of length N.  Modified.
+	 */
 	public void process( double input[] , double[] output );
 }

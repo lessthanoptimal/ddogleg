@@ -17,6 +17,8 @@ Date:     2015
   * Assumes no argument constructor and set() function
 - JacobianChecker
   * Can use a relative fractional error threshold instead of an absolute
+  * Added support for gradient
+  * Renamed to DerivativeChecker
 
 [1] P. S. Bradley, U. Fayyad, Refining Initial Points for K-Means Clustering, in: Proc. of the 15th Int. Conf. on
     Machine Learning, 1998, pp. 91–99.
