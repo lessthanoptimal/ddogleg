@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,7 +35,7 @@ public class EvaluateLineSearchMore94 extends LineSearchEvaluator {
 
 	@Override
 	protected LineSearch createSearch() {
-		return new LineSearchMore94(ftol, gtol,xtol);
+		return new LineSearchMore94().setConvergence(ftol, gtol,xtol);
 	}
 
 	@Override

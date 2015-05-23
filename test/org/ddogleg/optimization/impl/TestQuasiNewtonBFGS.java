@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -59,7 +59,7 @@ public class TestQuasiNewtonBFGS {
 
 	public QuasiNewtonBFGS createAlg( FunctionNtoS function ) {
 		double gtol = 0.9;
-		LineSearch lineSearch = new LineSearchMore94(1e-3,gtol,0.1);
+		LineSearch lineSearch = new LineSearchMore94().setConvergence(1e-3,gtol,0.1);
 		GradientLineFunction f = new CachedNumericalGradientLineFunction(function);
 
 		QuasiNewtonBFGS alg = new QuasiNewtonBFGS(f,lineSearch,0);

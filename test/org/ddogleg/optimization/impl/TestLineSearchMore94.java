@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -55,7 +55,7 @@ public class TestLineSearchMore94 {
 		FunctionStoS d = new TrivialQuadraticDerivStoS(expected);
 
 		// the initial value should pass all the tests with this setting
-		LineSearch alg = new LineSearchMore94(0.0001,0.1,0.001);
+		LineSearch alg = new LineSearchMore94().setConvergence(0.0001,0.1,0.001);
 		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 
 		double valueZero = f.process(0);
@@ -67,7 +67,7 @@ public class TestLineSearchMore94 {
 		double foundLoose = alg.getStep();
 
 		// now try it with tighter bounds
-		alg = new LineSearchMore94(0.00001,0.000001,0.001);
+		alg = new LineSearchMore94().setConvergence(0.00001,0.000001,0.001);
 		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));

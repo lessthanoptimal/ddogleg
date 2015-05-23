@@ -63,10 +63,10 @@ public class LineSearchMore94 implements LineSearch {
 	private CoupledDerivative function;
 
 	// thresholds to test for convergence
-	private double ftol; // tolerance for sufficient decrease.  ftol > 0
-	private double gtol; // tolerance for curvature condition. gtol >= 0
-	private double xtol; // relative tolerance for an acceptable step. xtol >= 0
-					     // Only a warning is provided if xtol has not been meet
+	private double ftol=-1; // tolerance for sufficient decrease.  ftol > 0
+	private double gtol;    // tolerance for curvature condition. gtol >= 0
+	private double xtol;    // relative tolerance for an acceptable step. xtol >= 0
+					        // Only a warning is provided if xtol has not been meet
 
 	// value of the function and derivative at 0
 	private double finit;
@@ -115,8 +115,10 @@ public class LineSearchMore94 implements LineSearch {
 	 * @param ftol Tolerance for sufficient decrease. ftol {@code >} 0. Smaller value for loose tolerance.  Try 1e-4
 	 * @param gtol Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 1e-3
 	 * @param xtol Relative tolerance for acceptable step. xtol &ge; 0. Larger value for loose tolerance.  Try 1e-4.
+	 *
+	 * @return Reference to this class to allow for command chaining.
 	 */
-	public LineSearchMore94(double ftol, double gtol, double xtol ) {
+	public LineSearchMore94 setConvergence(double ftol, double gtol, double xtol) {
 		if( ftol < 0 )
 			throw new IllegalArgumentException("ftol must be >= 0 ");
 		if( gtol < 0 )
@@ -127,6 +129,7 @@ public class LineSearchMore94 implements LineSearch {
 		this.ftol = ftol;
 		this.gtol = gtol;
 		this.xtol = xtol;
+		return this;
 	}
 
 	@Override
@@ -138,6 +141,8 @@ public class LineSearchMore94 implements LineSearch {
 	public void init(double funcAtZero, double derivAtZero, double funcAtInit, double stepInit ,
 					 double stepMin, double stepMax )
 	{
+		if( ftol < 0 )
+			throw new IllegalArgumentException("Must call setParameters first before init");
 		if( stepMax < stepMin )
 			throw new IllegalArgumentException("stpmin must be < stpmax");
 		if( stepMin < 0 )

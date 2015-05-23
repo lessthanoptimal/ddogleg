@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.wrap;
 
-import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
@@ -28,6 +27,9 @@ import org.ddogleg.optimization.impl.LineSearchMore94;
 import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
 
 /**
+ * Wrapper around {@link QuasiNewtonBFGS} for {@link UnconstrainedMinimization}.  For a description of what
+ * the line parameters mean see {@link LineSearchMore94}.
+ *
  * @author Peter Abeles
  */
 public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements UnconstrainedMinimization {
@@ -38,10 +40,11 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	private double line_xtol = 0.1;
 
 	QuasiNewtonBFGS alg;
+	LineSearchMore94 lineSearch = new LineSearchMore94();
 
 	@Override
 	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
-		LineSearch lineSearch = new LineSearchMore94(line_ftol,line_gtol,line_xtol);
+		lineSearch = new LineSearchMore94();
 
 		GradientLineFunction gradLine;
 
@@ -56,6 +59,7 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
+		lineSearch.setConvergence(line_ftol, line_gtol, line_xtol);
 		alg.setConvergence(ftol,gtol,line_gtol);
 		alg.initialize(initial);
 	}

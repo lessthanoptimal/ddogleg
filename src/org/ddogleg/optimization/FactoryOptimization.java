@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -48,6 +48,17 @@ public class FactoryOptimization {
 	}
 
 	/**
+	 * Returns an implementation of {@link QuasiNewtonBFGS} with {@link LineSearchMore94} for the internal line search.
+	 * This is a specific implementation of {@link UnconstrainedMinimization} and allows full access to all
+	 * tuning parameters.
+	 *
+	 * @return UnconstrainedMinimization
+	 */
+	public static QuasiNewtonBFGS_to_UnconstrainedMinimization createBfgsWithMore94() {
+		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
+	}
+
+	/**
 	 * <p>
 	 * Unconstrained least squares Levenberg-Marquardt (LM) optimizer for dense problems.  There are many
 	 * different variants of LM and this function provides an easy to use interface for selecting and
@@ -92,10 +103,11 @@ public class FactoryOptimization {
 	 *
 	 * @see org.ddogleg.optimization.impl.TrustRegionLeastSquares
 	 *
-	 *
-	 * @param regionSize
-	 * @param type
-	 * @return
+	 * @param regionSize Maximum radius of the trust region.
+	 * @param type The type of trust region
+	 * @param robustSolver If true then a lower but more robust solver which can handle singularities, otherwise
+	 *                     a much faster one if used.
+	 * @return UnconstrainedLeastSquares
 	 */
 	public static UnconstrainedLeastSquares leastSquaresTrustRegion( double regionSize ,
 																	 RegionStepType type ,
