@@ -128,7 +128,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setFunction(CoupledDerivative function ) {
@@ -176,7 +176,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean iterate()

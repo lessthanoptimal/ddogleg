@@ -72,11 +72,15 @@ public class SearchInterpolate {
 	}
 
 	/**
+	 * <p>
 	 * Interpolates the next step using a cubic model.  Interpolation works by solving for 'a' and 'b' in
 	 * the equation below. Designed to minimize the number of times the derivative
 	 * needs to be computed.  Care has been taken reduce overflow/underflow by normalizing.
+	 * </p>
 	 *
+	 * {@code
 	 * &phi;(&alpha;) =  a*&alpha;<sup>3</sup>  + b*&alpha;<sup>2</sup> + &alpha;<sup>3</sup>  + &alpha;*&phi;'(0) + &phi;(0)
+	 * }
 	 *
 	 * @param f0 Function value at f(0)
 	 * @param g0 Derivative value at g(0)
@@ -134,7 +138,7 @@ public class SearchInterpolate {
 		double s = Math.max(Math.abs(theta),Math.abs(g0));
 		s= Math.max(s,Math.abs(g1));
 		double gamma = s*Math.sqrt((theta/s)*(theta/s) - (g0/s)*(g1/s));
-		if( x0 > x1 )
+		if( x1 < x0 )
 			gamma = -gamma;
 		double p = (gamma-g0) + theta;
 		double q = ((gamma-g0)+gamma) + g1;

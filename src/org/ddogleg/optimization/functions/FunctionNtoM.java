@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,11 +30,15 @@ public interface FunctionNtoM {
 
 	/**
 	 * Number of input elements.  Typically the parameters you are optimizing.
+	 *
+	 * @return number of input elements
 	 */
 	public int getNumOfInputsN();
 
 	/**
 	 * Number of output elements. Typically the functions that are being optimized.
+	 *
+	 * @return number of output elements
 	 */
 	public int getNumOfOutputsM();
 

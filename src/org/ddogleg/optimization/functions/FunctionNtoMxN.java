@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,12 +28,16 @@ public interface FunctionNtoMxN {
 	/**
 	 * Number of input parameters and columns in output matrix.
 	 * Typically the parameters you are optimizing.
+	 *
+	 * @return Number of input parameters
 	 */
 	public int getNumOfInputsN();
 
 	/**
 	 * Number of rows in output matrix.
 	 * Typically the functions that are being optimized.
+	 *
+	 * @return Number of rows in output matrix.
 	 */
 	public int getNumOfOutputsM();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,10 +32,10 @@ import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
  */
 public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements UnconstrainedMinimization {
 
-	// line search parmeters
-	private static final double line_gtol = 0.9;
-	private static final double line_ftol = 1e-3;
-	private static final double line_xtol = 0.1;
+	// line search parameters
+	private double line_gtol = 0.9;
+	private double line_ftol = 1e-3;
+	private double line_xtol = 0.1;
 
 	QuasiNewtonBFGS alg;
 
@@ -88,5 +88,29 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	@Override
 	public boolean isUpdated() {
 		return alg.isUpdatedParameters();
+	}
+
+	public double getLine_gtol() {
+		return line_gtol;
+	}
+
+	public void setLine_gtol(double line_gtol) {
+		this.line_gtol = line_gtol;
+	}
+
+	public double getLine_ftol() {
+		return line_ftol;
+	}
+
+	public void setLine_ftol(double line_ftol) {
+		this.line_ftol = line_ftol;
+	}
+
+	public double getLine_xtol() {
+		return line_xtol;
+	}
+
+	public void setLine_xtol(double line_xtol) {
+		this.line_xtol = line_xtol;
 	}
 }

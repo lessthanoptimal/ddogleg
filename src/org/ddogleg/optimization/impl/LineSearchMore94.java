@@ -32,13 +32,13 @@ import org.ddogleg.optimization.functions.CoupledDerivative;
  *
  * <p>
  * Wolfe condition<br>
- * &phi;(&alpha;) &le; &phi;(0) + ftol*&alpha;&phi;'(0)<br>
- * | &phi;'(&alpha;)| &le; gtol*|&phi;'(0)|<br>
+ * {@code &phi;(&alpha;) &le; &phi;(0) + ftol*&alpha;&phi;'(0)}<br>
+ * {@code |&phi;'(&alpha;)| &le; gtol*|&phi;'(0)|}<br>
  * where ftol and gtol determine the precision needed to terminate the search..
  * </p>
  *
  * <p>
- * Parts of this code are from:.
+ * This is basically a "cleaned up" version of the code from:.
  * MINPACK-2 Project. November 1993.<br>
  * Argonne National Laboratory and University of Minnesota.<br>
  * Brett M. Averick, Richard G. Carter, and Jorge J. More'.<br>
@@ -117,10 +117,6 @@ public class LineSearchMore94 implements LineSearch {
 	 * @param xtol Relative tolerance for acceptable step. xtol &ge; 0. Larger value for loose tolerance.  Try 1e-4.
 	 */
 	public LineSearchMore94(double ftol, double gtol, double xtol ) {
-		if( stpmax < stpmin )
-			throw new IllegalArgumentException("stpmin must be < stpmax");
-		if( stpmin < 0 )
-			throw new IllegalArgumentException("stpmin must be > 0");
 		if( ftol < 0 )
 			throw new IllegalArgumentException("ftol must be >= 0 ");
 		if( gtol < 0 )
@@ -142,6 +138,10 @@ public class LineSearchMore94 implements LineSearch {
 	public void init(double funcAtZero, double derivAtZero, double funcAtInit, double stepInit ,
 					 double stepMin, double stepMax )
 	{
+		if( stepMax < stepMin )
+			throw new IllegalArgumentException("stpmin must be < stpmax");
+		if( stepMin < 0 )
+			throw new IllegalArgumentException("stpmin must be > 0");
 		if( stepInit < stepMin)
 			throw new IllegalArgumentException("Initial step is less than the minimum allowed step.");
 		if( stepInit > stepMax)
@@ -151,6 +151,7 @@ public class LineSearchMore94 implements LineSearch {
 
 		this.stpmin = stepMin;
 		this.stpmax = stepMax;
+
 		this.bracket = false;
 		this.stage = 0;
 		this.finit = funcAtZero;
@@ -198,7 +199,7 @@ public class LineSearchMore94 implements LineSearch {
 		// check warning conditions
 		if( bracket && (stp <= stmin || stp >= stmax))
 			message = "Rounding error preventing progress.";
-		if( bracket && stmax - stmin <= xtol* stmax) {
+		if( bracket && stmax - stmin <= xtol*stmax) {
 			converged = true;
 			message = "XTOL test satisfied";
 		}
@@ -214,7 +215,7 @@ public class LineSearchMore94 implements LineSearch {
 		}
 
 		// Warning messages indicates that no progress can be made and that it should stop iterating
-		if( message != null )
+		if( message != null || converged )
 			return true;
 
 		// See if it is searching for the upper bound still
@@ -223,12 +224,12 @@ public class LineSearchMore94 implements LineSearch {
 			// This function has been modified from what's in the paper by removing phi(0) since it
 			// did not effect the outcome of the inequalities.
 			// phi(x) = f(x) - ftol*f'(0)*x
-			fp -= stp*gtest;
-			fx -= stx*gtest;
-			fy -= sty*gtest;
-			gp -= gtest;
-			gx -= gtest;
-			gy -= gtest;
+			fp -= stp*gtest;  // fm
+			fx -= stx*gtest;  // fxm
+			fy -= sty*gtest;  // fym
+			gp -= gtest;      // gm
+			gx -= gtest;      // gxm
+			gy -= gtest;      // gym
 
 			// compute the new step
 			dcstep();
@@ -268,7 +269,7 @@ public class LineSearchMore94 implements LineSearch {
 
 		// see if further progress can be made. If not set stp to be equal to
 		// the best point obtained so far
-		if( bracket && (stp <= stmin || stp >= stmax ) ||  (bracket && stmax-stmin <= xtol*stmax))
+		if( bracket && (stp <= stmin || stp >= stmax ) || (bracket && stmax-stmin <= xtol*stmax))
 			stp=stx;
 
 		updated = true;
@@ -345,14 +346,14 @@ public class LineSearchMore94 implements LineSearch {
 	 */
 	private double handleCase2() {
 		double stpc = SearchInterpolate.cubic2(fp, gp, stp, fx, gx, stx);
-		double stps = SearchInterpolate.quadratic2(gp,stp,gx,stx);
+		double stpq = SearchInterpolate.quadratic2(gp,stp,gx,stx);
 
 		// use which ever is closest to stp since it is lower than stx
 		bracket = true;
-		if( Math.abs(stpc - stp) > Math.abs(stps - stp)) {
+		if( Math.abs(stpc - stp) > Math.abs(stpq - stp)) {
 			return stpc;
 		} else {
-			return stps;
+			return stpq;
 		}
 	}
 
@@ -387,8 +388,8 @@ public class LineSearchMore94 implements LineSearch {
 			} else {
 				stpf = stpq;
 			}
-			stpf = Math.min(stmax,stpf);
-			stpf = Math.max(stmin,stpf);
+			stpf = Math.min(stmax,stpf); // this really is stmax/stmin and not stpmax/stpmin
+			stpf = Math.max(stmin,stpf); // In the for tran can stmax and stmin is passed in for stpmax and stpmin
 		}
 		return stpf;
 	}
@@ -403,7 +404,7 @@ public class LineSearchMore94 implements LineSearch {
 		if( bracket ) {
 			return SearchInterpolate.cubic2(fp, gp, stp, fy, gy, sty);
 		} else if( stp > stx ) {
-			return stmax;
+			return stmax;  // see comment in case 3 about stmax and stmin
 		} else {
 			return stmin;
 		}
