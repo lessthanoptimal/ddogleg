@@ -230,7 +230,7 @@ public class QuasiNewtonBFGS
 			// do the search again, it can't fail this time
 			CommonOps.mult(-1,B,g, searchVector);
 			setupLineSearch(fx, x.data, g.data, searchVector.data);
-		} else if(Math.abs(derivAtZero) < gtol ) {
+		} else if(Math.abs(derivAtZero) <= gtol ) {
 			// the input might have been modified by the function.  So copy it
 			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
 			return terminateSearch(true,null);
@@ -308,8 +308,12 @@ public class QuasiNewtonBFGS
 					// if it failed on the very first step then it might have been too large
 					// try halving the step size
 					initialStep /= 2;
-					invokeLineInitialize(fx, maxStep);
-					return false;
+					if( initialStep != 0 ) {
+						invokeLineInitialize(fx, maxStep);
+						return false;
+					} else {
+						return terminateSearch(false, "Initial step reduced to zero");
+					}
 				} else {
 					return terminateSearch(false, lineSearch.getWarning());
 				}
@@ -335,6 +339,10 @@ public class QuasiNewtonBFGS
 			// error tolerance
 			if( Math.abs(fstp-fx) <= ftol*Math.abs(fx) || Math.abs(derivAtZero) < gtol )
 				return terminateSearch(true,null);
+
+			if( fstp > fx ) {
+				throw new RuntimeException("Worse results!");
+			}
 
 			// current function value is now the previous
 			fx = fstp;
