@@ -19,6 +19,8 @@ Date:     2015
   * Can use a relative fractional error threshold instead of an absolute
   * Added support for gradient
   * Renamed to DerivativeChecker
+- QuasiNewtonBFGS
+  * If the initial step is selected poorly it can recover now by selecting one half its size
 
 [1] P. S. Bradley, U. Fayyad, Refining Initial Points for K-Means Clustering, in: Proc. of the 15th Int. Conf. on
     Machine Learning, 1998, pp. 91–99.

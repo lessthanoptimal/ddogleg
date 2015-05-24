@@ -98,6 +98,10 @@ public class QuasiNewtonBFGS
 	// was 'x' update this iteration?
 	private boolean updated;
 
+	// used when selecting an initial step.
+	double initialStep, maxStep;
+	boolean firstStep;
+
 	/**
 	 * Configures the search.
 	 *
@@ -133,15 +137,15 @@ public class QuasiNewtonBFGS
 	 *
 	 * @param ftol Relative error tolerance for function value  0 {@code <=} ftol {@code <=} 1
 	 * @param gtol Absolute convergence based on gradient norm  0 {@code <=} gtol
-	 * @param lineGTol Slope coefficient for wolfe condition used in line search. 0 {@code <} lineGTol {@code <=} 1
+	 * @param lineGTol Slope coefficient for wolfe condition used in line search. 0 {@code <} lineGTol
 	 */
 	public void setConvergence( double ftol , double gtol , double lineGTol ) {
 		if( ftol < 0 )
 			throw new IllegalArgumentException("ftol < 0");
 		if( gtol < 0 )
 			throw new IllegalArgumentException("gtol < 0");
-		if( lineGTol <= 0 || lineGTol > 1)
-			throw new IllegalArgumentException("lineGTol <= 0 || lineGTol > 1");
+		if( lineGTol <= 0 )
+			throw new IllegalArgumentException("lineGTol <= 0");
 
 		this.ftol = ftol;
 		this.gtol = gtol;
@@ -219,13 +223,13 @@ public class QuasiNewtonBFGS
 		CommonOps.mult(-1,B,g, searchVector);
 
 		// use the line search to find the next x
-		if( !setupLineSearch(fx, x.data, g.data, searchVector.data, 1) ) {
+		if( !setupLineSearch(fx, x.data, g.data, searchVector.data) ) {
 			// the search direction has a positive derivative, meaning the B matrix is
 			// no longer SPD.  Attempt to fix the situation by resetting the matrix
 			resetMatrixB();
 			// do the search again, it can't fail this time
 			CommonOps.mult(-1,B,g, searchVector);
-			setupLineSearch(fx, x.data, g.data, searchVector.data, 1);
+			setupLineSearch(fx, x.data, g.data, searchVector.data);
 		} else if(Math.abs(derivAtZero) < gtol ) {
 			// the input might have been modified by the function.  So copy it
 			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
@@ -258,7 +262,7 @@ public class QuasiNewtonBFGS
 	}
 
 	private boolean setupLineSearch( double funcAtStart , double[] startPoint , double[] startDeriv,
-									 double[] direction , double initialStep ) {
+									 double[] direction ) {
 		// derivative of the line search is the dot product of the gradient and search direction
 		derivAtZero = 0;
 		for( int i = 0; i < N; i++ ) {
@@ -275,14 +279,18 @@ public class QuasiNewtonBFGS
 		function.setLine(startPoint, direction);
 
 		// use wolfe condition to set the maximum step size
-		double maxStep = (funcMinValue-funcAtStart)/(lineGTol *derivAtZero);
-		if( initialStep > maxStep )
-			initialStep = maxStep;
+		maxStep = (funcMinValue-funcAtStart)/(lineGTol*derivAtZero);
+		initialStep = 1 < maxStep ? 1 : maxStep;
+		invokeLineInitialize(funcAtStart,maxStep);
+
+		return true;
+	}
+
+	private void invokeLineInitialize(double funcAtStart, double maxStep) {
 		function.setInput(initialStep);
 		double funcAtInit = function.computeFunction();
 		lineSearch.init(funcAtStart,derivAtZero,funcAtInit,initialStep,0,maxStep);
-
-		return true;
+		firstStep = true;
 	}
 
 	/**
@@ -292,10 +300,21 @@ public class QuasiNewtonBFGS
 	 * @return true if the search has terminated.
 	 */
 	private boolean performLineSearch() {
+		// if true then it can't iterate any more
 		if( lineSearch.iterate() ) {
 			// see if the line search failed
 			if( !lineSearch.isConverged() ) {
-				return terminateSearch(false,lineSearch.getWarning());
+				if( firstStep ) {
+					// if it failed on the very first step then it might have been too large
+					// try halving the step size
+					initialStep /= 2;
+					invokeLineInitialize(fx, maxStep);
+					return false;
+				} else {
+					return terminateSearch(false, lineSearch.getWarning());
+				}
+			} else {
+				firstStep = false;
 			}
 
 			// update variables
