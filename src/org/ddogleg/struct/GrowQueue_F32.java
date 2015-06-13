@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,6 +52,21 @@ public class GrowQueue_F32 {
 		}
 		System.arraycopy(queue.data,0,data,size,queue.size);
 		size += queue.size;
+	}
+
+	public void addAll( float[] array , int startIndex , int endIndex ) {
+		if( endIndex > array.length )
+			throw new IllegalAccessError("endIndex is larger than input array");
+
+		int arraySize = endIndex-startIndex;
+
+		if( size+arraySize > data.length ) {
+			float temp[] = new float[ (size+arraySize) * 2];
+			System.arraycopy(data,0,temp,0,size);
+			data = temp;
+		}
+		System.arraycopy(array,startIndex,data,size,arraySize);
+		size += arraySize;
 	}
 
 	public void add( float val ) {

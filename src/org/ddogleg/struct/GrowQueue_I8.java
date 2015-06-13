@@ -54,6 +54,21 @@ public class GrowQueue_I8 {
 		size += queue.size;
 	}
 
+	public void addAll( byte[] array , int startIndex , int endIndex ) {
+		if( endIndex > array.length )
+			throw new IllegalAccessError("endIndex is larger than input array");
+
+		int arraySize = endIndex-startIndex;
+
+		if( size+arraySize > data.length ) {
+			byte temp[] = new byte[ (size+arraySize) * 2];
+			System.arraycopy(data,0,temp,0,size);
+			data = temp;
+		}
+		System.arraycopy(array,startIndex,data,size,arraySize);
+		size += arraySize;
+	}
+
 	public void add(int value) {
 		push(value);
 	}

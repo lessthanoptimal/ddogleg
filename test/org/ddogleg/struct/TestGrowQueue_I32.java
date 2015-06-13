@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 public class TestGrowQueue_I32 {
 
 	@Test
-	public void addAll() {
+	public void addAll_queue() {
 		GrowQueue_I32 queue0 = new GrowQueue_I32(2);
 		GrowQueue_I32 queue1 = new GrowQueue_I32(3);
 
@@ -53,6 +53,29 @@ public class TestGrowQueue_I32 {
 		assertEquals(3,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
 			assertEquals(queue0.get(i),i+3);
+		}
+	}
+
+	@Test
+	public void addAll_array() {
+		GrowQueue_I32 queue0 = new GrowQueue_I32(2);
+		int[] array = new int[]{3,4,5};
+
+		queue0.add(1);
+		queue0.add(2);
+
+		assertEquals(2,queue0.size);
+		queue0.addAll(array,0,3);
+		assertEquals(5,queue0.size);
+		for( int i = 0; i < queue0.size; i++ ) {
+			assertEquals(queue0.get(i),i+1,1e-8);
+		}
+
+		queue0.reset();
+		queue0.addAll(array,1,3);
+		assertEquals(2,queue0.size);
+		for( int i = 0; i < queue0.size; i++ ) {
+			assertEquals(queue0.get(i),i+4,1e-8);
 		}
 	}
 

@@ -54,6 +54,21 @@ public class GrowQueue_F64 {
 		size += queue.size;
 	}
 
+	public void addAll( double[] array , int startIndex , int endIndex ) {
+		if( endIndex > array.length )
+			throw new IllegalAccessError("endIndex is larger than input array");
+
+		int arraySize = endIndex-startIndex;
+
+		if( size+arraySize > data.length ) {
+			double temp[] = new double[ (size+arraySize) * 2];
+			System.arraycopy(data,0,temp,0,size);
+			data = temp;
+		}
+		System.arraycopy(array,startIndex,data,size,arraySize);
+		size += arraySize;
+	}
+
 	public void add( double val ) {
 		push(val);
 	}
