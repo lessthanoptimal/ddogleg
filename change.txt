@@ -25,6 +25,7 @@ Date:     2015
 - GrowQueue
   * Added addAll(array,start,end)
 - Created UtilStatisticsQueue for computing statistics from GrowQueues
+- LinkedList
 
 [1] P. S. Bradley, U. Fayyad, Refining Initial Points for K-Means Clustering, in: Proc. of the 15th Int. Conf. on
     Machine Learning, 1998, pp. 91–99.

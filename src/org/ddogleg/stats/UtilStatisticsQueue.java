@@ -43,4 +43,8 @@ public class UtilStatisticsQueue {
 
 		return total / (list.size()-1);
 	}
+
+	public static double stdev( GrowQueue_F64 list , double mean ) {
+		return Math.sqrt(variance(list,mean));
+	}
 }
