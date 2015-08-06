@@ -69,11 +69,11 @@ public class GrowQueue_I64 {
 		size += arraySize;
 	}
 
-	public void add(int value) {
+	public void add(long value) {
 		push(value);
 	}
 
-	public void push( int val ) {
+	public void push( long val ) {
 		if( size == data.length ) {
 			long temp[] = new long[ size * 2];
 			System.arraycopy(data,0,temp,0,size);
