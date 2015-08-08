@@ -27,8 +27,8 @@ import java.util.Stack;
  */
 public class RecycleManager<T> {
 
-	Class<T> targetClass;
-	Stack<T> unused = new Stack<T>();
+	protected Class<T> targetClass;
+	protected Stack<T> unused = new Stack<T>();
 
 	public RecycleManager(Class<T> targetClass) {
 		this.targetClass = targetClass;
@@ -70,4 +70,10 @@ public class RecycleManager<T> {
 		}
 	}
 
+	/**
+	 * Returns the stack containing all the unused instances.
+	 */
+	public Stack<T> getUnused() {
+		return unused;
+	}
 }
