@@ -144,7 +144,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 			// check for convergence
 			double fractionalChange = 1.0-sumDistance/previousSum;
-			if( fractionalChange > 0 && fractionalChange <= convergeTol)
+			if( fractionalChange >= 0 && fractionalChange <= convergeTol)
 				break;
 
 			previousSum = sumDistance;
