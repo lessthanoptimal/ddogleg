@@ -56,6 +56,11 @@ public interface NearestNeighbor<D> {
 	/**
 	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
 	 *
+	 * <p>
+	 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
+	 * distance squared is common.
+	 * </p>
+	 *
 	 * @param point A point being searched for.
 	 * @param maxDistance Maximum distance (inclusive, e.g. d &le; maxDistance) a neighbor can be from point.
 	 *                    Values {@code <} 0 will be set to the maximum distance.
@@ -66,6 +71,11 @@ public interface NearestNeighbor<D> {
 
 	/**
 	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
+	 *
+	 * <p>
+	 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
+	 * distance squared is common.
+	 * </p>
 	 *
 	 * @param point A point being searched for.
 	 * @param maxDistance Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
