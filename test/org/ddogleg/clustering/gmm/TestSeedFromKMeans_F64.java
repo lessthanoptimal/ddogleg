@@ -116,7 +116,7 @@ public class TestSeedFromKMeans_F64 {
 	}
 
 	private StandardKMeans_F64 createKMeans() {
-		return new StandardKMeans_F64(200,1e-6,new FixedSeeds());
+		return new StandardKMeans_F64(200,200,1e-6,new FixedSeeds());
 	}
 
 	public static class FixedSeeds implements InitializeKMeans_F64 {

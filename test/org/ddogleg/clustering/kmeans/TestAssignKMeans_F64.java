@@ -20,6 +20,7 @@ package org.ddogleg.clustering.kmeans;
 
 import org.junit.Test;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,48 @@ import static org.junit.Assert.assertTrue;
  * @author Peter Abeles
  */
 public class TestAssignKMeans_F64 {
+
+	@Test
+	public void serialize() {
+
+		List<double[]> clusters = new ArrayList<double[]>();
+
+		clusters.add( new double[]{10,0,0});
+		clusters.add( new double[]{0,0,10});
+
+		AssignKMeans_F64 alg = new AssignKMeans_F64(clusters);
+
+		byte[] encoded = save(alg);
+
+//		AssignKMeans_F64 found = load( encoded );
+	}
+
+	public static byte[] save( Object o ) {
+		try {
+			FileOutputStream fileOut = new FileOutputStream("junk.txt");
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(o);
+			out.close();
+			return byteStream.toByteArray();
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static <T> T load( byte[] data ) {
+		try {
+			ByteArrayInputStream fileIn = new ByteArrayInputStream(data);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			T obj = (T)in.readObject();
+			in.close();
+			return obj;
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Test
 	public void assign() {

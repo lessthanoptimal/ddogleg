@@ -242,6 +242,11 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		return errorChiSquare;
 	}
 
+	@Override
+	public void setVerbose(boolean verbose) {
+		throw new RuntimeException("Not supported yet");
+	}
+
 	public static class PointInfo
 	{
 		public double[] point; // reference to the original input point

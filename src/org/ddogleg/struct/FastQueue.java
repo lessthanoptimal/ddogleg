@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class FastQueue<T> {
+public class FastQueue<T> implements Serializable {
 	public T []data;
 	public int size;
 	public Class<T> type;

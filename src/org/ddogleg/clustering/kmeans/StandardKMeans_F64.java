@@ -23,6 +23,7 @@ import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,8 +57,13 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	// number of elements in each point
 	int N;
 
+	// flag for verbose mode
+	boolean verbose = false;
+
 	// maximum number of iterations
 	int maxIterations;
+	// max iterations before convergence
+	int maxConverge;
 
 	// It is considered to be converged when the change in sum score is <= than this amount.
 	double convergeTol;
@@ -75,24 +81,26 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	FastQueue<double[]> workClusters;
 	GrowQueue_I32 memberCount = new GrowQueue_I32();
 
-	// reference to the assigning algorithm which is returned
-	AssignKMeans_F64 assign;
-
 	// distance of the best match to the point
 	double bestDistance;
 	// sum of distances for all the points
 	double sumDistance;
+	// the best cluster centers
+	FastQueue<double[]> bestClusters;
+	double bestClusterScore;
 
 	/**
 	 * Configures k-means parameters
 	 *
 	 * @param maxIterations Maximum number of iterations
+	 * @param maxConverge Maximum iterations before it converges.  It is reseeded if it doesn't converge.
 	 * @param convergeTol Clusters have converged if the change in score is <= to this amount.
 	 * @param seedSelector Used to select initial seeds for the clusters
 	 */
-	public StandardKMeans_F64(int maxIterations, double convergeTol,
+	public StandardKMeans_F64(int maxIterations, int maxConverge, double convergeTol,
 							  InitializeKMeans_F64 seedSelector) {
 		this.maxIterations = maxIterations;
+		this.maxConverge = maxConverge;
 		this.convergeTol = convergeTol;
 		this.seedSelector = seedSelector;
 	}
@@ -104,9 +112,8 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 		clusters = createQueue(pointDimension);
 		workClusters = createQueue(pointDimension);
+		bestClusters = createQueue(pointDimension);
 		memberCount.resize(pointDimension);
-
-		assign = new AssignKMeans_F64(clusters.toList());
 	}
 
 	private FastQueue<double[]> createQueue( final int pointDimension ) {
@@ -120,9 +127,12 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 	@Override
 	public void process(List<double[]> points, int numCluster) {
+		if( verbose )
+			System.out.println("ENTER standard kmeans process");
 		// declare data
 		clusters.resize(numCluster);
 		workClusters.resize(numCluster);
+		bestClusters.resize(numCluster);
 		memberCount.resize(numCluster);
 		labels.resize(points.size());
 
@@ -130,7 +140,9 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 		seedSelector.selectSeeds(points, clusters.toList());
 
 		// run standard k-means
+		bestClusterScore = Double.MAX_VALUE;
 		double previousSum = Double.MAX_VALUE;
+		int lastConverge = 0;
 		for (int iteration = 0; iteration < maxIterations; iteration++) {
 			// zero the work seeds.  These will be used
 			for (int i = 0; i < workClusters.size(); i++) {
@@ -138,17 +150,45 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 			}
 			memberCount.fill(0);
 
+			// match points to the means and compute the score
 			matchPointsToClusters(points);
 
-			updateClusterCenters();
+			// see if a better solution has been found and save it
+			if( sumDistance < bestClusterScore) {
+				bestClusterScore = sumDistance;
+				for (int i = 0; i < clusters.size(); i++) {
+					System.arraycopy(clusters.data[i], 0,bestClusters.data[i],0,N);
+				}
+				if( verbose )
+					System.out.println(iteration+"  better clusters score: "+bestClusterScore);
+			}
+
+			// see if its taking too long
+			boolean reseed = iteration-lastConverge>=maxConverge;
 
 			// check for convergence
 			double fractionalChange = 1.0-sumDistance/previousSum;
-			if( fractionalChange >= 0 && fractionalChange <= convergeTol)
-				break;
+			reseed |= fractionalChange >= 0 && fractionalChange <= convergeTol;
 
-			previousSum = sumDistance;
+
+			if( reseed) {
+				if( verbose )
+					System.out.println(iteration+"  Reseeding: "+sumDistance);
+				// try from a new random seed
+				seedSelector.selectSeeds(points, clusters.toList());
+				previousSum = Double.MAX_VALUE;
+				lastConverge = iteration;
+			} else {
+				if( previousSum == Double.MAX_VALUE ) {
+					System.out.println(iteration+"  first iteration: "+sumDistance);
+				}
+				previousSum = sumDistance;
+				updateClusterCenters();
+			}
 		}
+
+		if( verbose )
+			System.out.println("EXIT standard kmeans process");
 	}
 
 	/**
@@ -230,12 +270,17 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	 * Returns the mean of each cluster
 	 */
 	public FastQueue<double[]> getClusterMeans() {
-		return clusters;
+		return bestClusters;
 	}
 
 	@Override
 	public AssignCluster<double[]> getAssignment() {
-		return assign;
+
+		// creating a new list here to make serialization easier
+		List<double[]> list = new ArrayList<double[]>();
+		list.addAll( bestClusters.toList() );
+
+		return new AssignKMeans_F64(list);
 	}
 
 	/**
@@ -244,5 +289,10 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	@Override
 	public double getDistanceMeasure() {
 		return sumDistance;
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 }

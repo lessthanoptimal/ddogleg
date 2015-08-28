@@ -81,7 +81,7 @@ public class ExampleClustering {
 		// remove any structure from the points
 		Collections.shuffle(points);
 
-		ComputeClusters<double[]> cluster = FactoryClustering.kMeans_F64(null,1000, 1e-8);
+		ComputeClusters<double[]> cluster = FactoryClustering.kMeans_F64(null,1000,100, 1e-8);
 //		ComputeClusters<double[]> cluster = FactoryClustering.gaussianMixtureModelEM_F64(1000, 1e-8);
 
 		cluster.init(2, rand.nextLong());

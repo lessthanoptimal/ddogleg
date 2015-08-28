@@ -42,7 +42,7 @@ public class FactoryClustering {
 	 */
 	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(int maxIterations, double convergeTol) {
 
-		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,convergeTol);
+		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,maxIterations,convergeTol);
 		SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 
 		return new ExpectationMaximizationGmm_F64(maxIterations,convergeTol,seeds);
@@ -54,11 +54,12 @@ public class FactoryClustering {
 	 *
 	 * @param initializer Specify which method should be used to select the initial seeds for the clusters.  null means default.
 	 * @param maxIterations Maximum number of iterations it will perform.
+	 * @param maxConverge Maximum iterations allowed before convergence.  Re-seeded if it doesn't converge.
 	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
 	 * @return StandardKMeans_F64
 	 */
 	public static StandardKMeans_F64 kMeans_F64( KMeansInitializers initializer,
-												 int maxIterations, double convergeTol) {
+												 int maxIterations, int maxConverge , double convergeTol) {
 		InitializeKMeans_F64 seed;
 
 		if( initializer == null ) {
@@ -77,6 +78,6 @@ public class FactoryClustering {
 					throw new RuntimeException("Unknown initializer " + initializer);
 			}
 		}
-		return new StandardKMeans_F64(maxIterations,convergeTol,seed);
+		return new StandardKMeans_F64(maxIterations,maxConverge,convergeTol,seed);
 	}
 }

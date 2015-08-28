@@ -21,13 +21,15 @@ package org.ddogleg.clustering.gmm;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import java.io.Serializable;
+
 /**
  * A Gaussian in a Gaussian Mixture Model.  Contains a mean, covariance, and weight.  Additional functions
  * are provided to help compute the Gaussian's parameters.
  *
  * @author Peter Abeles
  */
-public class GaussianGmm_F64 {
+public class GaussianGmm_F64 implements Serializable {
 	// These specify the parameters of the Gaussian in the mixture
 	public DenseMatrix64F mean;
 	public DenseMatrix64F covariance;
@@ -40,6 +42,9 @@ public class GaussianGmm_F64 {
 	public GaussianGmm_F64( int DOF ) {
 		mean = new DenseMatrix64F(DOF,1);
 		covariance = new DenseMatrix64F(DOF,DOF);
+	}
+
+	public GaussianGmm_F64() {
 	}
 
 	/**
@@ -96,5 +101,29 @@ public class GaussianGmm_F64 {
 
 		return out;
 
+	}
+
+	public DenseMatrix64F getMean() {
+		return mean;
+	}
+
+	public void setMean(DenseMatrix64F mean) {
+		this.mean = mean;
+	}
+
+	public DenseMatrix64F getCovariance() {
+		return covariance;
+	}
+
+	public void setCovariance(DenseMatrix64F covariance) {
+		this.covariance = covariance;
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
 	}
 }

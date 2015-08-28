@@ -118,4 +118,12 @@ public class AssignKMeans_F64 implements AssignCluster<double[]> {
 	public AssignCluster<double[]> copy() {
 		return new AssignKMeans_F64(this);
 	}
+
+	public List<double[]> getClusters() {
+		return clusters;
+	}
+
+	public void setClusters(List<double[]> clusters) {
+		this.clusters = clusters;
+	}
 }

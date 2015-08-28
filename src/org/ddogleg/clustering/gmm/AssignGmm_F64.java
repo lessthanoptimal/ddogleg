@@ -31,7 +31,7 @@ import java.util.List;
 public class AssignGmm_F64 implements AssignCluster<double[]> {
 
 	protected List<GaussianGmm_F64> mixture;
-	GaussianLikelihoodManager glm;
+	volatile GaussianLikelihoodManager glm;
 
 	/**
 	 * Use reference to provided mixtures
@@ -95,5 +95,13 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 	@Override
 	public AssignCluster<double[]> copy() {
 		return new AssignGmm_F64(this);
+	}
+
+	public List<GaussianGmm_F64> getMixture() {
+		return mixture;
+	}
+
+	public void setMixture(List<GaussianGmm_F64> mixture) {
+		this.mixture = mixture;
 	}
 }

@@ -58,8 +58,8 @@ public class BenchmarkStabilityInitialization {
 		addCluster(5,7,0.3,0.3,100);
 
 		System.out.println("Lower errors the better....\n");
-		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.STANDARD, 1000, 1e-8));
-		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.PLUS_PLUS,1000,1e-8));
+		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.STANDARD, 1000,1000, 1e-8));
+		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.PLUS_PLUS,1000,1000, 1e-8));
 		evaluate(FactoryClustering.gaussianMixtureModelEM_F64(1000,1e-8));
 	}
 

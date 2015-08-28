@@ -44,7 +44,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 
 	Random rand = new Random(234);
 
-	StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1e-8,new TestStandardKMeans_F64.FixedSeeds());;
+	StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1000,1e-8,new TestStandardKMeans_F64.FixedSeeds());;
 	SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 
 	/**
@@ -211,7 +211,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
 		} else {
 			InitializeStandard_F64 kseeds = new InitializeStandard_F64();
-			StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1e-8,kseeds);
+			StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1000,1e-8,kseeds);
 			SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
 		}

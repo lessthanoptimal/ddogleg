@@ -70,4 +70,10 @@ public interface ComputeClusters<D> {
 	 * @return sum of distance between each point and their respective clusters.
 	 */
 	public double getDistanceMeasure();
+
+	/**
+	 * If set to true then information about status will be printed to standard out.  By default verbose is off
+	 * @param verbose true for versbose mode.  False for quite mode.
+	 */
+	public void setVerbose( boolean verbose );
 }

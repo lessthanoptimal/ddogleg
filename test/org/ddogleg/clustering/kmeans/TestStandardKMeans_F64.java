@@ -38,7 +38,7 @@ public class TestStandardKMeans_F64 extends GenericClusterChecks_F64{
 
 	@Test
 	public void matchPointsToClusters() {
-		StandardKMeans_F64 alg = new StandardKMeans_F64(100,1,new InitializeStandard_F64());
+		StandardKMeans_F64 alg = new StandardKMeans_F64(100,100,1,new InitializeStandard_F64());
 
 		alg.init(4, 123);
 
@@ -74,7 +74,7 @@ public class TestStandardKMeans_F64 extends GenericClusterChecks_F64{
 	@Test
 	public void updateClusterCenters() {
 
-		StandardKMeans_F64 alg = new StandardKMeans_F64(100,1,new InitializeStandard_F64());
+		StandardKMeans_F64 alg = new StandardKMeans_F64(100,100,1,new InitializeStandard_F64());
 
 		alg.init(4,123);
 
@@ -137,10 +137,10 @@ public class TestStandardKMeans_F64 extends GenericClusterChecks_F64{
 	public ComputeClusters<double[]> createClustersAlg( boolean hint ) {
 		if( hint ) {
 			// assume the first 3 are in different groups for the seeds
-			return new StandardKMeans_F64(1000, 1e-8, new FixedSeeds());
+			return new StandardKMeans_F64(1000,1000, 1e-8, new FixedSeeds());
 		} else {
 			InitializeStandard_F64 seeds = new InitializeStandard_F64();
-			return new StandardKMeans_F64(1000, 1e-8, seeds );
+			return new StandardKMeans_F64(1000,1000, 1e-8, seeds );
 		}
 	}
 
