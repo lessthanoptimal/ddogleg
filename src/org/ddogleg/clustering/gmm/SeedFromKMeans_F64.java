@@ -123,4 +123,9 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 			}
 		}
 	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		kmeans.setVerbose(verbose);
+	}
 }

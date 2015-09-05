@@ -68,6 +68,9 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	// compute chi-square error
 	double errorChiSquare;
 
+	// true for verbose output to standard out
+	boolean verbose;
+
 	/**
 	 * Configures EM parameters
 	 *
@@ -81,6 +84,8 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		this.maxIterations = maxIterations;
 		this.convergeTol = convergeTol;
 		this.selectInitial = selectInitial;
+
+		System.err.println("WARNING:  GMM-EM is a work in progress!  Might not work in your situation");
 	}
 
 	@Override
@@ -108,9 +113,12 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			p.weights.resize(numCluster);
 		}
 
+		if( verbose ) System.out.println("GMM-EM: Selecting initial seeds");
 		// Select initial distributions
 		selectInitial.selectSeeds(points,mixture.toList());
 		likelihoodManager.precomputeAll();
+
+		if( verbose ) System.out.println("GMM-EM: Entering main loop");
 
 		// perform EM iteration
 		double errorBefore = Double.MAX_VALUE;
@@ -118,8 +126,11 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			// compute the expectation for each point and compute the chi-square error
 			errorChiSquare = expectation();
 
+			if( verbose ) System.out.println("GMM-EM: "+iteration+" errorChiSquare "+errorChiSquare);
 			// check for convergence
-			if( 1.0 - errorChiSquare/errorBefore <= convergeTol) {
+			double fractionChange = 1.0 - errorChiSquare/errorBefore;
+			if( fractionChange >= 0 && fractionChange <= convergeTol) {
+				if( verbose ) System.out.println("GMM-EM: CONVERGED");
 				break;
 			}
 			errorBefore = errorChiSquare;
@@ -244,7 +255,8 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	@Override
 	public void setVerbose(boolean verbose) {
-		throw new RuntimeException("Not supported yet");
+		selectInitial.setVerbose(verbose);
+		this.verbose = verbose;
 	}
 
 	public static class PointInfo

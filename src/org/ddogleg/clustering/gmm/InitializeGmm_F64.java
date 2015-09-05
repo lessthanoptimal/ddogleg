@@ -40,4 +40,9 @@ public interface InitializeGmm_F64 {
 	 * @param seeds (output) List containing storage for the initial Gaussians.
 	 */
 	public void selectSeeds( List<double[]> points, List<GaussianGmm_F64> seeds );
+
+	/**
+	 * Turn on verbose output to standard out
+	 */
+	void setVerbose( boolean verbose );
 }

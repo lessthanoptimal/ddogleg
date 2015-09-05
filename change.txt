@@ -11,8 +11,8 @@ Date:     2015
   * k-means
      - Random initialization
      - k-means++ initialization
-     - TODO look at [1]
   * Gaussian Mixture Model
+     - Work in progress... Doesn't work yet in all situations due to overflow issues
 - Created ModelManagerDefault which uses reflections
   * Assumes no argument constructor and set() function
 - JacobianChecker
@@ -27,9 +27,6 @@ Date:     2015
 - Created UtilStatisticsQueue for computing statistics from GrowQueues
 - LinkedList
 - Added RecycleManager
-
-[1] P. S. Bradley, U. Fayyad, Refining Initial Points for K-Means Clustering, in: Proc. of the 15th Int. Conf. on
-    Machine Learning, 1998, pp. 91–99.
 
 ------------------------------------------------------
 Version:  0.6

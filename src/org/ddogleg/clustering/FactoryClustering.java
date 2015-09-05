@@ -33,16 +33,22 @@ import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 public class FactoryClustering {
 
 	/**
+	 * <p>
 	 * High level interface for creating GMM cluster.  If more flexibility is needed (e.g. custom seeds)
 	 * then create and instance of {@link ExpectationMaximizationGmm_F64} directly
+	 * </p>
+	 *
+	 * <p>WARNING: DEVELOPMENTAL AND IS LIKELY TO FAIL HORRIBLY</p>
 	 *
 	 * @param maxIterations Maximum number of iterations it will perform.
+	 * @param maxConverge Maximum iterations allowed before convergence.  Re-seeded if it doesn't converge.
 	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
 	 * @return ExpectationMaximizationGmm_F64
 	 */
-	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(int maxIterations, double convergeTol) {
+	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(
+			int maxIterations, int maxConverge , double convergeTol) {
 
-		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,maxIterations,convergeTol);
+		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,maxConverge,convergeTol);
 		SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 
 		return new ExpectationMaximizationGmm_F64(maxIterations,convergeTol,seeds);
