@@ -109,6 +109,15 @@ public class GrowQueue_I32 {
 		size -= total;
 	}
 
+	public int removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
+	}
+
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];

@@ -24,6 +24,7 @@ Date:     2015
   * Can now handle the case where the derivative is zero and gtol is zero.  <= instead of <
 - GrowQueue
   * Added addAll(array,start,end)
+  * Added removeTail()
 - Created UtilStatisticsQueue for computing statistics from GrowQueues
 - LinkedList
 - Added RecycleManager

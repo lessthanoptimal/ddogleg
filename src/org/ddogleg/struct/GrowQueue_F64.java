@@ -97,6 +97,15 @@ public class GrowQueue_F64 {
 		size--;
 	}
 
+	public double removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
+	}
+
 	public double get( int index ) {
 		return data[index];
 	}

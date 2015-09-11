@@ -89,6 +89,15 @@ public class GrowQueue_F32 {
 		size--;
 	}
 
+	public float removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
+	}
+
 	public float get( int index ) {
 		return data[index];
 	}

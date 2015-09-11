@@ -90,6 +90,15 @@ public class GrowQueue_I8 {
 		data[index] = (byte)value;
 	}
 
+	public byte removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
+	}
+
 	public void fill( byte value ) {
 		Arrays.fill(data, 0, size, value);
 	}

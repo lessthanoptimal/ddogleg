@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -67,6 +67,15 @@ public class GrowQueue_B {
 
 	public void fill( boolean value ) {
 		Arrays.fill(data, 0, size, value);
+	}
+
+	public boolean removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
 	}
 
 	public void resize( int size ) {
