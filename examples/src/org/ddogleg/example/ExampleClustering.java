@@ -93,6 +93,7 @@ public class ExampleClustering {
 		frame.add(gui,BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		// Run the cluster algorithm again each time the user clicks the window
 		// This allows you to see how stable the clusters are

@@ -44,33 +44,39 @@ import java.util.List;
  * }
  * </pre>
  *
- * <p>
- * Algorithm was originally lifted from some website years ago.  Here is its pseudo-code.
- * </p>
- * <pre>
- * {@code
- * let a[] represent an arbitrary list of objects to permute
- *   let N equal the length of a[]
- *   create an integer array p[] of size N+1 to control the iteration
- *   initialize p[0] to 0, p[1] to 1, p[2] to 2, ..., p[N] to N
- *   initialize index variable i to 1
- *   while (i < N) do {
- *      decrement p[i] by 1
- *      if i is odd, then let j = p[i] otherwise let j = 0
- *      swap(a[j], a[i])
- *      let i = 1
- *      while (p[i] is equal to 0) do {
- *         let p[i] = i
- *         increment i by 1
- *      } // end while (p[i] is equal to 0)
- *   } // end while (i < N)
- * }
- * </pre>
- *
  * @param <T>
  */
 public class Permute< T >
 {
+	static void swap( int []arr , int i , int j ) {
+		int val = arr[i];
+		arr[i] = arr[j];
+		arr[j] = val;
+	}
+
+	static List<int[]> permute(int length) {
+
+		int arr[] = new int[length];
+		for (int i = 0; i < length; i++) {
+			arr[i] = i;
+		}
+		List<int[]> out = new ArrayList<int[]>();
+		permute(arr,0,out);
+		return out;
+	}
+
+	static void permute(int []arr, int k, List<int[]> out){
+
+		for(int i = k; i < arr.length; i++){
+			swap(arr, i, k);
+			permute(arr, k+1,out);
+			swap(arr, k, i);
+		}
+		if (k == arr.length -1){
+			out.add(arr.clone());
+		}
+	}
+
 	protected List<T> list;
 	private int bins[];
 	protected int i; // this is 'i' in the pseudocode above

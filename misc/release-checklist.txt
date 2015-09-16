@@ -1,23 +1,18 @@
-- check ant build
-  * ant clean, ant, ant test
-- check maven build
+- gradle test
+- gradle install
+- check ant javadoc
 - commit and tag release
 - Upload to source forge (src,libs,javadoc)
 - Update website
 - Update Maven central repository
 
------------
-Maven
 
-- change version in pom.xml
-- rm -rf target
-- mvn package
-- mvn javadoc:jar
-- mvn source:jar
+----
+Gradle
 
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION.jar
+To post a SNAPSHOT or full release:
+gradle uploadArchives
 
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION-sources.jar -Dclassifier=sources
+A SNAPSHOT is created if SNAPSHOT is in its name.
 
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/ddogleg-VERSION-javadoc.jar -Dclassifier=javadoc
-
+log onto http://oss.sonatype.org
