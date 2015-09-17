@@ -28,19 +28,34 @@ import java.util.List;
  * </p>
  *
  * <p>
- * Partially worked example for the set "1234".
+ * Example for the set "0123".
  * </p>
  * <pre>
  * {@code
- * 1234
- * 2134
- * 3124
- * 1324
- * 2314
- * 3214
- * 3241
- * 2341
- * 4321
+ * 0123
+ * 0132
+ * 0213
+ * 0231
+ * 0321
+ * 0312
+ * 1023
+ * 1032
+ * 1203
+ * 1230
+ * 1320
+ * 1302
+ * 2103
+ * 2130
+ * 2013
+ * 2031
+ * 2301
+ * 2310
+ * 3120
+ * 3102
+ * 3210
+ * 3201
+ * 3021
+ * 3012
  * }
  * </pre>
  *
@@ -48,39 +63,12 @@ import java.util.List;
  */
 public class Permute< T >
 {
-	static void swap( int []arr , int i , int j ) {
-		int val = arr[i];
-		arr[i] = arr[j];
-		arr[j] = val;
-	}
-
-	static List<int[]> permute(int length) {
-
-		int arr[] = new int[length];
-		for (int i = 0; i < length; i++) {
-			arr[i] = i;
-		}
-		List<int[]> out = new ArrayList<int[]>();
-		permute(arr,0,out);
-		return out;
-	}
-
-	static void permute(int []arr, int k, List<int[]> out){
-
-		for(int i = k; i < arr.length; i++){
-			swap(arr, i, k);
-			permute(arr, k+1,out);
-			swap(arr, k, i);
-		}
-		if (k == arr.length -1){
-			out.add(arr.clone());
-		}
-	}
-
 	protected List<T> list;
-	private int bins[];
-	protected int i; // this is 'i' in the pseudocode above
-	private int end; // total number of permutations
+	private int indexes[];
+	private int counters[];
+
+	private int total;
+	private int permutation;
 
 	/**
 	 Permute the elements in the list provided
@@ -99,25 +87,26 @@ public class Permute< T >
 	 */
 	private void init( List<T> list ) {
 		this.list = list;
-		bins = new int[ list.size() + 1 ];
+		indexes = new int[ list.size() ];
+		counters = new int[ list.size() ];
 
-		for( int i = 0; i < bins.length ; i++ ) {
-			bins[i] = i;
+		for( int i = 0; i < indexes.length ; i++ ) {
+			counters[i] = indexes[i] = i;
 		}
 
-		i = 1;
-		end = 1;
-		for( int i = 1; i < bins.length ; i++ ) {
-			end *= i;
+		total = 1;
+		for( int i = 2; i <= indexes.length ; i++ ) {
+			total *= i;
 		}
 
+		permutation = 0;
 	}
 
 	/**
 	 * Returns the total number of permutations
 	 */
 	public int getTotalPermutations() {
-		return end;
+		return total;
 	}
 
 	/**
@@ -125,35 +114,44 @@ public class Permute< T >
 	 */
 	public boolean next()
 	{
-		if( bins[i] >= list.size() ) {
+		System.out.println("ENTER next()");
+		printCounters();
+
+		if( indexes.length <= 1 || permutation >= total-1 )
 			return false;
+
+		int N = indexes.length-2;
+		int k = N;
+		while( k <= N ) {
+			System.out.println("  k = "+k+"  swap");
+			swap(k, counters[k]++);//after
+			if (counters[k] == indexes.length) {
+				System.out.println("  k -= 1");
+				k -= 1;
+				if( k < 0 )
+					throw new RuntimeException("BUG, should have been caught earlier");
+			} else {
+				System.out.println("  swap(counter[k],k)");
+				swap(counters[k], k);  //before
+				while( k < indexes.length-1 ) {
+					k++;
+					counters[k] = k;
+				}
+				printCounters();
+			}
 		}
+		printCounters();
+		System.out.println("EXIT next()");
 
-		bins[i]--;
-
-		int j = (i % 2) * bins[i]; // if N is odd then j = bin[N] else 0
-		swap(i, j );
-
-		i = 1;
-		while( bins[i] == 0 ) {
-			bins[i] = i;
-			i++;
-		}
-
+		permutation++;
 		return true;
 	}
 
-	private void swap( int a , int b ) {
-		if( a > b ) {
-			int t = a;
-			a = b;
-			b = t;
+	private void printCounters() {
+		for (int i = 0; i < counters.length; i++) {
+			System.out.print(counters[i]+" ");
 		}
-
-		// now swap that bin and left most
-		T t = list.get(a);
-		list.set( a , list.get(b) );
-		list.set( b , t );
+		System.out.println();
 	}
 
 	/**
@@ -161,27 +159,41 @@ public class Permute< T >
 	 */
 	public boolean previous()
 	{
-		if( i == 1 ) {
-			for( int i = 0; i < bins.length; i++ ) {
-				if( bins[i] != i ) {
-					bins[i]++;
-					this.i = i;
-					break;
-				}
-			}
-			if( i == 1 )
-				return false;
-		} else {
-			for( int i = 2; i < this.i; i++ ) {
-				bins[i] = 0;
-			}
-			i = 1;
-		}
+		return false;
+//		if( indexes.length <= 1 && permutation <= 0 )
+//			return false;
+//
+//		System.out.println("ENTER previous()");
+//		printCounters();
+//
+//		int N = indexes.length-2;
+//		int k = N;
+//
+//		while( k <= N ) {
+//			System.out.println("  k = " + k);
+//			swap( k, counters[k]++);//after
+//			if (counters[k] == indexes.length) {
+//				k -= 1;
+//				if( k < 0 )
+//					throw new RuntimeException("BUG, should have been caught earlier");
+//			} else {
+//				swap(counters[k], k);  //before
+//				while( k < indexes.length-1 ) {
+//					k++;
+//					counters[k] = k;
+//				}
+//			}
+//		}
+//
+//		printCounters();
+//		System.out.println("EXIT previous()");
+//		return true;
+	}
 
-		int j = i % 2 * (bins[i] - 1); // if N is odd then j = bin[N] else 0
-		swap(i, j );
-
-		return true;
+	private void swap( int i , int j ) {
+		int val = indexes[i];
+		indexes[i] = indexes[j];
+		indexes[j] = val;
 	}
 
 	/**
@@ -200,7 +212,7 @@ public class Permute< T >
 	 * @return element in permuted list
 	 */
 	public T get( int i ) {
-		return list.get(bins[i]);
+		return list.get(indexes[i]);
 	}
 
 	/**
@@ -220,5 +232,37 @@ public class Permute< T >
 		}
 
 		return storage;
+	}
+
+	public static void main(String[] args) {
+		List<Integer> list = new ArrayList<Integer>();
+
+		for (int i = 0; i < 4; i++) {
+			list.add(i);
+		}
+
+		Permute permute = new Permute(list);
+
+		print(permute);
+		while( permute.next() ) {
+			print(permute);
+		}
+
+		System.out.println();
+		System.out.println("Reverse");
+		print(permute);
+		while( permute.previous() ) {
+			print(permute);
+		}
+	}
+
+	private static void print( Permute permute ) {
+		System.out.print(" * ");
+		for (int i = 0; i < permute.size(); i++) {
+			System.out.print(permute.get(i));
+		}
+		System.out.println();
+
+
 	}
 }
