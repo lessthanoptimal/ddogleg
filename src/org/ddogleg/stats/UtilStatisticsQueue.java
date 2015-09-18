@@ -18,6 +18,7 @@
 
 package org.ddogleg.stats;
 
+import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.GrowQueue_F64;
 
 /**
@@ -46,5 +47,10 @@ public class UtilStatisticsQueue {
 
 	public static double stdev( GrowQueue_F64 list , double mean ) {
 		return Math.sqrt(variance(list,mean));
+	}
+
+	public static double fraction( GrowQueue_F64 list , double fraction ) {
+		int k = (int)((list.size-1)*fraction+0.5);
+		return QuickSelect.select(list.data,k,list.size);
 	}
 }

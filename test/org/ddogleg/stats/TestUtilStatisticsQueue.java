@@ -52,4 +52,17 @@ public class TestUtilStatisticsQueue {
 		double found = UtilStatisticsQueue.variance(l,2);
 		assertEquals(2.5,found,1e-8);
 	}
+
+	@Test
+	public void fraction_F64() {
+
+		GrowQueue_F64 l = new GrowQueue_F64();
+		for (int i = 0; i < 100; i++) {
+			l.add(i);
+		}
+
+		assertEquals(50,UtilStatisticsQueue.fraction(l,0.5),1e-8);
+		assertEquals(0,UtilStatisticsQueue.fraction(l,0),1e-8);
+		assertEquals(99,UtilStatisticsQueue.fraction(l,1.0),1e-8);
+	}
 }

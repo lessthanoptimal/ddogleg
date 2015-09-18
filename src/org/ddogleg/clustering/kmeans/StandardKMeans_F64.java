@@ -179,7 +179,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 				previousSum = Double.MAX_VALUE;
 				lastConverge = iteration;
 			} else {
-				if( previousSum == Double.MAX_VALUE ) {
+				if( verbose && previousSum == Double.MAX_VALUE ) {
 					System.out.println(iteration+"  first iteration: "+sumDistance);
 				}
 				previousSum = sumDistance;

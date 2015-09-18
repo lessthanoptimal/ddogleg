@@ -86,35 +86,59 @@ public class TestPermute {
 	}
 
 	@Test
-	public void previous() {
+	public void testSetSize5_to_7() {
 		List<Integer> l = new ArrayList<Integer>();
 		l.add(1);
 		l.add(2);
 		l.add(3);
+		l.add(4);
+		l.add(5);
 
-		Permute<Integer> alg = new Permute<Integer>(l);
+		int total = 24*5;
+		for (int i = 0; i <= 2; i++) {
 
-		List<List<Integer>> forward = new ArrayList<List<Integer>>();
-		do {
-			forward.add( alg.getAll(null));
-		} while( alg.next() );
+			Permute<Integer> alg = new Permute<Integer>(l);
 
-		int i = forward.size()-1;
-		do {
-			List<Integer> found = alg.getAll(null);
-			List<Integer> expected = forward.get(i--);
+			assertEquals(total, alg.getTotalPermutations());
 
-			for( int j = 0; j < 3; j++ ) {
-				assertTrue(found.get(j) == expected.get(j));
-			}
-		} while( alg.previous() );
+			checkList(alg, total);
+
+			l.add(6+i);
+			total *= l.size();
+		}
+	}
+
+	@Test
+	public void previous() {
+		List<Integer> l = new ArrayList<Integer>();
+		for (int size = 0; size < 9; size++) {
+			l.add(size);
+
+			Permute<Integer> alg = new Permute<Integer>(l);
+
+			List<List<Integer>> forward = new ArrayList<List<Integer>>();
+			do {
+				forward.add( alg.getPermutation(null));
+			} while( alg.next() );
+
+			int i = forward.size()-1;
+			do {
+				List<Integer> found = alg.getPermutation(null);
+				List<Integer> expected = forward.get(i--);
+
+				for( int j = 0; j < size; j++ ) {
+					assertTrue(found.get(j) == expected.get(j));
+				}
+			} while( alg.previous() );
+		}
 	}
 
 	private void checkList( Permute p , int expected ) {
 		List<List> all = new ArrayList<List>();
 
 		do {
-			List l = p.getAll(null);
+			List l = p.getPermutation(null);
+			// see if each object in the permutation is unique
 			for (int i = 0; i < l.size(); i++) {
 				Object o = l.get(i);
 				for (int j = i+1; j < l.size(); j++) {
@@ -127,6 +151,7 @@ public class TestPermute {
 
 		assertEquals(expected,all.size());
 
+		// now see if each permutation is unique in the set
 		for( int i = 0; i < expected; i++ ) {
 			List a = all.get(i);
 			assertEquals(a.size(),p.size());

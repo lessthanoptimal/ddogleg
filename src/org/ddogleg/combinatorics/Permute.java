@@ -114,44 +114,25 @@ public class Permute< T >
 	 */
 	public boolean next()
 	{
-		System.out.println("ENTER next()");
-		printCounters();
-
 		if( indexes.length <= 1 || permutation >= total-1 )
 			return false;
 
 		int N = indexes.length-2;
 		int k = N;
-		while( k <= N ) {
-			System.out.println("  k = "+k+"  swap");
-			swap(k, counters[k]++);//after
-			if (counters[k] == indexes.length) {
-				System.out.println("  k -= 1");
-				k -= 1;
-				if( k < 0 )
-					throw new RuntimeException("BUG, should have been caught earlier");
-			} else {
-				System.out.println("  swap(counter[k],k)");
-				swap(counters[k], k);  //before
-				while( k < indexes.length-1 ) {
-					k++;
-					counters[k] = k;
-				}
-				printCounters();
-			}
+
+		swap(k, counters[k]++);
+		while( counters[k] == indexes.length ) {
+			k -= 1;
+			swap(k, counters[k]++);
 		}
-		printCounters();
-		System.out.println("EXIT next()");
+		swap(counters[k], k);  //before
+		while (k < indexes.length - 1) {
+			k++;
+			counters[k] = k;
+		}
 
 		permutation++;
 		return true;
-	}
-
-	private void printCounters() {
-		for (int i = 0; i < counters.length; i++) {
-			System.out.print(counters[i]+" ");
-		}
-		System.out.println();
 	}
 
 	/**
@@ -159,35 +140,31 @@ public class Permute< T >
 	 */
 	public boolean previous()
 	{
-		return false;
-//		if( indexes.length <= 1 && permutation <= 0 )
-//			return false;
-//
-//		System.out.println("ENTER previous()");
-//		printCounters();
-//
-//		int N = indexes.length-2;
-//		int k = N;
-//
-//		while( k <= N ) {
-//			System.out.println("  k = " + k);
-//			swap( k, counters[k]++);//after
-//			if (counters[k] == indexes.length) {
-//				k -= 1;
-//				if( k < 0 )
-//					throw new RuntimeException("BUG, should have been caught earlier");
-//			} else {
-//				swap(counters[k], k);  //before
-//				while( k < indexes.length-1 ) {
-//					k++;
-//					counters[k] = k;
-//				}
-//			}
-//		}
-//
-//		printCounters();
-//		System.out.println("EXIT previous()");
-//		return true;
+		if( indexes.length <= 1 || permutation <= 0 )
+			return false;
+
+		int N = indexes.length-2;
+		int k = N;
+
+		while( counters[k] <= k ) {
+			k--;
+		}
+
+		swap(counters[k], k);
+		counters[k]--;
+		swap(k, counters[k]);
+		int foo = k+1;
+		while( counters[k+1] == k+1 && k < indexes.length-2) {
+			k++;
+			swap(k, indexes.length-1);
+		}
+
+		for (int i = foo; i < indexes.length - 1; i++) {
+			counters[i] = indexes.length - 1;
+		}
+
+		permutation--;
+		return true;
 	}
 
 	private void swap( int i , int j ) {
@@ -221,7 +198,7 @@ public class Permute< T >
 	 * @param storage Optional storage.  If null a new list will be declared.
 	 * @return Current permutation
 	 */
-	public List<T> getAll( List<T> storage ) {
+	public List<T> getPermutation(List<T> storage) {
 		if( storage == null )
 			storage = new ArrayList<T>();
 		else
