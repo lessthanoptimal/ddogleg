@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.7
-Date:     2015-09-16
+Date:     2015-09-18
 
 - Moved complex math into the EJML project
 - Added clustering algorithms
