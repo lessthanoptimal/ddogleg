@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,6 +38,7 @@ public class ExamplePolynomialRoot {
 		PolynomialRoots finder = PolynomialOps.createRootFinder(6, RootFinderType.EVD);
 
 		// Create an arbitrary 3rd order polynomial
+		// f(x) = 2 + 0.2*x + 5*x^2 + 3*x^3
 		Polynomial poly = Polynomial.wrap( 2 , 0.2 , 5 , 3 );
 
 		// Find the roots

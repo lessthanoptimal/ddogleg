@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,9 @@
 package org.ddogleg.solver;
 
 /**
- * Data structure for storing polynomials.
+ * Data structure for storing polynomials.  Internally the coefficients are stored in an array from lowest degree
+ * to highest:<br>
+ *     f(x) = c[0] + c[1]*x + ... + c[n]*x<sup>n-1</sup>
  *
  * @author Peter Abeles
  */
@@ -29,6 +31,12 @@ public class Polynomial {
 	// the number of coefficients (degree+1)
 	public int size;
 
+	/**
+	 * Wraps the polynomial around the array:<br>
+	 * f(x) = c[0] + c[1]*x + ... + c[n]*x<sup>n-1</sup>
+	 * @param coefficients Polynomial coefficients
+	 * @return new instance of a polyonimial which is identical to the input array
+	 */
 	public static Polynomial wrap( double ...coefficients ) {
 		Polynomial p = new Polynomial(coefficients.length);
 		p.setTo(coefficients,coefficients.length);

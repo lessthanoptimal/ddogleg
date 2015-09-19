@@ -78,7 +78,7 @@ public class ExampleClustering {
 		points.addAll( createCluster(1,2,1,120) );
 		points.addAll( createCluster(4,5,1.5,300) );
 
-		// remove any structure from the points
+		// remove any structure from the point's ordering
 		Collections.shuffle(points);
 
 		ComputeClusters<double[]> cluster = FactoryClustering.kMeans_F64(null,1000,100, 1e-8);
