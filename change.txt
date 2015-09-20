@@ -28,6 +28,8 @@ Date:     2015-09-18
 - Created UtilStatisticsQueue for computing statistics from GrowQueues
 - LinkedList
 - Added RecycleManager
+- Fixed Permute
+  * Was completely broken when run on lists larger than what was in the unit test
 
 ------------------------------------------------------
 Version:  0.6
