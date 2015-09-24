@@ -103,6 +103,15 @@ public class FastQueue<T> implements Serializable {
 		return data[size-1];
 	}
 
+	/**
+	 * Returns an element in the list relative to the tail
+	 * @param index index relative to tail.  0 == the tail. size-1 = first element
+	 * @return element
+	 */
+	public T getTail( int index ) {
+		return data[size-1-index];
+	}
+
 	public void reset() {
 		size = 0;
 	}

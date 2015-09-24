@@ -3,6 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.8
+Date:     2015
+
+- Added another variant of QuickSort that uses Comparator
+- Added FastQueue.getTail(index) for getting items relative to the end of the list
+
+------------------------------------------------------
 Version:  0.7
 Date:     2015-09-18
 
