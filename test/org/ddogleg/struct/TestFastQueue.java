@@ -113,6 +113,17 @@ public class TestFastQueue {
 	}
 
 	@Test
+	public void getTail_index() {
+		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+
+		alg.grow();alg.grow();
+
+		for (int i = 0; i < alg.size(); i++) {
+			assertTrue(alg.data[i] == alg.getTail(alg.size-i-1));
+		}
+	}
+
+	@Test
 	public void get_pop() {
 		FastQueue<DummyData> alg = new FastQueue<DummyData>(DummyData.class,true);
 
