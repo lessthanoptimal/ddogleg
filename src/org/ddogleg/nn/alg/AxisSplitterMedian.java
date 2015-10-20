@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -78,6 +78,12 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 						  List<double[]> left, List<D> leftData,
 						  List<double[]> right, List<D> rightData) {
 		computeAxisVariance(points);
+		for (int i = 0; i < N; i++) {
+			if( Double.isNaN(var[i])) {
+				throw new RuntimeException("Variance is NaN.  Bad input data with NaN is the cause.");
+			}
+		}
+
 		splitAxis = splitRule.select(var);
 
 		// where the median is

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,30 +37,30 @@ public class BenchMarkSort
 //        after = System.currentTimeMillis();
 //        System.out.println("Straight Insertion = "+(after-before));
 
-		data = createRandom(new Random(0x344),num);
+		data = createRandom(new Random(0x344), num);
 		before = System.currentTimeMillis();
 		ShellSort.sort(data);
 		after = System.currentTimeMillis();
 		System.out.println("Shell = "+(after-before));
 
-		data = createRandom(new Random(0x344),num);
+		data = createRandom(new Random(0x344), num);
 		QuickSort_F64 quicksort = new QuickSort_F64();
 		before = System.currentTimeMillis();
 		quicksort.sort(data,data.length);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort = "+(after-before));
 
-		data = createRandom(new Random(0x344),num);
+		data = createRandom(new Random(0x344), num);
 		int indexes[] = new int[ num ];
 		before = System.currentTimeMillis();
 		quicksort.sort(data,data.length,indexes);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort Indexes = "+(after-before));
 
-		data = createRandom(new Random(0x344),num);
+		data = createRandom(new Random(0x344), num);
 		ApproximateSort_F64 approx = new ApproximateSort_F64(2000);
 		before = System.currentTimeMillis();
-		approx.computeRange(data,0,data.length);
+		approx.computeRange(data, 0, data.length);
 //		approx.setRange(-1000,1000);
 		approx.sortIndex(data,0,data.length,indexes);
 		after = System.currentTimeMillis();
@@ -73,19 +73,25 @@ public class BenchMarkSort
 		after = System.currentTimeMillis();
 		System.out.println("QuicksortObj = "+(after-before));
 
-		data = createRandom(new Random(0x344),num);
+		data = createRandom(new Random(0x344), num);
 		before = System.currentTimeMillis();
 		Arrays.sort(data);
 		after = System.currentTimeMillis();
 		System.out.println("Array.sort = "+(after-before));
 
 		List<Foo> temp = createList(new Random(0x344),num);
+		Foo[] tempArr = temp.toArray(new Foo[0]);
+
 		before = System.currentTimeMillis();
 		Collections.sort(temp);
 		after = System.currentTimeMillis();
 		System.out.println("Collections.sort = "+(after-before));
 
-
+		before = System.currentTimeMillis();
+		QuickSortComparator<Foo> sortComparator = new QuickSortComparator<Foo>(new FooComparator());
+		sortComparator.sort(tempArr,tempArr.length);
+		after = System.currentTimeMillis();
+		System.out.println("QuickSortComparator = "+(after-before));
 	}
 
 	public static List<Double> makeList( double[] data ) {
@@ -152,6 +158,19 @@ public class BenchMarkSort
 			if( value < o.value )
 				return -1;
 			else if( value > o.value )
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	private static class FooComparator implements Comparator<Foo> {
+
+		@Override
+		public int compare(Foo o1, Foo o2) {
+			if( o1.value < o2.value )
+				return -1;
+			else if( o1.value > o2.value )
 				return 1;
 			else
 				return 0;
