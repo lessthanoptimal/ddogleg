@@ -90,6 +90,11 @@ public class GrowQueue_I8 {
 		data[index] = (byte)value;
 	}
 
+	public void setTo( GrowQueue_I8 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
 	public byte removeTail() {
 		if( size > 0 ) {
 			size--;

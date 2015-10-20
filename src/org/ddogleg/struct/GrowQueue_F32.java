@@ -106,6 +106,11 @@ public class GrowQueue_F32 {
 		data[index] = value;
 	}
 
+	public void setTo( GrowQueue_F32 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
 	public void fill( float value ) {
 		Arrays.fill(data, 0, size, value);
 	}

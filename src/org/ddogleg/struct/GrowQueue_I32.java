@@ -90,6 +90,11 @@ public class GrowQueue_I32 {
 		data[index] = value;
 	}
 
+	public void setTo( GrowQueue_I32 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];

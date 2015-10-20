@@ -114,6 +114,11 @@ public class GrowQueue_F64 {
 		data[index] = value;
 	}
 
+	public void setTo( GrowQueue_F64 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new double[size];

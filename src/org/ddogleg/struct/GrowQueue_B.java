@@ -65,6 +65,11 @@ public class GrowQueue_B {
 		data[index] = value;
 	}
 
+	public void setTo( GrowQueue_B original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
 	public void fill( boolean value ) {
 		Arrays.fill(data, 0, size, value);
 	}
