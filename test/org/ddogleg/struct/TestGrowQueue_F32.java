@@ -68,14 +68,14 @@ public class TestGrowQueue_F32 {
 		queue0.addAll(array,0,3);
 		assertEquals(5,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+1,1e-8);
+			assertEquals(queue0.get(i),i+1,1e-4f);
 		}
 
 		queue0.reset();
 		queue0.addAll(array,1,3);
 		assertEquals(2,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+4,1e-8);
+			assertEquals(queue0.get(i),i+4,1e-4f);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class TestGrowQueue_F32 {
 		assertEquals(10,alg.size);
 
 		for( int i = 0; i < 10; i++ )
-			assertEquals(i,alg.get(i),1e-8);
+			assertEquals(i,alg.get(i),1e-4f);
 	}
 
 	@Test
@@ -135,9 +135,47 @@ public class TestGrowQueue_F32 {
 
 		alg.remove(1);
 		assertEquals(3,alg.size);
-		assertEquals(1,alg.get(0),1e-8f);
-		assertEquals(4,alg.get(1),1e-8f);
-		assertEquals(5,alg.get(2),1e-8f);
+		assertEquals(1,alg.get(0),1e-4f);
+		assertEquals(4,alg.get(1),1e-4f);
+		assertEquals(5,alg.get(2),1e-4f);
 	}
 
+	@Test
+	public void insert() {
+
+		GrowQueue_F32 alg = new GrowQueue_F32(10);
+
+		// insert with no array resize
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.insert(2, 6);
+
+		assertEquals(5,alg.size, 1e-4f);
+		assertEquals(1,alg.get(0), 1e-4f);
+		assertEquals(3,alg.get(1), 1e-4f);
+		assertEquals(6,alg.get(2), 1e-4f);
+		assertEquals(4,alg.get(3), 1e-4f);
+		assertEquals(5,alg.get(4), 1e-4f);
+
+		// insert with array resize
+
+		alg = new GrowQueue_F32(4);
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.insert(2, 6);
+
+		assertEquals(5,alg.size);
+		assertEquals(1,alg.get(0), 1e-4f);
+		assertEquals(3,alg.get(1), 1e-4f);
+		assertEquals(6,alg.get(2), 1e-4f);
+		assertEquals(4,alg.get(3), 1e-4f);
+		assertEquals(5,alg.get(4), 1e-4f);
+	}
 }
+

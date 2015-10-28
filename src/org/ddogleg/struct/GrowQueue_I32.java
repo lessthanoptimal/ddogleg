@@ -103,6 +103,26 @@ public class GrowQueue_I32 {
 	}
 
 	/**
+	 * Inserts the value at the specified index and shifts all the other values down.
+	 */
+	public void insert( int index , int value ) {
+		if( size == data.length ) {
+			int temp[] = new int[ size * 2];
+			System.arraycopy(data,0,temp,0,index);
+			temp[index] = value;
+			System.arraycopy(data,index,temp,index+1,size-index);
+			this.data = temp;
+			size++;
+		} else {
+			size++;
+			for( int i = size-1; i > index; i-- ) {
+				data[i] = data[i-1];
+			}
+			data[index] = value;
+		}
+	}
+
+	/**
 	 * Removes the first 'total' elements from the queue. Element 'total' will be the new start of the queue
 	 *
 	 * @param total Number of elements to remove from the head of the queue

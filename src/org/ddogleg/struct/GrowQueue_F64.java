@@ -97,6 +97,26 @@ public class GrowQueue_F64 {
 		size--;
 	}
 
+	/**
+	 * Inserts the value at the specified index and shifts all the other values down.
+	 */
+	public void insert( int index , double value ) {
+		if( size == data.length ) {
+			double temp[] = new double[ size * 2];
+			System.arraycopy(data,0,temp,0,index);
+			temp[index] = value;
+			System.arraycopy(data,index,temp,index+1,size-index);
+			this.data = temp;
+			size++;
+		} else {
+			size++;
+			for( int i = size-1; i > index; i-- ) {
+				data[i] = data[i-1];
+			}
+			data[index] = value;
+		}
+	}
+
 	public double removeTail() {
 		if( size > 0 ) {
 			size--;

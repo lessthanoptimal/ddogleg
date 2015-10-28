@@ -95,6 +95,26 @@ public class GrowQueue_I8 {
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
+	/**
+	 * Inserts the value at the specified index and shifts all the other values down.
+	 */
+	public void insert( int index , int value ) {
+		if( size == data.length ) {
+			byte temp[] = new byte[ size * 2];
+			System.arraycopy(data,0,temp,0,index);
+			temp[index] = (byte)value;
+			System.arraycopy(data,index,temp,index+1,size-index);
+			this.data = temp;
+			size++;
+		} else {
+			size++;
+			for( int i = size-1; i > index; i-- ) {
+				data[i] = data[i-1];
+			}
+			data[index] = (byte)value;
+		}
+	}
+
 	public byte removeTail() {
 		if( size > 0 ) {
 			size--;

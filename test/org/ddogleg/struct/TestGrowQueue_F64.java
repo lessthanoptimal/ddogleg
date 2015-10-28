@@ -139,4 +139,42 @@ public class TestGrowQueue_F64 {
 		assertEquals(4,alg.get(1),1e-8);
 		assertEquals(5,alg.get(2),1e-8);
 	}
+
+	@Test
+	public void insert() {
+
+		GrowQueue_F64 alg = new GrowQueue_F64(10);
+
+		// insert with no array resize
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.insert(2, 6);
+
+		assertEquals(5,alg.size, 1e-8);
+		assertEquals(1,alg.get(0), 1e-8);
+		assertEquals(3,alg.get(1), 1e-8);
+		assertEquals(6,alg.get(2), 1e-8);
+		assertEquals(4,alg.get(3), 1e-8);
+		assertEquals(5,alg.get(4), 1e-8);
+
+		// insert with array resize
+
+		alg = new GrowQueue_F64(4);
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.insert(2, 6);
+
+		assertEquals(5,alg.size);
+		assertEquals(1,alg.get(0), 1e-8);
+		assertEquals(3,alg.get(1), 1e-8);
+		assertEquals(6,alg.get(2), 1e-8);
+		assertEquals(4,alg.get(3), 1e-8);
+		assertEquals(5,alg.get(4), 1e-8);
+	}
 }
