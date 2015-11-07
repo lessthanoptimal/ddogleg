@@ -12,8 +12,8 @@ The latest stable release is available on Source Forge, with direct links provid
 
 https://sourceforge.net/projects/ddogleg/
 
-* `Source Code <https://sourceforge.net/projects/ddogleg/files/v0.7/ddogleg-v0.7-src.zip/download/>`_
-* `Precompiled Jar <https://sourceforge.net/projects/ddogleg/files/v0.7/ddogleg-v0.7-libs.zip/download/>`_
+* `Source Code <https://sourceforge.net/projects/ddogleg/files/v0.8/ddogleg-v0.8-src.zip/download/>`_
+* `Precompiled Jar <https://sourceforge.net/projects/ddogleg/files/v0.8/ddogleg-v0.8-libs.zip/download/>`_
 
 Bleeding Edge
 -------------
