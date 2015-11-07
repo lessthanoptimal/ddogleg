@@ -1,3 +1,8 @@
+- updated website
+  * conf.py, Download.rst, index.rst
+  * examples
+- update version in build.gradle
+- update change.txt
 - gradle test
 - gradle install
 - check ant javadoc
