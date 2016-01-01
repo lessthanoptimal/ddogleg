@@ -83,9 +83,9 @@ public class KdTree {
 		public Object data;
 		/** axis used to split the data. -1 for leafs */
 		public int split = -1;
-		/** Branch {@code <=} point[split] */
+		/** Branch &le; point[split] */
 		public Node left;
-		/** Branch {@code >=} point[split] */
+		/** Branch &ge; point[split] */
 		public Node right;
 
 		public Node( double[] point , Object data ) {

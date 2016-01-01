@@ -7,7 +7,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.8'
+version = '0.9-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.6
@@ -46,7 +46,7 @@ sourceSets {
 
 dependencies {
     ['core','dense64','simple','equation'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.28'}
+        compile group: 'org.ejml', name: a, version: '0.29-SNAPSHOT'}
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
