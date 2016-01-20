@@ -58,6 +58,12 @@ public class GrowQueue_B {
 	}
 
 	public boolean get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
+
+	public boolean unsafe_get( int index ) {
 		return data[index];
 	}
 

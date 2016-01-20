@@ -10,6 +10,7 @@ Date:     2015-11-07
 - Added FastQueue.getTail(index) for getting items relative to the end of the list
 - Added a variant of RecycleManager, RecycleManagerL, which keeps track of the used list
 - Added insert into GrowQueue
+- Added bounds check to GrowQueue.get() and unsafe_get()
 
 ------------------------------------------------------
 Version:  0.7

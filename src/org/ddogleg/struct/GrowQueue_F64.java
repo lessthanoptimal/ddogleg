@@ -127,6 +127,12 @@ public class GrowQueue_F64 {
 	}
 
 	public double get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
+
+	public double unsafe_get( int index ) {
 		return data[index];
 	}
 
