@@ -4,7 +4,11 @@ Documentation
 
 DDogleg Numerics is library for Java. Usage documentation is primarily provided in the form of examples and JavaDoc. To use DDogleg simply add its jars to your class path like you would with any other library. Ant and Maven scripts are provided for compiling the source code, alternatively you can use the command line or your favorite IDE.
 
-Click here for `JavaDoc <http://ddogleg.org/javadoc>`_
+
+JavaDoc
+-----------
+
+Full documentation of the API is contained in the `JavaDoc <http://ddogleg.org/javadoc>`_
 
 Example Code
 ------------
