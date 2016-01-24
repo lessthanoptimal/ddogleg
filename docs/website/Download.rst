@@ -12,8 +12,8 @@ The latest stable release is available on Source Forge, with direct links provid
 
 https://sourceforge.net/projects/ddogleg/
 
-* `Source Code <https://sourceforge.net/projects/ddogleg/files/v0.8/ddogleg-v0.8-src.zip/download/>`_
-* `Precompiled Jar <https://sourceforge.net/projects/ddogleg/files/v0.8/ddogleg-v0.8-libs.zip/download/>`_
+* `Source Code <https://sourceforge.net/projects/ddogleg/files/v0.9/ddogleg-v0.9-src.zip/download/>`_
+* `Precompiled Jar <https://sourceforge.net/projects/ddogleg/files/v0.9/ddogleg-v0.9-libs.zip/download/>`_
 
 Bleeding Edge
 -------------
@@ -38,12 +38,12 @@ To include the latest stable release in your Maven projects add the following de
     <dependency>
         <groupId>org.ddogleg</groupId>
         <artifactId>ddogleg</artifactId>
-        <version>0.8</version>
+        <version>0.9</version>
     </dependency>
  
 **Gradle:**
 ::
-    compile group: 'org.ddogleg', name: 'ddogleg', version: '0.8'
+    compile group: 'org.ddogleg', name: 'ddogleg', version: '0.9'
 
 
 Dependencies

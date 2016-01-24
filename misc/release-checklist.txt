@@ -1,4 +1,5 @@
 - updated website
+  * cd docs/website/
   * conf.py, Download.rst, index.rst
   * examples
 - update version in build.gradle
