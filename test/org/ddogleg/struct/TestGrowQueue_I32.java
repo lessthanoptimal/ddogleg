@@ -196,4 +196,17 @@ public class TestGrowQueue_I32 {
 		assertEquals(2,alg.size);
 		assertEquals(4,alg.get(0));
 	}
+
+	@Test
+	public void indexOf() {
+		GrowQueue_I32 alg = new GrowQueue_I32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(3);
+
+		assertEquals(1,alg.indexOf(3));
+		assertEquals(-1,alg.indexOf(8));
+	}
 }

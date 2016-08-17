@@ -173,4 +173,17 @@ public class GrowQueue_I32 {
 	public int pop() {
 		return data[--size];
 	}
+
+	/**
+	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
+	 * @param value Value to search for
+	 * @return index or -1 if it's not in the list
+	 */
+	public int indexOf( int value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return i;
+		}
+		return -1;
+	}
 }

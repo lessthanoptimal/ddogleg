@@ -160,4 +160,17 @@ public class TestGrowQueue_I8 {
 		assertEquals(4,alg.get(3));
 		assertEquals(5,alg.get(4));
 	}
+
+	@Test
+	public void indexOf() {
+		GrowQueue_I8 alg = new GrowQueue_I8(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		assertEquals(1,alg.indexOf((byte)3));
+		assertEquals(-1,alg.indexOf((byte)8));
+	}
 }

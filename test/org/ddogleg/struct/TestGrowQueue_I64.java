@@ -177,4 +177,17 @@ public class TestGrowQueue_I64 {
 		assertEquals(4,alg.get(3));
 		assertEquals(5,alg.get(4));
 	}
+
+	@Test
+	public void indexOf() {
+		GrowQueue_I64 alg = new GrowQueue_I64(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		assertEquals(1,alg.indexOf(3));
+		assertEquals(-1,alg.indexOf(8));
+	}
 }
