@@ -4,6 +4,14 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.9
+Date:     2016
+
+- Fixed bug in InitializePlusPlus where duplicate points in input set could cause a crash
+  * behavior is now defined
+
+
+------------------------------------------------------
+Version:  0.9
 Date:     2016-01-23
 
 - Added bounds check to GrowQueue.get()

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -32,6 +33,38 @@ import static org.junit.Assert.assertEquals;
 public class TestInitializePlusPlus extends StandardInitializeKMeansChecks{
 
 	Random rand = new Random(234);
+
+	/**
+	 * In this situation there are not enough unique points which can act as unique seeds.
+	 *
+	 * This is a stricter version of generic test
+	 */
+	@Test
+	public void notEnoughUniquePoints_strict() {
+		int DOF = 20;
+
+		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,30,true);
+		for (int i = 1; i < points.size(); i += 2) {
+			System.arraycopy(points.get(i-1),0,points.get(i),0,DOF);
+		}
+		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,20,false);
+
+		InitializeKMeans_F64 alg = createAlg();
+		alg.init(DOF,0xBEEF);
+
+		alg.selectSeeds(points, seeds);
+
+		int hits[] = new int[15];
+		for( double[] a : seeds ) {
+			int match = findMatch( a , points )/2;
+			hits[match]++;
+		}
+
+		// make sure each one was selected at least once
+		for (int i = 0; i < hits.length; i++) {
+			assertTrue(hits[i] > 0);
+		}
+	}
 
 	/**
 	 * Test seed selection by seeing if it has the expected distribution.
