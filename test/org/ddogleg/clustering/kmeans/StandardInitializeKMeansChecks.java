@@ -32,6 +32,46 @@ public abstract class StandardInitializeKMeansChecks {
 
 	public abstract InitializeKMeans_F64 createAlg();
 
+	/**
+	 * In this situation there are not enough unique points which can act as unique seeds
+	 */
+	@Test
+	public void notEnoughUniquePoints() {
+		int DOF = 20;
+
+		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,30,true);
+		for (int i = 1; i < points.size(); i += 2) {
+			System.arraycopy(points.get(i-1),0,points.get(i),0,DOF);
+		}
+		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,20,false);
+
+		InitializeKMeans_F64 alg = createAlg();
+		alg.init(DOF,0xBEEF);
+
+		alg.selectSeeds(points, seeds);
+
+		// just make sure it found a match in the input set
+		for( double[] a : seeds ) {
+			findMatch( a , points );
+		}
+	}
+
+	public static int findMatch( double[] a , List<double[]> list ) {
+		for (int i = 0; i < list.size(); i++) {
+			double[] b = list.get(i);
+			boolean match = true;
+			for (int j = 0; j < a.length; j++) {
+				if( a[j] != b[j]) {
+					match = false;
+					break;
+				}
+			}
+			if( match )
+				return i;
+		}
+		throw new RuntimeException("Egads.  bug?");
+	}
+
 	@Test
 	public void selectSeeds() {
 		int DOF = 20;

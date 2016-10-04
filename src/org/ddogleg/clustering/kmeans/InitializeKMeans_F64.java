@@ -32,12 +32,19 @@ public interface InitializeKMeans_F64 {
 	 * @param pointDimension NUmber of degrees of freedom in each point.
 	 * @param randomSeed Seed for any random number generators used internally.
 	 */
-	public void init( int pointDimension, long randomSeed );
+	void init( int pointDimension, long randomSeed );
 
 	/**
+	 * <p>Given the set of points select reasonable seeds.</p>
 	 *
-	 * @param points Set of points which is to be clustered.
-	 * @param seeds List full of points which will act as the initial seed for k-means.
+	 * Duplicate Points: If there duplicate points in the input list it should not crash.  This
+	 * is true even if the number of unique points is less than the number of requested seeds.  All the
+	 * seeds will be filled but they do not need to be unique.
+	 *
+	 *
+	 * @param points (Input) Set of points which is to be clustered.
+	 * @param seeds (Output) List full of points which will act as the initial seed for k-means.  Results
+	 *              are copied into this set.  Must be filled initially.
 	 */
-	public void selectSeeds( List<double[]> points, List<double[]> seeds );
+	void selectSeeds( List<double[]> points, List<double[]> seeds );
 }

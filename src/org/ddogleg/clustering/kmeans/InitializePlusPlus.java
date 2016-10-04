@@ -71,9 +71,16 @@ public class InitializePlusPlus implements InitializeKMeans_F64{
 
 		// iteratively select the next seed and update the list of point distances
 		for (int i = 1; i < seeds.size(); i++) {
-			double target = rand.nextDouble();
-			copyInto(selectNextSeed(points,target),seeds.get(i));
-			updateDistances(points,seeds.get(i));
+			if( totalDistance == 0 ) {
+				// if the total distance is zero that means there are duplicate points and that
+				// all the unique points have already been added as seeds.  just select a point
+				// and copy it into rest of the seeds
+				copyInto(seed, seeds.get(i));
+			} else {
+				double target = rand.nextDouble();
+				copyInto(selectNextSeed(points, target), seeds.get(i));
+				updateDistances(points, seeds.get(i));
+			}
 		}
 	}
 
