@@ -8,6 +8,7 @@ Date:     2016
 
 - Fixed bug in InitializePlusPlus where duplicate points in input set could cause a crash
   * behavior is now defined
+- Moved Tuple2 into this project
 
 
 ------------------------------------------------------
