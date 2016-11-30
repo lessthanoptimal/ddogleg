@@ -5,7 +5,13 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-.idea
+.gradle
+.idea/libraries
+*.class
+*.jar
+**/*.iml
+**/*.ipr
+
 
 # Package Files #
 *.jar
