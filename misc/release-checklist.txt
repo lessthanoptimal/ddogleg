@@ -8,7 +8,7 @@
 - gradle install
 - check ant javadoc
 - commit and tag release
-- Upload to source forge (src,libs,javadoc)
+- Upload to sourceforge (src,libs)
 - Update Maven central repository
 
 
