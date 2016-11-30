@@ -11,6 +11,7 @@ version = '0.10'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
