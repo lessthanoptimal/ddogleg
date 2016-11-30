@@ -173,10 +173,14 @@ task alljavadoc(type: Javadoc) {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
+}
+
 idea {
     project {
-        jdkName = '1.6 (64bit)'
-        languageLevel = '1.6'
+        jdkName = '1.7 (64bit)'
+        languageLevel = '1.7'
     }
 }
 
