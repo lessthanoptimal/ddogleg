@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -185,6 +185,16 @@ public class TestRansac extends GenericModelMatcherTests {
 		@Override
 		public void computeDistance(List<Integer> points, double[] distance) {
 			throw new RuntimeException("Why was this called?");
+		}
+
+		@Override
+		public Class<Integer> getPointType() {
+			return Integer.class;
+		}
+
+		@Override
+		public Class<double[]> getModelType() {
+			return double[].class;
 		}
 
 		@Override

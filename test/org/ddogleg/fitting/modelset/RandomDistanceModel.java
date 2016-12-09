@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,5 +52,15 @@ public class RandomDistanceModel implements DistanceFromModel<double[],Double> {
 		for (int i = 0; i < points.size(); i++) {
 			distance[i] = computeDistance(null);
 		}
+	}
+
+	@Override
+	public Class<Double> getPointType() {
+		return Double.class;
+	}
+
+	@Override
+	public Class<double[]> getModelType() {
+		return double[].class;
 	}
 }

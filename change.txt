@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.11
+Date:
+
+- Added getType() functions to ModelMatcher
+
+------------------------------------------------------
 Version:  0.10
 Date:     2016/11/29
 

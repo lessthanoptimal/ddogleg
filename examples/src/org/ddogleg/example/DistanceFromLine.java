@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -69,5 +69,15 @@ public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
 		for( int i = 0; i < obs.size(); i++ ) {
 			distance[i] = computeDistance(obs.get(i));
 		}
+	}
+
+	@Override
+	public Class<Point2D> getPointType() {
+		return Point2D.class;
+	}
+
+	@Override
+	public Class<Line2D> getModelType() {
+		return Line2D.class;
 	}
 }

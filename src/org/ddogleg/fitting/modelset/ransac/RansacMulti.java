@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -305,6 +305,16 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 
 	public int getIteration() {
 		return iteration;
+	}
+
+	@Override
+	public Class<Point> getPointType() {
+		return initialSample.type;
+	}
+
+	@Override
+	public Class<Object> getModelType() {
+		return Object.class; // multiple types of objects can be returned
 	}
 
 	/**

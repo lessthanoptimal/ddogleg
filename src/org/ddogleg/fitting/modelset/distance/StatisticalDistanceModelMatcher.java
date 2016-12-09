@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -244,5 +244,15 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 	@Override
 	public int getMinimumSize() {
 		return minFitPoints;
+	}
+
+	@Override
+	public Class<Point> getPointType() {
+		return modelError.getPointType();
+	}
+
+	@Override
+	public Class<Model> getModelType() {
+		return modelError.getModelType();
 	}
 }

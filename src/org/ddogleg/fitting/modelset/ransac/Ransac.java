@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -269,5 +269,15 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 
 	public void setThresholdFit(double thresholdFit) {
 		this.thresholdFit = thresholdFit;
+	}
+
+	@Override
+	public Class<Point> getPointType() {
+		return modelDistance.getPointType();
+	}
+
+	@Override
+	public Class<Model> getModelType() {
+		return modelDistance.getModelType();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,5 +57,15 @@ public class MultipleToSingle implements ModelMatcher {
 	@Override
 	public int getMinimumSize() {
 		return 0;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public Class getPointType() {
+		return alg.getPointType();
+	}
+
+	@Override
+	public Class getModelType() {
+		return alg.getModelType();
 	}
 }

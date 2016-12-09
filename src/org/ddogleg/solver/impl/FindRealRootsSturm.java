@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -212,7 +212,7 @@ public class FindRealRootsSturm {
 			} else {
 // In systems where some coefficients are close to zero the Sturm sequence starts to yield erratic results.
 // In this case, certain basic assumptions are broken and a garbage solution is returned.  The EVD method
-// still seems to yield a solution in these cases.  Maybe a different forumation would improve its numerical
+// still seems to yield a solution in these cases.  Maybe a different formulation would improve its numerical
 // stability?  The problem seems to lie with polynomial division by very small coefficients
 //				if( sturm.countRealRoots(l,m) != 1 ) {
 //					throw new RuntimeException("Oh Crap");
