@@ -7,6 +7,8 @@ Version:  0.11
 Date:
 
 - Added getType() functions to ModelMatcher
+- RANSAC now uses a much more efficient sampling method which works well on small and large lists
+  * First useful interview question I've been given!
 
 ------------------------------------------------------
 Version:  0.10

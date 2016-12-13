@@ -24,7 +24,6 @@ import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcher;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -74,6 +73,9 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	// the maximum number of iterations it will perform
 	protected int maxIterations;
 
+	// copy of the input data set so that it can be modified
+	protected List<Point> dataSet = new ArrayList<>();
+
 	// the set of points which were initially sampled
 	protected List<Point> initialSample = new ArrayList<Point>();
 
@@ -111,11 +113,14 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	}
 
 	@Override
-	public boolean process(List<Point> dataSet ) {
+	public boolean process(List<Point> _dataSet ) {
 
 		// see if it has the minimum number of points
-		if (dataSet.size() < modelGenerator.getMinimumPoints() )
+		if (_dataSet.size() < modelGenerator.getMinimumPoints() )
 			return false;
+
+		dataSet.clear();
+		dataSet.addAll(_dataSet);
 
 		// configure internal data structures
 		initialize(dataSet);
@@ -130,7 +135,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 			if( modelGenerator.generate(initialSample, candidateParam ) ) {
 
 				// see if it can find a model better than the current best one
-				selectMatchSet(dataSet, thresholdFit, candidateParam);
+				selectMatchSet(_dataSet, thresholdFit, candidateParam);
 
 				// save this results
 				if (bestFitPoints.size() < candidatePoints.size()) {
@@ -155,29 +160,24 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	}
 
 	/**
-	 * Two different methods are used to select the initial set of points depending on
-	 * if the data set is much larger or smaller than the initial sample size
+	 * Performs a random draw in the dataSet.  When an element is selected it is moved to the end of the list
+	 * so that it can't be selected again.
+	 *
+	 * @param dataSet List that points are to be selected from.  Modified.
 	 */
 	public static <T> void randomDraw(List<T> dataSet, int numSample,
 									  List<T> initialSample, Random rand) {
 		initialSample.clear();
 
-		if (dataSet.size() > numSample * 10) {
-			// randomly select points until a set is found
-			while (initialSample.size() < numSample) {
-				T s = dataSet.get(rand.nextInt(dataSet.size()));
+		for (int i = 0; i < numSample; i++) {
+			int end = dataSet.size()-i-1;
+			int selected = rand.nextInt(end+1);
 
-				if (!initialSample.contains(s)) {
-					initialSample.add(s);
-				}
-			}
-		} else {
-			// shuffle the data set
-			Collections.shuffle(dataSet, rand);
+			T a = dataSet.get(selected);
+			initialSample.add(a);
 
-			for (int i = 0; i < numSample; i++) {
-				initialSample.add(dataSet.get(i));
-			}
+			// swap location of selected and the last selectable item in the list
+			dataSet.set(selected,dataSet.set(end,a));
 		}
 	}
 
