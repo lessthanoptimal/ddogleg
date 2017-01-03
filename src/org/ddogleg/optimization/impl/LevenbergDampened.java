@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,12 +21,12 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ejml.UtilEjml;
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.MatrixMultProduct;
-import org.ejml.alg.dense.mult.VectorVectorMult;
+import org.ejml.alg.dense.mult.MatrixMultProduct_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_D64;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 /**
  * <p>
@@ -85,11 +85,11 @@ public class LevenbergDampened extends LevenbergDenseBase {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		MatrixMultProduct.inner_reorder_upper(jacobianVals, B);
-		CommonOps.multTransA(jacobianVals, residuals, gradient);
+		MatrixMultProduct_D64.inner_reorder_upper(jacobianVals, B);
+		CommonOps_D64.multTransA(jacobianVals, residuals, gradient);
 
 		// extract diagonal elements from B
-		CommonOps.extractDiag(B, Bdiag);
+		CommonOps_D64.extractDiag(B, Bdiag);
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class LevenbergDampened extends LevenbergDenseBase {
 	public void setFunction( CoupledJacobian function ) {
 		super.setFunction(function);
 
-		solver = LinearSolverFactory.symmPosDef(N);
+		solver = LinearSolverFactory_D64.symmPosDef(N);
 		if( solver.modifiesB() )
 			this.solver = new LinearSolverSafe<DenseMatrix64F>(solver);
 	}
@@ -137,8 +137,8 @@ public class LevenbergDampened extends LevenbergDenseBase {
 	 */
 	@Override
 	protected double predictedReduction( DenseMatrix64F param, DenseMatrix64F gradientNegative , double mu ) {
-		double p_dot_p = VectorVectorMult.innerProd(param,param);
-		double p_dot_g = VectorVectorMult.innerProd(param,gradientNegative);
+		double p_dot_p = VectorVectorMult_D64.innerProd(param,param);
+		double p_dot_g = VectorVectorMult_D64.innerProd(param,gradientNegative);
 		return 0.5*(mu*p_dot_p + p_dot_g);
 	}
 

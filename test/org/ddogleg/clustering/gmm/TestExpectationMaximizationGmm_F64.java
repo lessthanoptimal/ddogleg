@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,8 +26,8 @@ import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.equation.Equation;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.MatrixFeatures_D64;
 import org.junit.Test;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			GaussianGmm_F64 a = alg.mixture.grow();
 			a.setMean(alg.info.get(i).point);
 			a.weight = 2;
-			CommonOps.setIdentity(a.covariance);
+			CommonOps_D64.setIdentity(a.covariance);
 
 			// compute expectation.  The peak for the first i points is known
 			alg.likelihoodManager.precomputeAll();
@@ -115,12 +115,12 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 
 		GaussianGmm_F64 a = alg.mixture.grow();
 		a.setMean(new double[]{1,0.5});
-		CommonOps.diag(a.covariance, 2, 0.75, 1);
+		CommonOps_D64.diag(a.covariance, 2, 0.75, 1);
 		a.weight = 0.25;
 
 		GaussianGmm_F64 b = alg.mixture.grow();
 		b.setMean(new double[]{4,8});
-		CommonOps.diag(b.covariance, 2, 0.5, 0.75);
+		CommonOps_D64.diag(b.covariance, 2, 0.5, 0.75);
 		b.weight = 0.75;
 
 
@@ -131,8 +131,8 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 
 		// discard the mixture parameters
 		for (int i = 0; i < alg.mixture.size; i++) {
-			CommonOps.fill(alg.mixture.get(i).mean,0);
-			CommonOps.fill(alg.mixture.get(i).covariance,0);
+			CommonOps_D64.fill(alg.mixture.get(i).mean,0);
+			CommonOps_D64.fill(alg.mixture.get(i).covariance,0);
 			alg.mixture.get(i).weight = 0;
 		}
 
@@ -142,10 +142,10 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		GaussianGmm_F64 expectedA = computeGaussian(0,alg.info.toList());
 		GaussianGmm_F64 expectedB = computeGaussian(1,alg.info.toList());
 
-		assertTrue(MatrixFeatures.isIdentical(expectedA.mean, a.mean, 1e-8));
-		assertTrue(MatrixFeatures.isIdentical(expectedB.mean, b.mean, 1e-8));
-		assertTrue(MatrixFeatures.isIdentical(expectedA.covariance,a.covariance,1e-8));
-		assertTrue(MatrixFeatures.isIdentical(expectedB.covariance,b.covariance,1e-8));
+		assertTrue(MatrixFeatures_D64.isIdentical(expectedA.mean, a.mean, 1e-8));
+		assertTrue(MatrixFeatures_D64.isIdentical(expectedB.mean, b.mean, 1e-8));
+		assertTrue(MatrixFeatures_D64.isIdentical(expectedA.covariance,a.covariance,1e-8));
+		assertTrue(MatrixFeatures_D64.isIdentical(expectedB.covariance,b.covariance,1e-8));
 
 	}
 
@@ -187,7 +187,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 				out.mean.data[j] += w*p.point[j];
 			}
 		}
-		CommonOps.divide(out.mean,total);
+		CommonOps_D64.divide(out.mean,total);
 
 		// compute the covariance
 		Equation eq = new Equation();
@@ -200,7 +200,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			eq.alias(x,"x",w,"w");
 			eq.process("Q = Q + w*(x-mu)*(x-mu)'");
 		}
-		CommonOps.divide(out.covariance,total);
+		CommonOps_D64.divide(out.covariance,total);
 		return out;
 	}
 

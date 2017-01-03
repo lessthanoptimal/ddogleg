@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.ops.MatrixFeatures_D64;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -79,8 +79,8 @@ public class TestAssignGmm_F64 {
 			GaussianGmm_F64 c = copy.mixture.get(i);
 
 			assertTrue(o!=c);
-			assertTrue(MatrixFeatures.isIdentical(o.mean,c.mean,1e-8));
-			assertTrue(MatrixFeatures.isIdentical(o.covariance,c.covariance,1e-8));
+			assertTrue(MatrixFeatures_D64.isIdentical(o.mean,c.mean,1e-8));
+			assertTrue(MatrixFeatures_D64.isIdentical(o.covariance,c.covariance,1e-8));
 			assertTrue(o.weight == c.weight);
 		}
 	}

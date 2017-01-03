@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,7 @@
 package org.ddogleg.solver;
 
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -41,7 +41,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic3by3 {
 	
-	LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.leastSquares(9, 6);
+	LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.leastSquares(9, 6);
 	DenseMatrix64F X = new DenseMatrix64F(6,1);
 	DenseMatrix64F Y = new DenseMatrix64F(9,1);
 	

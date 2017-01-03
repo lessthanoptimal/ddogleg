@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,8 +23,8 @@ import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
 import org.ejml.data.Complex64F;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.DecompositionFactory;
-import org.ejml.interfaces.decomposition.EigenDecomposition;
+import org.ejml.factory.DecompositionFactory_D64;
+import org.ejml.interfaces.decomposition.EigenDecomposition_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 	DenseMatrix64F c = new DenseMatrix64F(1,1);
 
 	// use generalized eigenvalue decomposition to find the roots
-	EigenDecomposition<DenseMatrix64F> evd =  DecompositionFactory.eig(11, false, false);
+	EigenDecomposition_F64<DenseMatrix64F> evd =  DecompositionFactory_D64.eig(11, false, false);
 
 	// storage for found roots
 	List<Complex64F> roots = new ArrayList<Complex64F>();

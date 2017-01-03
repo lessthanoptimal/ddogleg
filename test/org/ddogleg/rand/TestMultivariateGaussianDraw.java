@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.rand;
 
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.MatrixFeatures_D64;
 import org.junit.Test;
 
 import java.util.Random;
@@ -74,12 +74,12 @@ public class TestMultivariateGaussianDraw
             temp.set(0,0,draws[i].get(0,0)-raw_comp_x[0]);
             temp.set(1,0,draws[i].get(1,0)-raw_comp_x[1]);
 
-            CommonOps.multAddTransB(temp,temp,comp_P);
+            CommonOps_D64.multAddTransB(temp,temp,comp_P);
         }
 
-        CommonOps.scale(1.0/N,comp_P);
+        CommonOps_D64.scale(1.0/N,comp_P);
 
-        MatrixFeatures.isIdentical(comp_P,orig_P,0.3);
+        MatrixFeatures_D64.isIdentical(comp_P,orig_P,0.3);
     }
 
 }

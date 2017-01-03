@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,7 +22,7 @@ import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 import java.util.List;
 
@@ -210,7 +210,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
 			if( g.weight > 0 )
-				CommonOps.divide(g.mean,g.weight);
+				CommonOps_D64.divide(g.mean,g.weight);
 		}
 
 		// compute new covariance
@@ -232,7 +232,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
 			if( g.weight > 0 ) {
-				CommonOps.divide(g.covariance, g.weight);
+				CommonOps_D64.divide(g.covariance, g.weight);
 				totalMixtureWeight += g.weight;
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 /**
  * Base class for Levenberg solvers which use dense matrices.
@@ -57,7 +57,7 @@ public abstract class LevenbergDenseBase extends LevenbergBase {
 
 	@Override
 	protected double getMinimumDampening() {
-		return CommonOps.elementMax(Bdiag);
+		return CommonOps_D64.elementMax(Bdiag);
 	}
 
 	/**

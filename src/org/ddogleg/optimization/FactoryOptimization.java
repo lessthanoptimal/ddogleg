@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSqua
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -75,9 +75,9 @@ public class FactoryOptimization {
 		LinearSolver<DenseMatrix64F> solver;
 
 		if( robust ) {
-			solver = LinearSolverFactory.pseudoInverse(true);
+			solver = LinearSolverFactory_D64.pseudoInverse(true);
 		} else {
-			solver = LinearSolverFactory.symmPosDef(10);
+			solver = LinearSolverFactory_D64.symmPosDef(10);
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
@@ -122,16 +122,16 @@ public class FactoryOptimization {
 
 			case DOG_LEG_F:
 				if( robustSolver )
-					stepAlg = new DoglegStepF(LinearSolverFactory.pseudoInverse(true));
+					stepAlg = new DoglegStepF(LinearSolverFactory_D64.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepF(LinearSolverFactory.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepF(LinearSolverFactory_D64.leastSquaresQrPivot(true, false));
 				break;
 
 			case DOG_LEG_FTF:
 				if( robustSolver )
-					stepAlg = new DoglegStepFtF(LinearSolverFactory.pseudoInverse(true));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_D64.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepFtF(LinearSolverFactory.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_D64.leastSquaresQrPivot(true, false));
 				break;
 
 			default:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.ops.MatrixFeatures_D64;
 
 /**
  * Used to validate an algebraic Jacobian numerically.
@@ -97,7 +97,7 @@ public class DerivativeChecker {
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
 
-		return MatrixFeatures.isIdentical(expected,found,tol);
+		return MatrixFeatures_D64.isIdentical(expected,found,tol);
 	}
 
 	/**

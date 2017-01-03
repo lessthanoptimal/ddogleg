@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,7 +22,7 @@ import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 		for (int i = 0; i < seeds.size(); i++) {
 			GaussianGmm_F64 g = seeds.get(i);
 			g.setMean(means.get(i));
-			CommonOps.fill(g.covariance, 0);
+			CommonOps_D64.fill(g.covariance, 0);
 		}
 
 		// Perform the summation part of the covariance calculation and tally how many points are
@@ -116,7 +116,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 				// will this is a bit distressing. The covariance is already zero so that's what
 				// it should be in this pathological case
 			} else {
-				CommonOps.divide(cov, M);
+				CommonOps_D64.divide(cov, M);
 
 				// compute the weights now
 				seeds.get(i).weight = totals.get(i) / (double) points.size();

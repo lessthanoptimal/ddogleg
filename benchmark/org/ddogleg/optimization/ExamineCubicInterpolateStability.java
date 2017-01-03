@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -102,8 +102,8 @@ public class ExamineCubicInterpolateStability {
 
 		DenseMatrix64F X = new DenseMatrix64F(2,1);
 
-		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.linear(2);
-//		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.leastSquares(2,2);
+		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.linear(2);
+//		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.leastSquares(2,2);
 
 		if( !solver.setA(A))
 			return X.data;

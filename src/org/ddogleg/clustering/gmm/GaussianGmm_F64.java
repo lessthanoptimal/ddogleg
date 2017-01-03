@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,7 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 import java.io.Serializable;
 
@@ -51,8 +51,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * Sets the mean, covariance, and weight to zero
 	 */
 	public void zero() {
-		CommonOps.fill(mean,0);
-		CommonOps.fill(covariance,0);
+		CommonOps_D64.fill(mean,0);
+		CommonOps_D64.fill(covariance,0);
 		weight = 0;
 	}
 

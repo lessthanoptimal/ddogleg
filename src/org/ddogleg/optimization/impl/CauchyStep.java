@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
+import org.ejml.alg.dense.mult.VectorVectorMult_D64;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
+import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.NormOps_D64;
 
 /**
  * <p>
@@ -61,10 +61,10 @@ public class CauchyStep implements TrustRegionStep {
 							DenseMatrix64F gradient , double fx )
 	{
 		this.gradient = gradient;
-		CommonOps.multInner(J, B);
+		CommonOps_D64.multInner(J, B);
 
-		gBg = VectorVectorMult.innerProdA(gradient, B, gradient);
-		gnorm = NormOps.normF(gradient);
+		gBg = VectorVectorMult_D64.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_D64.normF(gradient);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class CauchyStep implements TrustRegionStep {
 			}
 		}
 
-		CommonOps.scale(-dist,gradient,step);
+		CommonOps_D64.scale(-dist,gradient,step);
 
 		// compute predicted reduction
 		predicted = dist*gnorm*gnorm - 0.5*dist*dist*gBg;

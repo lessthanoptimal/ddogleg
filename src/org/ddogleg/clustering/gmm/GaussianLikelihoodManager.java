@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,10 +20,10 @@ package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.struct.FastQueue;
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult;
+import org.ejml.alg.dense.mult.VectorVectorMult_D64;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
-import org.ejml.interfaces.decomposition.CholeskyDecomposition;
+import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public class GaussianLikelihoodManager {
 		this.mixtures = mixtures;
 
 		// this will produce a cholesky decomposition
-		solver = LinearSolverFactory.symmPosDef(pointDimension);
+		solver = LinearSolverFactory_D64.symmPosDef(pointDimension);
 		solver = new LinearSolverSafe<DenseMatrix64F>(solver);
 
 		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
@@ -114,7 +114,7 @@ public class GaussianLikelihoodManager {
 			}
 			solver.invert(invCov);
 
-			CholeskyDecomposition<DenseMatrix64F> decomposition = solver.getDecomposition();
+			CholeskyDecomposition_F64<DenseMatrix64F> decomposition = solver.getDecomposition();
 			double det = decomposition.computeDeterminant().real;
 
 			// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out
@@ -136,7 +136,7 @@ public class GaussianLikelihoodManager {
 			for (int i = 0; i < N; i++) {
 				diff.data[i] = point[i] - gaussian.mean.data[i];
 			}
-			chisq = VectorVectorMult.innerProdA(diff, invCov, diff);
+			chisq = VectorVectorMult_D64.innerProdA(diff, invCov, diff);
 
 			return leftSide * Math.exp(-0.5 * chisq);
 		}

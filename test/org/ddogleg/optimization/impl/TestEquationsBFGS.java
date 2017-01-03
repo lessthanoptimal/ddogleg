@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.MatrixFeatures;
-import org.ejml.ops.RandomMatrices;
+import org.ejml.ops.MatrixFeatures_D64;
+import org.ejml.ops.RandomMatrices_D64;
 import org.junit.Test;
 
 import java.util.Random;
@@ -37,9 +37,9 @@ public class TestEquationsBFGS {
 	@Test
 	public void inverseUpdate() {
 		int N = 6;
-		DenseMatrix64F H = RandomMatrices.createSymmetric(N,-1,1,rand);
-		DenseMatrix64F s = RandomMatrices.createRandom(N,1,-1,1,rand);
-		DenseMatrix64F y = RandomMatrices.createRandom(N,1,-1,1,rand);
+		DenseMatrix64F H = RandomMatrices_D64.createSymmetric(N,-1,1,rand);
+		DenseMatrix64F s = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
+		DenseMatrix64F y = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
 		DenseMatrix64F tempV0 = new DenseMatrix64F(N,1);
 		DenseMatrix64F tempV1 = new DenseMatrix64F(N,1);
 
@@ -49,7 +49,7 @@ public class TestEquationsBFGS {
 		EquationsBFGS.naiveInverseUpdate(expected, s, y);
 		EquationsBFGS.inverseUpdate(found,s,y.copy(),tempV0,tempV1);
 
-		assertTrue(MatrixFeatures.isIdentical(expected, found, 1e-8));
+		assertTrue(MatrixFeatures_D64.isIdentical(expected, found, 1e-8));
 	}
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
+import org.ejml.alg.dense.mult.VectorVectorMult_D64;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 
 /**
  * <p>
@@ -206,10 +206,10 @@ public abstract class LevenbergBase {
 	private boolean initSamplePoint() {
 		// calculate the Jacobian values at the current sample point
 		computeJacobian(funcVals,g);
-		CommonOps.scale(-1, g);
+		CommonOps_D64.scale(-1, g);
 
 		// Find the derivative along the current Jacobian's direction
-		double gx = CommonOps.elementMaxAbs(g);
+		double gx = CommonOps_D64.elementMaxAbs(g);
 
 		// check for convergence
 		if( Math.abs(fnorm-fnormPrev) <= ftol*Math.max(fnorm,fnormPrev) || Math.abs(gx) <= gtol )
@@ -229,9 +229,9 @@ public abstract class LevenbergBase {
 			return false;
 
 		// xtest = x + delta x
-		CommonOps.add(x, xdelta, xtest);
+		CommonOps_D64.add(x, xdelta, xtest);
 		// take in account rounding error
-		CommonOps.subtract(xtest, x, xdelta);
+		CommonOps_D64.subtract(xtest, x, xdelta);
 
 		// compute the residuals at x
 		setFunctionParameters(xtest.data);
@@ -281,7 +281,7 @@ public abstract class LevenbergBase {
 	 * then the dampParam is increased.
 	 */
 	protected boolean solveForXDelta() {
-//		double max = CommonOps.elementMax(Bdiag);
+//		double max = CommonOps_D64.elementMax(Bdiag);
 //
 //		// if the matrix is null do a simple gradient descent search
 //		if( max == 0 ) {
@@ -326,7 +326,7 @@ public abstract class LevenbergBase {
 	 * sum_i 0.5*fi(x)^2
 	 */
 	private double computeError() {
-		return VectorVectorMult.innerProd(funcVals,funcVals)/2.0;
+		return VectorVectorMult_D64.innerProd(funcVals,funcVals)/2.0;
 	}
 
 	public boolean isConverged() {

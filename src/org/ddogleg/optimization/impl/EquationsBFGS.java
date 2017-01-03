@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
+import org.ejml.alg.dense.mult.VectorVectorMult_D64;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.ops.CommonOps_D64;
 import org.ejml.simple.SimpleMatrix;
 
 /**
@@ -91,20 +91,20 @@ public class EquationsBFGS {
 	public static void inverseUpdate( DenseMatrix64F H , DenseMatrix64F s , DenseMatrix64F y ,
 									  DenseMatrix64F tempV0, DenseMatrix64F tempV1)
 	{
-		double alpha = VectorVectorMult.innerProdA(y,H,y);
-		double p = 1.0/VectorVectorMult.innerProd(s,y);
+		double alpha = VectorVectorMult_D64.innerProdA(y,H,y);
+		double p = 1.0/VectorVectorMult_D64.innerProd(s,y);
 
 		// make sure storage variables have the correct dimension
 		int N = H.numCols;
 		tempV0.numRows = N; tempV0.numCols=1;
 		tempV1.numRows = 1; tempV1.numCols=N;
 
-		CommonOps.mult(H,y,tempV0);
-		CommonOps.multTransA(y, H, tempV1);
+		CommonOps_D64.mult(H,y,tempV0);
+		CommonOps_D64.multTransA(y, H, tempV1);
 
-		VectorVectorMult.rank1Update(-p, H , tempV0, s);
-		VectorVectorMult.rank1Update(-p, H , s, tempV1);
-		VectorVectorMult.rank1Update(p*alpha*p+p, H , s, s);
+		VectorVectorMult_D64.rank1Update(-p, H , tempV0, s);
+		VectorVectorMult_D64.rank1Update(-p, H , s, tempV1);
+		VectorVectorMult_D64.rank1Update(p*alpha*p+p, H , s, s);
 	}
 
 	/**
@@ -125,10 +125,10 @@ public class EquationsBFGS {
 	{
 		DenseMatrix64F z = tempV0;
 
-		CommonOps.multTransA(C, y, z);
+		CommonOps_D64.multTransA(C, y, z);
 		
-		double dTd = VectorVectorMult.innerProd(d,d);
-		double dTz = VectorVectorMult.innerProd(d,z);
+		double dTd = VectorVectorMult_D64.innerProd(d,d);
+		double dTz = VectorVectorMult_D64.innerProd(d,z);
 		
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);
@@ -158,10 +158,10 @@ public class EquationsBFGS {
 		DenseMatrix64F z = tempV0;
 		DenseMatrix64F d_bar = tempV1;
 
-		CommonOps.multTransA(C,y,z);
+		CommonOps_D64.multTransA(C,y,z);
 
-		double dTd = VectorVectorMult.innerProd(d,d);
-		double dTz = VectorVectorMult.innerProd(d,z);
+		double dTd = VectorVectorMult_D64.innerProd(d,d);
+		double dTz = VectorVectorMult_D64.innerProd(d,z);
 
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);
