@@ -20,7 +20,7 @@ package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.equation.Equation;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.MatrixFeatures_D64;
@@ -107,7 +107,7 @@ public class TestSeedFromKMeans_F64 {
 		eq.alias(out.mean, "mu", out.covariance, "Q");
 		for (int i = offset; i < points.size(); i += 2) {
 			double[] p = points.get(i);
-			DenseMatrix64F x = DenseMatrix64F.wrap(2,1,p);
+			RowMatrix_F64 x = RowMatrix_F64.wrap(2,1,p);
 			eq.alias(x,"x");
 			eq.process("Q = Q + (x-mu)*(x-mu)'");
 		}

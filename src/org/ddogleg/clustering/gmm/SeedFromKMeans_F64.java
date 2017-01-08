@@ -21,7 +21,7 @@ package org.ddogleg.clustering.gmm;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 
 import java.util.List;
@@ -88,7 +88,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 			}
 
 			// add to the covariance while taking advantage of symmetry
-			DenseMatrix64F cov = seeds.get(label).covariance;
+			RowMatrix_F64 cov = seeds.get(label).covariance;
 
 			for (int j = 0; j < N; j++) {
 				for (int k = j; k < N; k++) {
@@ -99,7 +99,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
 		// fill in the lower half
 		for (int i = 0; i < seeds.size(); i++) {
-			DenseMatrix64F cov = seeds.get(i).covariance;
+			RowMatrix_F64 cov = seeds.get(i).covariance;
 			for (int j = 0; j < N; j++) {
 				for (int k = 0; k < j; k++) {
 					cov.data[k*N+j] = cov.data[j*N+k];
@@ -109,7 +109,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
 		// Perform the division part of covariance calculation and compute the weight
 		for (int i = 0; i < seeds.size(); i++) {
-			DenseMatrix64F cov = seeds.get(i).covariance;
+			RowMatrix_F64 cov = seeds.get(i).covariance;
 
 			int M = totals.get(i)-1;
 			if( M <= 0 ) {

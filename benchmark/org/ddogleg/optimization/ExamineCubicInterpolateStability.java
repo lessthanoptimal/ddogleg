@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -90,20 +90,20 @@ public class ExamineCubicInterpolateStability {
 										double f1 , double alpha1 ,
 										double f2 , double alpha2 ) {
 
-		DenseMatrix64F A = new DenseMatrix64F(2,2);
+		RowMatrix_F64 A = new RowMatrix_F64(2,2);
 		A.set(0,0,alpha1*alpha1*alpha1);
 		A.set(0,1,alpha1*alpha1);
 		A.set(1,0,alpha2*alpha2*alpha2);
 		A.set(1,1,alpha2*alpha2);
 
-		DenseMatrix64F Y = new DenseMatrix64F(2,1);
+		RowMatrix_F64 Y = new RowMatrix_F64(2,1);
 		Y.set(0,f1 - f0 - g0*alpha1);
 		Y.set(1,f2 - f0 - g0*alpha2);
 
-		DenseMatrix64F X = new DenseMatrix64F(2,1);
+		RowMatrix_F64 X = new RowMatrix_F64(2,1);
 
-		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.linear(2);
-//		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.leastSquares(2,2);
+		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.linear(2);
+//		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.leastSquares(2,2);
 
 		if( !solver.setA(A))
 			return X.data;

@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.MatrixFeatures_D64;
 import org.ejml.ops.RandomMatrices_D64;
 import org.junit.Test;
@@ -37,14 +37,14 @@ public class TestEquationsBFGS {
 	@Test
 	public void inverseUpdate() {
 		int N = 6;
-		DenseMatrix64F H = RandomMatrices_D64.createSymmetric(N,-1,1,rand);
-		DenseMatrix64F s = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
-		DenseMatrix64F y = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
-		DenseMatrix64F tempV0 = new DenseMatrix64F(N,1);
-		DenseMatrix64F tempV1 = new DenseMatrix64F(N,1);
+		RowMatrix_F64 H = RandomMatrices_D64.createSymmetric(N,-1,1,rand);
+		RowMatrix_F64 s = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
+		RowMatrix_F64 y = RandomMatrices_D64.createRandom(N,1,-1,1,rand);
+		RowMatrix_F64 tempV0 = new RowMatrix_F64(N,1);
+		RowMatrix_F64 tempV1 = new RowMatrix_F64(N,1);
 
-		DenseMatrix64F expected = H.copy();
-		DenseMatrix64F found = H.copy();
+		RowMatrix_F64 expected = H.copy();
+		RowMatrix_F64 found = H.copy();
 
 		EquationsBFGS.naiveInverseUpdate(expected, s, y);
 		EquationsBFGS.inverseUpdate(found,s,y.copy(),tempV0,tempV1);

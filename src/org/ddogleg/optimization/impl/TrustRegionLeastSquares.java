@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.NormOps_D64;
 import org.ejml.ops.SpecializedOps_D64;
@@ -52,19 +52,19 @@ public class TrustRegionLeastSquares {
 	private double fx_prev;
 
 	// Jacobian
-	private DenseMatrix64F J = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 J = new RowMatrix_F64(1,1);
 	// Sample point
-	private DenseMatrix64F x = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 x = new RowMatrix_F64(1,1);
 	// Candidate sample point
-	private DenseMatrix64F candidate = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 candidate = new RowMatrix_F64(1,1);
 	// Step from x to sample point
-	private DenseMatrix64F xdelta = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 xdelta = new RowMatrix_F64(1,1);
 	// Residual error function
-	private DenseMatrix64F residuals = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 residuals = new RowMatrix_F64(1,1);
 	// Residual error for the candidate point
-	private DenseMatrix64F candidateResiduals = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 candidateResiduals = new RowMatrix_F64(1,1);
 	// Gradient of residuals
-	private DenseMatrix64F gradient = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 gradient = new RowMatrix_F64(1,1);
 
 	// size of the current trust region
 	private double regionRadius;
@@ -218,7 +218,7 @@ public class TrustRegionLeastSquares {
 
 		if( acceptCandidate ) {
 			// make the candidate the current step
-			DenseMatrix64F temp = x;
+			RowMatrix_F64 temp = x;
 			x = candidate;
 			candidate = temp;
 
@@ -233,7 +233,7 @@ public class TrustRegionLeastSquares {
 		return acceptCandidate;
 	}
 
-//	private void checkPredicted( double found , DenseMatrix64F step ) {
+//	private void checkPredicted( double found , RowMatrix_F64 step ) {
 //		SimpleMatrix J = SimpleMatrix.wrap(this.J);
 //		SimpleMatrix h = SimpleMatrix.wrap(step);
 //
@@ -251,7 +251,7 @@ public class TrustRegionLeastSquares {
 	/**
 	 * Cost is equal to (1/2)*f(x)<sup>T</sup>*f(x)
 	 */
-	private double cost( DenseMatrix64F residuals ) {
+	private double cost( RowMatrix_F64 residuals ) {
 		return 0.5*SpecializedOps_D64.elementSumSq(residuals);
 	}
 

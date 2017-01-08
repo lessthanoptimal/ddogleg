@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.NormOps_D64;
 
@@ -41,8 +41,8 @@ import org.ejml.ops.NormOps_D64;
 public class CauchyStep implements TrustRegionStep {
 
 	// square of the Jacobian
-	private DenseMatrix64F B = new DenseMatrix64F(1,1);
-	private DenseMatrix64F gradient;
+	private RowMatrix_F64 B = new RowMatrix_F64(1,1);
+	private RowMatrix_F64 gradient;
 
 
 	private double gBg;
@@ -57,8 +57,8 @@ public class CauchyStep implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(  DenseMatrix64F x , DenseMatrix64F residuals , DenseMatrix64F J ,
-							DenseMatrix64F gradient , double fx )
+	public void setInputs(  RowMatrix_F64 x , RowMatrix_F64 residuals , RowMatrix_F64 J ,
+							RowMatrix_F64 gradient , double fx )
 	{
 		this.gradient = gradient;
 		CommonOps_D64.multInner(J, B);
@@ -76,7 +76,7 @@ public class CauchyStep implements TrustRegionStep {
 	 * @param step
 	 */
 	@Override
-	public void computeStep( double regionRadius , DenseMatrix64F step) {
+	public void computeStep( double regionRadius , RowMatrix_F64 step) {
 
 		double dist;
 

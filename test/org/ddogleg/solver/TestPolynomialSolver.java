@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.solver;
 
-import org.ejml.data.Complex64F;
+import org.ejml.data.Complex_F64;
 import org.junit.Test;
 
 import java.util.Random;
@@ -37,10 +37,10 @@ public class TestPolynomialSolver {
 	 */
 	@Test
 	public void polynomialRootsEVD() {
-		Complex64F[] roots = PolynomialSolver.polynomialRootsEVD(4, 3, 2, 1);
+		Complex_F64[] roots = PolynomialSolver.polynomialRootsEVD(4, 3, 2, 1);
 
 		int numReal = 0;
-		for( Complex64F c : roots ) {
+		for( Complex_F64 c : roots ) {
 			if( c.isReal() ) {
 				assertEquals(0, cubic(4, 3, 2, 1, c.real), 1e-8);
 				numReal++;
@@ -76,7 +76,7 @@ public class TestPolynomialSolver {
 			double d = rand.nextGaussian()*2;
 
 			double root = PolynomialSolver.cubicRootReal(a, b, c, d);
-//			Complex64F[] roots = PolynomialSolver.polynomialRootsEVD(a, b, c, d);
+//			Complex_F64[] roots = PolynomialSolver.polynomialRootsEVD(a, b, c, d);
 
 //			System.out.printf("a = %6.3f b = %6.3f c = %6.3f d= %6.3f\n", a, b, c, d);
 //			System.out.println("root = "+root+"  val = "+cubic(a, b, c, d, root));

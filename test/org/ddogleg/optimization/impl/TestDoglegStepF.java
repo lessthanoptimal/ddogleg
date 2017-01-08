@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.MatrixFeatures_D64;
 import org.ejml.ops.NormOps_D64;
@@ -36,15 +36,15 @@ public class TestDoglegStepF {
 	double gaussRadius = 10;
 	double combinedRadius = 0.9;
 
-	DenseMatrix64F J,x,residuals,gradient;
+	RowMatrix_F64 J,x,residuals,gradient;
 
 	public TestDoglegStepF() {
-		J = new DenseMatrix64F(3,2,true,1,0.5,2,Math.sqrt(2),-2,4);
+		J = new RowMatrix_F64(3,2,true,1,0.5,2,Math.sqrt(2),-2,4);
 
-		x = new DenseMatrix64F(2,1,true,0.5,1.5);
-		residuals = new DenseMatrix64F(3,1,true,-1,-2,-3);
+		x = new RowMatrix_F64(2,1,true,0.5,1.5);
+		residuals = new RowMatrix_F64(3,1,true,-1,-2,-3);
 
-		gradient = new DenseMatrix64F(2,1);
+		gradient = new RowMatrix_F64(2,1);
 		CommonOps_D64.multTransA(J, residuals, gradient);
 	}
 
@@ -62,8 +62,8 @@ public class TestDoglegStepF {
 		cauchy.setInputs(x, residuals, J, gradient, -1);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F expected = new DenseMatrix64F(2,1);
-		DenseMatrix64F found = new DenseMatrix64F(2,1);
+		RowMatrix_F64 expected = new RowMatrix_F64(2,1);
+		RowMatrix_F64 found = new RowMatrix_F64(2,1);
 
 		// step less than the cauchy step
 		cauchy.computeStep(cauchyRadius, expected);
@@ -86,7 +86,7 @@ public class TestDoglegStepF {
 		alg.init(2, 3);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		// give it a very large region
 		alg.computeStep(gaussRadius,step);
@@ -114,7 +114,7 @@ public class TestDoglegStepF {
 		alg.init(2, 3);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		// give it a specially selected step
 		alg.computeStep(combinedRadius,step);
@@ -152,7 +152,7 @@ public class TestDoglegStepF {
 		alg.setInputs(x, residuals, J, gradient, fx);
 
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		alg.computeStep(radius,step);
 		assertTrue(alg.calledCauchy == calledCauchy);
@@ -165,13 +165,13 @@ public class TestDoglegStepF {
 		assertEquals(expected,alg.predictedReduction(),1e-8);
 	}
 	
-	public static double cost( DenseMatrix64F residuals , DenseMatrix64F J , DenseMatrix64F h , double... delta )
+	public static double cost( RowMatrix_F64 residuals , RowMatrix_F64 J , RowMatrix_F64 h , double... delta )
 	{
 		h = h.copy();
 		for( int i = 0; i < h.numRows; i++ )
 			h.data[i] += delta[i];
 
-		DenseMatrix64F B = new DenseMatrix64F(J.numCols,J.numCols);
+		RowMatrix_F64 B = new RowMatrix_F64(J.numCols,J.numCols);
 		CommonOps_D64.multTransA(J,J,B);
 
 		double left = VectorVectorMult_D64.innerProd(residuals, residuals);
@@ -186,13 +186,13 @@ public class TestDoglegStepF {
 		boolean calledCauchy = false;
 
 		@Override
-		protected void cauchyStep(double regionRadius, DenseMatrix64F step) {
+		protected void cauchyStep(double regionRadius, RowMatrix_F64 step) {
 			super.cauchyStep(regionRadius, step);
 			calledCauchy = true;
 		}
 
 		@Override
-		protected void combinedStep(double regionRadius, DenseMatrix64F step) {
+		protected void combinedStep(double regionRadius, RowMatrix_F64 step) {
 			super.combinedStep(regionRadius, step);
 			calledCombined = true;
 		}

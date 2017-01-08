@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.simple.SimpleMatrix;
 
@@ -60,9 +60,9 @@ public class EquationsBFGS {
 	 * @param s change in state
 	 * @param y change in gradient
 	 */
-	public static void naiveInverseUpdate(DenseMatrix64F H,
-										  DenseMatrix64F s,
-										  DenseMatrix64F y)
+	public static void naiveInverseUpdate(RowMatrix_F64 H,
+										  RowMatrix_F64 s,
+										  RowMatrix_F64 y)
 	{
 		SimpleMatrix _y = new SimpleMatrix(y);
 		SimpleMatrix _s = new SimpleMatrix(s);
@@ -88,8 +88,8 @@ public class EquationsBFGS {
 	 * @param tempV0 Storage vector of length N
 	 * @param tempV1 Storage vector of length N
 	 */
-	public static void inverseUpdate( DenseMatrix64F H , DenseMatrix64F s , DenseMatrix64F y ,
-									  DenseMatrix64F tempV0, DenseMatrix64F tempV1)
+	public static void inverseUpdate( RowMatrix_F64 H , RowMatrix_F64 s , RowMatrix_F64 y ,
+									  RowMatrix_F64 tempV0, RowMatrix_F64 tempV1)
 	{
 		double alpha = VectorVectorMult_D64.innerProdA(y,H,y);
 		double p = 1.0/VectorVectorMult_D64.innerProd(s,y);
@@ -120,10 +120,10 @@ public class EquationsBFGS {
 	 * @param y
 	 * @param tempV0
 	 */
-	public static void conjugateUpdateD( DenseMatrix64F C , DenseMatrix64F d , DenseMatrix64F y ,
-										 double step, DenseMatrix64F tempV0 )
+	public static void conjugateUpdateD( RowMatrix_F64 C , RowMatrix_F64 d , RowMatrix_F64 y ,
+										 double step, RowMatrix_F64 tempV0 )
 	{
-		DenseMatrix64F z = tempV0;
+		RowMatrix_F64 z = tempV0;
 
 		CommonOps_D64.multTransA(C, y, z);
 		
@@ -152,11 +152,11 @@ public class EquationsBFGS {
 	 * @param y
 	 * @param tempV0
 	 */
-	public static void conjugateUpdateC( DenseMatrix64F C , DenseMatrix64F d , DenseMatrix64F y ,
-										 double step, DenseMatrix64F tempV0 , DenseMatrix64F tempV1)
+	public static void conjugateUpdateC( RowMatrix_F64 C , RowMatrix_F64 d , RowMatrix_F64 y ,
+										 double step, RowMatrix_F64 tempV0 , RowMatrix_F64 tempV1)
 	{
-		DenseMatrix64F z = tempV0;
-		DenseMatrix64F d_bar = tempV1;
+		RowMatrix_F64 z = tempV0;
+		RowMatrix_F64 d_bar = tempV1;
 
 		CommonOps_D64.multTransA(C,y,z);
 

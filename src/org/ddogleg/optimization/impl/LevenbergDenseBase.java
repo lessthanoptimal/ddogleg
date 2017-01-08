@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 
 /**
@@ -30,13 +30,13 @@ import org.ejml.ops.CommonOps_D64;
 public abstract class LevenbergDenseBase extends LevenbergBase {
 
 	// jacobian at x
-	protected DenseMatrix64F jacobianVals = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 jacobianVals = new RowMatrix_F64(1,1);
 
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
-	protected DenseMatrix64F B = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 B = new RowMatrix_F64(1,1);
 	// diagonal elements of JtJ
-	protected DenseMatrix64F Bdiag = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 Bdiag = new RowMatrix_F64(1,1);
 
 	// Least-squares Function being optimized
 	protected CoupledJacobian function;

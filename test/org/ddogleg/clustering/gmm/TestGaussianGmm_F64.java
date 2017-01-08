@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.equation.Equation;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.MatrixFeatures_D64;
@@ -74,13 +74,13 @@ public class TestGaussianGmm_F64 {
 		Equation eq = new Equation();
 		eq.process("Q = zeros(3,3)");
 		for (int i = 0; i < 5; i++) {
-			DenseMatrix64F x = RandomMatrices_D64.createRandom(3,1,rand);
+			RowMatrix_F64 x = RandomMatrices_D64.createRandom(3,1,rand);
 			eq.alias(x,"x",0.4+i*0.1,"w");
 			eq.process("Q = Q + w*x*x'");
 
 			g.addCovariance(x.data,0.4+i*0.1);
 		}
-		DenseMatrix64F Q = eq.lookupMatrix("Q");
+		RowMatrix_F64 Q = eq.lookupMatrix("Q");
 
 		assertTrue(MatrixFeatures_D64.isIdentical(Q, g.covariance, 1e-8));
 	}

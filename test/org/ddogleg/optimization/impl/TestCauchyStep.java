@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ejml.UtilEjml;
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.NormOps_D64;
 import org.junit.Test;
@@ -33,15 +33,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestCauchyStep {
 
-	DenseMatrix64F J,x,residuals,gradient;
+	RowMatrix_F64 J,x,residuals,gradient;
 
 	public TestCauchyStep() {
-		J = new DenseMatrix64F(3,2,true,1,0,0,Math.sqrt(2),0,0);
+		J = new RowMatrix_F64(3,2,true,1,0,0,Math.sqrt(2),0,0);
 
-		x = new DenseMatrix64F(2,1,true,0.5,1.5);
-		residuals = new DenseMatrix64F(3,1,true,-1,-2,-3);
+		x = new RowMatrix_F64(2,1,true,0.5,1.5);
+		residuals = new RowMatrix_F64(3,1,true,-1,-2,-3);
 
-		gradient = new DenseMatrix64F(2,1);
+		gradient = new RowMatrix_F64(2,1);
 		CommonOps_D64.multTransA(J, residuals, gradient);
 	}
 	/**
@@ -53,7 +53,7 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 		
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 		
 		alg.computeStep(10,step);
 		
@@ -66,17 +66,17 @@ public class TestCauchyStep {
 		assertTrue(a < c);
 	}
 	
-	public static double cost( DenseMatrix64F residuals , DenseMatrix64F J , DenseMatrix64F h , double delta )
+	public static double cost( RowMatrix_F64 residuals , RowMatrix_F64 J , RowMatrix_F64 h , double delta )
 	{
 		// adjust the value of h along the gradient's direction
-		DenseMatrix64F direction = h.copy();
+		RowMatrix_F64 direction = h.copy();
 		CommonOps_D64.scale(1.0/ NormOps_D64.normF(h),direction);
 		
 		h = h.copy();
 		for( int i = 0; i < h.numRows; i++ )
 			h.data[i] += delta*direction.data[i];
 		
-		DenseMatrix64F B = new DenseMatrix64F(J.numCols,J.numCols);
+		RowMatrix_F64 B = new RowMatrix_F64(J.numCols,J.numCols);
 		CommonOps_D64.multTransA(J,J,B);
 
 		double left = VectorVectorMult_D64.innerProd(residuals, residuals);
@@ -109,7 +109,7 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		alg.computeStep(1,step);
 
@@ -133,7 +133,7 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		alg.computeStep(10,step);
 
@@ -153,7 +153,7 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		RowMatrix_F64 step = new RowMatrix_F64(2,1);
 
 		alg.computeStep(1,step);
 

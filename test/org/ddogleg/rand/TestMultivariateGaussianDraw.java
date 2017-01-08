@@ -18,7 +18,7 @@
 
 package org.ddogleg.rand;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.MatrixFeatures_D64;
 import org.junit.Test;
@@ -38,16 +38,16 @@ public class TestMultivariateGaussianDraw
      */
     @Test
     public void testStatistics() {
-        DenseMatrix64F orig_x = new DenseMatrix64F(new double[][]{{4},{-2}});
-        DenseMatrix64F orig_P = new DenseMatrix64F(new double[][]{{6,-2},{-2,10}});
+        RowMatrix_F64 orig_x = new RowMatrix_F64(new double[][]{{4},{-2}});
+        RowMatrix_F64 orig_P = new RowMatrix_F64(new double[][]{{6,-2},{-2,10}});
 
         MultivariateGaussianDraw dist = new MultivariateGaussianDraw(new Random(0xfeed),orig_x,orig_P);
 
-        DenseMatrix64F draws[] = new DenseMatrix64F[N];
+        RowMatrix_F64 draws[] = new RowMatrix_F64[N];
 
         // sample the distribution
         for( int i = 0; i < N; i++ ) {
-            DenseMatrix64F x = new DenseMatrix64F(2,1);
+            RowMatrix_F64 x = new RowMatrix_F64(2,1);
             draws[i] = dist.next(x);
         }
 
@@ -67,8 +67,8 @@ public class TestMultivariateGaussianDraw
         assertEquals(-2.0,raw_comp_x[1],0.1);
 
         // now the covariance
-        DenseMatrix64F comp_P = new DenseMatrix64F(2,2);
-        DenseMatrix64F temp = new DenseMatrix64F(2,1);
+        RowMatrix_F64 comp_P = new RowMatrix_F64(2,2);
+        RowMatrix_F64 temp = new RowMatrix_F64(2,1);
 
         for( int i = 0; i < N; i++ ) {
             temp.set(0,0,draws[i].get(0,0)-raw_comp_x[0]);

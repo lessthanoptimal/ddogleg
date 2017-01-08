@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 
 /**
@@ -42,15 +42,15 @@ public abstract class LevenbergBase {
 	private double ftol;
 
 	// current set of parameters being considered
-	private DenseMatrix64F x = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 x = new RowMatrix_F64(1,1);
 	// gradient at 'x' = J'*f(x)
-	private DenseMatrix64F g = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 g = new RowMatrix_F64(1,1);
 	// function residuals values at x
-	private DenseMatrix64F funcVals = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 funcVals = new RowMatrix_F64(1,1);
 
 	// Current x being considered
-	private DenseMatrix64F xtest = new DenseMatrix64F(1,1);
-	private DenseMatrix64F xdelta = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 xtest = new RowMatrix_F64(1,1);
+	private RowMatrix_F64 xdelta = new RowMatrix_F64(1,1);
 
 	// function value norm at x
 	private double fnorm;
@@ -160,14 +160,14 @@ public abstract class LevenbergBase {
 	/**
 	 * Computes the Jacobian matrix,
 	 */
-	protected abstract void computeJacobian( DenseMatrix64F residuals ,
-											 DenseMatrix64F gradient );
+	protected abstract void computeJacobian( RowMatrix_F64 residuals ,
+											 RowMatrix_F64 gradient );
 
 	protected abstract boolean computeStep( double dampeningParam ,
-											DenseMatrix64F gradientNegative ,
-											DenseMatrix64F step );
+											RowMatrix_F64 gradientNegative ,
+											RowMatrix_F64 step );
 
-	protected abstract double predictedReduction( DenseMatrix64F param, DenseMatrix64F gradientNegative , double dampeningParam );
+	protected abstract double predictedReduction( RowMatrix_F64 param, RowMatrix_F64 gradientNegative , double dampeningParam );
 
 	/**
 	 * Returns the minimum allowed value for the dampening parameters.  This should be a function
@@ -247,7 +247,7 @@ public abstract class LevenbergBase {
 		// update the dampParam depending on the results
 		if( predictedReduction > 0 && actualReduction >= 0 ) {
 			// set the test point to be the new point
-			DenseMatrix64F temp = x;
+			RowMatrix_F64 temp = x;
 			x = xtest; xtest = temp;
 			// updated residual norm
 			fnorm = ftestnorm;

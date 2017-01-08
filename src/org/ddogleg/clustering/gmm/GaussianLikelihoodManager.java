@@ -21,7 +21,7 @@ package org.ddogleg.clustering.gmm;
 import org.ddogleg.struct.FastQueue;
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
@@ -41,17 +41,17 @@ public class GaussianLikelihoodManager {
 	FastQueue<Likelihood> precomputes;
 
 	// used to compute likelihood
-	LinearSolver<DenseMatrix64F> solver;
+	LinearSolver<RowMatrix_F64> solver;
 
 	// Used internally when computing difference between point and mean
-	DenseMatrix64F diff;
+	RowMatrix_F64 diff;
 
 	public GaussianLikelihoodManager( final int pointDimension , List<GaussianGmm_F64> mixtures ) {
 		this.mixtures = mixtures;
 
 		// this will produce a cholesky decomposition
 		solver = LinearSolverFactory_D64.symmPosDef(pointDimension);
-		solver = new LinearSolverSafe<DenseMatrix64F>(solver);
+		solver = new LinearSolverSafe<RowMatrix_F64>(solver);
 
 		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
 			@Override
@@ -60,7 +60,7 @@ public class GaussianLikelihoodManager {
 			}
 		};
 
-		diff = new DenseMatrix64F(pointDimension,1);
+		diff = new RowMatrix_F64(pointDimension,1);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class GaussianLikelihoodManager {
 		public GaussianGmm_F64 gaussian;
 
 		// used to precompute parts of the likelihood function
-		public DenseMatrix64F invCov;
+		public RowMatrix_F64 invCov;
 		public double leftSide; // precomputed left side of likelihood
 
 		public double chisq; // chi-sq (x-mu)'*inv(Sigma)*(x-mu)
@@ -96,7 +96,7 @@ public class GaussianLikelihoodManager {
 		public boolean valid = false; // is there a valid distribution?  e.g. more than 1 point matched to it
 
 		public Likelihood(int N) {
-			invCov = new DenseMatrix64F(N,N);
+			invCov = new RowMatrix_F64(N,N);
 		}
 
 		/**
@@ -114,7 +114,7 @@ public class GaussianLikelihoodManager {
 			}
 			solver.invert(invCov);
 
-			CholeskyDecomposition_F64<DenseMatrix64F> decomposition = solver.getDecomposition();
+			CholeskyDecomposition_F64<RowMatrix_F64> decomposition = solver.getDecomposition();
 			double det = decomposition.computeDeterminant().real;
 
 			// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out

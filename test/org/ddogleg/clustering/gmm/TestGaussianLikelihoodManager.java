@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,7 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.struct.FastQueue;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.equation.Equation;
 import org.junit.Test;
 
@@ -89,7 +89,7 @@ public class TestGaussianLikelihoodManager {
 		Equation eq = new Equation();
 
 		eq.alias(g.mean,"mu",g.covariance,"S",p.length,"D");
-		eq.alias(DenseMatrix64F.wrap(p.length,1,p),"x");
+		eq.alias(RowMatrix_F64.wrap(p.length,1,p),"x");
 
 		eq.process("left = 1.0/((2*pi)^(D/2.0)*sqrt(det(S)))");
 		eq.process("likelihood = left*exp(-0.5*(x-mu)'*inv(S)*(x-mu))");
@@ -101,7 +101,7 @@ public class TestGaussianLikelihoodManager {
 		Equation eq = new Equation();
 
 		eq.alias(g.mean,"mu",g.covariance,"S");
-		eq.alias(DenseMatrix64F.wrap(p.length,1,p),"x");
+		eq.alias(RowMatrix_F64.wrap(p.length,1,p),"x");
 
 		eq.process("chisq = (x-mu)'*inv(S)*(x-mu)");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.UtilEjml;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 
 /**
  * Finite difference numerical jacobian calculation using the forward+backwards equation.
@@ -76,7 +76,7 @@ public class NumericalJacobianFB implements FunctionNtoMxN
 
 	@Override
 	public void process(double[] input, double[] jacobian) {
-		DenseMatrix64F J = DenseMatrix64F.wrap(M,N,jacobian);
+		RowMatrix_F64 J = RowMatrix_F64.wrap(M,N,jacobian);
 		
 		for( int i = 0; i < N; i++ ) {
 			double x = input[i];

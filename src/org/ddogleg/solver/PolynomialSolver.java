@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,8 +21,8 @@ package org.ddogleg.solver;
 import org.ddogleg.solver.impl.FindRealRootsSturm;
 import org.ddogleg.solver.impl.RootFinderCompanion;
 import org.ddogleg.solver.impl.WrapRealRootsSturm;
-import org.ejml.data.Complex64F;
-import org.ejml.ops.ComplexMath64F;
+import org.ejml.data.Complex_F64;
+import org.ejml.ops.ComplexMath_F64;
 
 import java.util.List;
 
@@ -64,16 +64,16 @@ public class PolynomialSolver {
 	 * @return The found roots.
 	 */
 	@SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
-	public static Complex64F[] polynomialRootsEVD(double... coefficients) {
+	public static Complex_F64[] polynomialRootsEVD(double... coefficients) {
 
 		PolynomialRoots alg = new RootFinderCompanion();
 
 		if( !alg.process( Polynomial.wrap(coefficients)) )
 			throw new IllegalArgumentException("Algorithm failed, was the input bad?");
 
-		List<Complex64F> coefs = alg.getRoots();
+		List<Complex_F64> coefs = alg.getRoots();
 
-		return coefs.toArray(new Complex64F[0]);
+		return coefs.toArray(new Complex_F64[0]);
 	}
 
 	/**
@@ -119,10 +119,10 @@ public class PolynomialSolver {
 
 			return -ret/(3.0*d);
 		} else {
-			Complex64F inside = new Complex64F(0.5*insideLeft,0.5*Math.sqrt(-insideOfSqrt ));
-			Complex64F root = new Complex64F();
+			Complex_F64 inside = new Complex_F64(0.5*insideLeft,0.5*Math.sqrt(-insideOfSqrt ));
+			Complex_F64 root = new Complex_F64();
 
-			ComplexMath64F.root(inside, 3, 2, root);
+			ComplexMath_F64.root(inside, 3, 2, root);
 
 			// imaginary components cancel out
 			double ret = c + 2*root.getReal();

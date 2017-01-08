@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps_D64;
@@ -32,13 +32,13 @@ import org.ejml.ops.SpecializedOps_D64;
 public class DoglegStepF implements TrustRegionStep {
 
 	// linear solver for least squares problem, needs to handle singular matrices
-	LinearSolver<DenseMatrix64F> pinv;
+	LinearSolver<RowMatrix_F64> pinv;
 
 	// gradient J'*f
-	private DenseMatrix64F gradient;
+	private RowMatrix_F64 gradient;
 
 	// negative of the residuals
-	private DenseMatrix64F residualsNeg = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 residualsNeg = new RowMatrix_F64(1,1);
 
 	// predicted reduction.  Is computed efficiently depending on the case
 	private double predicted;
@@ -47,26 +47,26 @@ public class DoglegStepF implements TrustRegionStep {
 	private boolean maxStep;
 
 	// step and distance of Cauchy point
-	protected DenseMatrix64F stepCauchy = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 stepCauchy = new RowMatrix_F64(1,1);
 	private double distanceCauchy;
 	private double alpha;
 
 	// step computed using Gauss-Newton
-	protected DenseMatrix64F stepGN = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 stepGN = new RowMatrix_F64(1,1);
 	// distance of the Gauss-Newton step
 	private double distanceGN;
 
 	double gnorm;
 
 	// Jacobian times the gradient
-	DenseMatrix64F Jg = new DenseMatrix64F(1,1);
+	RowMatrix_F64 Jg = new RowMatrix_F64(1,1);
 
 	/**
 	 * Configure internal algorithms
 	 *
 	 * @param pinv Linear solver for least-squares problem. Needs to handle
 	 */
-	public DoglegStepF(LinearSolver<DenseMatrix64F> pinv) {
+	public DoglegStepF(LinearSolver<RowMatrix_F64> pinv) {
 		this.pinv = pinv;
 	}
 
@@ -86,8 +86,8 @@ public class DoglegStepF implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(DenseMatrix64F x, DenseMatrix64F residuals, 
-						  DenseMatrix64F J, DenseMatrix64F gradient, double fx) {
+	public void setInputs(RowMatrix_F64 x, RowMatrix_F64 residuals,
+						  RowMatrix_F64 J, RowMatrix_F64 gradient, double fx) {
 
 		this.gradient = gradient;
 
@@ -107,7 +107,7 @@ public class DoglegStepF implements TrustRegionStep {
 	}
 
 	@Override
-	public void computeStep(double regionRadius, DenseMatrix64F step) {
+	public void computeStep(double regionRadius, RowMatrix_F64 step) {
 
 		// of the Gauss-Newton solution is inside the trust region use that
 		if( distanceGN <= regionRadius ) {
@@ -126,7 +126,7 @@ public class DoglegStepF implements TrustRegionStep {
 	/**
 	 * Computes the Cauchy step and the predicted reduction
 	 */
-	protected void cauchyStep(double regionRadius, DenseMatrix64F step) {
+	protected void cauchyStep(double regionRadius, RowMatrix_F64 step) {
 
 		double dist;
 
@@ -145,7 +145,7 @@ public class DoglegStepF implements TrustRegionStep {
 	/**
 	 * Computes a linear interpolation between the Cauchy and Gauss-Newton steps
 	 */
-	protected void combinedStep(double regionRadius, DenseMatrix64F step) {
+	protected void combinedStep(double regionRadius, RowMatrix_F64 step) {
 		// find the Cauchy point
 		CommonOps_D64.scale(-distanceCauchy/gnorm, gradient, stepCauchy);
 

@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps_D64;
@@ -48,15 +48,15 @@ import org.ejml.ops.NormOps_D64;
 public class DoglegStepFtF implements TrustRegionStep {
 
 	// Linear solver for positive semi-definite symmetric matrix
-	private LinearSolver<DenseMatrix64F> pinv;
+	private LinearSolver<RowMatrix_F64> pinv;
 
 	// B=J'*J estimated Hessian
-	private DenseMatrix64F B = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 B = new RowMatrix_F64(1,1);
 	// gradient J'*f
-	private DenseMatrix64F gradient;
+	private RowMatrix_F64 gradient;
 
 	// negative of the gradient
-	private DenseMatrix64F gradientNeg = new DenseMatrix64F(1,1);
+	private RowMatrix_F64 gradientNeg = new RowMatrix_F64(1,1);
 
 	// predicted reduction.  Is computed efficiently depending on the case
 	private double predicted;
@@ -65,11 +65,11 @@ public class DoglegStepFtF implements TrustRegionStep {
 	private boolean maxStep;
 
 	// step and distance of Cauchy point
-	protected DenseMatrix64F stepCauchy = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 stepCauchy = new RowMatrix_F64(1,1);
 	private double distanceCauchy;
 
 	// step computed using Gauss-Newton
-	protected DenseMatrix64F stepGN = new DenseMatrix64F(1,1);
+	protected RowMatrix_F64 stepGN = new RowMatrix_F64(1,1);
 	// distance of the Gauss-Newton step
 	private double distanceGN;
 
@@ -82,7 +82,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 *
 	 * @param pinv Linear solver for a positive semi-definite symmetric system
 	 */
-	public DoglegStepFtF(LinearSolver<DenseMatrix64F> pinv) {
+	public DoglegStepFtF(LinearSolver<RowMatrix_F64> pinv) {
 		this.pinv = pinv;
 	}
 
@@ -103,8 +103,8 @@ public class DoglegStepFtF implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(DenseMatrix64F x, DenseMatrix64F residuals, DenseMatrix64F J,
-						  DenseMatrix64F gradient , double fx ) {
+	public void setInputs(RowMatrix_F64 x, RowMatrix_F64 residuals, RowMatrix_F64 J,
+						  RowMatrix_F64 gradient , double fx ) {
 		this.gradient = gradient;
 		CommonOps_D64.scale(-1, gradient, gradientNeg);
 
@@ -133,7 +133,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * depending on which of the 3 cases is active.
 	 */
 	@Override
-	public void computeStep(double regionRadius, DenseMatrix64F step) {
+	public void computeStep(double regionRadius, RowMatrix_F64 step) {
 
 		// of the Gauss-Newton solution is inside the trust region use that
 		if( distanceGN <= regionRadius ) {
@@ -154,7 +154,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * @param regionRadius
 	 * @param step
 	 */
-	protected void cauchyStep(double regionRadius, DenseMatrix64F step) {
+	protected void cauchyStep(double regionRadius, RowMatrix_F64 step) {
 		double normRadius = regionRadius/gnorm;
 
 		double dist = distanceCauchy;
@@ -172,7 +172,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * Compute the step which is a linear combination of the cauchy point and the Gauss-Newton
 	 * point.  The distance is computed so that it is at the edge of the allowed region.
 	 */
-	protected void combinedStep(double regionRadius, DenseMatrix64F step) {
+	protected void combinedStep(double regionRadius, RowMatrix_F64 step) {
 		// find the Cauchy point
 		CommonOps_D64.scale(-distanceCauchy, gradient, stepCauchy);
 
@@ -203,8 +203,8 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 *
 	 * @return 'beta' from equation above
 	 */
-	protected static double combinedStep( DenseMatrix64F stepCauchy , DenseMatrix64F stepGN ,
-										  double regionRadius , DenseMatrix64F step ) {
+	protected static double combinedStep( RowMatrix_F64 stepCauchy , RowMatrix_F64 stepGN ,
+										  double regionRadius , RowMatrix_F64 step ) {
 		// c = a'*(b-a)
 		double c = 0;
 		for( int i = 0; i < stepCauchy.numRows; i++ )

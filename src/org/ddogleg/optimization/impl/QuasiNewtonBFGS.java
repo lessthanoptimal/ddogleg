@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.CommonOps_D64;
 
 /**
@@ -67,24 +67,24 @@ public class QuasiNewtonBFGS
 	private double derivAtZero;
 
 	// inverse of the Hessian approximation
-	private DenseMatrix64F B;
+	private RowMatrix_F64 B;
 	// search direction
-	private DenseMatrix64F searchVector;
+	private RowMatrix_F64 searchVector;
 	// gradient
-	private DenseMatrix64F g;
+	private RowMatrix_F64 g;
 	// difference between current and previous x
-	private DenseMatrix64F s;
+	private RowMatrix_F64 s;
 	// difference between current and previous gradient
-	private DenseMatrix64F y;
+	private RowMatrix_F64 y;
 	
 	// current set of parameters being considered
-	private DenseMatrix64F x;
+	private RowMatrix_F64 x;
 	// function value at x(k)
 	private double fx;
 
 	// storage
-	private DenseMatrix64F temp0_Nx1;
-	private DenseMatrix64F temp1_Nx1;
+	private RowMatrix_F64 temp0_Nx1;
+	private RowMatrix_F64 temp1_Nx1;
 
 	// mode that the algorithm is in
 	private int mode;
@@ -121,15 +121,15 @@ public class QuasiNewtonBFGS
 
 		N = function.getN();
 		
-		B = new DenseMatrix64F(N,N);
-		searchVector = new DenseMatrix64F(N,1);
-		g = new DenseMatrix64F(N,1);
-		s = new DenseMatrix64F(N,1);
-		y = new DenseMatrix64F(N,1);
-		x = new DenseMatrix64F(N,1);
+		B = new RowMatrix_F64(N,N);
+		searchVector = new RowMatrix_F64(N,1);
+		g = new RowMatrix_F64(N,1);
+		s = new RowMatrix_F64(N,1);
+		y = new RowMatrix_F64(N,1);
+		x = new RowMatrix_F64(N,1);
 
-		temp0_Nx1 = new DenseMatrix64F(N,1);
-		temp1_Nx1 = new DenseMatrix64F(N,1);
+		temp0_Nx1 = new RowMatrix_F64(N,1);
+		temp1_Nx1 = new RowMatrix_F64(N,1);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class QuasiNewtonBFGS
 	 * Manually specify the initial inverse hessian approximation.
 	 * @param Hinverse Initial hessian approximation
 	 */
-	public void setInitialHInv( DenseMatrix64F Hinverse) {
+	public void setInitialHInv( RowMatrix_F64 Hinverse) {
 		B.set(Hinverse);
 	}
 

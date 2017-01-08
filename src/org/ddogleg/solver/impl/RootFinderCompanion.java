@@ -21,8 +21,8 @@ package org.ddogleg.solver.impl;
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
-import org.ejml.data.Complex64F;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.Complex_F64;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.DecompositionFactory_D64;
 import org.ejml.interfaces.decomposition.EigenDecomposition_F64;
 
@@ -39,13 +39,13 @@ import java.util.List;
 public class RootFinderCompanion implements PolynomialRoots {
 
 	// Companion matrix
-	DenseMatrix64F c = new DenseMatrix64F(1,1);
+	RowMatrix_F64 c = new RowMatrix_F64(1,1);
 
 	// use generalized eigenvalue decomposition to find the roots
-	EigenDecomposition_F64<DenseMatrix64F> evd =  DecompositionFactory_D64.eig(11, false, false);
+	EigenDecomposition_F64<RowMatrix_F64> evd =  DecompositionFactory_D64.eig(11, false, false);
 
 	// storage for found roots
-	List<Complex64F> roots = new ArrayList<Complex64F>();
+	List<Complex_F64> roots = new ArrayList<Complex_F64>();
 
 
 	public RootFinderCompanion() {
@@ -83,7 +83,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 
 		roots.clear();
 		for( int i = 0; i < N; i++ ) {
-			Complex64F r = evd.getEigenvalue(i);
+			Complex_F64 r = evd.getEigenvalue(i);
 
 			// increase the accuracy of real roots
 			if( r.isReal() ) {
@@ -97,7 +97,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 	}
 
 	@Override
-	public List<Complex64F> getRoots() {
+	public List<Complex_F64> getRoots() {
 		return roots;
 	}
 }

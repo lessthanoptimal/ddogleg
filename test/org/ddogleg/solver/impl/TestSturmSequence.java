@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -225,8 +225,8 @@ public class TestSturmSequence {
 //		RootFinderCompanion alt = new RootFinderCompanion();
 //		alt.process(poly);
 //
-//		List<Complex64F> l = alt.getRoots();
-//		for( Complex64F c : l ) {
+//		List<Complex_F64> l = alt.getRoots();
+//		for( Complex_F64 c : l ) {
 //			System.out.println(c);
 //			if( c.isReal() ) {
 //				System.out.println("   value = "+poly.evaluate(c.real));

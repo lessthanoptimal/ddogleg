@@ -24,7 +24,7 @@ import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
 import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.equation.Equation;
 import org.ejml.ops.CommonOps_D64;
 import org.ejml.ops.MatrixFeatures_D64;
@@ -196,7 +196,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			PointInfo p = points.get(i);
 			double w = p.weights.data[which];
 
-			DenseMatrix64F x = DenseMatrix64F.wrap(N,1,p.point);
+			RowMatrix_F64 x = RowMatrix_F64.wrap(N,1,p.point);
 			eq.alias(x,"x",w,"w");
 			eq.process("Q = Q + w*(x-mu)*(x-mu)'");
 		}

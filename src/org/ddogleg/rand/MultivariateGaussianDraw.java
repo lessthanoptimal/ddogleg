@@ -19,7 +19,7 @@
 package org.ddogleg.rand;
 
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition;
 import org.ejml.interfaces.linsol.LinearSolver;
@@ -33,12 +33,12 @@ import static org.ejml.ops.CommonOps_D64.multAdd;
  * Draw a number from a multivariate Gaussian distribution.
  */
 public class MultivariateGaussianDraw {
-	private LinearSolver<DenseMatrix64F> solver;
-	private DenseMatrix64F mean;
-	private DenseMatrix64F A;
+	private LinearSolver<RowMatrix_F64> solver;
+	private RowMatrix_F64 mean;
+	private RowMatrix_F64 A;
 	private Random rand;
-	private DenseMatrix64F r;
-	private DenseMatrix64F Q_inv;
+	private RowMatrix_F64 r;
+	private RowMatrix_F64 Q_inv;
 
 	double likelihoodLeft;
 
@@ -51,20 +51,20 @@ public class MultivariateGaussianDraw {
 	 * this is useful if someone is being anal about performance and will soon call assignMean()
 	 * @param cov The covariance of the distribution
 	 */
-	public MultivariateGaussianDraw( Random rand , DenseMatrix64F mean , DenseMatrix64F cov )
+	public MultivariateGaussianDraw( Random rand , RowMatrix_F64 mean , RowMatrix_F64 cov )
 	{
 		if( mean != null )
-			this.mean = new DenseMatrix64F(mean);
+			this.mean = new RowMatrix_F64(mean);
 		else
-			this.mean = new DenseMatrix64F(cov.numCols,1);
-		r = new DenseMatrix64F(cov.numRows,1);
-		Q_inv = new DenseMatrix64F(cov.numRows,cov.numCols);
+			this.mean = new RowMatrix_F64(cov.numCols,1);
+		r = new RowMatrix_F64(cov.numRows,1);
+		Q_inv = new RowMatrix_F64(cov.numRows,cov.numCols);
 
 		solver = LinearSolverFactory_D64.chol(cov.numRows);
 
 		// will invoke decompose in cholesky
 		solver.setA(cov);
-		CholeskyDecomposition<DenseMatrix64F> chol = solver.getDecomposition();
+		CholeskyDecomposition<RowMatrix_F64> chol = solver.getDecomposition();
 
 		A = chol.getT(null);
 
@@ -80,14 +80,14 @@ public class MultivariateGaussianDraw {
 	 * Uses the referenced variable as the internal mean.  This does not perform a copy but
 	 * actually points to the specified matrix as the mean.
 	 */
-	public void assignMean( DenseMatrix64F mean ) {
+	public void assignMean( RowMatrix_F64 mean ) {
 		this.mean = mean;
 	}
 
 	/**
 	 * Makes a draw on the distribution and stores the results in parameter 'x'
 	 */
-	public DenseMatrix64F next( DenseMatrix64F x )
+	public RowMatrix_F64 next( RowMatrix_F64 x )
 	{
 		for( int i = 0; i < r.numRows; i++ ) {
 			r.set(i,0,rand.nextGaussian());

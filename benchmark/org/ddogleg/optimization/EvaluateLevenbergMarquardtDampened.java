@@ -20,7 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -38,7 +38,7 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
-		LinearSolver<DenseMatrix64F> solver;
+		LinearSolver<RowMatrix_F64> solver;
 
 		if( robust ) {
 			solver = LinearSolverFactory_D64.pseudoInverse(true);

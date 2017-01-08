@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
 import org.ejml.alg.dense.mult.VectorVectorMult_D64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.ops.CommonOps_D64;
 
@@ -49,7 +49,7 @@ import org.ejml.ops.CommonOps_D64;
 public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 
 	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolver<DenseMatrix64F> solver;
+	protected LinearSolver<RowMatrix_F64> solver;
 
 	/**
 	 * Specifies termination condition and linear solver.  Selection of the linear solver an effect
@@ -58,16 +58,16 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	 * @param solver		   Linear solver. Cholesky or pseudo-inverse are recommended.
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergMarquardtDampened(LinearSolver<DenseMatrix64F> solver,
+	public LevenbergMarquardtDampened(LinearSolver<RowMatrix_F64> solver,
 									  double initialDampParam) {
 		super(initialDampParam);
 		this.solver = solver;
 		if( solver.modifiesB() )
-			this.solver = new LinearSolverSafe<DenseMatrix64F>(solver);
+			this.solver = new LinearSolverSafe<RowMatrix_F64>(solver);
 	}
 
 	@Override
-	protected void computeJacobian( DenseMatrix64F residuals , DenseMatrix64F gradient) {
+	protected void computeJacobian( RowMatrix_F64 residuals , RowMatrix_F64 gradient) {
 		// calculate the Jacobian values at the current sample point
 		function.computeJacobian(jacobianVals.data);
 
@@ -83,7 +83,7 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	}
 
 	@Override
-	protected boolean computeStep(double lambda, DenseMatrix64F gradientNegative, DenseMatrix64F step) {
+	protected boolean computeStep(double lambda, RowMatrix_F64 gradientNegative, RowMatrix_F64 step) {
 		// add dampening parameter
 		for( int i = 0; i < N; i++ ) {
 			int index = B.getIndex(i,i);
@@ -110,7 +110,7 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	 * @return predicted reduction
 	 */
 	@Override
-	protected double predictedReduction( DenseMatrix64F param, DenseMatrix64F gradientNegative , double mu ) {
+	protected double predictedReduction( RowMatrix_F64 param, RowMatrix_F64 gradientNegative , double mu ) {
 
 		double p_dot_g = VectorVectorMult_D64.innerProd(param,gradientNegative);
 		double p_JJ_p = 0;

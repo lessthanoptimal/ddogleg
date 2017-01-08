@@ -25,7 +25,7 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.ops.MatrixFeatures_D64;
 
 /**
@@ -46,8 +46,8 @@ public class DerivativeChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 found = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 expected = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -91,8 +91,8 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 found = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 expected = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -115,8 +115,8 @@ public class DerivativeChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 found = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 expected = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -174,8 +174,8 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 found = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		RowMatrix_F64 expected = new RowMatrix_F64(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param, found.data);
 		numerical.process(param, expected.data);

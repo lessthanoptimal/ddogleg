@@ -18,7 +18,7 @@
 
 package org.ddogleg.solver;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.RowMatrix_F64;
 import org.ejml.factory.LinearSolverFactory_D64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -29,11 +29,11 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic2D {
 
-	LinearSolver<DenseMatrix64F> solver = LinearSolverFactory_D64.leastSquares(10, 6);
+	LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.leastSquares(10, 6);
 
-	DenseMatrix64F A = new DenseMatrix64F(1,6);
-	DenseMatrix64F b = new DenseMatrix64F(1,1);
-	DenseMatrix64F x = new DenseMatrix64F(6,1);
+	RowMatrix_F64 A = new RowMatrix_F64(1,6);
+	RowMatrix_F64 b = new RowMatrix_F64(1,1);
+	RowMatrix_F64 x = new RowMatrix_F64(6,1);
 
 	double foundX;
 	double foundY;
