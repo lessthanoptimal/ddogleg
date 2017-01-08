@@ -19,10 +19,10 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 
 /**
  * <p>
@@ -75,11 +75,11 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_D64.multInner(jacobianVals, B);
-		CommonOps_D64.multTransA(jacobianVals, residuals, gradient);
+		CommonOps_R64.multInner(jacobianVals, B);
+		CommonOps_R64.multTransA(jacobianVals, residuals, gradient);
 
 		// extract diagonal elements from B
-		CommonOps_D64.extractDiag(B, Bdiag);
+		CommonOps_R64.extractDiag(B, Bdiag);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	@Override
 	protected double predictedReduction( RowMatrix_F64 param, RowMatrix_F64 gradientNegative , double mu ) {
 
-		double p_dot_g = VectorVectorMult_D64.innerProd(param,gradientNegative);
+		double p_dot_g = VectorVectorMult_R64.innerProd(param,gradientNegative);
 		double p_JJ_p = 0;
 		for( int i = 0; i < N; i++ )
 			p_JJ_p += param.data[i]*Bdiag.data[i]*param.data[i];

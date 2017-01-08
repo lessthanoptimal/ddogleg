@@ -21,7 +21,7 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 
 /**
  * <p>
@@ -170,7 +170,7 @@ public class QuasiNewtonBFGS
 		s.zero();
 		// default to an initial inverse Hessian approximation as
 		// the identity matrix.  This can be overridden or improved by an heuristic below
-		CommonOps_D64.setIdentity(B);
+		CommonOps_R64.setIdentity(B);
 
 		// save the initial value of x
 		System.arraycopy(initial, 0, x.data, 0, N);
@@ -220,7 +220,7 @@ public class QuasiNewtonBFGS
 		}
 
 		// compute the search direction
-		CommonOps_D64.mult(-1,B,g, searchVector);
+		CommonOps_R64.mult(-1,B,g, searchVector);
 
 		// use the line search to find the next x
 		if( !setupLineSearch(fx, x.data, g.data, searchVector.data) ) {
@@ -228,7 +228,7 @@ public class QuasiNewtonBFGS
 			// no longer SPD.  Attempt to fix the situation by resetting the matrix
 			resetMatrixB();
 			// do the search again, it can't fail this time
-			CommonOps_D64.mult(-1,B,g, searchVector);
+			CommonOps_R64.mult(-1,B,g, searchVector);
 			setupLineSearch(fx, x.data, g.data, searchVector.data);
 		} else if(Math.abs(derivAtZero) <= gtol ) {
 			// the input might have been modified by the function.  So copy it

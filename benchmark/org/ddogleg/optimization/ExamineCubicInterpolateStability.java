@@ -19,7 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -102,8 +102,8 @@ public class ExamineCubicInterpolateStability {
 
 		RowMatrix_F64 X = new RowMatrix_F64(2,1);
 
-		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.linear(2);
-//		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.leastSquares(2,2);
+		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.linear(2);
+//		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.leastSquares(2,2);
 
 		if( !solver.setA(A))
 			return X.data;

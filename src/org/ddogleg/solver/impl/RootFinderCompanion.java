@@ -23,7 +23,7 @@ import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
 import org.ejml.data.Complex_F64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.DecompositionFactory_D64;
+import org.ejml.factory.DecompositionFactory_R64;
 import org.ejml.interfaces.decomposition.EigenDecomposition_F64;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 	RowMatrix_F64 c = new RowMatrix_F64(1,1);
 
 	// use generalized eigenvalue decomposition to find the roots
-	EigenDecomposition_F64<RowMatrix_F64> evd =  DecompositionFactory_D64.eig(11, false, false);
+	EigenDecomposition_F64<RowMatrix_F64> evd =  DecompositionFactory_R64.eig(11, false, false);
 
 	// storage for found roots
 	List<Complex_F64> roots = new ArrayList<Complex_F64>();

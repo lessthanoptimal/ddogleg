@@ -24,7 +24,7 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.junit.Test;
 
@@ -64,7 +64,7 @@ public class TestLevenbergMarquardtDampened {
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
 		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
 
-		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.pseudoInverse(true);
+		LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.pseudoInverse(true);
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,1e-3);
 

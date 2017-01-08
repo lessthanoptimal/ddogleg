@@ -18,16 +18,16 @@
 
 package org.ddogleg.rand;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 
 import java.util.Random;
 
-import static org.ejml.ops.CommonOps_D64.multAdd;
+import static org.ejml.ops.CommonOps_R64.multAdd;
 
 /**
  * Draw a number from a multivariate Gaussian distribution.
@@ -60,7 +60,7 @@ public class MultivariateGaussianDraw {
 		r = new RowMatrix_F64(cov.numRows,1);
 		Q_inv = new RowMatrix_F64(cov.numRows,cov.numCols);
 
-		solver = LinearSolverFactory_D64.chol(cov.numRows);
+		solver = LinearSolverFactory_R64.chol(cov.numRows);
 
 		// will invoke decompose in cholesky
 		solver.setA(cov);
@@ -71,7 +71,7 @@ public class MultivariateGaussianDraw {
 
 		solver.invert(Q_inv);
 
-		likelihoodLeft = Math.pow(Math.PI*2,-this.mean.numRows/2.0)*Math.sqrt(CommonOps_D64.det(cov));
+		likelihoodLeft = Math.pow(Math.PI*2,-this.mean.numRows/2.0)*Math.sqrt(CommonOps_R64.det(cov));
 
 		this.rand = rand;
 	}
@@ -100,7 +100,7 @@ public class MultivariateGaussianDraw {
 	}
 
 	public double computeLikelihoodP() {
-		double inner = VectorVectorMult_D64.innerProdA(r,Q_inv,r);
+		double inner = VectorVectorMult_R64.innerProdA(r,Q_inv,r);
 
 		return likelihoodLeft*Math.exp(-0.5*inner);
 	}

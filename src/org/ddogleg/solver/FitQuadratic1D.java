@@ -19,7 +19,7 @@
 package org.ddogleg.solver;
 
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -36,7 +36,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic1D {
 
-	LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_D64.leastSquares(10,3);
+	LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.leastSquares(10,3);
 
 	RowMatrix_F64 A = new RowMatrix_F64(1,3);
 	RowMatrix_F64 x = new RowMatrix_F64(3,1);

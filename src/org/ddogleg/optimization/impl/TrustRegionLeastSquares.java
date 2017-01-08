@@ -20,9 +20,9 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.NormOps_D64;
-import org.ejml.ops.SpecializedOps_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.NormOps_R64;
+import org.ejml.ops.SpecializedOps_R64;
 
 /**
  * <p>
@@ -144,10 +144,10 @@ public class TrustRegionLeastSquares {
 		if( mode == 0 ) {
 			// compute the Jacobian and gradient
 			function.computeJacobian(J.data);
-			CommonOps_D64.multTransA(J, residuals, gradient);
+			CommonOps_R64.multTransA(J, residuals, gradient);
 
 			// check for convergence
-			double gnorm = CommonOps_D64.elementMaxAbs(gradient);
+			double gnorm = CommonOps_R64.elementMaxAbs(gradient);
 
 			if( gnorm <= gtol || Math.abs(fx-fx_prev) <= ftol*Math.max(fx,fx_prev) ) {
 				mode = 2;
@@ -181,7 +181,7 @@ public class TrustRegionLeastSquares {
 		stepAlg.computeStep(regionRadius,xdelta);
 
 		// evaluate the candidate point
-		CommonOps_D64.add(x,xdelta,candidate);
+		CommonOps_R64.add(x,xdelta,candidate);
 		function.setInput(candidate.data);
 		function.computeFunctions(candidateResiduals.data);
 		double fxp = cost(candidateResiduals);
@@ -208,7 +208,7 @@ public class TrustRegionLeastSquares {
 				// only increase the size of the trust region if it is taking a step of maximum size
 				// otherwise just assume it's doing good enough job
 				if( reductionRatio > 0.75 ) {
-					double r = NormOps_D64.normF(xdelta);
+					double r = NormOps_R64.normF(xdelta);
 					regionRadius = Math.max(regionRadius,3*r);
 				}
 			}
@@ -239,7 +239,7 @@ public class TrustRegionLeastSquares {
 //
 //		SimpleMatrix r = SimpleMatrix.wrap(residuals);
 //
-//		double z = SpecializedOps_D64.elementSumSq(r.plus(J.mult(h)).getMatrix());
+//		double z = SpecializedOps_R64.elementSumSq(r.plus(J.mult(h)).getMatrix());
 //		double expected = fx-0.5*z;
 //
 //		if( Math.abs(found-expected)/Math.max(found,expected) > 1e-3 ) {
@@ -252,7 +252,7 @@ public class TrustRegionLeastSquares {
 	 * Cost is equal to (1/2)*f(x)<sup>T</sup>*f(x)
 	 */
 	private double cost( RowMatrix_F64 residuals ) {
-		return 0.5*SpecializedOps_D64.elementSumSq(residuals);
+		return 0.5*SpecializedOps_R64.elementSumSq(residuals);
 	}
 
 	public double[] getParameters() {

@@ -22,8 +22,8 @@ import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ejml.data.RowMatrix_F64;
 import org.ejml.equation.Equation;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.MatrixFeatures_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.MatrixFeatures_R64;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -83,10 +83,10 @@ public class TestSeedFromKMeans_F64 {
 		GaussianGmm_F64 expectedA = computeGaussian(0,points);
 		GaussianGmm_F64 expectedB = computeGaussian(1,points);
 
-		assertTrue(MatrixFeatures_D64.isIdentical(expectedA.mean,a.mean,1e-8));
-		assertTrue(MatrixFeatures_D64.isIdentical(expectedB.mean,b.mean,1e-8));
-		assertTrue(MatrixFeatures_D64.isIdentical(expectedA.covariance,a.covariance,1e-8));
-		assertTrue(MatrixFeatures_D64.isIdentical(expectedB.covariance,b.covariance,1e-8));
+		assertTrue(MatrixFeatures_R64.isIdentical(expectedA.mean,a.mean,1e-8));
+		assertTrue(MatrixFeatures_R64.isIdentical(expectedB.mean,b.mean,1e-8));
+		assertTrue(MatrixFeatures_R64.isIdentical(expectedA.covariance,a.covariance,1e-8));
+		assertTrue(MatrixFeatures_R64.isIdentical(expectedB.covariance,b.covariance,1e-8));
 	}
 
 	private GaussianGmm_F64 computeGaussian( int offset , List<double[]> points ) {
@@ -100,7 +100,7 @@ public class TestSeedFromKMeans_F64 {
 			out.mean.data[0] += p[0];
 			out.mean.data[1] += p[1];
 		}
-		CommonOps_D64.divide(out.mean,points.size()/2);
+		CommonOps_R64.divide(out.mean,points.size()/2);
 
 		// compute the covariance
 		Equation eq = new Equation();
@@ -111,7 +111,7 @@ public class TestSeedFromKMeans_F64 {
 			eq.alias(x,"x");
 			eq.process("Q = Q + (x-mu)*(x-mu)'");
 		}
-		CommonOps_D64.divide(out.covariance,points.size()/2-1);
+		CommonOps_R64.divide(out.covariance,points.size()/2-1);
 		return out;
 	}
 

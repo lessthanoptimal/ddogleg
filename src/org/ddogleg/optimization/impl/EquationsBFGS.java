@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 import org.ejml.simple.SimpleMatrix;
 
 /**
@@ -91,20 +91,20 @@ public class EquationsBFGS {
 	public static void inverseUpdate( RowMatrix_F64 H , RowMatrix_F64 s , RowMatrix_F64 y ,
 									  RowMatrix_F64 tempV0, RowMatrix_F64 tempV1)
 	{
-		double alpha = VectorVectorMult_D64.innerProdA(y,H,y);
-		double p = 1.0/VectorVectorMult_D64.innerProd(s,y);
+		double alpha = VectorVectorMult_R64.innerProdA(y,H,y);
+		double p = 1.0/VectorVectorMult_R64.innerProd(s,y);
 
 		// make sure storage variables have the correct dimension
 		int N = H.numCols;
 		tempV0.numRows = N; tempV0.numCols=1;
 		tempV1.numRows = 1; tempV1.numCols=N;
 
-		CommonOps_D64.mult(H,y,tempV0);
-		CommonOps_D64.multTransA(y, H, tempV1);
+		CommonOps_R64.mult(H,y,tempV0);
+		CommonOps_R64.multTransA(y, H, tempV1);
 
-		VectorVectorMult_D64.rank1Update(-p, H , tempV0, s);
-		VectorVectorMult_D64.rank1Update(-p, H , s, tempV1);
-		VectorVectorMult_D64.rank1Update(p*alpha*p+p, H , s, s);
+		VectorVectorMult_R64.rank1Update(-p, H , tempV0, s);
+		VectorVectorMult_R64.rank1Update(-p, H , s, tempV1);
+		VectorVectorMult_R64.rank1Update(p*alpha*p+p, H , s, s);
 	}
 
 	/**
@@ -125,10 +125,10 @@ public class EquationsBFGS {
 	{
 		RowMatrix_F64 z = tempV0;
 
-		CommonOps_D64.multTransA(C, y, z);
+		CommonOps_R64.multTransA(C, y, z);
 		
-		double dTd = VectorVectorMult_D64.innerProd(d,d);
-		double dTz = VectorVectorMult_D64.innerProd(d,z);
+		double dTd = VectorVectorMult_R64.innerProd(d,d);
+		double dTz = VectorVectorMult_R64.innerProd(d,z);
 		
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);
@@ -158,10 +158,10 @@ public class EquationsBFGS {
 		RowMatrix_F64 z = tempV0;
 		RowMatrix_F64 d_bar = tempV1;
 
-		CommonOps_D64.multTransA(C,y,z);
+		CommonOps_R64.multTransA(C,y,z);
 
-		double dTd = VectorVectorMult_D64.innerProd(d,d);
-		double dTz = VectorVectorMult_D64.innerProd(d,z);
+		double dTd = VectorVectorMult_R64.innerProd(d,d);
+		double dTz = VectorVectorMult_R64.innerProd(d,z);
 
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);

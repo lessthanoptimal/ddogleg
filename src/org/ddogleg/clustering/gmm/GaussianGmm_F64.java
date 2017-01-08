@@ -19,7 +19,7 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 
 import java.io.Serializable;
 
@@ -51,8 +51,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * Sets the mean, covariance, and weight to zero
 	 */
 	public void zero() {
-		CommonOps_D64.fill(mean,0);
-		CommonOps_D64.fill(covariance,0);
+		CommonOps_R64.fill(mean,0);
+		CommonOps_R64.fill(covariance,0);
 		weight = 0;
 	}
 

@@ -26,7 +26,7 @@ import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.MatrixFeatures_D64;
+import org.ejml.ops.MatrixFeatures_R64;
 
 /**
  * Used to validate an algebraic Jacobian numerically.
@@ -97,7 +97,7 @@ public class DerivativeChecker {
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
 
-		return MatrixFeatures_D64.isIdentical(expected,found,tol);
+		return MatrixFeatures_R64.isIdentical(expected,found,tol);
 	}
 
 	/**

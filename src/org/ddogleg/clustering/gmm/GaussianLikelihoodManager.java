@@ -20,9 +20,9 @@ package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.struct.FastQueue;
 import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -50,7 +50,7 @@ public class GaussianLikelihoodManager {
 		this.mixtures = mixtures;
 
 		// this will produce a cholesky decomposition
-		solver = LinearSolverFactory_D64.symmPosDef(pointDimension);
+		solver = LinearSolverFactory_R64.symmPosDef(pointDimension);
 		solver = new LinearSolverSafe<RowMatrix_F64>(solver);
 
 		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
@@ -136,7 +136,7 @@ public class GaussianLikelihoodManager {
 			for (int i = 0; i < N; i++) {
 				diff.data[i] = point[i] - gaussian.mean.data[i];
 			}
-			chisq = VectorVectorMult_D64.innerProdA(diff, invCov, diff);
+			chisq = VectorVectorMult_R64.innerProdA(diff, invCov, diff);
 
 			return leftSide * Math.exp(-0.5 * chisq);
 		}

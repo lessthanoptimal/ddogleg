@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.MatrixFeatures_D64;
-import org.ejml.ops.NormOps_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.MatrixFeatures_R64;
+import org.ejml.ops.NormOps_R64;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -45,7 +45,7 @@ public class TestDoglegStepFtF {
 		residuals = new RowMatrix_F64(3,1,true,-1,-2,-3);
 
 		gradient = new RowMatrix_F64(2,1);
-		CommonOps_D64.multTransA(J, residuals, gradient);
+		CommonOps_R64.multTransA(J, residuals, gradient);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class TestDoglegStepFtF {
 		assertTrue(alg.isMaxStep());
 		assertTrue(alg.calledCauchy);
 
-		assertTrue(MatrixFeatures_D64.isIdentical(expected, found, 1e-8));
+		assertTrue(MatrixFeatures_R64.isIdentical(expected, found, 1e-8));
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class TestDoglegStepFtF {
 		
 		// check to see if it is along the region's radius
 		assertTrue(alg.isMaxStep());
-		double r = NormOps_D64.normF(step);
+		double r = NormOps_R64.normF(step);
 		assertEquals(combinedRadius, r, 1e-8);
 	}
 
@@ -145,7 +145,7 @@ public class TestDoglegStepFtF {
 
 	private void checkPredictedCost( double radius , boolean calledCauchy , boolean calledCombined  )
 	{
-		double fx = VectorVectorMult_D64.innerProd(residuals,residuals)*0.5;
+		double fx = VectorVectorMult_R64.innerProd(residuals,residuals)*0.5;
 		WrappedDog alg = new WrappedDog();
 
 		alg.init(2, 3);
@@ -172,11 +172,11 @@ public class TestDoglegStepFtF {
 			h.data[i] += delta[i];
 
 		RowMatrix_F64 B = new RowMatrix_F64(J.numCols,J.numCols);
-		CommonOps_D64.multTransA(J,J,B);
+		CommonOps_R64.multTransA(J,J,B);
 
-		double left = VectorVectorMult_D64.innerProd(residuals, residuals);
-		double middle = VectorVectorMult_D64.innerProdA(residuals, J, h);
-		double right = VectorVectorMult_D64.innerProdA(h, B, h);
+		double left = VectorVectorMult_R64.innerProd(residuals, residuals);
+		double middle = VectorVectorMult_R64.innerProdA(residuals, J, h);
+		double right = VectorVectorMult_R64.innerProdA(h, B, h);
 
 		return 0.5*left + middle + 0.5*right;
 	}

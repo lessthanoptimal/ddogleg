@@ -20,7 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
+import org.ejml.ops.CommonOps_R64;
 
 /**
  * Base class for Levenberg solvers which use dense matrices.
@@ -57,7 +57,7 @@ public abstract class LevenbergDenseBase extends LevenbergBase {
 
 	@Override
 	protected double getMinimumDampening() {
-		return CommonOps_D64.elementMax(Bdiag);
+		return CommonOps_R64.elementMax(Bdiag);
 	}
 
 	/**

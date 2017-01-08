@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.NormOps_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.NormOps_R64;
 
 /**
  * <p>
@@ -90,8 +90,8 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * Default solver
 	 */
 	public DoglegStepFtF() {
-		this(LinearSolverFactory_D64.leastSquaresQrPivot(true, false));
-//		this(LinearSolverFactory_D64.pseudoInverse(true));
+		this(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
+//		this(LinearSolverFactory_R64.pseudoInverse(true));
 	}
 
 	@Override
@@ -106,12 +106,12 @@ public class DoglegStepFtF implements TrustRegionStep {
 	public void setInputs(RowMatrix_F64 x, RowMatrix_F64 residuals, RowMatrix_F64 J,
 						  RowMatrix_F64 gradient , double fx ) {
 		this.gradient = gradient;
-		CommonOps_D64.scale(-1, gradient, gradientNeg);
+		CommonOps_R64.scale(-1, gradient, gradientNeg);
 
-		CommonOps_D64.multInner(J, B);
+		CommonOps_R64.multInner(J, B);
 
-		gBg = VectorVectorMult_D64.innerProdA(gradient, B, gradient);
-		gnorm = NormOps_D64.normF(gradient);
+		gBg = VectorVectorMult_R64.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_R64.normF(gradient);
 
 		// compute and distance location of the Cauchy step
 		if( gBg == 0 )
@@ -124,7 +124,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 			throw new RuntimeException("pinv failed?!?");
 
 		pinv.solve(gradientNeg, stepGN);
-		distanceGN = NormOps_D64.normF(stepGN);
+		distanceGN = NormOps_R64.normF(stepGN);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 		if( distanceGN <= regionRadius ) {
 			step.set(stepGN);
 			maxStep = distanceGN == regionRadius;
-			predicted = -0.5*VectorVectorMult_D64.innerProd(stepGN,gradient);
+			predicted = -0.5*VectorVectorMult_R64.innerProd(stepGN,gradient);
 		} else if( distanceCauchy*gnorm >= regionRadius ) {
 			// if the trust region comes before the Cauchy point then perform the cauchy step
 			cauchyStep(regionRadius, step);
@@ -164,7 +164,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 		} else {
 			maxStep = false;
 		}
-		CommonOps_D64.scale(-dist, gradient, step);
+		CommonOps_R64.scale(-dist, gradient, step);
 		predicted = predictCauchy(dist);
 	}
 
@@ -174,7 +174,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 */
 	protected void combinedStep(double regionRadius, RowMatrix_F64 step) {
 		// find the Cauchy point
-		CommonOps_D64.scale(-distanceCauchy, gradient, stepCauchy);
+		CommonOps_R64.scale(-distanceCauchy, gradient, stepCauchy);
 
 		// compute the combined step
 		double beta = combinedStep(stepCauchy,stepGN,regionRadius,step);
@@ -184,7 +184,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 		// This was found by plugging in h=beta*stepGN + stepC*(1-beta) to
 		// L(0) - L(h) = -F(x)'*J(x)*h - 0.5*h'*B*h
 
-		double dotGandGN = VectorVectorMult_D64.innerProd(stepGN,gradient);
+		double dotGandGN = VectorVectorMult_R64.innerProd(stepGN,gradient);
 		double oneMb = (1-beta);
 		double left = -0.5*distanceCauchy*distanceCauchy*oneMb*oneMb*gBg;
 		double middle = -distanceCauchy*oneMb*(beta-1)*gnorm*gnorm;

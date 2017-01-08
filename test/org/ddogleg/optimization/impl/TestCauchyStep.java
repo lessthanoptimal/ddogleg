@@ -19,10 +19,10 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.UtilEjml;
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.NormOps_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.NormOps_R64;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +42,7 @@ public class TestCauchyStep {
 		residuals = new RowMatrix_F64(3,1,true,-1,-2,-3);
 
 		gradient = new RowMatrix_F64(2,1);
-		CommonOps_D64.multTransA(J, residuals, gradient);
+		CommonOps_R64.multTransA(J, residuals, gradient);
 	}
 	/**
 	 * The optimal solution falls inside the trust region
@@ -70,18 +70,18 @@ public class TestCauchyStep {
 	{
 		// adjust the value of h along the gradient's direction
 		RowMatrix_F64 direction = h.copy();
-		CommonOps_D64.scale(1.0/ NormOps_D64.normF(h),direction);
+		CommonOps_R64.scale(1.0/ NormOps_R64.normF(h),direction);
 		
 		h = h.copy();
 		for( int i = 0; i < h.numRows; i++ )
 			h.data[i] += delta*direction.data[i];
 		
 		RowMatrix_F64 B = new RowMatrix_F64(J.numCols,J.numCols);
-		CommonOps_D64.multTransA(J,J,B);
+		CommonOps_R64.multTransA(J,J,B);
 
-		double left = VectorVectorMult_D64.innerProd(residuals, residuals);
-		double middle = VectorVectorMult_D64.innerProdA(residuals, J, h);
-		double right = VectorVectorMult_D64.innerProdA(h, B, h);
+		double left = VectorVectorMult_R64.innerProd(residuals, residuals);
+		double middle = VectorVectorMult_R64.innerProdA(residuals, J, h);
+		double right = VectorVectorMult_R64.innerProdA(h, B, h);
 
 //		double cost =  0.5*left + middle + 0.5*right;
 //
@@ -114,7 +114,7 @@ public class TestCauchyStep {
 		alg.computeStep(1,step);
 
 		// make sure it on he trust region border
-		double l = NormOps_D64.normF(step);
+		double l = NormOps_R64.normF(step);
 		assertTrue(Math.abs(l - 1) <= UtilEjml.EPS);
 		
 		// empirical test to see if it is a local minimum
@@ -138,7 +138,7 @@ public class TestCauchyStep {
 		alg.computeStep(10,step);
 
 		// empirical calculation of the reduction
-		double a =  VectorVectorMult_D64.innerProd(residuals,residuals)*0.5;
+		double a =  VectorVectorMult_R64.innerProd(residuals,residuals)*0.5;
 		double c =  cost(residuals,J,step,0);
 
 		assertEquals(a-c,alg.predictedReduction(),1e-8);
@@ -158,7 +158,7 @@ public class TestCauchyStep {
 		alg.computeStep(1,step);
 
 		// empirical calculation of the reduction
-		double a =  VectorVectorMult_D64.innerProd(residuals,residuals)*0.5;
+		double a =  VectorVectorMult_R64.innerProd(residuals,residuals)*0.5;
 		double c =  cost(residuals,J,step,0);
 
 		assertEquals(a-c,alg.predictedReduction(),1e-8);

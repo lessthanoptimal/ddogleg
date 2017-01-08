@@ -23,7 +23,7 @@ import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSqua
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -75,9 +75,9 @@ public class FactoryOptimization {
 		LinearSolver<RowMatrix_F64> solver;
 
 		if( robust ) {
-			solver = LinearSolverFactory_D64.pseudoInverse(true);
+			solver = LinearSolverFactory_R64.pseudoInverse(true);
 		} else {
-			solver = LinearSolverFactory_D64.symmPosDef(10);
+			solver = LinearSolverFactory_R64.symmPosDef(10);
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
@@ -122,16 +122,16 @@ public class FactoryOptimization {
 
 			case DOG_LEG_F:
 				if( robustSolver )
-					stepAlg = new DoglegStepF(LinearSolverFactory_D64.pseudoInverse(true));
+					stepAlg = new DoglegStepF(LinearSolverFactory_R64.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepF(LinearSolverFactory_D64.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepF(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
 				break;
 
 			case DOG_LEG_FTF:
 				if( robustSolver )
-					stepAlg = new DoglegStepFtF(LinearSolverFactory_D64.pseudoInverse(true));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_R64.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepFtF(LinearSolverFactory_D64.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
 				break;
 
 			default:

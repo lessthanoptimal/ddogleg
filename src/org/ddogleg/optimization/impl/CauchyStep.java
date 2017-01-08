@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_D64;
+import org.ejml.alg.dense.mult.VectorVectorMult_R64;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_D64;
-import org.ejml.ops.NormOps_D64;
+import org.ejml.ops.CommonOps_R64;
+import org.ejml.ops.NormOps_R64;
 
 /**
  * <p>
@@ -61,10 +61,10 @@ public class CauchyStep implements TrustRegionStep {
 							RowMatrix_F64 gradient , double fx )
 	{
 		this.gradient = gradient;
-		CommonOps_D64.multInner(J, B);
+		CommonOps_R64.multInner(J, B);
 
-		gBg = VectorVectorMult_D64.innerProdA(gradient, B, gradient);
-		gnorm = NormOps_D64.normF(gradient);
+		gBg = VectorVectorMult_R64.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_R64.normF(gradient);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class CauchyStep implements TrustRegionStep {
 			}
 		}
 
-		CommonOps_D64.scale(-dist,gradient,step);
+		CommonOps_R64.scale(-dist,gradient,step);
 
 		// compute predicted reduction
 		predicted = dist*gnorm*gnorm - 0.5*dist*dist*gBg;

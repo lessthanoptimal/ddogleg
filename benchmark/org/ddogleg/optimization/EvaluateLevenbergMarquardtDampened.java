@@ -21,7 +21,7 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_D64;
+import org.ejml.factory.LinearSolverFactory_R64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -41,9 +41,9 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 		LinearSolver<RowMatrix_F64> solver;
 
 		if( robust ) {
-			solver = LinearSolverFactory_D64.pseudoInverse(true);
+			solver = LinearSolverFactory_R64.pseudoInverse(true);
 		} else {
-			solver = LinearSolverFactory_D64.symmPosDef(10);
+			solver = LinearSolverFactory_R64.symmPosDef(10);
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
