@@ -53,7 +53,7 @@ public class BenchMarkSort
 		data = createRandom(new Random(0x344), num);
 		int indexes[] = new int[ num ];
 		before = System.currentTimeMillis();
-		quicksort.sort(data,data.length,indexes);
+		quicksort.sort(data,0,data.length,indexes);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort Indexes = "+(after-before));
 

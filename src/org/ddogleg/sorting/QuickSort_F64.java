@@ -128,10 +128,10 @@ public class QuickSort_F64 {
 		}
 	}
 
-	public void sort( double[] arr , int length , int indexes[] )
+	public void sort( double[] arr , int offset , int length , int indexes[] )
 	{
 		for( int i = 0; i < length; i++ ) {
-			indexes[i] = i;
+			indexes[i] = offset+i;
 		}
 
 		int i,ir,j,k;

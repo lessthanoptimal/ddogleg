@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ejml.UtilEjml;
 import org.junit.Test;
 
 import java.util.Random;
@@ -61,22 +62,25 @@ public class TestQuickSort_S32 {
 
 	@Test
 	public void testSortingRandom_indexes() {
+		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			int[] normal = BenchMarkSort.createRandom_S32(rand,20);
 			int[] original = normal.clone();
-			int[] withIndexes = normal.clone();
-			int[] indexes = new int[ normal.length ];
+			int[] withIndexes = new int[offset+normal.length];;
+			int[] indexes = new int[ withIndexes.length ];
+
+			System.arraycopy(normal,0,withIndexes,offset,normal.length);
 
 			QuickSort_S32 sorter = new QuickSort_S32();
 
 			sorter.sort(normal,normal.length);
-			sorter.sort(withIndexes,normal.length,indexes);
+			sorter.sort(withIndexes,offset,normal.length,indexes);
 
 			for( int i = 0; i < normal.length; i++ ) {
 				// make sure the original hasn't been modified
-				assertEquals(original[i],withIndexes[i],1e-8);
+				assertEquals(original[i],withIndexes[i+offset], UtilEjml.TEST_F64);
 				// see if it produced the same results as the normal one
-				assertEquals(normal[i],withIndexes[indexes[i]],1e-8);
+				assertEquals(normal[i],withIndexes[indexes[i]],UtilEjml.TEST_F64);
 			}
 		}
 	}

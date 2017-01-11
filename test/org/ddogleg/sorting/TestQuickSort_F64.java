@@ -19,6 +19,7 @@
 package org.ddogleg.sorting;
 
 import org.ddogleg.util.UtilDouble;
+import org.ejml.UtilEjml;
 import org.junit.Test;
 
 import java.util.Random;
@@ -42,7 +43,7 @@ public class TestQuickSort_F64 {
 		double postTotal = UtilDouble.sum(ret);
 
 		// make sure it didn't modify the list, in an unexpected way
-		assertEquals(preTotal,postTotal,1e-8);
+		assertEquals(preTotal,postTotal,UtilEjml.TEST_F64);
 
 		double prev = ret[0];
 		for( int i = 1; i < ret.length; i++ ) {
@@ -54,22 +55,25 @@ public class TestQuickSort_F64 {
 
 	@Test
 	public void testSortingRandom_indexes() {
+		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			double[] normal = BenchMarkSort.createRandom(rand,20);
 			double[] original = normal.clone();
-			double[] withIndexes = normal.clone();
-			int[] indexes = new int[ normal.length ];
+			double[] withIndexes = new double[offset+normal.length];;
+			int[] indexes = new int[ withIndexes.length ];
+
+			System.arraycopy(normal,0,withIndexes,offset,normal.length);
 
 			QuickSort_F64 sorter = new QuickSort_F64();
 
 			sorter.sort(normal,normal.length);
-			sorter.sort(withIndexes,normal.length,indexes);
+			sorter.sort(withIndexes,offset,normal.length,indexes);
 
 			for( int i = 0; i < normal.length; i++ ) {
 				// make sure the original hasn't been modified
-				assertEquals(original[i],withIndexes[i],1e-8);
+				assertEquals(original[i],withIndexes[i+offset], UtilEjml.TEST_F64);
 				// see if it produced the same results as the normal one
-				assertEquals(normal[i],withIndexes[indexes[i]],1e-8);
+				assertEquals(normal[i],withIndexes[indexes[i]],UtilEjml.TEST_F64);
 			}
 		}
 	}
