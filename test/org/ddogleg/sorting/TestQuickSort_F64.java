@@ -32,7 +32,7 @@ public class TestQuickSort_F64 {
 
 	@Test
 	public void testSortingRandom() {
-		double[] ret = BenchMarkSort.createRandom(rand,200);
+		double[] ret = BenchMarkSort.createRandom_F64(rand,200);
 
 		double preTotal = UtilDouble.sum(ret);
 
@@ -57,7 +57,7 @@ public class TestQuickSort_F64 {
 	public void testSortingRandom_indexes() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
-			double[] normal = BenchMarkSort.createRandom(rand,20);
+			double[] normal = BenchMarkSort.createRandom_F64(rand,20);
 			double[] original = normal.clone();
 			double[] withIndexes = new double[offset+normal.length];;
 			int[] indexes = new int[ withIndexes.length ];
