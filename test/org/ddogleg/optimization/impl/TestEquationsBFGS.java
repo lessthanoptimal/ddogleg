@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.MatrixFeatures_R64;
-import org.ejml.ops.RandomMatrices_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
+import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.junit.Test;
 
 import java.util.Random;
@@ -37,19 +37,19 @@ public class TestEquationsBFGS {
 	@Test
 	public void inverseUpdate() {
 		int N = 6;
-		RowMatrix_F64 H = RandomMatrices_R64.createSymmetric(N,-1,1,rand);
-		RowMatrix_F64 s = RandomMatrices_R64.createRandom(N,1,-1,1,rand);
-		RowMatrix_F64 y = RandomMatrices_R64.createRandom(N,1,-1,1,rand);
-		RowMatrix_F64 tempV0 = new RowMatrix_F64(N,1);
-		RowMatrix_F64 tempV1 = new RowMatrix_F64(N,1);
+		DMatrixRMaj H = RandomMatrices_DDRM.symmetric(N,-1,1,rand);
+		DMatrixRMaj s = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
+		DMatrixRMaj y = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
+		DMatrixRMaj tempV0 = new DMatrixRMaj(N,1);
+		DMatrixRMaj tempV1 = new DMatrixRMaj(N,1);
 
-		RowMatrix_F64 expected = H.copy();
-		RowMatrix_F64 found = H.copy();
+		DMatrixRMaj expected = H.copy();
+		DMatrixRMaj found = H.copy();
 
 		EquationsBFGS.naiveInverseUpdate(expected, s, y);
 		EquationsBFGS.inverseUpdate(found,s,y.copy(),tempV0,tempV1);
 
-		assertTrue(MatrixFeatures_R64.isIdentical(expected, found, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, 1e-8));
 	}
 
 

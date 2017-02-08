@@ -19,10 +19,10 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.struct.FastQueue;
-import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.LinearSolverSafe;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
@@ -41,17 +41,17 @@ public class GaussianLikelihoodManager {
 	FastQueue<Likelihood> precomputes;
 
 	// used to compute likelihood
-	LinearSolver<RowMatrix_F64> solver;
+	LinearSolver<DMatrixRMaj> solver;
 
 	// Used internally when computing difference between point and mean
-	RowMatrix_F64 diff;
+	DMatrixRMaj diff;
 
 	public GaussianLikelihoodManager( final int pointDimension , List<GaussianGmm_F64> mixtures ) {
 		this.mixtures = mixtures;
 
 		// this will produce a cholesky decomposition
-		solver = LinearSolverFactory_R64.symmPosDef(pointDimension);
-		solver = new LinearSolverSafe<RowMatrix_F64>(solver);
+		solver = LinearSolverFactory_DDRM.symmPosDef(pointDimension);
+		solver = new LinearSolverSafe<DMatrixRMaj>(solver);
 
 		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
 			@Override
@@ -60,7 +60,7 @@ public class GaussianLikelihoodManager {
 			}
 		};
 
-		diff = new RowMatrix_F64(pointDimension,1);
+		diff = new DMatrixRMaj(pointDimension,1);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class GaussianLikelihoodManager {
 		public GaussianGmm_F64 gaussian;
 
 		// used to precompute parts of the likelihood function
-		public RowMatrix_F64 invCov;
+		public DMatrixRMaj invCov;
 		public double leftSide; // precomputed left side of likelihood
 
 		public double chisq; // chi-sq (x-mu)'*inv(Sigma)*(x-mu)
@@ -96,7 +96,7 @@ public class GaussianLikelihoodManager {
 		public boolean valid = false; // is there a valid distribution?  e.g. more than 1 point matched to it
 
 		public Likelihood(int N) {
-			invCov = new RowMatrix_F64(N,N);
+			invCov = new DMatrixRMaj(N,N);
 		}
 
 		/**
@@ -114,7 +114,7 @@ public class GaussianLikelihoodManager {
 			}
 			solver.invert(invCov);
 
-			CholeskyDecomposition_F64<RowMatrix_F64> decomposition = solver.getDecomposition();
+			CholeskyDecomposition_F64<DMatrixRMaj> decomposition = solver.getDecomposition();
 			double det = decomposition.computeDeterminant().real;
 
 			// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out
@@ -136,7 +136,7 @@ public class GaussianLikelihoodManager {
 			for (int i = 0; i < N; i++) {
 				diff.data[i] = point[i] - gaussian.mean.data[i];
 			}
-			chisq = VectorVectorMult_R64.innerProdA(diff, invCov, diff);
+			chisq = VectorVectorMult_DDRM.innerProdA(diff, invCov, diff);
 
 			return leftSide * Math.exp(-0.5 * chisq);
 		}

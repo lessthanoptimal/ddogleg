@@ -18,11 +18,11 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
+import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.equation.Equation;
-import org.ejml.ops.CommonOps_R64;
-import org.ejml.ops.MatrixFeatures_R64;
-import org.ejml.ops.RandomMatrices_R64;
 import org.junit.Test;
 
 import java.util.Random;
@@ -41,14 +41,14 @@ public class TestGaussianGmm_F64 {
 	public void zero() {
 		GaussianGmm_F64 g = new GaussianGmm_F64(3);
 
-		CommonOps_R64.fill(g.mean,1);
-		CommonOps_R64.fill(g.covariance,2);
+		CommonOps_DDRM.fill(g.mean,1);
+		CommonOps_DDRM.fill(g.covariance,2);
 		g.weight = 4;
 
 		g.zero();
 
-		assertTrue(CommonOps_R64.elementSumAbs(g.mean)==0);
-		assertTrue(CommonOps_R64.elementSumAbs(g.covariance)==0);
+		assertTrue(CommonOps_DDRM.elementSumAbs(g.mean)==0);
+		assertTrue(CommonOps_DDRM.elementSumAbs(g.covariance)==0);
 		assertTrue(g.weight == 0);
 	}
 
@@ -74,15 +74,15 @@ public class TestGaussianGmm_F64 {
 		Equation eq = new Equation();
 		eq.process("Q = zeros(3,3)");
 		for (int i = 0; i < 5; i++) {
-			RowMatrix_F64 x = RandomMatrices_R64.createRandom(3,1,rand);
+			DMatrixRMaj x = RandomMatrices_DDRM.rectangle(3,1,rand);
 			eq.alias(x,"x",0.4+i*0.1,"w");
 			eq.process("Q = Q + w*x*x'");
 
 			g.addCovariance(x.data,0.4+i*0.1);
 		}
-		RowMatrix_F64 Q = eq.lookupMatrix("Q");
+		DMatrixRMaj Q = eq.lookupMatrix("Q");
 
-		assertTrue(MatrixFeatures_R64.isIdentical(Q, g.covariance, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(Q, g.covariance, 1e-8));
 	}
 
 	@Test

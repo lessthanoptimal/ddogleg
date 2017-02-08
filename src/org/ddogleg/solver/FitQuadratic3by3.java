@@ -18,8 +18,8 @@
 
 package org.ddogleg.solver;
 
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -41,15 +41,15 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic3by3 {
 	
-	LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.leastSquares(9, 6);
-	RowMatrix_F64 X = new RowMatrix_F64(6,1);
-	RowMatrix_F64 Y = new RowMatrix_F64(9,1);
+	LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(9, 6);
+	DMatrixRMaj X = new DMatrixRMaj(6,1);
+	DMatrixRMaj Y = new DMatrixRMaj(9,1);
 	
 	double deltaX;
 	double deltaY;
 	
 	public FitQuadratic3by3() {
-		RowMatrix_F64 M = new RowMatrix_F64(9,6);
+		DMatrixRMaj M = new DMatrixRMaj(9,6);
 
 		int index = 0;
 		for( int i = -1; i <= 1; i++ ) {

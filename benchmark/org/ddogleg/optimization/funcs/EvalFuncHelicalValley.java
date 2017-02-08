@@ -20,7 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  *
@@ -102,7 +102,7 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 
 		@Override
 		public void process(double[] input, double[] output) {
-			RowMatrix_F64 J = RowMatrix_F64.wrap(3,3,output);
+			DMatrixRMaj J = DMatrixRMaj.wrap(3,3,output);
 			double x1 = input[0];
 			double x2 = input[1];
 			double x3 = input[2];

@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.simple.SimpleMatrix;
 
 /**
@@ -60,9 +60,9 @@ public class EquationsBFGS {
 	 * @param s change in state
 	 * @param y change in gradient
 	 */
-	public static void naiveInverseUpdate(RowMatrix_F64 H,
-										  RowMatrix_F64 s,
-										  RowMatrix_F64 y)
+	public static void naiveInverseUpdate(DMatrixRMaj H,
+										  DMatrixRMaj s,
+										  DMatrixRMaj y)
 	{
 		SimpleMatrix _y = new SimpleMatrix(y);
 		SimpleMatrix _s = new SimpleMatrix(s);
@@ -88,23 +88,23 @@ public class EquationsBFGS {
 	 * @param tempV0 Storage vector of length N
 	 * @param tempV1 Storage vector of length N
 	 */
-	public static void inverseUpdate( RowMatrix_F64 H , RowMatrix_F64 s , RowMatrix_F64 y ,
-									  RowMatrix_F64 tempV0, RowMatrix_F64 tempV1)
+	public static void inverseUpdate( DMatrixRMaj H , DMatrixRMaj s , DMatrixRMaj y ,
+									  DMatrixRMaj tempV0, DMatrixRMaj tempV1)
 	{
-		double alpha = VectorVectorMult_R64.innerProdA(y,H,y);
-		double p = 1.0/VectorVectorMult_R64.innerProd(s,y);
+		double alpha = VectorVectorMult_DDRM.innerProdA(y,H,y);
+		double p = 1.0/VectorVectorMult_DDRM.innerProd(s,y);
 
 		// make sure storage variables have the correct dimension
 		int N = H.numCols;
 		tempV0.numRows = N; tempV0.numCols=1;
 		tempV1.numRows = 1; tempV1.numCols=N;
 
-		CommonOps_R64.mult(H,y,tempV0);
-		CommonOps_R64.multTransA(y, H, tempV1);
+		CommonOps_DDRM.mult(H,y,tempV0);
+		CommonOps_DDRM.multTransA(y, H, tempV1);
 
-		VectorVectorMult_R64.rank1Update(-p, H , tempV0, s);
-		VectorVectorMult_R64.rank1Update(-p, H , s, tempV1);
-		VectorVectorMult_R64.rank1Update(p*alpha*p+p, H , s, s);
+		VectorVectorMult_DDRM.rank1Update(-p, H , tempV0, s);
+		VectorVectorMult_DDRM.rank1Update(-p, H , s, tempV1);
+		VectorVectorMult_DDRM.rank1Update(p*alpha*p+p, H , s, s);
 	}
 
 	/**
@@ -120,15 +120,15 @@ public class EquationsBFGS {
 	 * @param y
 	 * @param tempV0
 	 */
-	public static void conjugateUpdateD( RowMatrix_F64 C , RowMatrix_F64 d , RowMatrix_F64 y ,
-										 double step, RowMatrix_F64 tempV0 )
+	public static void conjugateUpdateD( DMatrixRMaj C , DMatrixRMaj d , DMatrixRMaj y ,
+										 double step, DMatrixRMaj tempV0 )
 	{
-		RowMatrix_F64 z = tempV0;
+		DMatrixRMaj z = tempV0;
 
-		CommonOps_R64.multTransA(C, y, z);
+		CommonOps_DDRM.multTransA(C, y, z);
 		
-		double dTd = VectorVectorMult_R64.innerProd(d,d);
-		double dTz = VectorVectorMult_R64.innerProd(d,z);
+		double dTd = VectorVectorMult_DDRM.innerProd(d,d);
+		double dTz = VectorVectorMult_DDRM.innerProd(d,z);
 		
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);
@@ -152,16 +152,16 @@ public class EquationsBFGS {
 	 * @param y
 	 * @param tempV0
 	 */
-	public static void conjugateUpdateC( RowMatrix_F64 C , RowMatrix_F64 d , RowMatrix_F64 y ,
-										 double step, RowMatrix_F64 tempV0 , RowMatrix_F64 tempV1)
+	public static void conjugateUpdateC( DMatrixRMaj C , DMatrixRMaj d , DMatrixRMaj y ,
+										 double step, DMatrixRMaj tempV0 , DMatrixRMaj tempV1)
 	{
-		RowMatrix_F64 z = tempV0;
-		RowMatrix_F64 d_bar = tempV1;
+		DMatrixRMaj z = tempV0;
+		DMatrixRMaj d_bar = tempV1;
 
-		CommonOps_R64.multTransA(C,y,z);
+		CommonOps_DDRM.multTransA(C,y,z);
 
-		double dTd = VectorVectorMult_R64.innerProd(d,d);
-		double dTz = VectorVectorMult_R64.innerProd(d,z);
+		double dTd = VectorVectorMult_DDRM.innerProd(d,d);
+		double dTz = VectorVectorMult_DDRM.innerProd(d,z);
 
 		double middleScale = -dTd/dTz;
 		double rightScale = dTd/Math.sqrt(-dTd*dTz/step);

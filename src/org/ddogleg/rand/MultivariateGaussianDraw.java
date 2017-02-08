@@ -18,27 +18,27 @@
 
 package org.ddogleg.rand;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_R64;
 
 import java.util.Random;
 
-import static org.ejml.ops.CommonOps_R64.multAdd;
+import static org.ejml.dense.row.CommonOps_DDRM.multAdd;
 
 /**
  * Draw a number from a multivariate Gaussian distribution.
  */
 public class MultivariateGaussianDraw {
-	private LinearSolver<RowMatrix_F64> solver;
-	private RowMatrix_F64 mean;
-	private RowMatrix_F64 A;
+	private LinearSolver<DMatrixRMaj> solver;
+	private DMatrixRMaj mean;
+	private DMatrixRMaj A;
 	private Random rand;
-	private RowMatrix_F64 r;
-	private RowMatrix_F64 Q_inv;
+	private DMatrixRMaj r;
+	private DMatrixRMaj Q_inv;
 
 	double likelihoodLeft;
 
@@ -51,27 +51,27 @@ public class MultivariateGaussianDraw {
 	 * this is useful if someone is being anal about performance and will soon call assignMean()
 	 * @param cov The covariance of the distribution
 	 */
-	public MultivariateGaussianDraw( Random rand , RowMatrix_F64 mean , RowMatrix_F64 cov )
+	public MultivariateGaussianDraw( Random rand , DMatrixRMaj mean , DMatrixRMaj cov )
 	{
 		if( mean != null )
-			this.mean = new RowMatrix_F64(mean);
+			this.mean = new DMatrixRMaj(mean);
 		else
-			this.mean = new RowMatrix_F64(cov.numCols,1);
-		r = new RowMatrix_F64(cov.numRows,1);
-		Q_inv = new RowMatrix_F64(cov.numRows,cov.numCols);
+			this.mean = new DMatrixRMaj(cov.numCols,1);
+		r = new DMatrixRMaj(cov.numRows,1);
+		Q_inv = new DMatrixRMaj(cov.numRows,cov.numCols);
 
-		solver = LinearSolverFactory_R64.chol(cov.numRows);
+		solver = LinearSolverFactory_DDRM.chol(cov.numRows);
 
 		// will invoke decompose in cholesky
 		solver.setA(cov);
-		CholeskyDecomposition<RowMatrix_F64> chol = solver.getDecomposition();
+		CholeskyDecomposition<DMatrixRMaj> chol = solver.getDecomposition();
 
 		A = chol.getT(null);
 
 
 		solver.invert(Q_inv);
 
-		likelihoodLeft = Math.pow(Math.PI*2,-this.mean.numRows/2.0)*Math.sqrt(CommonOps_R64.det(cov));
+		likelihoodLeft = Math.pow(Math.PI*2,-this.mean.numRows/2.0)*Math.sqrt(CommonOps_DDRM.det(cov));
 
 		this.rand = rand;
 	}
@@ -80,14 +80,14 @@ public class MultivariateGaussianDraw {
 	 * Uses the referenced variable as the internal mean.  This does not perform a copy but
 	 * actually points to the specified matrix as the mean.
 	 */
-	public void assignMean( RowMatrix_F64 mean ) {
+	public void assignMean( DMatrixRMaj mean ) {
 		this.mean = mean;
 	}
 
 	/**
 	 * Makes a draw on the distribution and stores the results in parameter 'x'
 	 */
-	public RowMatrix_F64 next( RowMatrix_F64 x )
+	public DMatrixRMaj next( DMatrixRMaj x )
 	{
 		for( int i = 0; i < r.numRows; i++ ) {
 			r.set(i,0,rand.nextGaussian());
@@ -100,7 +100,7 @@ public class MultivariateGaussianDraw {
 	}
 
 	public double computeLikelihoodP() {
-		double inner = VectorVectorMult_R64.innerProdA(r,Q_inv,r);
+		double inner = VectorVectorMult_DDRM.innerProdA(r,Q_inv,r);
 
 		return likelihoodLeft*Math.exp(-0.5*inner);
 	}

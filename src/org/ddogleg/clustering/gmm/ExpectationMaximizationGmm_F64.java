@@ -22,7 +22,7 @@ import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
-import org.ejml.ops.CommonOps_R64;
+import org.ejml.dense.row.CommonOps_DDRM;
 
 import java.util.List;
 
@@ -210,7 +210,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
 			if( g.weight > 0 )
-				CommonOps_R64.divide(g.mean,g.weight);
+				CommonOps_DDRM.divide(g.mean,g.weight);
 		}
 
 		// compute new covariance
@@ -232,7 +232,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		for (int i = 0; i < mixture.size; i++) {
 			GaussianGmm_F64 g = mixture.get(i);
 			if( g.weight > 0 ) {
-				CommonOps_R64.divide(g.covariance, g.weight);
+				CommonOps_DDRM.divide(g.covariance, g.weight);
 				totalMixtureWeight += g.weight;
 			}
 		}

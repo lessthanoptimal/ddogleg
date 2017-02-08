@@ -21,7 +21,7 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  * Convert the Jacobian of a least squares function into a nonlinear optimization gradient.
@@ -55,7 +55,7 @@ public class LsToNonLinearDeriv implements FunctionNtoN {
 		func.process(input,funcOutput);
 		deriv.process(input,jacobian);
 
-		RowMatrix_F64 J = RowMatrix_F64.wrap(deriv.getNumOfOutputsM(),deriv.getNumOfInputsN(),jacobian);
+		DMatrixRMaj J = DMatrixRMaj.wrap(deriv.getNumOfOutputsM(),deriv.getNumOfInputsN(),jacobian);
 		
 		int N = deriv.getNumOfInputsN();
 		int M = deriv.getNumOfOutputsM();

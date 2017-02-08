@@ -24,10 +24,10 @@ import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
 import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.equation.Equation;
-import org.ejml.ops.CommonOps_R64;
-import org.ejml.ops.MatrixFeatures_R64;
 import org.junit.Test;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			GaussianGmm_F64 a = alg.mixture.grow();
 			a.setMean(alg.info.get(i).point);
 			a.weight = 2;
-			CommonOps_R64.setIdentity(a.covariance);
+			CommonOps_DDRM.setIdentity(a.covariance);
 
 			// compute expectation.  The peak for the first i points is known
 			alg.likelihoodManager.precomputeAll();
@@ -115,12 +115,12 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 
 		GaussianGmm_F64 a = alg.mixture.grow();
 		a.setMean(new double[]{1,0.5});
-		CommonOps_R64.diag(a.covariance, 2, 0.75, 1);
+		CommonOps_DDRM.diag(a.covariance, 2, 0.75, 1);
 		a.weight = 0.25;
 
 		GaussianGmm_F64 b = alg.mixture.grow();
 		b.setMean(new double[]{4,8});
-		CommonOps_R64.diag(b.covariance, 2, 0.5, 0.75);
+		CommonOps_DDRM.diag(b.covariance, 2, 0.5, 0.75);
 		b.weight = 0.75;
 
 
@@ -131,8 +131,8 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 
 		// discard the mixture parameters
 		for (int i = 0; i < alg.mixture.size; i++) {
-			CommonOps_R64.fill(alg.mixture.get(i).mean,0);
-			CommonOps_R64.fill(alg.mixture.get(i).covariance,0);
+			CommonOps_DDRM.fill(alg.mixture.get(i).mean,0);
+			CommonOps_DDRM.fill(alg.mixture.get(i).covariance,0);
 			alg.mixture.get(i).weight = 0;
 		}
 
@@ -142,10 +142,10 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		GaussianGmm_F64 expectedA = computeGaussian(0,alg.info.toList());
 		GaussianGmm_F64 expectedB = computeGaussian(1,alg.info.toList());
 
-		assertTrue(MatrixFeatures_R64.isIdentical(expectedA.mean, a.mean, 1e-8));
-		assertTrue(MatrixFeatures_R64.isIdentical(expectedB.mean, b.mean, 1e-8));
-		assertTrue(MatrixFeatures_R64.isIdentical(expectedA.covariance,a.covariance,1e-8));
-		assertTrue(MatrixFeatures_R64.isIdentical(expectedB.covariance,b.covariance,1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expectedA.mean, a.mean, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expectedB.mean, b.mean, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expectedA.covariance,a.covariance,1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expectedB.covariance,b.covariance,1e-8));
 
 	}
 
@@ -187,7 +187,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 				out.mean.data[j] += w*p.point[j];
 			}
 		}
-		CommonOps_R64.divide(out.mean,total);
+		CommonOps_DDRM.divide(out.mean,total);
 
 		// compute the covariance
 		Equation eq = new Equation();
@@ -196,11 +196,11 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 			PointInfo p = points.get(i);
 			double w = p.weights.data[which];
 
-			RowMatrix_F64 x = RowMatrix_F64.wrap(N,1,p.point);
+			DMatrixRMaj x = DMatrixRMaj.wrap(N,1,p.point);
 			eq.alias(x,"x",w,"w");
 			eq.process("Q = Q + w*(x-mu)*(x-mu)'");
 		}
-		CommonOps_R64.divide(out.covariance,total);
+		CommonOps_DDRM.divide(out.covariance,total);
 		return out;
 	}
 

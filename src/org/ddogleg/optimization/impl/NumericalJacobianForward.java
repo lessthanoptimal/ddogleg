@@ -21,7 +21,7 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.UtilEjml;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  * Finite difference numerical gradient calculation using forward equation. Forward
@@ -76,7 +76,7 @@ public class NumericalJacobianForward implements FunctionNtoMxN
 
 	@Override
 	public void process(double[] input, double[] jacobian) {
-		RowMatrix_F64 J = RowMatrix_F64.wrap(M,N,jacobian);
+		DMatrixRMaj J = DMatrixRMaj.wrap(M,N,jacobian);
 		
 		function.process(input,output0);
 		

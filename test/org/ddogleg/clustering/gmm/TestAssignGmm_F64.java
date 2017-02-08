@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.ops.MatrixFeatures_R64;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -79,8 +79,8 @@ public class TestAssignGmm_F64 {
 			GaussianGmm_F64 c = copy.mixture.get(i);
 
 			assertTrue(o!=c);
-			assertTrue(MatrixFeatures_R64.isIdentical(o.mean,c.mean,1e-8));
-			assertTrue(MatrixFeatures_R64.isIdentical(o.covariance,c.covariance,1e-8));
+			assertTrue(MatrixFeatures_DDRM.isIdentical(o.mean,c.mean,1e-8));
+			assertTrue(MatrixFeatures_DDRM.isIdentical(o.covariance,c.covariance,1e-8));
 			assertTrue(o.weight == c.weight);
 		}
 	}

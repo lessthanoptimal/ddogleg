@@ -22,8 +22,8 @@ import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
 import org.ejml.data.Complex_F64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.DecompositionFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.DecompositionFactory_DDRM;
 import org.ejml.interfaces.decomposition.EigenDecomposition_F64;
 
 import java.util.ArrayList;
@@ -39,10 +39,10 @@ import java.util.List;
 public class RootFinderCompanion implements PolynomialRoots {
 
 	// Companion matrix
-	RowMatrix_F64 c = new RowMatrix_F64(1,1);
+	DMatrixRMaj c = new DMatrixRMaj(1,1);
 
 	// use generalized eigenvalue decomposition to find the roots
-	EigenDecomposition_F64<RowMatrix_F64> evd =  DecompositionFactory_R64.eig(11, false, false);
+	EigenDecomposition_F64<DMatrixRMaj> evd =  DecompositionFactory_DDRM.eig(11, false, false);
 
 	// storage for found roots
 	List<Complex_F64> roots = new ArrayList<Complex_F64>();

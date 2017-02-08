@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_R64;
-import org.ejml.ops.NormOps_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 /**
  * <p>
@@ -41,8 +41,8 @@ import org.ejml.ops.NormOps_R64;
 public class CauchyStep implements TrustRegionStep {
 
 	// square of the Jacobian
-	private RowMatrix_F64 B = new RowMatrix_F64(1,1);
-	private RowMatrix_F64 gradient;
+	private DMatrixRMaj B = new DMatrixRMaj(1,1);
+	private DMatrixRMaj gradient;
 
 
 	private double gBg;
@@ -57,14 +57,14 @@ public class CauchyStep implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(  RowMatrix_F64 x , RowMatrix_F64 residuals , RowMatrix_F64 J ,
-							RowMatrix_F64 gradient , double fx )
+	public void setInputs(  DMatrixRMaj x , DMatrixRMaj residuals , DMatrixRMaj J ,
+							DMatrixRMaj gradient , double fx )
 	{
 		this.gradient = gradient;
-		CommonOps_R64.multInner(J, B);
+		CommonOps_DDRM.multInner(J, B);
 
-		gBg = VectorVectorMult_R64.innerProdA(gradient, B, gradient);
-		gnorm = NormOps_R64.normF(gradient);
+		gBg = VectorVectorMult_DDRM.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_DDRM.normF(gradient);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class CauchyStep implements TrustRegionStep {
 	 * @param step
 	 */
 	@Override
-	public void computeStep( double regionRadius , RowMatrix_F64 step) {
+	public void computeStep( double regionRadius , DMatrixRMaj step) {
 
 		double dist;
 
@@ -97,7 +97,7 @@ public class CauchyStep implements TrustRegionStep {
 			}
 		}
 
-		CommonOps_R64.scale(-dist,gradient,step);
+		CommonOps_DDRM.scale(-dist,gradient,step);
 
 		// compute predicted reduction
 		predicted = dist*gnorm*gnorm - 0.5*dist*dist*gBg;

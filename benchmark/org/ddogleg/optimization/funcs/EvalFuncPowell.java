@@ -20,7 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  *
@@ -87,7 +87,7 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 
 		@Override
 		public void process(double[] input, double[] output) {
-			RowMatrix_F64 J = RowMatrix_F64.wrap(2,2,output);
+			DMatrixRMaj J = DMatrixRMaj.wrap(2,2,output);
 			double x1 = input[0];
 			double x2 = input[1];
 			

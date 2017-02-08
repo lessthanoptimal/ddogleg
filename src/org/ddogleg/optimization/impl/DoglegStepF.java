@@ -18,13 +18,13 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.SpecializedOps_DDRM;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_R64;
-import org.ejml.ops.NormOps_R64;
-import org.ejml.ops.SpecializedOps_R64;
 
 /**
  * @author Peter Abeles
@@ -32,13 +32,13 @@ import org.ejml.ops.SpecializedOps_R64;
 public class DoglegStepF implements TrustRegionStep {
 
 	// linear solver for least squares problem, needs to handle singular matrices
-	LinearSolver<RowMatrix_F64> pinv;
+	LinearSolver<DMatrixRMaj> pinv;
 
 	// gradient J'*f
-	private RowMatrix_F64 gradient;
+	private DMatrixRMaj gradient;
 
 	// negative of the residuals
-	private RowMatrix_F64 residualsNeg = new RowMatrix_F64(1,1);
+	private DMatrixRMaj residualsNeg = new DMatrixRMaj(1,1);
 
 	// predicted reduction.  Is computed efficiently depending on the case
 	private double predicted;
@@ -47,26 +47,26 @@ public class DoglegStepF implements TrustRegionStep {
 	private boolean maxStep;
 
 	// step and distance of Cauchy point
-	protected RowMatrix_F64 stepCauchy = new RowMatrix_F64(1,1);
+	protected DMatrixRMaj stepCauchy = new DMatrixRMaj(1,1);
 	private double distanceCauchy;
 	private double alpha;
 
 	// step computed using Gauss-Newton
-	protected RowMatrix_F64 stepGN = new RowMatrix_F64(1,1);
+	protected DMatrixRMaj stepGN = new DMatrixRMaj(1,1);
 	// distance of the Gauss-Newton step
 	private double distanceGN;
 
 	double gnorm;
 
 	// Jacobian times the gradient
-	RowMatrix_F64 Jg = new RowMatrix_F64(1,1);
+	DMatrixRMaj Jg = new DMatrixRMaj(1,1);
 
 	/**
 	 * Configure internal algorithms
 	 *
 	 * @param pinv Linear solver for least-squares problem. Needs to handle
 	 */
-	public DoglegStepF(LinearSolver<RowMatrix_F64> pinv) {
+	public DoglegStepF(LinearSolver<DMatrixRMaj> pinv) {
 		this.pinv = pinv;
 	}
 
@@ -74,7 +74,7 @@ public class DoglegStepF implements TrustRegionStep {
 	 * Default solver
 	 */
 	public DoglegStepF() {
-		this(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
+		this(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false));
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public class DoglegStepF implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(RowMatrix_F64 x, RowMatrix_F64 residuals,
-						  RowMatrix_F64 J, RowMatrix_F64 gradient, double fx) {
+	public void setInputs(DMatrixRMaj x, DMatrixRMaj residuals,
+						  DMatrixRMaj J, DMatrixRMaj gradient, double fx) {
 
 		this.gradient = gradient;
 
@@ -95,25 +95,25 @@ public class DoglegStepF implements TrustRegionStep {
 			throw new RuntimeException("Solver failed");
 
 		// compute Gauss Newton step
-		CommonOps_R64.scale(-1,residuals,residualsNeg);
+		CommonOps_DDRM.scale(-1,residuals,residualsNeg);
 		pinv.solve(residualsNeg,stepGN);
-		distanceGN = NormOps_R64.normF(stepGN);
+		distanceGN = NormOps_DDRM.normF(stepGN);
 
 		// Compute Cauchy step
-		CommonOps_R64.mult(J,gradient, Jg);
-		alpha = SpecializedOps_R64.elementSumSq(gradient)/SpecializedOps_R64.elementSumSq(Jg);
-		gnorm = NormOps_R64.normF(gradient);
+		CommonOps_DDRM.mult(J,gradient, Jg);
+		alpha = SpecializedOps_DDRM.elementSumSq(gradient)/SpecializedOps_DDRM.elementSumSq(Jg);
+		gnorm = NormOps_DDRM.normF(gradient);
 		distanceCauchy = alpha*gnorm;
 	}
 
 	@Override
-	public void computeStep(double regionRadius, RowMatrix_F64 step) {
+	public void computeStep(double regionRadius, DMatrixRMaj step) {
 
 		// of the Gauss-Newton solution is inside the trust region use that
 		if( distanceGN <= regionRadius ) {
 			step.set(stepGN);
 			maxStep = distanceGN == regionRadius;
-			predicted = -0.5* VectorVectorMult_R64.innerProd(stepGN, gradient);
+			predicted = -0.5* VectorVectorMult_DDRM.innerProd(stepGN, gradient);
 		} else if( distanceCauchy >= regionRadius ) {
 			// if the trust region comes before the Cauchy point then perform the cauchy step
 			cauchyStep(regionRadius, step);
@@ -126,7 +126,7 @@ public class DoglegStepF implements TrustRegionStep {
 	/**
 	 * Computes the Cauchy step and the predicted reduction
 	 */
-	protected void cauchyStep(double regionRadius, RowMatrix_F64 step) {
+	protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 
 		double dist;
 
@@ -137,7 +137,7 @@ public class DoglegStepF implements TrustRegionStep {
 			maxStep = false;
 			dist = distanceCauchy;
 		}
-		CommonOps_R64.scale(-dist/gnorm, gradient, step);
+		CommonOps_DDRM.scale(-dist/gnorm, gradient, step);
 
 		predicted = regionRadius*(2.0*alpha*gnorm - regionRadius)/(2.0*alpha);
 	}
@@ -145,15 +145,15 @@ public class DoglegStepF implements TrustRegionStep {
 	/**
 	 * Computes a linear interpolation between the Cauchy and Gauss-Newton steps
 	 */
-	protected void combinedStep(double regionRadius, RowMatrix_F64 step) {
+	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 		// find the Cauchy point
-		CommonOps_R64.scale(-distanceCauchy/gnorm, gradient, stepCauchy);
+		CommonOps_DDRM.scale(-distanceCauchy/gnorm, gradient, stepCauchy);
 
 		// compute the combined step
 		double beta = DoglegStepFtF.combinedStep(stepCauchy,stepGN,regionRadius,step);
 
 		// predicted reduction
-		double predictedGN = -0.5* VectorVectorMult_R64.innerProd(stepGN, gradient);
+		double predictedGN = -0.5* VectorVectorMult_DDRM.innerProd(stepGN, gradient);
 
 		predicted = 0.5*alpha*(1-beta)*(1-beta)*gnorm*gnorm + beta*(2-beta)*predictedGN;
 	}

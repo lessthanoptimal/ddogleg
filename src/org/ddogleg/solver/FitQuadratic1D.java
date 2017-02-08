@@ -18,8 +18,8 @@
 
 package org.ddogleg.solver;
 
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -36,11 +36,11 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic1D {
 
-	LinearSolver<RowMatrix_F64> solver = LinearSolverFactory_R64.leastSquares(10,3);
+	LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(10,3);
 
-	RowMatrix_F64 A = new RowMatrix_F64(1,3);
-	RowMatrix_F64 x = new RowMatrix_F64(3,1);
-	RowMatrix_F64 y = new RowMatrix_F64(1,1);
+	DMatrixRMaj A = new DMatrixRMaj(1,3);
+	DMatrixRMaj x = new DMatrixRMaj(3,1);
+	DMatrixRMaj y = new DMatrixRMaj(1,1);
 
 	/**
 	 * Computes polynomial coefficients for the given data.

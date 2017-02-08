@@ -22,8 +22,8 @@ import org.ddogleg.optimization.impl.*;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.factory.LinearSolverFactory_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -72,12 +72,12 @@ public class FactoryOptimization {
 	public static UnconstrainedLeastSquares leastSquaresLM( double dampInit ,
 															boolean robust )
 	{
-		LinearSolver<RowMatrix_F64> solver;
+		LinearSolver<DMatrixRMaj> solver;
 
 		if( robust ) {
-			solver = LinearSolverFactory_R64.pseudoInverse(true);
+			solver = LinearSolverFactory_DDRM.pseudoInverse(true);
 		} else {
-			solver = LinearSolverFactory_R64.symmPosDef(10);
+			solver = LinearSolverFactory_DDRM.symmPosDef(10);
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
@@ -122,16 +122,16 @@ public class FactoryOptimization {
 
 			case DOG_LEG_F:
 				if( robustSolver )
-					stepAlg = new DoglegStepF(LinearSolverFactory_R64.pseudoInverse(true));
+					stepAlg = new DoglegStepF(LinearSolverFactory_DDRM.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepF(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepF(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false));
 				break;
 
 			case DOG_LEG_FTF:
 				if( robustSolver )
-					stepAlg = new DoglegStepFtF(LinearSolverFactory_R64.pseudoInverse(true));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_DDRM.pseudoInverse(true));
 				else
-					stepAlg = new DoglegStepFtF(LinearSolverFactory_R64.leastSquaresQrPivot(true, false));
+					stepAlg = new DoglegStepFtF(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false));
 				break;
 
 			default:

@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.LinearSolverSafe;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps_R64;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ import org.ejml.ops.CommonOps_R64;
 public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 
 	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolver<RowMatrix_F64> solver;
+	protected LinearSolver<DMatrixRMaj> solver;
 
 	/**
 	 * Specifies termination condition and linear solver.  Selection of the linear solver an effect
@@ -58,16 +58,16 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	 * @param solver		   Linear solver. Cholesky or pseudo-inverse are recommended.
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergMarquardtDampened(LinearSolver<RowMatrix_F64> solver,
+	public LevenbergMarquardtDampened(LinearSolver<DMatrixRMaj> solver,
 									  double initialDampParam) {
 		super(initialDampParam);
 		this.solver = solver;
 		if( solver.modifiesB() )
-			this.solver = new LinearSolverSafe<RowMatrix_F64>(solver);
+			this.solver = new LinearSolverSafe<DMatrixRMaj>(solver);
 	}
 
 	@Override
-	protected void computeJacobian( RowMatrix_F64 residuals , RowMatrix_F64 gradient) {
+	protected void computeJacobian( DMatrixRMaj residuals , DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
 		function.computeJacobian(jacobianVals.data);
 
@@ -75,15 +75,15 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_R64.multInner(jacobianVals, B);
-		CommonOps_R64.multTransA(jacobianVals, residuals, gradient);
+		CommonOps_DDRM.multInner(jacobianVals, B);
+		CommonOps_DDRM.multTransA(jacobianVals, residuals, gradient);
 
 		// extract diagonal elements from B
-		CommonOps_R64.extractDiag(B, Bdiag);
+		CommonOps_DDRM.extractDiag(B, Bdiag);
 	}
 
 	@Override
-	protected boolean computeStep(double lambda, RowMatrix_F64 gradientNegative, RowMatrix_F64 step) {
+	protected boolean computeStep(double lambda, DMatrixRMaj gradientNegative, DMatrixRMaj step) {
 		// add dampening parameter
 		for( int i = 0; i < N; i++ ) {
 			int index = B.getIndex(i,i);
@@ -110,9 +110,9 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	 * @return predicted reduction
 	 */
 	@Override
-	protected double predictedReduction( RowMatrix_F64 param, RowMatrix_F64 gradientNegative , double mu ) {
+	protected double predictedReduction( DMatrixRMaj param, DMatrixRMaj gradientNegative , double mu ) {
 
-		double p_dot_g = VectorVectorMult_R64.innerProd(param,gradientNegative);
+		double p_dot_g = VectorVectorMult_DDRM.innerProd(param,gradientNegative);
 		double p_JJ_p = 0;
 		for( int i = 0; i < N; i++ )
 			p_JJ_p += param.data[i]*Bdiag.data[i]*param.data[i];

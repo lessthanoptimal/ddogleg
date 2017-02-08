@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult_R64;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 /**
  * <p>
@@ -42,15 +42,15 @@ public abstract class LevenbergBase {
 	private double ftol;
 
 	// current set of parameters being considered
-	private RowMatrix_F64 x = new RowMatrix_F64(1,1);
+	private DMatrixRMaj x = new DMatrixRMaj(1,1);
 	// gradient at 'x' = J'*f(x)
-	private RowMatrix_F64 g = new RowMatrix_F64(1,1);
+	private DMatrixRMaj g = new DMatrixRMaj(1,1);
 	// function residuals values at x
-	private RowMatrix_F64 funcVals = new RowMatrix_F64(1,1);
+	private DMatrixRMaj funcVals = new DMatrixRMaj(1,1);
 
 	// Current x being considered
-	private RowMatrix_F64 xtest = new RowMatrix_F64(1,1);
-	private RowMatrix_F64 xdelta = new RowMatrix_F64(1,1);
+	private DMatrixRMaj xtest = new DMatrixRMaj(1,1);
+	private DMatrixRMaj xdelta = new DMatrixRMaj(1,1);
 
 	// function value norm at x
 	private double fnorm;
@@ -160,14 +160,14 @@ public abstract class LevenbergBase {
 	/**
 	 * Computes the Jacobian matrix,
 	 */
-	protected abstract void computeJacobian( RowMatrix_F64 residuals ,
-											 RowMatrix_F64 gradient );
+	protected abstract void computeJacobian( DMatrixRMaj residuals ,
+											 DMatrixRMaj gradient );
 
 	protected abstract boolean computeStep( double dampeningParam ,
-											RowMatrix_F64 gradientNegative ,
-											RowMatrix_F64 step );
+											DMatrixRMaj gradientNegative ,
+											DMatrixRMaj step );
 
-	protected abstract double predictedReduction( RowMatrix_F64 param, RowMatrix_F64 gradientNegative , double dampeningParam );
+	protected abstract double predictedReduction( DMatrixRMaj param, DMatrixRMaj gradientNegative , double dampeningParam );
 
 	/**
 	 * Returns the minimum allowed value for the dampening parameters.  This should be a function
@@ -206,10 +206,10 @@ public abstract class LevenbergBase {
 	private boolean initSamplePoint() {
 		// calculate the Jacobian values at the current sample point
 		computeJacobian(funcVals,g);
-		CommonOps_R64.scale(-1, g);
+		CommonOps_DDRM.scale(-1, g);
 
 		// Find the derivative along the current Jacobian's direction
-		double gx = CommonOps_R64.elementMaxAbs(g);
+		double gx = CommonOps_DDRM.elementMaxAbs(g);
 
 		// check for convergence
 		if( Math.abs(fnorm-fnormPrev) <= ftol*Math.max(fnorm,fnormPrev) || Math.abs(gx) <= gtol )
@@ -229,9 +229,9 @@ public abstract class LevenbergBase {
 			return false;
 
 		// xtest = x + delta x
-		CommonOps_R64.add(x, xdelta, xtest);
+		CommonOps_DDRM.add(x, xdelta, xtest);
 		// take in account rounding error
-		CommonOps_R64.subtract(xtest, x, xdelta);
+		CommonOps_DDRM.subtract(xtest, x, xdelta);
 
 		// compute the residuals at x
 		setFunctionParameters(xtest.data);
@@ -247,7 +247,7 @@ public abstract class LevenbergBase {
 		// update the dampParam depending on the results
 		if( predictedReduction > 0 && actualReduction >= 0 ) {
 			// set the test point to be the new point
-			RowMatrix_F64 temp = x;
+			DMatrixRMaj temp = x;
 			x = xtest; xtest = temp;
 			// updated residual norm
 			fnorm = ftestnorm;
@@ -281,7 +281,7 @@ public abstract class LevenbergBase {
 	 * then the dampParam is increased.
 	 */
 	protected boolean solveForXDelta() {
-//		double max = CommonOps_R64.elementMax(Bdiag);
+//		double max = CommonOps_DDRM.elementMax(Bdiag);
 //
 //		// if the matrix is null do a simple gradient descent search
 //		if( max == 0 ) {
@@ -326,7 +326,7 @@ public abstract class LevenbergBase {
 	 * sum_i 0.5*fi(x)^2
 	 */
 	private double computeError() {
-		return VectorVectorMult_R64.innerProd(funcVals,funcVals)/2.0;
+		return VectorVectorMult_DDRM.innerProd(funcVals,funcVals)/2.0;
 	}
 
 	public boolean isConverged() {

@@ -21,7 +21,7 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
-import org.ejml.data.RowMatrix_F64;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -118,12 +118,12 @@ public class TestTrustRegionLeastSquares {
 		public void init(int numParam, int numFunctions) {}
 
 		@Override
-		public void setInputs(RowMatrix_F64 x, RowMatrix_F64 residuals, RowMatrix_F64 J,
-							  RowMatrix_F64 gradient , double fx)
+		public void setInputs(DMatrixRMaj x, DMatrixRMaj residuals, DMatrixRMaj J,
+							  DMatrixRMaj gradient , double fx)
 		{}
 
 		@Override
-		public void computeStep(double regionRadius, RowMatrix_F64 step) {}
+		public void computeStep(double regionRadius, DMatrixRMaj step) {}
 
 		@Override
 		public double predictedReduction() {

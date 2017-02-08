@@ -18,8 +18,8 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
 
 import java.io.Serializable;
 
@@ -31,8 +31,8 @@ import java.io.Serializable;
  */
 public class GaussianGmm_F64 implements Serializable {
 	// These specify the parameters of the Gaussian in the mixture
-	public RowMatrix_F64 mean;
-	public RowMatrix_F64 covariance;
+	public DMatrixRMaj mean;
+	public DMatrixRMaj covariance;
 	public double weight;
 
 	/**
@@ -40,8 +40,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * @param DOF Number of degrees-of-freedom in the sampled points.
 	 */
 	public GaussianGmm_F64( int DOF ) {
-		mean = new RowMatrix_F64(DOF,1);
-		covariance = new RowMatrix_F64(DOF,DOF);
+		mean = new DMatrixRMaj(DOF,1);
+		covariance = new DMatrixRMaj(DOF,DOF);
 	}
 
 	public GaussianGmm_F64() {
@@ -51,8 +51,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * Sets the mean, covariance, and weight to zero
 	 */
 	public void zero() {
-		CommonOps_R64.fill(mean,0);
-		CommonOps_R64.fill(covariance,0);
+		CommonOps_DDRM.fill(mean,0);
+		CommonOps_DDRM.fill(covariance,0);
 		weight = 0;
 	}
 
@@ -103,19 +103,19 @@ public class GaussianGmm_F64 implements Serializable {
 
 	}
 
-	public RowMatrix_F64 getMean() {
+	public DMatrixRMaj getMean() {
 		return mean;
 	}
 
-	public void setMean(RowMatrix_F64 mean) {
+	public void setMean(DMatrixRMaj mean) {
 		this.mean = mean;
 	}
 
-	public RowMatrix_F64 getCovariance() {
+	public DMatrixRMaj getCovariance() {
 		return covariance;
 	}
 
-	public void setCovariance(RowMatrix_F64 covariance) {
+	public void setCovariance(DMatrixRMaj covariance) {
 		this.covariance = covariance;
 	}
 

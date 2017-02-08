@@ -19,10 +19,10 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.data.RowMatrix_F64;
-import org.ejml.ops.CommonOps_R64;
-import org.ejml.ops.NormOps_R64;
-import org.ejml.ops.SpecializedOps_R64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
  * <p>
@@ -52,19 +52,19 @@ public class TrustRegionLeastSquares {
 	private double fx_prev;
 
 	// Jacobian
-	private RowMatrix_F64 J = new RowMatrix_F64(1,1);
+	private DMatrixRMaj J = new DMatrixRMaj(1,1);
 	// Sample point
-	private RowMatrix_F64 x = new RowMatrix_F64(1,1);
+	private DMatrixRMaj x = new DMatrixRMaj(1,1);
 	// Candidate sample point
-	private RowMatrix_F64 candidate = new RowMatrix_F64(1,1);
+	private DMatrixRMaj candidate = new DMatrixRMaj(1,1);
 	// Step from x to sample point
-	private RowMatrix_F64 xdelta = new RowMatrix_F64(1,1);
+	private DMatrixRMaj xdelta = new DMatrixRMaj(1,1);
 	// Residual error function
-	private RowMatrix_F64 residuals = new RowMatrix_F64(1,1);
+	private DMatrixRMaj residuals = new DMatrixRMaj(1,1);
 	// Residual error for the candidate point
-	private RowMatrix_F64 candidateResiduals = new RowMatrix_F64(1,1);
+	private DMatrixRMaj candidateResiduals = new DMatrixRMaj(1,1);
 	// Gradient of residuals
-	private RowMatrix_F64 gradient = new RowMatrix_F64(1,1);
+	private DMatrixRMaj gradient = new DMatrixRMaj(1,1);
 
 	// size of the current trust region
 	private double regionRadius;
@@ -144,10 +144,10 @@ public class TrustRegionLeastSquares {
 		if( mode == 0 ) {
 			// compute the Jacobian and gradient
 			function.computeJacobian(J.data);
-			CommonOps_R64.multTransA(J, residuals, gradient);
+			CommonOps_DDRM.multTransA(J, residuals, gradient);
 
 			// check for convergence
-			double gnorm = CommonOps_R64.elementMaxAbs(gradient);
+			double gnorm = CommonOps_DDRM.elementMaxAbs(gradient);
 
 			if( gnorm <= gtol || Math.abs(fx-fx_prev) <= ftol*Math.max(fx,fx_prev) ) {
 				mode = 2;
@@ -181,7 +181,7 @@ public class TrustRegionLeastSquares {
 		stepAlg.computeStep(regionRadius,xdelta);
 
 		// evaluate the candidate point
-		CommonOps_R64.add(x,xdelta,candidate);
+		CommonOps_DDRM.add(x,xdelta,candidate);
 		function.setInput(candidate.data);
 		function.computeFunctions(candidateResiduals.data);
 		double fxp = cost(candidateResiduals);
@@ -208,7 +208,7 @@ public class TrustRegionLeastSquares {
 				// only increase the size of the trust region if it is taking a step of maximum size
 				// otherwise just assume it's doing good enough job
 				if( reductionRatio > 0.75 ) {
-					double r = NormOps_R64.normF(xdelta);
+					double r = NormOps_DDRM.normF(xdelta);
 					regionRadius = Math.max(regionRadius,3*r);
 				}
 			}
@@ -218,7 +218,7 @@ public class TrustRegionLeastSquares {
 
 		if( acceptCandidate ) {
 			// make the candidate the current step
-			RowMatrix_F64 temp = x;
+			DMatrixRMaj temp = x;
 			x = candidate;
 			candidate = temp;
 
@@ -233,13 +233,13 @@ public class TrustRegionLeastSquares {
 		return acceptCandidate;
 	}
 
-//	private void checkPredicted( double found , RowMatrix_F64 step ) {
+//	private void checkPredicted( double found , DMatrixRMaj step ) {
 //		SimpleMatrix J = SimpleMatrix.wrap(this.J);
 //		SimpleMatrix h = SimpleMatrix.wrap(step);
 //
 //		SimpleMatrix r = SimpleMatrix.wrap(residuals);
 //
-//		double z = SpecializedOps_R64.elementSumSq(r.plus(J.mult(h)).getMatrix());
+//		double z = SpecializedOps_DDRM.elementSumSq(r.plus(J.mult(h)).getMatrix());
 //		double expected = fx-0.5*z;
 //
 //		if( Math.abs(found-expected)/Math.max(found,expected) > 1e-3 ) {
@@ -251,8 +251,8 @@ public class TrustRegionLeastSquares {
 	/**
 	 * Cost is equal to (1/2)*f(x)<sup>T</sup>*f(x)
 	 */
-	private double cost( RowMatrix_F64 residuals ) {
-		return 0.5*SpecializedOps_R64.elementSumSq(residuals);
+	private double cost( DMatrixRMaj residuals ) {
+		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	public double[] getParameters() {
