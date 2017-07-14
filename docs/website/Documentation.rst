@@ -28,7 +28,7 @@ List of Example Code:
 
 Latest example code at Github:
 
-https://github.com/lessthanoptimal/ddogleg/tree/master/example/src/org/ddogleg/example
+https://github.com/lessthanoptimal/ddogleg/tree/v0.11/examples/src/org/ddogleg/example
 
 Building the Library
 --------------------
@@ -38,7 +38,7 @@ DDogleg is easy to compile and build its Jar files. Ant and Gradle scripts are p
 Gradle::
 
   $ cd ddogleg/
-  $ gradle createLibraryDirectory
+  $ ./gradlew createLibraryDirectory
   :compileJava
   :processResources UP-TO-DATE
   :classes

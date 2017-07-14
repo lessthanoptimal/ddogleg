@@ -1,8 +1,10 @@
 - updated website
   * cd docs/website/
-  * conf.py, Download.rst, index.rst
-  * examples
+  * conf.py, Download.rst, index.rst, Documentation.rst
+  * examples/ <-- the source code
   * git tag links to github *.rst example files
+  * make html
+  * scp _build to ddogleg.org
 - update version in build.gradle
 - update change.txt
 - gradle test

@@ -19,7 +19,7 @@ To build compiled jars using Gradle do the following:
 
 --- BEGIN ----
 cd ddogleg
-gradle createLibraryDirectory
+./gradlew createLibraryDirectory
 ---  END ----
 
 Then look inside the ddogleg/libraries directory created by the script.  It will include jars for this library and anything it depends on.
