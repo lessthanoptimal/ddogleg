@@ -63,7 +63,7 @@ public class TestQuickSort_F32 {
 			QuickSort_F32 sorter = new QuickSort_F32();
 
 			sorter.sort(normal,normal.length);
-			sorter.sort(withIndexes,normal.length,indexes);
+			sorter.sort(withIndexes,0,normal.length,indexes);
 
 			for( int i = 0; i < normal.length; i++ ) {
 				// make sure the original hasn't been modified

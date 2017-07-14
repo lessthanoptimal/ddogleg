@@ -31,7 +31,7 @@ public class TestStraightInsertionSort {
 
     @Test
     public void testSortDouble() {
-        double[] ret = BenchMarkSort.createRandom(rand,200);
+        double[] ret = BenchMarkSort.createRandom_F64(rand,200);
 
         StraightInsertionSort.sort(ret);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,11 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
+import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.equation.Equation;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.MatrixFeatures;
-import org.ejml.ops.RandomMatrices;
 import org.junit.Test;
 
 import java.util.Random;
@@ -41,14 +41,14 @@ public class TestGaussianGmm_F64 {
 	public void zero() {
 		GaussianGmm_F64 g = new GaussianGmm_F64(3);
 
-		CommonOps.fill(g.mean,1);
-		CommonOps.fill(g.covariance,2);
+		CommonOps_DDRM.fill(g.mean,1);
+		CommonOps_DDRM.fill(g.covariance,2);
 		g.weight = 4;
 
 		g.zero();
 
-		assertTrue(CommonOps.elementSumAbs(g.mean)==0);
-		assertTrue(CommonOps.elementSumAbs(g.covariance)==0);
+		assertTrue(CommonOps_DDRM.elementSumAbs(g.mean)==0);
+		assertTrue(CommonOps_DDRM.elementSumAbs(g.covariance)==0);
 		assertTrue(g.weight == 0);
 	}
 
@@ -74,15 +74,15 @@ public class TestGaussianGmm_F64 {
 		Equation eq = new Equation();
 		eq.process("Q = zeros(3,3)");
 		for (int i = 0; i < 5; i++) {
-			DenseMatrix64F x = RandomMatrices.createRandom(3,1,rand);
+			DMatrixRMaj x = RandomMatrices_DDRM.rectangle(3,1,rand);
 			eq.alias(x,"x",0.4+i*0.1,"w");
 			eq.process("Q = Q + w*x*x'");
 
 			g.addCovariance(x.data,0.4+i*0.1);
 		}
-		DenseMatrix64F Q = eq.lookupMatrix("Q");
+		DMatrixRMaj Q = eq.lookupMatrix("Q");
 
-		assertTrue(MatrixFeatures.isIdentical(Q, g.covariance, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(Q, g.covariance, 1e-8));
 	}
 
 	@Test

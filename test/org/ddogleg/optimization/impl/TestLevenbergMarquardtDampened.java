@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,8 +23,8 @@ import org.ddogleg.optimization.NonlinearResults;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 import org.junit.Test;
 
@@ -64,7 +64,7 @@ public class TestLevenbergMarquardtDampened {
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
 		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
 
-		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.pseudoInverse(true);
+		LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.pseudoInverse(true);
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,1e-3);
 

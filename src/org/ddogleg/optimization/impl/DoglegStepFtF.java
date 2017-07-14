@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
 
 /**
  * <p>
@@ -48,15 +48,15 @@ import org.ejml.ops.NormOps;
 public class DoglegStepFtF implements TrustRegionStep {
 
 	// Linear solver for positive semi-definite symmetric matrix
-	private LinearSolver<DenseMatrix64F> pinv;
+	private LinearSolver<DMatrixRMaj> pinv;
 
 	// B=J'*J estimated Hessian
-	private DenseMatrix64F B = new DenseMatrix64F(1,1);
+	private DMatrixRMaj B = new DMatrixRMaj(1,1);
 	// gradient J'*f
-	private DenseMatrix64F gradient;
+	private DMatrixRMaj gradient;
 
 	// negative of the gradient
-	private DenseMatrix64F gradientNeg = new DenseMatrix64F(1,1);
+	private DMatrixRMaj gradientNeg = new DMatrixRMaj(1,1);
 
 	// predicted reduction.  Is computed efficiently depending on the case
 	private double predicted;
@@ -65,11 +65,11 @@ public class DoglegStepFtF implements TrustRegionStep {
 	private boolean maxStep;
 
 	// step and distance of Cauchy point
-	protected DenseMatrix64F stepCauchy = new DenseMatrix64F(1,1);
+	protected DMatrixRMaj stepCauchy = new DMatrixRMaj(1,1);
 	private double distanceCauchy;
 
 	// step computed using Gauss-Newton
-	protected DenseMatrix64F stepGN = new DenseMatrix64F(1,1);
+	protected DMatrixRMaj stepGN = new DMatrixRMaj(1,1);
 	// distance of the Gauss-Newton step
 	private double distanceGN;
 
@@ -82,7 +82,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 *
 	 * @param pinv Linear solver for a positive semi-definite symmetric system
 	 */
-	public DoglegStepFtF(LinearSolver<DenseMatrix64F> pinv) {
+	public DoglegStepFtF(LinearSolver<DMatrixRMaj> pinv) {
 		this.pinv = pinv;
 	}
 
@@ -90,8 +90,8 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * Default solver
 	 */
 	public DoglegStepFtF() {
-		this(LinearSolverFactory.leastSquaresQrPivot(true, false));
-//		this(LinearSolverFactory.pseudoInverse(true));
+		this(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false));
+//		this(LinearSolverFactory_DDRM.pseudoInverse(true));
 	}
 
 	@Override
@@ -103,15 +103,15 @@ public class DoglegStepFtF implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(DenseMatrix64F x, DenseMatrix64F residuals, DenseMatrix64F J,
-						  DenseMatrix64F gradient , double fx ) {
+	public void setInputs(DMatrixRMaj x, DMatrixRMaj residuals, DMatrixRMaj J,
+						  DMatrixRMaj gradient , double fx ) {
 		this.gradient = gradient;
-		CommonOps.scale(-1, gradient, gradientNeg);
+		CommonOps_DDRM.scale(-1, gradient, gradientNeg);
 
-		CommonOps.multInner(J, B);
+		CommonOps_DDRM.multInner(J, B);
 
-		gBg = VectorVectorMult.innerProdA(gradient, B, gradient);
-		gnorm = NormOps.normF(gradient);
+		gBg = VectorVectorMult_DDRM.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_DDRM.normF(gradient);
 
 		// compute and distance location of the Cauchy step
 		if( gBg == 0 )
@@ -124,7 +124,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 			throw new RuntimeException("pinv failed?!?");
 
 		pinv.solve(gradientNeg, stepGN);
-		distanceGN = NormOps.normF(stepGN);
+		distanceGN = NormOps_DDRM.normF(stepGN);
 	}
 
 	/**
@@ -133,13 +133,13 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * depending on which of the 3 cases is active.
 	 */
 	@Override
-	public void computeStep(double regionRadius, DenseMatrix64F step) {
+	public void computeStep(double regionRadius, DMatrixRMaj step) {
 
 		// of the Gauss-Newton solution is inside the trust region use that
 		if( distanceGN <= regionRadius ) {
 			step.set(stepGN);
 			maxStep = distanceGN == regionRadius;
-			predicted = -0.5*VectorVectorMult.innerProd(stepGN,gradient);
+			predicted = -0.5*VectorVectorMult_DDRM.innerProd(stepGN,gradient);
 		} else if( distanceCauchy*gnorm >= regionRadius ) {
 			// if the trust region comes before the Cauchy point then perform the cauchy step
 			cauchyStep(regionRadius, step);
@@ -154,7 +154,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * @param regionRadius
 	 * @param step
 	 */
-	protected void cauchyStep(double regionRadius, DenseMatrix64F step) {
+	protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 		double normRadius = regionRadius/gnorm;
 
 		double dist = distanceCauchy;
@@ -164,7 +164,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 		} else {
 			maxStep = false;
 		}
-		CommonOps.scale(-dist, gradient, step);
+		CommonOps_DDRM.scale(-dist, gradient, step);
 		predicted = predictCauchy(dist);
 	}
 
@@ -172,9 +172,9 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 * Compute the step which is a linear combination of the cauchy point and the Gauss-Newton
 	 * point.  The distance is computed so that it is at the edge of the allowed region.
 	 */
-	protected void combinedStep(double regionRadius, DenseMatrix64F step) {
+	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 		// find the Cauchy point
-		CommonOps.scale(-distanceCauchy, gradient, stepCauchy);
+		CommonOps_DDRM.scale(-distanceCauchy, gradient, stepCauchy);
 
 		// compute the combined step
 		double beta = combinedStep(stepCauchy,stepGN,regionRadius,step);
@@ -184,7 +184,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 		// This was found by plugging in h=beta*stepGN + stepC*(1-beta) to
 		// L(0) - L(h) = -F(x)'*J(x)*h - 0.5*h'*B*h
 
-		double dotGandGN = VectorVectorMult.innerProd(stepGN,gradient);
+		double dotGandGN = VectorVectorMult_DDRM.innerProd(stepGN,gradient);
 		double oneMb = (1-beta);
 		double left = -0.5*distanceCauchy*distanceCauchy*oneMb*oneMb*gBg;
 		double middle = -distanceCauchy*oneMb*(beta-1)*gnorm*gnorm;
@@ -203,8 +203,8 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 *
 	 * @return 'beta' from equation above
 	 */
-	protected static double combinedStep( DenseMatrix64F stepCauchy , DenseMatrix64F stepGN ,
-										  double regionRadius , DenseMatrix64F step ) {
+	protected static double combinedStep( DMatrixRMaj stepCauchy , DMatrixRMaj stepGN ,
+										  double regionRadius , DMatrixRMaj step ) {
 		// c = a'*(b-a)
 		double c = 0;
 		for( int i = 0; i < stepCauchy.numRows; i++ )

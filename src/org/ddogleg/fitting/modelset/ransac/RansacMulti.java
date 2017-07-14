@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,9 +57,6 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	// used to randomly select points/samples
 	protected Random rand;
 
-	// list of Points passed in by the user
-	protected List<Point> dataSet;
-
 	// list of points which are a candidate for the best fit set
 	protected List<Point> candidatePoints = new ArrayList<Point>();
 
@@ -77,6 +74,9 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	protected Object bestFitParam;
 	// the index of the model which is the best fit
 	protected int bestFitModelIndex;
+
+	// copy of the input data set so that it can be modified
+	protected List<Point> dataSet = new ArrayList<>();
 
 	// which iteration is it on
 	protected int iteration;
@@ -133,12 +133,14 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean process(List<Point> dataSet ) {
-		this.dataSet = dataSet;
+	public boolean process(List<Point> _dataSet ) {
 
 		// see if it has the minimum number of points
-		if (dataSet.size() < sampleSize )
+		if (_dataSet.size() < sampleSize )
 			return false;
+
+		dataSet.clear();
+		dataSet.addAll(_dataSet);
 
 		// configure internal data structures
 		initialize(dataSet);
@@ -163,7 +165,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 				if( model.modelGenerator.generate(initialSample.toList(), param ) ) {
 
 					// see if it can find a model better than the current best one
-					selectMatchSet(model.modelDistance, model.thresholdFit, param);
+					selectMatchSet(_dataSet, model.modelDistance, model.thresholdFit, param);
 
 					// save this results
 					if (bestFitPoints.size() < candidatePoints.size()) {
@@ -213,7 +215,8 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	 *
 	 * @param modelDistance Computes
 	 */
-	protected <Model>void selectMatchSet( DistanceFromModel<Model,Point> modelDistance ,
+	protected <Model>void selectMatchSet( List<Point> dataSet ,
+										  DistanceFromModel<Model,Point> modelDistance ,
 										  double threshold, Model param) {
 		candidatePoints.clear();
 		modelDistance.setModel(param);
@@ -305,6 +308,16 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 
 	public int getIteration() {
 		return iteration;
+	}
+
+	@Override
+	public Class<Point> getPointType() {
+		return initialSample.type;
+	}
+
+	@Override
+	public Class<Object> getModelType() {
+		return Object.class; // multiple types of objects can be returned
 	}
 
 	/**

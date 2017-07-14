@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,7 +20,7 @@ package org.ddogleg.solver.impl;
 
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialRoots;
-import org.ejml.data.Complex64F;
+import org.ejml.data.Complex_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +36,15 @@ public class WrapRealRootsSturm implements PolynomialRoots {
 	FindRealRootsSturm alg;
 
 	// avoid creating memory by recycling
-	List<Complex64F> roots = new ArrayList<Complex64F>();
-	Complex64F[] storage;
+	List<Complex_F64> roots = new ArrayList<Complex_F64>();
+	Complex_F64[] storage;
 
 	public WrapRealRootsSturm(FindRealRootsSturm alg) {
 		this.alg = alg;
 
-		storage = new Complex64F[alg.getMaxRoots()];
+		storage = new Complex_F64[alg.getMaxRoots()];
 		for( int i = 0; i < storage.length; i++ )
-			storage[i] = new Complex64F();
+			storage[i] = new Complex_F64();
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class WrapRealRootsSturm implements PolynomialRoots {
 		int N = alg.getNumberOfRoots();
 
 		for( int i = 0; i < N; i++ ) {
-			Complex64F c = storage[i];
+			Complex_F64 c = storage[i];
 			c.real = found[i];
 			c.imaginary = 0;
 			roots.add(c);
@@ -71,7 +71,7 @@ public class WrapRealRootsSturm implements PolynomialRoots {
 	}
 
 	@Override
-	public List<Complex64F> getRoots() {
+	public List<Complex_F64> getRoots() {
 		return roots;
 	}
 }

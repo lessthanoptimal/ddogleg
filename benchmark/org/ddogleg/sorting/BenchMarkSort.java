@@ -37,27 +37,27 @@ public class BenchMarkSort
 //        after = System.currentTimeMillis();
 //        System.out.println("Straight Insertion = "+(after-before));
 
-		data = createRandom(new Random(0x344), num);
+		data = createRandom_F64(new Random(0x344), num);
 		before = System.currentTimeMillis();
 		ShellSort.sort(data);
 		after = System.currentTimeMillis();
 		System.out.println("Shell = "+(after-before));
 
-		data = createRandom(new Random(0x344), num);
+		data = createRandom_F64(new Random(0x344), num);
 		QuickSort_F64 quicksort = new QuickSort_F64();
 		before = System.currentTimeMillis();
 		quicksort.sort(data,data.length);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort = "+(after-before));
 
-		data = createRandom(new Random(0x344), num);
+		data = createRandom_F64(new Random(0x344), num);
 		int indexes[] = new int[ num ];
 		before = System.currentTimeMillis();
-		quicksort.sort(data,data.length,indexes);
+		quicksort.sort(data,0,data.length,indexes);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort Indexes = "+(after-before));
 
-		data = createRandom(new Random(0x344), num);
+		data = createRandom_F64(new Random(0x344), num);
 		ApproximateSort_F64 approx = new ApproximateSort_F64(2000);
 		before = System.currentTimeMillis();
 		approx.computeRange(data, 0, data.length);
@@ -73,7 +73,7 @@ public class BenchMarkSort
 		after = System.currentTimeMillis();
 		System.out.println("QuicksortObj = "+(after-before));
 
-		data = createRandom(new Random(0x344), num);
+		data = createRandom_F64(new Random(0x344), num);
 		before = System.currentTimeMillis();
 		Arrays.sort(data);
 		after = System.currentTimeMillis();
@@ -104,7 +104,17 @@ public class BenchMarkSort
 		return ret;
 	}
 
-	public static double[] createRandom( Random rand , final int num ) {
+	public static float[] createRandom_F32(Random rand , final int num ) {
+		float[] ret = new float[ num ];
+
+		for( int i = 0; i < num; i++ ) {
+			ret[i] = (rand.nextFloat()-0.5f)*200.0f;
+		}
+
+		return ret;
+	}
+
+	public static double[] createRandom_F64(Random rand , final int num ) {
 		double[] ret = new double[ num ];
 
 		for( int i = 0; i < num; i++ ) {

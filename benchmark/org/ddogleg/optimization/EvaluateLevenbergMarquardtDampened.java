@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,8 +20,8 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -38,12 +38,12 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
-		LinearSolver<DenseMatrix64F> solver;
+		LinearSolver<DMatrixRMaj> solver;
 
 		if( robust ) {
-			solver = LinearSolverFactory.pseudoInverse(true);
+			solver = LinearSolverFactory_DDRM.pseudoInverse(true);
 		} else {
-			solver = LinearSolverFactory.symmPosDef(10);
+			solver = LinearSolverFactory_DDRM.symmPosDef(10);
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);

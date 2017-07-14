@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,10 +21,10 @@ package org.ddogleg.solver.impl;
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
-import org.ejml.data.Complex64F;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.DecompositionFactory;
-import org.ejml.interfaces.decomposition.EigenDecomposition;
+import org.ejml.data.Complex_F64;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.DecompositionFactory_DDRM;
+import org.ejml.interfaces.decomposition.EigenDecomposition_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +39,13 @@ import java.util.List;
 public class RootFinderCompanion implements PolynomialRoots {
 
 	// Companion matrix
-	DenseMatrix64F c = new DenseMatrix64F(1,1);
+	DMatrixRMaj c = new DMatrixRMaj(1,1);
 
 	// use generalized eigenvalue decomposition to find the roots
-	EigenDecomposition<DenseMatrix64F> evd =  DecompositionFactory.eig(11, false, false);
+	EigenDecomposition_F64<DMatrixRMaj> evd =  DecompositionFactory_DDRM.eig(11, false, false);
 
 	// storage for found roots
-	List<Complex64F> roots = new ArrayList<Complex64F>();
+	List<Complex_F64> roots = new ArrayList<Complex_F64>();
 
 
 	public RootFinderCompanion() {
@@ -83,7 +83,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 
 		roots.clear();
 		for( int i = 0; i < N; i++ ) {
-			Complex64F r = evd.getEigenvalue(i);
+			Complex_F64 r = evd.getEigenvalue(i);
 
 			// increase the accuracy of real roots
 			if( r.isReal() ) {
@@ -97,7 +97,7 @@ public class RootFinderCompanion implements PolynomialRoots {
 	}
 
 	@Override
-	public List<Complex64F> getRoots() {
+	public List<Complex_F64> getRoots() {
 		return roots;
 	}
 }

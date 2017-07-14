@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,11 +19,11 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.struct.FastQueue;
-import org.ejml.alg.dense.linsol.LinearSolverSafe;
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
-import org.ejml.interfaces.decomposition.CholeskyDecomposition;
+import org.ejml.LinearSolverSafe;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
+import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 import java.util.List;
@@ -41,17 +41,17 @@ public class GaussianLikelihoodManager {
 	FastQueue<Likelihood> precomputes;
 
 	// used to compute likelihood
-	LinearSolver<DenseMatrix64F> solver;
+	LinearSolver<DMatrixRMaj> solver;
 
 	// Used internally when computing difference between point and mean
-	DenseMatrix64F diff;
+	DMatrixRMaj diff;
 
 	public GaussianLikelihoodManager( final int pointDimension , List<GaussianGmm_F64> mixtures ) {
 		this.mixtures = mixtures;
 
 		// this will produce a cholesky decomposition
-		solver = LinearSolverFactory.symmPosDef(pointDimension);
-		solver = new LinearSolverSafe<DenseMatrix64F>(solver);
+		solver = LinearSolverFactory_DDRM.symmPosDef(pointDimension);
+		solver = new LinearSolverSafe<DMatrixRMaj>(solver);
 
 		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
 			@Override
@@ -60,7 +60,7 @@ public class GaussianLikelihoodManager {
 			}
 		};
 
-		diff = new DenseMatrix64F(pointDimension,1);
+		diff = new DMatrixRMaj(pointDimension,1);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class GaussianLikelihoodManager {
 		public GaussianGmm_F64 gaussian;
 
 		// used to precompute parts of the likelihood function
-		public DenseMatrix64F invCov;
+		public DMatrixRMaj invCov;
 		public double leftSide; // precomputed left side of likelihood
 
 		public double chisq; // chi-sq (x-mu)'*inv(Sigma)*(x-mu)
@@ -96,7 +96,7 @@ public class GaussianLikelihoodManager {
 		public boolean valid = false; // is there a valid distribution?  e.g. more than 1 point matched to it
 
 		public Likelihood(int N) {
-			invCov = new DenseMatrix64F(N,N);
+			invCov = new DMatrixRMaj(N,N);
 		}
 
 		/**
@@ -114,7 +114,7 @@ public class GaussianLikelihoodManager {
 			}
 			solver.invert(invCov);
 
-			CholeskyDecomposition<DenseMatrix64F> decomposition = solver.getDecomposition();
+			CholeskyDecomposition_F64<DMatrixRMaj> decomposition = solver.getDecomposition();
 			double det = decomposition.computeDeterminant().real;
 
 			// (2*PI)^(D/2) has been omitted since it's the same for all the Gaussians and will get normalized out
@@ -136,7 +136,7 @@ public class GaussianLikelihoodManager {
 			for (int i = 0; i < N; i++) {
 				diff.data[i] = point[i] - gaussian.mean.data[i];
 			}
-			chisq = VectorVectorMult.innerProdA(diff, invCov, diff);
+			chisq = VectorVectorMult_DDRM.innerProdA(diff, invCov, diff);
 
 			return leftSide * Math.exp(-0.5 * chisq);
 		}

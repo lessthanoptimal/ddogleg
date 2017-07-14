@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,7 +22,7 @@ import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
 import org.ddogleg.solver.RootFinderType;
-import org.ejml.data.Complex64F;
+import org.ejml.data.Complex_F64;
 
 import java.util.List;
 
@@ -46,11 +46,11 @@ public class ExamplePolynomialRoot {
 			throw new RuntimeException("Failed to find solution!");
 
 		// Print the solution
-		List<Complex64F> roots = finder.getRoots();
+		List<Complex_F64> roots = finder.getRoots();
 
 		System.out.println("Total roots found: "+roots.size());
 
-		for( Complex64F c : roots ) {
+		for( Complex_F64 c : roots ) {
 			if( !c.isReal() ) {
 				System.out.println("root is imaginary: "+c);
 				continue;

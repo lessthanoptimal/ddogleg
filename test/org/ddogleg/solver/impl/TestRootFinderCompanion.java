@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.solver.impl;
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
-import org.ejml.data.Complex64F;
+import org.ejml.data.Complex_F64;
 import org.junit.Test;
 
 import java.util.List;
@@ -49,10 +49,10 @@ public class TestRootFinderCompanion {
 
 			assertTrue(alg.process(poly));
 
-			List<Complex64F> roots = alg.getRoots();
+			List<Complex_F64> roots = alg.getRoots();
 
 			int numReal = 0;
-			for( Complex64F c : roots ) {
+			for( Complex_F64 c : roots ) {
 				if( c.isReal() ) {
 					assertEquals(0,poly.evaluate(c.real),1e-8);
 					numReal++;

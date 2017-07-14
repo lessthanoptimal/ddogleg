@@ -19,7 +19,7 @@
 package org.ddogleg.sorting;
 
 /**
- * Implemenation of the shell sort algorithm from Numerical Recipes Third Edition.
+ * Implementation of the shell sort algorithm from Numerical Recipes Third Edition.
  *
  * Is a O(N^{3/2}) sorting algorithm
  *
@@ -28,6 +28,34 @@ package org.ddogleg.sorting;
  * Only recommended for less than 50 elements
  */
 public class ShellSort {
+
+	public static void sort( float[] data )
+	{
+		int i,j;
+		int inc=1;
+		float v;
+
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= data.length );
+
+		do {
+			inc /= 3;
+
+			for( i=inc; i < data.length; i++ ) {
+				v=data[i];
+				j=i;
+				while( data[j-inc] > v ) {
+					data[j] = data[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				data[j]=v;
+			}
+		} while( inc > 1 );
+	}
+
 	/**
 	 * Sorts data into ascending order
 	 */
@@ -54,6 +82,129 @@ public class ShellSort {
 					if( j < inc ) break;
 				}
 				data[j]=v;
+			}
+		} while( inc > 1 );
+	}
+
+	public static void sort( int[] data )
+	{
+		int i,j;
+		int inc=1;
+		int v;
+
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= data.length );
+
+		do {
+			inc /= 3;
+
+			for( i=inc; i < data.length; i++ ) {
+				v=data[i];
+				j=i;
+				while( data[j-inc] > v ) {
+					data[j] = data[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				data[j]=v;
+			}
+		} while( inc > 1 );
+	}
+
+	public static void sort( float[] data , int offset , int length , int indexes[] )
+	{
+		for( int i = 0; i < length; i++ ) {
+			indexes[i] = offset+i;
+		}
+
+		int i,j;
+		int inc=1;
+		float v;
+
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= length );
+
+		do {
+			inc /= 3;
+
+			for( i=inc; i < length; i++ ) {
+				v=data[indexes[i]];
+				int idx_i = indexes[i];
+				j=i;
+				while( data[indexes[j-inc]] > v ) {
+					indexes[j] = indexes[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				indexes[j] = idx_i;
+			}
+		} while( inc > 1 );
+	}
+
+	public static void sort( double[] data , int offset , int length , int indexes[] )
+	{
+		for( int i = 0; i < length; i++ ) {
+			indexes[i] = offset+i;
+		}
+
+		int i,j;
+		int inc=1;
+		double v;
+
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= length );
+
+		do {
+			inc /= 3;
+
+			for( i=inc; i < length; i++ ) {
+				v=data[indexes[i]];
+				int idx_i = indexes[i];
+				j=i;
+				while( data[indexes[j-inc]] > v ) {
+					indexes[j] = indexes[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				indexes[j] = idx_i;
+			}
+		} while( inc > 1 );
+	}
+
+	public static void sort( int[] data , int offset , int length , int indexes[] )
+	{
+		for( int i = 0; i < length; i++ ) {
+			indexes[i] = offset+i;
+		}
+
+		int i,j;
+		int inc=1;
+		int v;
+
+		do {
+			inc *= 3;
+			inc++;
+		} while( inc <= length );
+
+		do {
+			inc /= 3;
+
+			for( i=inc; i < length; i++ ) {
+				v=data[indexes[i]];
+				int idx_i = indexes[i];
+				j=i;
+				while( data[indexes[j-inc]] > v ) {
+					indexes[j] = indexes[j-inc];
+					j -= inc;
+					if( j < inc ) break;
+				}
+				indexes[j] = idx_i;
 			}
 		} while( inc > 1 );
 	}

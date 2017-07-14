@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  * <p>
@@ -55,8 +55,8 @@ public interface TrustRegionStep {
 	 * @param gradient Gradient: J<sup>T</sup>(x)*f(x)
 	 * @param fx Residual at x: 0.5*f<sup>T</sup>(x)*f(x)
 	 */
-	public void setInputs( DenseMatrix64F x , DenseMatrix64F residuals , DenseMatrix64F J ,
-						   DenseMatrix64F gradient , double fx );
+	public void setInputs( DMatrixRMaj x , DMatrixRMaj residuals , DMatrixRMaj J ,
+						   DMatrixRMaj gradient , double fx );
 
 	/**
 	 * Computes the next step to take for a given trust region.  Must invoke {@link #setInputs} before, but it only
@@ -65,7 +65,7 @@ public interface TrustRegionStep {
 	 * @param regionRadius Size of the trust region.
 	 * @param step Output, the computed step.
 	 */
-	public void computeStep( double regionRadius , DenseMatrix64F step );
+	public void computeStep( double regionRadius , DMatrixRMaj step );
 
 	/**
 	 * Returns the predicted reduction for the step.  A linear model is used to predict the reduction.  See

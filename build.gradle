@@ -7,10 +7,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.10'
+version = '0.11'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
@@ -45,10 +46,11 @@ sourceSets {
 }
 
 dependencies {
-    ['core','dense64','simple','equation'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.30'}
+    ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple'].each { String a ->
+        compile group: 'org.ejml', name: a, version: '0.31'}
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'com.peterabeles', name: 'auto64fto32f', version: '1.0.1'
 }
 
 javadoc {
@@ -172,10 +174,14 @@ task alljavadoc(type: Javadoc) {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
+}
+
 idea {
     project {
-        jdkName = '1.6 (64bit)'
-        languageLevel = '1.6'
+        jdkName = '1.7 (64bit)'
+        languageLevel = '1.7'
     }
 }
 

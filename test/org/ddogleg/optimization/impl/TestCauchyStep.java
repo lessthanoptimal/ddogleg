@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,10 +19,10 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.UtilEjml;
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -33,16 +33,16 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestCauchyStep {
 
-	DenseMatrix64F J,x,residuals,gradient;
+	DMatrixRMaj J,x,residuals,gradient;
 
 	public TestCauchyStep() {
-		J = new DenseMatrix64F(3,2,true,1,0,0,Math.sqrt(2),0,0);
+		J = new DMatrixRMaj(3,2,true,1,0,0,Math.sqrt(2),0,0);
 
-		x = new DenseMatrix64F(2,1,true,0.5,1.5);
-		residuals = new DenseMatrix64F(3,1,true,-1,-2,-3);
+		x = new DMatrixRMaj(2,1,true,0.5,1.5);
+		residuals = new DMatrixRMaj(3,1,true,-1,-2,-3);
 
-		gradient = new DenseMatrix64F(2,1);
-		CommonOps.multTransA(J, residuals, gradient);
+		gradient = new DMatrixRMaj(2,1);
+		CommonOps_DDRM.multTransA(J, residuals, gradient);
 	}
 	/**
 	 * The optimal solution falls inside the trust region
@@ -53,7 +53,7 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 		
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 		
 		alg.computeStep(10,step);
 		
@@ -66,22 +66,22 @@ public class TestCauchyStep {
 		assertTrue(a < c);
 	}
 	
-	public static double cost( DenseMatrix64F residuals , DenseMatrix64F J , DenseMatrix64F h , double delta )
+	public static double cost( DMatrixRMaj residuals , DMatrixRMaj J , DMatrixRMaj h , double delta )
 	{
 		// adjust the value of h along the gradient's direction
-		DenseMatrix64F direction = h.copy();
-		CommonOps.scale(1.0/ NormOps.normF(h),direction);
+		DMatrixRMaj direction = h.copy();
+		CommonOps_DDRM.scale(1.0/ NormOps_DDRM.normF(h),direction);
 		
 		h = h.copy();
 		for( int i = 0; i < h.numRows; i++ )
 			h.data[i] += delta*direction.data[i];
 		
-		DenseMatrix64F B = new DenseMatrix64F(J.numCols,J.numCols);
-		CommonOps.multTransA(J,J,B);
+		DMatrixRMaj B = new DMatrixRMaj(J.numCols,J.numCols);
+		CommonOps_DDRM.multTransA(J,J,B);
 
-		double left = VectorVectorMult.innerProd(residuals, residuals);
-		double middle = VectorVectorMult.innerProdA(residuals, J, h);
-		double right = VectorVectorMult.innerProdA(h, B, h);
+		double left = VectorVectorMult_DDRM.innerProd(residuals, residuals);
+		double middle = VectorVectorMult_DDRM.innerProdA(residuals, J, h);
+		double right = VectorVectorMult_DDRM.innerProdA(h, B, h);
 
 //		double cost =  0.5*left + middle + 0.5*right;
 //
@@ -109,12 +109,12 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		alg.computeStep(1,step);
 
 		// make sure it on he trust region border
-		double l = NormOps.normF(step);
+		double l = NormOps_DDRM.normF(step);
 		assertTrue(Math.abs(l - 1) <= UtilEjml.EPS);
 		
 		// empirical test to see if it is a local minimum
@@ -133,12 +133,12 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		alg.computeStep(10,step);
 
 		// empirical calculation of the reduction
-		double a =  VectorVectorMult.innerProd(residuals,residuals)*0.5;
+		double a =  VectorVectorMult_DDRM.innerProd(residuals,residuals)*0.5;
 		double c =  cost(residuals,J,step,0);
 
 		assertEquals(a-c,alg.predictedReduction(),1e-8);
@@ -153,12 +153,12 @@ public class TestCauchyStep {
 		alg.init(2,3);
 		alg.setInputs(x,residuals,J,gradient,-1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		alg.computeStep(1,step);
 
 		// empirical calculation of the reduction
-		double a =  VectorVectorMult.innerProd(residuals,residuals)*0.5;
+		double a =  VectorVectorMult_DDRM.innerProd(residuals,residuals)*0.5;
 		double c =  cost(residuals,J,step,0);
 
 		assertEquals(a-c,alg.predictedReduction(),1e-8);

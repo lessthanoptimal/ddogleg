@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.solver;
 
-import org.ejml.data.Complex64F;
+import org.ejml.data.Complex_F64;
 
 import java.util.List;
 
@@ -45,5 +45,5 @@ public interface PolynomialRoots {
 	 *
 	 * @return roots
 	 */
-	public List<Complex64F> getRoots();
+	public List<Complex_F64> getRoots();
 }

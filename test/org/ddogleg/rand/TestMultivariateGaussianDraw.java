@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,9 +18,9 @@
 
 package org.ddogleg.rand;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.junit.Test;
 
 import java.util.Random;
@@ -38,16 +38,16 @@ public class TestMultivariateGaussianDraw
      */
     @Test
     public void testStatistics() {
-        DenseMatrix64F orig_x = new DenseMatrix64F(new double[][]{{4},{-2}});
-        DenseMatrix64F orig_P = new DenseMatrix64F(new double[][]{{6,-2},{-2,10}});
+        DMatrixRMaj orig_x = new DMatrixRMaj(new double[][]{{4},{-2}});
+        DMatrixRMaj orig_P = new DMatrixRMaj(new double[][]{{6,-2},{-2,10}});
 
         MultivariateGaussianDraw dist = new MultivariateGaussianDraw(new Random(0xfeed),orig_x,orig_P);
 
-        DenseMatrix64F draws[] = new DenseMatrix64F[N];
+        DMatrixRMaj draws[] = new DMatrixRMaj[N];
 
         // sample the distribution
         for( int i = 0; i < N; i++ ) {
-            DenseMatrix64F x = new DenseMatrix64F(2,1);
+            DMatrixRMaj x = new DMatrixRMaj(2,1);
             draws[i] = dist.next(x);
         }
 
@@ -67,19 +67,19 @@ public class TestMultivariateGaussianDraw
         assertEquals(-2.0,raw_comp_x[1],0.1);
 
         // now the covariance
-        DenseMatrix64F comp_P = new DenseMatrix64F(2,2);
-        DenseMatrix64F temp = new DenseMatrix64F(2,1);
+        DMatrixRMaj comp_P = new DMatrixRMaj(2,2);
+        DMatrixRMaj temp = new DMatrixRMaj(2,1);
 
         for( int i = 0; i < N; i++ ) {
             temp.set(0,0,draws[i].get(0,0)-raw_comp_x[0]);
             temp.set(1,0,draws[i].get(1,0)-raw_comp_x[1]);
 
-            CommonOps.multAddTransB(temp,temp,comp_P);
+            CommonOps_DDRM.multAddTransB(temp,temp,comp_P);
         }
 
-        CommonOps.scale(1.0/N,comp_P);
+        CommonOps_DDRM.scale(1.0/N,comp_P);
 
-        MatrixFeatures.isIdentical(comp_P,orig_P,0.3);
+        MatrixFeatures_DDRM.isIdentical(comp_P,orig_P,0.3);
     }
 
 }

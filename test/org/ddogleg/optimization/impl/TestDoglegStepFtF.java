@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.MatrixFeatures;
-import org.ejml.ops.NormOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -36,16 +36,16 @@ public class TestDoglegStepFtF {
 	double gaussRadius = 10;
 	double combinedRadius = 0.9;
 
-	DenseMatrix64F J,x,residuals,gradient;
+	DMatrixRMaj J,x,residuals,gradient;
 
 	public TestDoglegStepFtF() {
-		J = new DenseMatrix64F(3,2,true,1,0.5,2,Math.sqrt(2),-2,4);
+		J = new DMatrixRMaj(3,2,true,1,0.5,2,Math.sqrt(2),-2,4);
 
-		x = new DenseMatrix64F(2,1,true,0.5,1.5);
-		residuals = new DenseMatrix64F(3,1,true,-1,-2,-3);
+		x = new DMatrixRMaj(2,1,true,0.5,1.5);
+		residuals = new DMatrixRMaj(3,1,true,-1,-2,-3);
 
-		gradient = new DenseMatrix64F(2,1);
-		CommonOps.multTransA(J, residuals, gradient);
+		gradient = new DMatrixRMaj(2,1);
+		CommonOps_DDRM.multTransA(J, residuals, gradient);
 	}
 
 	/**
@@ -62,8 +62,8 @@ public class TestDoglegStepFtF {
 		cauchy.setInputs(x, residuals, J, gradient, -1);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F expected = new DenseMatrix64F(2,1);
-		DenseMatrix64F found = new DenseMatrix64F(2,1);
+		DMatrixRMaj expected = new DMatrixRMaj(2,1);
+		DMatrixRMaj found = new DMatrixRMaj(2,1);
 
 		// step less than the cauchy step
 		cauchy.computeStep(cauchyRadius, expected);
@@ -72,7 +72,7 @@ public class TestDoglegStepFtF {
 		assertTrue(alg.isMaxStep());
 		assertTrue(alg.calledCauchy);
 
-		assertTrue(MatrixFeatures.isIdentical(expected, found, 1e-8));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, 1e-8));
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class TestDoglegStepFtF {
 		alg.init(2, 3);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		// give it a very large region
 		alg.computeStep(gaussRadius,step);
@@ -114,7 +114,7 @@ public class TestDoglegStepFtF {
 		alg.init(2, 3);
 		alg.setInputs(x, residuals, J, gradient, -1);
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		// give it a specially selected step
 		alg.computeStep(combinedRadius,step);
@@ -124,7 +124,7 @@ public class TestDoglegStepFtF {
 		
 		// check to see if it is along the region's radius
 		assertTrue(alg.isMaxStep());
-		double r = NormOps.normF(step);
+		double r = NormOps_DDRM.normF(step);
 		assertEquals(combinedRadius, r, 1e-8);
 	}
 
@@ -145,14 +145,14 @@ public class TestDoglegStepFtF {
 
 	private void checkPredictedCost( double radius , boolean calledCauchy , boolean calledCombined  )
 	{
-		double fx = VectorVectorMult.innerProd(residuals,residuals)*0.5;
+		double fx = VectorVectorMult_DDRM.innerProd(residuals,residuals)*0.5;
 		WrappedDog alg = new WrappedDog();
 
 		alg.init(2, 3);
 		alg.setInputs(x, residuals, J, gradient, fx);
 
 
-		DenseMatrix64F step = new DenseMatrix64F(2,1);
+		DMatrixRMaj step = new DMatrixRMaj(2,1);
 
 		alg.computeStep(radius,step);
 		assertTrue(alg.calledCauchy == calledCauchy);
@@ -165,18 +165,18 @@ public class TestDoglegStepFtF {
 		assertEquals(expected,alg.predictedReduction(),1e-8);
 	}
 	
-	public static double cost( DenseMatrix64F residuals , DenseMatrix64F J , DenseMatrix64F h , double... delta )
+	public static double cost( DMatrixRMaj residuals , DMatrixRMaj J , DMatrixRMaj h , double... delta )
 	{
 		h = h.copy();
 		for( int i = 0; i < h.numRows; i++ )
 			h.data[i] += delta[i];
 
-		DenseMatrix64F B = new DenseMatrix64F(J.numCols,J.numCols);
-		CommonOps.multTransA(J,J,B);
+		DMatrixRMaj B = new DMatrixRMaj(J.numCols,J.numCols);
+		CommonOps_DDRM.multTransA(J,J,B);
 
-		double left = VectorVectorMult.innerProd(residuals, residuals);
-		double middle = VectorVectorMult.innerProdA(residuals, J, h);
-		double right = VectorVectorMult.innerProdA(h, B, h);
+		double left = VectorVectorMult_DDRM.innerProd(residuals, residuals);
+		double middle = VectorVectorMult_DDRM.innerProdA(residuals, J, h);
+		double right = VectorVectorMult_DDRM.innerProdA(h, B, h);
 
 		return 0.5*left + middle + 0.5*right;
 	}
@@ -186,13 +186,13 @@ public class TestDoglegStepFtF {
 		boolean calledCauchy = false;
 
 		@Override
-		protected void cauchyStep(double regionRadius, DenseMatrix64F step) {
+		protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 			super.cauchyStep(regionRadius, step);
 			calledCauchy = true;
 		}
 
 		@Override
-		protected void combinedStep(double regionRadius, DenseMatrix64F step) {
+		protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 			super.combinedStep(regionRadius, step);
 			calledCombined = true;
 		}

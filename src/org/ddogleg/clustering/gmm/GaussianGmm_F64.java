@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,8 +18,8 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
 
 import java.io.Serializable;
 
@@ -31,8 +31,8 @@ import java.io.Serializable;
  */
 public class GaussianGmm_F64 implements Serializable {
 	// These specify the parameters of the Gaussian in the mixture
-	public DenseMatrix64F mean;
-	public DenseMatrix64F covariance;
+	public DMatrixRMaj mean;
+	public DMatrixRMaj covariance;
 	public double weight;
 
 	/**
@@ -40,8 +40,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * @param DOF Number of degrees-of-freedom in the sampled points.
 	 */
 	public GaussianGmm_F64( int DOF ) {
-		mean = new DenseMatrix64F(DOF,1);
-		covariance = new DenseMatrix64F(DOF,DOF);
+		mean = new DMatrixRMaj(DOF,1);
+		covariance = new DMatrixRMaj(DOF,DOF);
 	}
 
 	public GaussianGmm_F64() {
@@ -51,8 +51,8 @@ public class GaussianGmm_F64 implements Serializable {
 	 * Sets the mean, covariance, and weight to zero
 	 */
 	public void zero() {
-		CommonOps.fill(mean,0);
-		CommonOps.fill(covariance,0);
+		CommonOps_DDRM.fill(mean,0);
+		CommonOps_DDRM.fill(covariance,0);
 		weight = 0;
 	}
 
@@ -103,19 +103,19 @@ public class GaussianGmm_F64 implements Serializable {
 
 	}
 
-	public DenseMatrix64F getMean() {
+	public DMatrixRMaj getMean() {
 		return mean;
 	}
 
-	public void setMean(DenseMatrix64F mean) {
+	public void setMean(DMatrixRMaj mean) {
 		this.mean = mean;
 	}
 
-	public DenseMatrix64F getCovariance() {
+	public DMatrixRMaj getCovariance() {
 		return covariance;
 	}
 
-	public void setCovariance(DenseMatrix64F covariance) {
+	public void setCovariance(DMatrixRMaj covariance) {
 		this.covariance = covariance;
 	}
 

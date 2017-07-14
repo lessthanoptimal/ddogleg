@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -80,4 +80,14 @@ public interface ModelMatcher<Model, Point> {
 	 * @return Minimum number of sample points
 	 */
 	public int getMinimumSize();
+
+	/**
+	 * Returns a class for the input point object
+	 */
+	Class<Point> getPointType();
+
+	/**
+	 * Returns a class for the input point object
+	 */
+	Class<Model> getModelType();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
 
 /**
  * Base class for Levenberg solvers which use dense matrices.
@@ -30,13 +30,13 @@ import org.ejml.ops.CommonOps;
 public abstract class LevenbergDenseBase extends LevenbergBase {
 
 	// jacobian at x
-	protected DenseMatrix64F jacobianVals = new DenseMatrix64F(1,1);
+	protected DMatrixRMaj jacobianVals = new DMatrixRMaj(1,1);
 
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
-	protected DenseMatrix64F B = new DenseMatrix64F(1,1);
+	protected DMatrixRMaj B = new DMatrixRMaj(1,1);
 	// diagonal elements of JtJ
-	protected DenseMatrix64F Bdiag = new DenseMatrix64F(1,1);
+	protected DMatrixRMaj Bdiag = new DMatrixRMaj(1,1);
 
 	// Least-squares Function being optimized
 	protected CoupledJacobian function;
@@ -57,7 +57,7 @@ public abstract class LevenbergDenseBase extends LevenbergBase {
 
 	@Override
 	protected double getMinimumDampening() {
-		return CommonOps.elementMax(Bdiag);
+		return CommonOps_DDRM.elementMax(Bdiag);
 	}
 
 	/**

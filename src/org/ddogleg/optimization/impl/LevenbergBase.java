@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,9 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 /**
  * <p>
@@ -42,15 +42,15 @@ public abstract class LevenbergBase {
 	private double ftol;
 
 	// current set of parameters being considered
-	private DenseMatrix64F x = new DenseMatrix64F(1,1);
+	private DMatrixRMaj x = new DMatrixRMaj(1,1);
 	// gradient at 'x' = J'*f(x)
-	private DenseMatrix64F g = new DenseMatrix64F(1,1);
+	private DMatrixRMaj g = new DMatrixRMaj(1,1);
 	// function residuals values at x
-	private DenseMatrix64F funcVals = new DenseMatrix64F(1,1);
+	private DMatrixRMaj funcVals = new DMatrixRMaj(1,1);
 
 	// Current x being considered
-	private DenseMatrix64F xtest = new DenseMatrix64F(1,1);
-	private DenseMatrix64F xdelta = new DenseMatrix64F(1,1);
+	private DMatrixRMaj xtest = new DMatrixRMaj(1,1);
+	private DMatrixRMaj xdelta = new DMatrixRMaj(1,1);
 
 	// function value norm at x
 	private double fnorm;
@@ -160,14 +160,14 @@ public abstract class LevenbergBase {
 	/**
 	 * Computes the Jacobian matrix,
 	 */
-	protected abstract void computeJacobian( DenseMatrix64F residuals ,
-											 DenseMatrix64F gradient );
+	protected abstract void computeJacobian( DMatrixRMaj residuals ,
+											 DMatrixRMaj gradient );
 
 	protected abstract boolean computeStep( double dampeningParam ,
-											DenseMatrix64F gradientNegative ,
-											DenseMatrix64F step );
+											DMatrixRMaj gradientNegative ,
+											DMatrixRMaj step );
 
-	protected abstract double predictedReduction( DenseMatrix64F param, DenseMatrix64F gradientNegative , double dampeningParam );
+	protected abstract double predictedReduction( DMatrixRMaj param, DMatrixRMaj gradientNegative , double dampeningParam );
 
 	/**
 	 * Returns the minimum allowed value for the dampening parameters.  This should be a function
@@ -206,10 +206,10 @@ public abstract class LevenbergBase {
 	private boolean initSamplePoint() {
 		// calculate the Jacobian values at the current sample point
 		computeJacobian(funcVals,g);
-		CommonOps.scale(-1, g);
+		CommonOps_DDRM.scale(-1, g);
 
 		// Find the derivative along the current Jacobian's direction
-		double gx = CommonOps.elementMaxAbs(g);
+		double gx = CommonOps_DDRM.elementMaxAbs(g);
 
 		// check for convergence
 		if( Math.abs(fnorm-fnormPrev) <= ftol*Math.max(fnorm,fnormPrev) || Math.abs(gx) <= gtol )
@@ -229,9 +229,9 @@ public abstract class LevenbergBase {
 			return false;
 
 		// xtest = x + delta x
-		CommonOps.add(x, xdelta, xtest);
+		CommonOps_DDRM.add(x, xdelta, xtest);
 		// take in account rounding error
-		CommonOps.subtract(xtest, x, xdelta);
+		CommonOps_DDRM.subtract(xtest, x, xdelta);
 
 		// compute the residuals at x
 		setFunctionParameters(xtest.data);
@@ -247,7 +247,7 @@ public abstract class LevenbergBase {
 		// update the dampParam depending on the results
 		if( predictedReduction > 0 && actualReduction >= 0 ) {
 			// set the test point to be the new point
-			DenseMatrix64F temp = x;
+			DMatrixRMaj temp = x;
 			x = xtest; xtest = temp;
 			// updated residual norm
 			fnorm = ftestnorm;
@@ -281,7 +281,7 @@ public abstract class LevenbergBase {
 	 * then the dampParam is increased.
 	 */
 	protected boolean solveForXDelta() {
-//		double max = CommonOps.elementMax(Bdiag);
+//		double max = CommonOps_DDRM.elementMax(Bdiag);
 //
 //		// if the matrix is null do a simple gradient descent search
 //		if( max == 0 ) {
@@ -326,7 +326,7 @@ public abstract class LevenbergBase {
 	 * sum_i 0.5*fi(x)^2
 	 */
 	private double computeError() {
-		return VectorVectorMult.innerProd(funcVals,funcVals)/2.0;
+		return VectorVectorMult_DDRM.innerProd(funcVals,funcVals)/2.0;
 	}
 
 	public boolean isConverged() {

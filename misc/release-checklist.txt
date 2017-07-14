@@ -2,6 +2,7 @@
   * cd docs/website/
   * conf.py, Download.rst, index.rst
   * examples
+  * git tag links to github *.rst example files
 - update version in build.gradle
 - update change.txt
 - gradle test

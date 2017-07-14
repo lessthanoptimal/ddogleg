@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,8 +25,8 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.MatrixFeatures;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.MatrixFeatures_DDRM;
 
 /**
  * Used to validate an algebraic Jacobian numerically.
@@ -46,8 +46,8 @@ public class DerivativeChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -91,13 +91,13 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
 
-		return MatrixFeatures.isIdentical(expected,found,tol);
+		return MatrixFeatures_DDRM.isIdentical(expected,found,tol);
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class DerivativeChecker {
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param,found.data);
 		numerical.process(param,expected.data);
@@ -174,8 +174,8 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DenseMatrix64F found = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
-		DenseMatrix64F expected = new DenseMatrix64F(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
 		jacobian.process(param, found.data);
 		numerical.process(param, expected.data);

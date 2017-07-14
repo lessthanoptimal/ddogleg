@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -64,6 +64,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	// the parameter with the best error
 	private Model bestParam;
 	private double bestMedian;
+
+	// copy of the input data set so that it can be modified
+	protected List<Point> dataSet = new ArrayList<>();
 
 	// stores all the errors for quicker sorting
 	private double []errors = new double[1];
@@ -137,9 +140,12 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	}
 
 	@Override
-	public boolean process(List<Point> dataSet) {
-		if( dataSet.size() < sampleSize )
+	public boolean process(List<Point> _dataSet) {
+		if( _dataSet.size() < sampleSize )
 			return false;
+
+		dataSet.clear();
+		dataSet.addAll(_dataSet);
         
 		int N = dataSet.size();
 
@@ -156,7 +162,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 
 			if( generator.generate(smallSet, candidate) ) {
 				errorMetric.setModel(candidate);
-				errorMetric.computeDistance(dataSet,errors);
+				errorMetric.computeDistance(_dataSet,errors);
 
 				double median = QuickSelect.select(errors, N / 2, N);
 
@@ -170,7 +176,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		}
 
 		// if configured to do so compute the inlier set
-		computeInlierSet(dataSet, N);
+		computeInlierSet(_dataSet, N);
 
 		return bestMedian <= maxMedianError;
 	}
@@ -228,5 +234,15 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	@Override
 	public int getMinimumSize() {
 		return sampleSize;
+	}
+
+	@Override
+	public Class<Point> getPointType() {
+		return errorMetric.getPointType();
+	}
+
+	@Override
+	public Class<Model> getModelType() {
+		return errorMetric.getModelType();
 	}
 }

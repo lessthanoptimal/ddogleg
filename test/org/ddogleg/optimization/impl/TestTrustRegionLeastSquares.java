@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.optimization.impl;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -118,12 +118,12 @@ public class TestTrustRegionLeastSquares {
 		public void init(int numParam, int numFunctions) {}
 
 		@Override
-		public void setInputs(DenseMatrix64F x, DenseMatrix64F residuals, DenseMatrix64F J,
-							  DenseMatrix64F gradient , double fx)
+		public void setInputs(DMatrixRMaj x, DMatrixRMaj residuals, DMatrixRMaj J,
+							  DMatrixRMaj gradient , double fx)
 		{}
 
 		@Override
-		public void computeStep(double regionRadius, DenseMatrix64F step) {}
+		public void computeStep(double regionRadius, DMatrixRMaj step) {}
 
 		@Override
 		public double predictedReduction() {

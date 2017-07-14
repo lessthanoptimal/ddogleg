@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.alg.dense.mult.VectorVectorMult;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 /**
  * <p>
@@ -41,8 +41,8 @@ import org.ejml.ops.NormOps;
 public class CauchyStep implements TrustRegionStep {
 
 	// square of the Jacobian
-	private DenseMatrix64F B = new DenseMatrix64F(1,1);
-	private DenseMatrix64F gradient;
+	private DMatrixRMaj B = new DMatrixRMaj(1,1);
+	private DMatrixRMaj gradient;
 
 
 	private double gBg;
@@ -57,14 +57,14 @@ public class CauchyStep implements TrustRegionStep {
 	}
 
 	@Override
-	public void setInputs(  DenseMatrix64F x , DenseMatrix64F residuals , DenseMatrix64F J ,
-							DenseMatrix64F gradient , double fx )
+	public void setInputs(  DMatrixRMaj x , DMatrixRMaj residuals , DMatrixRMaj J ,
+							DMatrixRMaj gradient , double fx )
 	{
 		this.gradient = gradient;
-		CommonOps.multInner(J, B);
+		CommonOps_DDRM.multInner(J, B);
 
-		gBg = VectorVectorMult.innerProdA(gradient, B, gradient);
-		gnorm = NormOps.normF(gradient);
+		gBg = VectorVectorMult_DDRM.innerProdA(gradient, B, gradient);
+		gnorm = NormOps_DDRM.normF(gradient);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class CauchyStep implements TrustRegionStep {
 	 * @param step
 	 */
 	@Override
-	public void computeStep( double regionRadius , DenseMatrix64F step) {
+	public void computeStep( double regionRadius , DMatrixRMaj step) {
 
 		double dist;
 
@@ -97,7 +97,7 @@ public class CauchyStep implements TrustRegionStep {
 			}
 		}
 
-		CommonOps.scale(-dist,gradient,step);
+		CommonOps_DDRM.scale(-dist,gradient,step);
 
 		// compute predicted reduction
 		predicted = dist*gnorm*gnorm - 0.5*dist*dist*gBg;

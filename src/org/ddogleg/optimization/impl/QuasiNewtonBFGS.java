@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,8 +20,8 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
 
 /**
  * <p>
@@ -67,24 +67,24 @@ public class QuasiNewtonBFGS
 	private double derivAtZero;
 
 	// inverse of the Hessian approximation
-	private DenseMatrix64F B;
+	private DMatrixRMaj B;
 	// search direction
-	private DenseMatrix64F searchVector;
+	private DMatrixRMaj searchVector;
 	// gradient
-	private DenseMatrix64F g;
+	private DMatrixRMaj g;
 	// difference between current and previous x
-	private DenseMatrix64F s;
+	private DMatrixRMaj s;
 	// difference between current and previous gradient
-	private DenseMatrix64F y;
+	private DMatrixRMaj y;
 	
 	// current set of parameters being considered
-	private DenseMatrix64F x;
+	private DMatrixRMaj x;
 	// function value at x(k)
 	private double fx;
 
 	// storage
-	private DenseMatrix64F temp0_Nx1;
-	private DenseMatrix64F temp1_Nx1;
+	private DMatrixRMaj temp0_Nx1;
+	private DMatrixRMaj temp1_Nx1;
 
 	// mode that the algorithm is in
 	private int mode;
@@ -121,15 +121,15 @@ public class QuasiNewtonBFGS
 
 		N = function.getN();
 		
-		B = new DenseMatrix64F(N,N);
-		searchVector = new DenseMatrix64F(N,1);
-		g = new DenseMatrix64F(N,1);
-		s = new DenseMatrix64F(N,1);
-		y = new DenseMatrix64F(N,1);
-		x = new DenseMatrix64F(N,1);
+		B = new DMatrixRMaj(N,N);
+		searchVector = new DMatrixRMaj(N,1);
+		g = new DMatrixRMaj(N,1);
+		s = new DMatrixRMaj(N,1);
+		y = new DMatrixRMaj(N,1);
+		x = new DMatrixRMaj(N,1);
 
-		temp0_Nx1 = new DenseMatrix64F(N,1);
-		temp1_Nx1 = new DenseMatrix64F(N,1);
+		temp0_Nx1 = new DMatrixRMaj(N,1);
+		temp1_Nx1 = new DMatrixRMaj(N,1);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class QuasiNewtonBFGS
 	 * Manually specify the initial inverse hessian approximation.
 	 * @param Hinverse Initial hessian approximation
 	 */
-	public void setInitialHInv( DenseMatrix64F Hinverse) {
+	public void setInitialHInv( DMatrixRMaj Hinverse) {
 		B.set(Hinverse);
 	}
 
@@ -170,7 +170,7 @@ public class QuasiNewtonBFGS
 		s.zero();
 		// default to an initial inverse Hessian approximation as
 		// the identity matrix.  This can be overridden or improved by an heuristic below
-		CommonOps.setIdentity(B);
+		CommonOps_DDRM.setIdentity(B);
 
 		// save the initial value of x
 		System.arraycopy(initial, 0, x.data, 0, N);
@@ -220,7 +220,7 @@ public class QuasiNewtonBFGS
 		}
 
 		// compute the search direction
-		CommonOps.mult(-1,B,g, searchVector);
+		CommonOps_DDRM.mult(-1,B,g, searchVector);
 
 		// use the line search to find the next x
 		if( !setupLineSearch(fx, x.data, g.data, searchVector.data) ) {
@@ -228,7 +228,7 @@ public class QuasiNewtonBFGS
 			// no longer SPD.  Attempt to fix the situation by resetting the matrix
 			resetMatrixB();
 			// do the search again, it can't fail this time
-			CommonOps.mult(-1,B,g, searchVector);
+			CommonOps_DDRM.mult(-1,B,g, searchVector);
 			setupLineSearch(fx, x.data, g.data, searchVector.data);
 		} else if(Math.abs(derivAtZero) <= gtol ) {
 			// the input might have been modified by the function.  So copy it

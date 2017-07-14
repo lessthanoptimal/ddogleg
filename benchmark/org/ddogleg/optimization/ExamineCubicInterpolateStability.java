@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,8 +18,8 @@
 
 package org.ddogleg.optimization;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.factory.LinearSolverFactory;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -90,20 +90,20 @@ public class ExamineCubicInterpolateStability {
 										double f1 , double alpha1 ,
 										double f2 , double alpha2 ) {
 
-		DenseMatrix64F A = new DenseMatrix64F(2,2);
+		DMatrixRMaj A = new DMatrixRMaj(2,2);
 		A.set(0,0,alpha1*alpha1*alpha1);
 		A.set(0,1,alpha1*alpha1);
 		A.set(1,0,alpha2*alpha2*alpha2);
 		A.set(1,1,alpha2*alpha2);
 
-		DenseMatrix64F Y = new DenseMatrix64F(2,1);
+		DMatrixRMaj Y = new DMatrixRMaj(2,1);
 		Y.set(0,f1 - f0 - g0*alpha1);
 		Y.set(1,f2 - f0 - g0*alpha2);
 
-		DenseMatrix64F X = new DenseMatrix64F(2,1);
+		DMatrixRMaj X = new DMatrixRMaj(2,1);
 
-		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.linear(2);
-//		LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.leastSquares(2,2);
+		LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.linear(2);
+//		LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(2,2);
 
 		if( !solver.setA(A))
 			return X.data;

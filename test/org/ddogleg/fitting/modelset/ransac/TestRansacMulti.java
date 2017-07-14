@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -87,7 +87,7 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 		double param[] = new double[]{modelVal};
 
 		ransac.dataSet = dataSet;
-		ransac.selectMatchSet(obj0.modelDistance, 4, param);
+		ransac.selectMatchSet(dataSet,obj0.modelDistance, 4, param);
 
 		assertTrue(ransac.candidatePoints.size() == 7);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,7 +30,7 @@ public interface ModelManager<Model> {
 	 *
 	 * @return New model instance
 	 */
-	public Model createModelInstance();
+	Model createModelInstance();
 
 	/**
 	 * Turns 'dst' into an exact copy of 'src'.  If the model has a variable structure
@@ -39,5 +39,5 @@ public interface ModelManager<Model> {
 	 * @param src Original model.  Not modified.
 	 * @param dst Where the copy is written to.  Modified.
 	 */
-	public void copyModel( Model src, Model dst );
+	void copyModel( Model src, Model dst );
 }
