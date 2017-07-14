@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.11
-Date:
+Date:     2017/07/14
 
 - Added getType() functions to ModelMatcher
 - RANSAC now uses a much more efficient sampling method which works well on small and large lists
