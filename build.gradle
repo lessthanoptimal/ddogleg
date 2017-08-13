@@ -46,8 +46,8 @@ sourceSets {
 }
 
 dependencies {
-    ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.31'}
+    ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
+        compile group: 'org.ejml', name: a, version: '0.32-SNAPSHOT'}
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'com.peterabeles', name: 'auto64fto32f', version: '1.0.1'

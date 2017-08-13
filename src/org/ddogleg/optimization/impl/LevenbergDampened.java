@@ -26,7 +26,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.dense.row.mult.MatrixMultProduct_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 public class LevenbergDampened extends LevenbergDenseBase {
 
 	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolver<DMatrixRMaj> solver;
+	protected LinearSolverDense<DMatrixRMaj> solver;
 
 	/**
 	 * Specifies termination condition and dampening parameter

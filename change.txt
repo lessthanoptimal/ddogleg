@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.12
+Date:     2017
+
+- Refactored for changes in EJML
+
+------------------------------------------------------
 Version:  0.11
 Date:     2017/07/14
 

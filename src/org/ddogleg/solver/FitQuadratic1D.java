@@ -20,7 +20,7 @@ package org.ddogleg.solver;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p></p>Fits the coefficients for a quadratic polynomial to a set of even spaced data in an array.</p>
@@ -36,7 +36,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic1D {
 
-	LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(10,3);
+	LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(10,3);
 
 	DMatrixRMaj A = new DMatrixRMaj(1,3);
 	DMatrixRMaj x = new DMatrixRMaj(3,1);

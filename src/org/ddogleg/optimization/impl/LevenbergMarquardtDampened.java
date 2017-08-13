@@ -22,7 +22,7 @@ import org.ejml.LinearSolverSafe;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 
 	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolver<DMatrixRMaj> solver;
+	protected LinearSolverDense<DMatrixRMaj> solver;
 
 	/**
 	 * Specifies termination condition and linear solver.  Selection of the linear solver an effect
@@ -58,7 +58,7 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	 * @param solver		   Linear solver. Cholesky or pseudo-inverse are recommended.
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergMarquardtDampened(LinearSolver<DMatrixRMaj> solver,
+	public LevenbergMarquardtDampened(LinearSolverDense<DMatrixRMaj> solver,
 									  double initialDampParam) {
 		super(initialDampParam);
 		this.solver = solver;

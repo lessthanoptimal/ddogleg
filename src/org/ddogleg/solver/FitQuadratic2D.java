@@ -20,7 +20,7 @@ package org.ddogleg.solver;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * Quadratic solver for an arbitrary 2D region
@@ -29,7 +29,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic2D {
 
-	LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(10, 6);
+	LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(10, 6);
 
 	DMatrixRMaj A = new DMatrixRMaj(1,6);
 	DMatrixRMaj b = new DMatrixRMaj(1,1);

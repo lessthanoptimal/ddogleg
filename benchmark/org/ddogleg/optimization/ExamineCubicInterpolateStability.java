@@ -20,7 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * Tests to see which stabilization routine is more numerically stable
@@ -102,8 +102,8 @@ public class ExamineCubicInterpolateStability {
 
 		DMatrixRMaj X = new DMatrixRMaj(2,1);
 
-		LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.linear(2);
-//		LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(2,2);
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.linear(2);
+//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(2,2);
 
 		if( !solver.setA(A))
 			return X.data;

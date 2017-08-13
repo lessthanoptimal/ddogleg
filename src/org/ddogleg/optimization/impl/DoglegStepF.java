@@ -24,7 +24,7 @@ import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * @author Peter Abeles
@@ -32,7 +32,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 public class DoglegStepF implements TrustRegionStep {
 
 	// linear solver for least squares problem, needs to handle singular matrices
-	LinearSolver<DMatrixRMaj> pinv;
+	LinearSolverDense<DMatrixRMaj> pinv;
 
 	// gradient J'*f
 	private DMatrixRMaj gradient;
@@ -66,7 +66,7 @@ public class DoglegStepF implements TrustRegionStep {
 	 *
 	 * @param pinv Linear solver for least-squares problem. Needs to handle
 	 */
-	public DoglegStepF(LinearSolver<DMatrixRMaj> pinv) {
+	public DoglegStepF(LinearSolverDense<DMatrixRMaj> pinv) {
 		this.pinv = pinv;
 	}
 

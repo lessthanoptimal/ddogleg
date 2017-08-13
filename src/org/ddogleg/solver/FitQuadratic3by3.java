@@ -20,7 +20,7 @@ package org.ddogleg.solver;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class FitQuadratic3by3 {
 	
-	LinearSolver<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(9, 6);
+	LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquares(9, 6);
 	DMatrixRMaj X = new DMatrixRMaj(6,1);
 	DMatrixRMaj Y = new DMatrixRMaj(9,1);
 	
