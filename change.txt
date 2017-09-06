@@ -7,6 +7,7 @@ Version:  0.12
 Date:     2017
 
 - Refactored for changes in EJML
+- Changed behavior of NearestNeighbor. Search results are now cleared. No idea why it wasn't this way by default...
 
 ------------------------------------------------------
 Version:  0.11

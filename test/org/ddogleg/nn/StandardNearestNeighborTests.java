@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -272,6 +272,28 @@ public abstract class StandardNearestNeighborTests {
 		alg.findNearest(new double[]{6, 7}, 10, 1, foundN);
 
 		assertTrue(data.get(1) == foundN.get(0).data);
+	}
+
+	/**
+	 * Makes sure the algorithm first clears the results
+	 */
+	@Test
+	public void findNearestN_resultsCleared() {
+		List<double[]> points = new ArrayList<double[]>();
+		points.add(new double[]{3,4});
+		points.add(new double[]{6,8});
+
+		List<Double> data = new ArrayList<Double>();
+		data.add(3.0);
+		data.add(7.0);
+
+		alg.init(2);
+		alg.setPoints(points,data);
+
+		foundN.add(new NnData<Double>());
+		alg.findNearest(new double[]{6, 7}, 10, 1, foundN);
+
+		assertEquals(1,foundN.size);
 	}
 
 	@Test
