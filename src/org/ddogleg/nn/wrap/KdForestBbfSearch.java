@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -93,7 +93,8 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 	}
 
 	@Override
-	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> result) {
+	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> results) {
+		results.reset();
 		if( maxDistance <= 0 )
 			searchN.setMaxDistance(Double.MAX_VALUE);
 		else
@@ -104,7 +105,7 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 
 		for( int i = 0; i < found.size; i++ ) {
 			KdTreeResult k = found.get(i);
-			NnData<D> r = result.grow();
+			NnData<D> r = results.grow();
 
 			r.point = k.node.point;
 			r.data = (D)k.node.data;

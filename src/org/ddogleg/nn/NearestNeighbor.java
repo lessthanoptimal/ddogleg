@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -43,7 +43,7 @@ public interface NearestNeighbor<D> {
 	 *
 	 * @param pointDimension Dimension of input data
 	 */
-	public void init( int pointDimension );
+	void init( int pointDimension );
 
 	/**
 	 * Specifies the set of points which are to be searched.
@@ -51,7 +51,7 @@ public interface NearestNeighbor<D> {
 	 * @param points Set of points.
 	 * @param data (Optional) Associated data.  Can be null.
 	 */
-	public void setPoints( List<double[]> points , List<D> data );
+	void setPoints( List<double[]> points , List<D> data );
 
 	/**
 	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
@@ -61,13 +61,13 @@ public interface NearestNeighbor<D> {
 	 * distance squared is common.
 	 * </p>
 	 *
-	 * @param point A point being searched for.
-	 * @param maxDistance Maximum distance (inclusive, e.g. d &le; maxDistance) a neighbor can be from point.
+	 * @param point (Input) A point being searched for.
+	 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) a neighbor can be from point.
 	 *                    Values {@code <} 0 will be set to the maximum distance.
-	 * @param result Storage for the result.
+	 * @param result (Output) Storage for the result.
 	 * @return true if a match within the max distance was found.
 	 */
-	public boolean findNearest( double[] point , double maxDistance , NnData<D> result );
+	boolean findNearest( double[] point , double maxDistance , NnData<D> result );
 
 	/**
 	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
@@ -77,11 +77,11 @@ public interface NearestNeighbor<D> {
 	 * distance squared is common.
 	 * </p>
 	 *
-	 * @param point A point being searched for.
-	 * @param maxDistance Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
+	 * @param point (Input) A point being searched for.
+	 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
 	 *                    Values {@code <} 0 will be set to the maximum distance.
-	 * @param numNeighbors The number of neighbors it will search for.
-	 * @param result Storage for the result. Must be empty before calling. Must support grow() function.
+	 * @param numNeighbors (Input) The number of neighbors it will search for.
+	 * @param results (Output) Storage for the result. Reset() is called. Must support grow() function.
 	 */
-	public void findNearest( double[] point , double maxDistance , int numNeighbors , FastQueue<NnData<D>> result );
+	void findNearest( double[] point , double maxDistance , int numNeighbors , FastQueue<NnData<D>> results );
 }

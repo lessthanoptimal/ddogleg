@@ -24,7 +24,7 @@ import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimizatio
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * Creates optimization algorithms using easy to use interfaces.  These implementations/interfaces
@@ -72,7 +72,7 @@ public class FactoryOptimization {
 	public static UnconstrainedLeastSquares leastSquaresLM( double dampInit ,
 															boolean robust )
 	{
-		LinearSolver<DMatrixRMaj> solver;
+		LinearSolverDense<DMatrixRMaj> solver;
 
 		if( robust ) {
 			solver = LinearSolverFactory_DDRM.pseudoInverse(true);

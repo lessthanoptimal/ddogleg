@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -119,6 +119,8 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		if (_dataSet.size() < modelGenerator.getMinimumPoints() )
 			return false;
 
+		// the data set will be modified so a copy is needed. Otherwise indexes of match set will not
+		// be correct
 		dataSet.clear();
 		dataSet.addAll(_dataSet);
 
@@ -170,14 +172,17 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		initialSample.clear();
 
 		for (int i = 0; i < numSample; i++) {
-			int end = dataSet.size()-i-1;
-			int selected = rand.nextInt(end+1);
+			// index of last element that has not been selected
+			int indexLast = dataSet.size()-i-1;
+			// randomly select an item from the list which has not been selected
+			int indexSelected = rand.nextInt(indexLast+1);
 
-			T a = dataSet.get(selected);
+			T a = dataSet.get(indexSelected);
 			initialSample.add(a);
 
-			// swap location of selected and the last selectable item in the list
-			dataSet.set(selected,dataSet.set(end,a));
+			// Swap the selected item with the last unselected item in the list. This way the selected
+			// item can't be selected again and the last item can now be selected
+			dataSet.set(indexSelected,dataSet.set(indexLast,a));
 		}
 	}
 

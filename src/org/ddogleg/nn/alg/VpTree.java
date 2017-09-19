@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -66,7 +66,10 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
    }
 
    @Override
-	public void findNearest(double[] target, double maxDistance, int numNeighbors, FastQueue<NnData<PointData>> results) {
+	public void findNearest(double[] target, double maxDistance,
+							int numNeighbors, FastQueue<NnData<PointData>> results)
+	{
+		results.reset();
 		PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);
 
 		while (!heap.isEmpty()) {

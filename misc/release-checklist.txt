@@ -7,9 +7,11 @@
   * scp _build to ddogleg.org
 - update version in build.gradle
 - update change.txt
-- gradle test
-- gradle install
-- check ant javadoc
+- ./gradlew test
+- ./gradlew install
+- Generate javadoc
+  ./gradlew alljavadoc
+- ./gradlew createLibraryDirectory
 - commit and tag release
 - Upload to sourceforge (src,libs)
 - Update Maven central repository

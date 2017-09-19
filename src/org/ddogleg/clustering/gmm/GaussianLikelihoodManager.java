@@ -24,7 +24,7 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class GaussianLikelihoodManager {
 	FastQueue<Likelihood> precomputes;
 
 	// used to compute likelihood
-	LinearSolver<DMatrixRMaj> solver;
+	LinearSolverDense<DMatrixRMaj> solver;
 
 	// Used internally when computing difference between point and mean
 	DMatrixRMaj diff;

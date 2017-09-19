@@ -23,7 +23,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p>
@@ -48,7 +48,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 public class DoglegStepFtF implements TrustRegionStep {
 
 	// Linear solver for positive semi-definite symmetric matrix
-	private LinearSolver<DMatrixRMaj> pinv;
+	private LinearSolverDense<DMatrixRMaj> pinv;
 
 	// B=J'*J estimated Hessian
 	private DMatrixRMaj B = new DMatrixRMaj(1,1);
@@ -82,7 +82,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	 *
 	 * @param pinv Linear solver for a positive semi-definite symmetric system
 	 */
-	public DoglegStepFtF(LinearSolver<DMatrixRMaj> pinv) {
+	public DoglegStepFtF(LinearSolverDense<DMatrixRMaj> pinv) {
 		this.pinv = pinv;
 	}
 

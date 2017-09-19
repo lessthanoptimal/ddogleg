@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -51,28 +51,36 @@ public class TestRansac extends GenericModelMatcherTests {
 
 	/**
 	 * See if it correctly randomly selects points when the initial set size is
-	 * similar to the data set size
+	 * much smaller than the data set size
 	 */
 	@SuppressWarnings({"NumberEquality"})
 	@Test
-	public void randomDraw_large() {
+	public void randomDraw() {
+		randomDraw_sanity(200,15);
+		randomDraw_sanity(200,150);
+	}
+
+	private void randomDraw_sanity( int total , int numSample ) {
 		List<Integer> dataSet = new ArrayList<Integer>();
 
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < total; i++) {
 			dataSet.add(i);
 		}
 
 		List<Integer> initSet = new ArrayList<Integer>();
-		Ransac.randomDraw(dataSet, 150, initSet, rand);
+		Ransac.randomDraw(dataSet, numSample, initSet, rand);
 
-		assertEquals(150, initSet.size());
+		assertEquals(numSample, initSet.size());
 
 		// make sure the item is in the original data set and that it is only contained once
 		int numTheSame = 0;
 		for (int i = 0; i < initSet.size(); i++) {
 			Integer o = initSet.get(i);
-			// make sure it is in the original data set
+			// make sure it is in the original dataset
 			assertTrue(dataSet.contains(o));
+
+			// make sure the order has been changed
+			assertTrue(dataSet.get(i) != o);
 
 			// make sure the order has been changed
 			if (o == i)
@@ -90,48 +98,39 @@ public class TestRansac extends GenericModelMatcherTests {
 		assertTrue(numTheSame < initSet.size() * 0.9);
 
 		// call get init set once more and see if it was cleared
-		Ransac.randomDraw(dataSet, 150, initSet, rand);
-		assertEquals(150, initSet.size());
+		Ransac.randomDraw(dataSet, numSample, initSet, rand);
+		assertEquals(numSample, initSet.size());
 	}
 
 	/**
-	 * See if it correctly randomly selects points when the initial set size is
-	 * much smaller than the data set size
+	 * Checks the histogram of selected items to see if it is a uniformly random distribution
 	 */
-	@SuppressWarnings({"NumberEquality"})
 	@Test
-	public void randomDraw_small() {
+	public void randomDraw_Histogram() {
 		List<Integer> dataSet = new ArrayList<Integer>();
 
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 30; i++) {
 			dataSet.add(i);
 		}
+		int histogram[] = new int[ dataSet.size() ];
 
-		List<Integer> initSet = new ArrayList<Integer>();
-		Ransac.randomDraw(dataSet, 15, initSet, rand);
+		List<Integer> selected = new ArrayList<Integer>();
 
-		assertEquals(15, initSet.size());
+		int numTrials = 10000;
+		for (int i = 0; i < numTrials; i++) {
+			Ransac.randomDraw(dataSet, 3, selected, rand);
 
-		// make sure the item is in the original data set and that it is only contained once
-		for (int i = 0; i < initSet.size(); i++) {
-			Integer o = initSet.get(i);
-			// make sure it is in the original dataset
-			assertTrue(dataSet.contains(o));
-
-			// make sure the order has been changed
-			assertTrue(dataSet.get(i) != o);
-
-			// make sure only one copy is in the init set
-			for (int j = i + 1; j < initSet.size(); j++) {
-				if (o == initSet.get(j)) {
-					fail("Multiple copies in initSet");
-				}
+			for (int j = 0; j < selected.size(); j++) {
+				histogram[ selected.get(j)]++;
 			}
 		}
 
-		// call get init set once more and see if it was cleared
-		Ransac.randomDraw(dataSet, 15, initSet, rand);
-		assertEquals(15, initSet.size());
+		double expected = (3.0/30.0)*numTrials;
+
+		for (int i = 0; i < histogram.length; i++) {
+			assertTrue( Math.abs(histogram[i]-expected)/expected < 0.1 );
+		}
+
 	}
 
 	/**

@@ -23,7 +23,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.decomposition.CholeskyDecomposition;
-import org.ejml.interfaces.linsol.LinearSolver;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 import java.util.Random;
 
@@ -33,7 +33,7 @@ import static org.ejml.dense.row.CommonOps_DDRM.multAdd;
  * Draw a number from a multivariate Gaussian distribution.
  */
 public class MultivariateGaussianDraw {
-	private LinearSolver<DMatrixRMaj> solver;
+	private LinearSolverDense<DMatrixRMaj> solver;
 	private DMatrixRMaj mean;
 	private DMatrixRMaj A;
 	private Random rand;
