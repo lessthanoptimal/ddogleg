@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.12
-Date:     2017
+Date:     2017/09/18
 
 - Refactored for changes in EJML
 - Changed behavior of NearestNeighbor. Search results are now cleared. No idea why it wasn't this way by default...
