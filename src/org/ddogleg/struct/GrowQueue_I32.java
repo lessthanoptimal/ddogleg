@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_I32 {
+public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	public int data[];
 	public int size;
@@ -40,6 +40,7 @@ public class GrowQueue_I32 {
 		this(10);
 	}
 
+	@Override
 	public void reset() {
 		size = 0;
 	}
@@ -96,6 +97,7 @@ public class GrowQueue_I32 {
 		data[index] = value;
 	}
 
+	@Override
 	public void setTo( GrowQueue_I32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
@@ -149,6 +151,7 @@ public class GrowQueue_I32 {
 		}
 	}
 
+	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];
@@ -156,6 +159,7 @@ public class GrowQueue_I32 {
 		this.size = size;
 	}
 
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];
@@ -166,12 +170,18 @@ public class GrowQueue_I32 {
 		Arrays.fill(data,0,size,value);
 	}
 
+	@Override
 	public int size() {
 		return size;
 	}
 
 	public int pop() {
 		return data[--size];
+	}
+
+	@Override
+	public void zero() {
+		Arrays.fill(data,0,size,0);
 	}
 
 	/**
