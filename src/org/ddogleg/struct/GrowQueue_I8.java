@@ -163,6 +163,13 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		Arrays.fill(data,0,size,(byte)0);
 	}
 
+	@Override
+	public GrowQueue_I8 copy() {
+		GrowQueue_I8 ret = new GrowQueue_I8(size);
+		ret.setTo(this);
+		return ret;
+	}
+
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for

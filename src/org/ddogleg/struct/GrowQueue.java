@@ -58,4 +58,6 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	 * Sets all elements to 0 or False for binary queues
 	 */
 	void zero();
+
+	T copy();
 }

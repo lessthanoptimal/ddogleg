@@ -167,6 +167,13 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		Arrays.fill(data,0,size,0);
 	}
 
+	@Override
+	public GrowQueue_F32 copy() {
+		GrowQueue_F32 ret = new GrowQueue_F32(size);
+		ret.setTo(this);
+		return ret;
+	}
+
 	public float pop() {
         return data[--size];
     }

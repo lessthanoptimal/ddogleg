@@ -135,6 +135,13 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		Arrays.fill(data,0,size,false);
 	}
 
+	@Override
+	public GrowQueue_B copy() {
+		GrowQueue_B ret = new GrowQueue_B(size);
+		ret.setTo(this);
+		return ret;
+	}
+
 	public boolean pop() {
 		return data[--size];
 	}

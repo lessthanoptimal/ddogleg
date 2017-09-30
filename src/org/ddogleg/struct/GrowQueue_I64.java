@@ -172,6 +172,13 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		Arrays.fill(data,0,size,0);
 	}
 
+	@Override
+	public GrowQueue_I64 copy() {
+		GrowQueue_I64 ret = new GrowQueue_I64(size);
+		ret.setTo(this);
+		return ret;
+	}
+
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for

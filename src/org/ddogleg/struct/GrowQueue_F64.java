@@ -176,6 +176,13 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		Arrays.fill(data,0,size,0);
 	}
 
+	@Override
+	public GrowQueue_F64 copy() {
+		GrowQueue_F64 ret = new GrowQueue_F64(size);
+		ret.setTo(this);
+		return ret;
+	}
+
 	public double pop() {
         return data[--size];
     }
