@@ -37,10 +37,18 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	void setTo( T original );
 
 	/**
-	 * Ensures that the internal array is at least this size and changes the size to be this.
+	 * Ensures that the internal array is at least this size and changes the size to be this. Array
+	 * data is not saved
 	 * @param size desired new size
 	 */
 	void resize( int size );
+
+	/**
+	 * Ensures that the internal array this size. If a new array needs to be declared the old data
+	 * is saved
+	 * @param size desired new size
+	 */
+	void extend( int size );
 
 	/**
 	 * Ensures that the internal array's length is at least this size. Size is left unchanged

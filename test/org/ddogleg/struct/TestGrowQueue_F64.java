@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestGrowQueue_F64 {
+public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 
 	@Test
 	public void addAll_queue() {
@@ -140,42 +140,24 @@ public class TestGrowQueue_F64 {
 		assertEquals(5,alg.get(2),1e-8);
 	}
 
-	@Test
-	public void insert() {
+	@Override
+	public GrowQueue_F64 declare(int maxsize) {
+		return new GrowQueue_F64(maxsize);
+	}
 
-		GrowQueue_F64 alg = new GrowQueue_F64(10);
+	@Override
+	public void push(GrowQueue_F64 queue, double value) {
+		queue.push(value);
+	}
 
-		// insert with no array resize
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
+	@Override
+	public void insert(GrowQueue_F64 queue, int index, double value) {
+		queue.insert(index,value);
+	}
 
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size, 1e-8);
-		assertEquals(1,alg.get(0), 1e-8);
-		assertEquals(3,alg.get(1), 1e-8);
-		assertEquals(6,alg.get(2), 1e-8);
-		assertEquals(4,alg.get(3), 1e-8);
-		assertEquals(5,alg.get(4), 1e-8);
-
-		// insert with array resize
-
-		alg = new GrowQueue_F64(4);
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
-
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size);
-		assertEquals(1,alg.get(0), 1e-8);
-		assertEquals(3,alg.get(1), 1e-8);
-		assertEquals(6,alg.get(2), 1e-8);
-		assertEquals(4,alg.get(3), 1e-8);
-		assertEquals(5,alg.get(4), 1e-8);
+	@Override
+	public void check(GrowQueue_F64 queue, int index, double value) {
+		assertEquals(value,queue.get(index),1e-8);
 	}
 
 	@Test

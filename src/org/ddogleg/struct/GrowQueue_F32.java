@@ -151,6 +151,16 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			float []tmp = new float[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new float[size];

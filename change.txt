@@ -8,6 +8,7 @@ Date:
 
 - Created an interface for GrowQueue
   * Added zero()
+  * Added extend()
 
 ------------------------------------------------------
 Version:  0.12

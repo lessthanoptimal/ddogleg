@@ -119,6 +119,16 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	}
 
 	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			boolean []tmp = new boolean[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new boolean[size];

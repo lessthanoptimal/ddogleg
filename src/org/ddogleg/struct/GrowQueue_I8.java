@@ -143,6 +143,16 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		this.size = size;
 	}
 
+	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			byte []tmp = new byte[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new byte[size];

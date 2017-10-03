@@ -147,6 +147,16 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		this.size = size;
 	}
 
+	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			long []tmp = new long[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
 	public void fill( long value ) {
 		Arrays.fill(data, 0, size, value);
 	}
