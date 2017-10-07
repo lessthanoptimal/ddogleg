@@ -181,6 +181,33 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 	}
 
 	/**
+	 * Prints the queue to stdout as a hex array
+	 */
+	public void printHex() {
+		System.out.print("[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.printf("0x%02X ",data[i]);
+		}
+		System.out.print("]");
+	}
+
+	public static GrowQueue_I8 parseHex( String message ) {
+		message = message.replaceAll("\\[","");
+		message = message.replaceAll("\\]","");
+		message = message.replaceAll(" ","");
+
+		String words[] = message.split(",");
+
+		GrowQueue_I8 out = new GrowQueue_I8(words.length);
+		out.size = words.length;
+
+		for (int i = 0; i < words.length; i++) {
+			out.data[i] = Integer.decode(words[i]).byteValue();
+		}
+		return out;
+	}
+
+	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
