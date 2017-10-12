@@ -3,7 +3,7 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.12
+Version:  0.13
 Date:
 
 - Created an interface for GrowQueue
