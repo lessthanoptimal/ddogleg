@@ -6,9 +6,11 @@ Date Format: YEAR-MONTH-DAY
 Version:  0.13
 Date:
 
-- Created an interface for GrowQueue
+- GrowQueue
+  * Created an interface for GrowQueue
   * Added zero()
   * Added extend()
+  * Added static function zeros(N)
 
 ------------------------------------------------------
 Version:  0.12

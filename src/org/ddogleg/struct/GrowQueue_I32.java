@@ -40,6 +40,15 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		this(10);
 	}
 
+	/**
+	 * Creates a queue with the specified length as its size filled with all zeros
+	 */
+	public static GrowQueue_I32 zeros( int length ) {
+		GrowQueue_I32 out = new GrowQueue_I32(length);
+		out.size = length;
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
