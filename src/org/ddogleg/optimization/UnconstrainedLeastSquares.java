@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrix;
 
 /**
  * <p>
@@ -58,7 +59,9 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  *
  * @author Peter Abeles
  */
-public interface UnconstrainedLeastSquares extends IterativeOptimization {
+public interface UnconstrainedLeastSquares<S extends DMatrix>
+		extends IterativeOptimization
+{
 
 	/**
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
@@ -67,7 +70,7 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 * @param function Computes the output of M functions f<sub>i</sub>(x) which take in N fit parameters as input.
 	 * @param jacobian Computes the Jacobian of the M functions.  If null a numerical Jacobian will be used.
 	 */
-	public void setFunction( FunctionNtoM function , FunctionNtoMxN jacobian );
+	void setFunction( FunctionNtoM function , FunctionNtoMxN<S> jacobian );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after
@@ -78,13 +81,13 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
 	 *             Try 1e-12
 	 */
-	public void initialize( double initial[] , double ftol , double gtol );
+	void initialize( double initial[] , double ftol , double gtol );
 
 	/**
 	 * After each iteration this function can be called to get the current best
 	 * set of parameters.
 	 */
-	public double[] getParameters();
+	double[] getParameters();
 
 	/**
 	 * Returns the value of the objective function being evaluated at the current
@@ -92,5 +95,5 @@ public interface UnconstrainedLeastSquares extends IterativeOptimization {
 	 *
 	 * @return Objective function's value.
 	 */
-	public double getFunctionValue();
+	double getFunctionValue();
 }

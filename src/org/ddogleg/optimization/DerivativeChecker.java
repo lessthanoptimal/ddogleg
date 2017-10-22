@@ -25,8 +25,9 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 import org.ejml.UtilEjml;
+import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.MatrixFeatures_DDRM;
+import org.ejml.ops.MatrixFeatures_D;
 
 /**
  * Used to validate an algebraic Jacobian numerically.
@@ -35,34 +36,39 @@ import org.ejml.dense.row.MatrixFeatures_DDRM;
  */
 public class DerivativeChecker {
 
-	public static void jacobianPrint( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									  double param[] , double tol )
+	public static <S extends DMatrix>
+	void jacobianPrint(FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+					   double param[] , double tol )
 	{
 		jacobianPrint(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
 	}
 
-	public static void jacobianPrint( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									  double param[] , double tol , double differenceScale )
+	public static <S extends DMatrix>
+	void jacobianPrint( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+						double param[] , double tol , double differenceScale )
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
-		jacobian.process(param,found.data);
-		numerical.process(param,expected.data);
+		jacobian.process(param,found);
+		numerical.process(param,expected);
+
+		if( expected.getNumRows() != found.getNumRows() || expected.getNumCols() != found.getNumCols() )
+			throw new RuntimeException("Unexpected jacobian shape");
 
 		System.out.println("FOUND:");
 		found.print();
 		System.out.println("-----------------------------");
 		System.out.println("Numerical");
 		expected.print();
-		
+
 		System.out.println("-----------------------------");
 		System.out.println("Large Differences");
-		for( int y = 0; y < found.numRows; y++ ) {
-			for( int x = 0; x < found.numCols; x++ ) {
-				double diff = Math.abs(found.get(y,x)-expected.get(y,x));
+		for( int y = 0; y < expected.numRows; y++ ) {
+			for( int x = 0; x < expected.numCols; x++ ) {
+				double diff = Math.abs(found.unsafe_get(y,x)-expected.unsafe_get(y,x));
 				if( diff > tol ) {
 //					double e = expected.get(y,x);
 //					double f = found.get(y,x);
@@ -74,14 +80,16 @@ public class DerivativeChecker {
 		}
 	}
 
-	public static boolean jacobian( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									double param[] , double tol )
+	public static <S extends DMatrix>
+	boolean jacobian( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+					  double param[] , double tol )
 	{
 		return jacobian(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
 	}
 
-	public static boolean jacobian( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									double param[] , double tol ,  double differenceScale )
+	public static <S extends DMatrix>
+	boolean jacobian( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+					  double param[] , double tol ,  double differenceScale )
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
@@ -91,35 +99,37 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
-		jacobian.process(param,found.data);
-		numerical.process(param,expected.data);
+		jacobian.process(param,found);
+		numerical.process(param,expected);
 
-		return MatrixFeatures_DDRM.isIdentical(expected,found,tol);
+		return MatrixFeatures_D.isIdentical(expected,found,tol);
 	}
 
 	/**
 	 * Prints out the difference using a relative error threshold
 	 * @param tol fractional difference
 	 */
-	public static void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									  double param[] , double tol )
+	public static <S extends DMatrix>
+	void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+						 double param[] , double tol )
 	{
 		jacobianPrint(func, jacobian, param, tol, Math.sqrt(UtilEjml.EPS));
 	}
 
-	public static void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN jacobian ,
-									  double param[] , double tol , double differenceScale )
+	public static <S extends DMatrix>
+	void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
+						 double param[] , double tol , double differenceScale )
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
 
-		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
-		jacobian.process(param,found.data);
-		numerical.process(param,expected.data);
+		jacobian.process(param,found);
+		numerical.process(param,expected);
 
 		System.out.println("FOUND:");
 		found.print();
@@ -129,8 +139,8 @@ public class DerivativeChecker {
 
 		System.out.println("-----------------------------");
 		System.out.println("Large Differences");
-		for( int y = 0; y < found.numRows; y++ ) {
-			for( int x = 0; x < found.numCols; x++ ) {
+		for( int y = 0; y < expected.numRows; y++ ) {
+			for( int x = 0; x < expected.numCols; x++ ) {
 				double f = found.get(y,x);
 				double e = expected.get(y,x);
 
@@ -153,7 +163,8 @@ public class DerivativeChecker {
 	 * Checks the jacobian using a relative error threshold.
 	 * @param tol fractional difference
 	 */
-	public static boolean jacobianR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+	public static <S extends DMatrix>
+	boolean jacobianR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 								 double param[] , double tol )
 	{
 		return jacobian(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
@@ -163,7 +174,8 @@ public class DerivativeChecker {
 	 * Checks the jacobian using a relative error threshold.
 	 * @param tol fractional difference
 	 */
-	public static boolean jacobianR( FunctionNtoM func , FunctionNtoMxN jacobian ,
+	public static <S extends DMatrix>
+	boolean jacobianR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 								 double param[] , double tol ,  double differenceScale )
 	{
 		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
@@ -174,14 +186,14 @@ public class DerivativeChecker {
 		if( numerical.getNumOfInputsN() != jacobian.getNumOfInputsN() )
 			throw new RuntimeException("N is not equal: "+numerical.getNumOfInputsN()+"  "+jacobian.getNumOfInputsN());
 
-		DMatrixRMaj found = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
+		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
 
-		jacobian.process(param, found.data);
-		numerical.process(param, expected.data);
+		jacobian.process(param, found);
+		numerical.process(param, expected);
 
-		for( int y = 0; y < found.numRows; y++ ) {
-			for( int x = 0; x < found.numCols; x++ ) {
+		for( int y = 0; y < expected.numRows; y++ ) {
+			for( int x = 0; x < expected.numCols; x++ ) {
 				double f = found.get(y,x);
 				double e = expected.get(y,x);
 

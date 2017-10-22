@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,16 +21,17 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  * Wrapper around {@link org.ddogleg.optimization.functions.FunctionNtoM} and {@link FunctionNtoMxN} for {@link org.ddogleg.optimization.functions.CoupledJacobian}.
  * 
  * @author Peter Abeles
  */
-public class Individual_to_CoupledJacobian implements CoupledJacobian {
+public class Individual_to_CoupledJacobian implements CoupledJacobian<DMatrixRMaj> {
 	
 	FunctionNtoM func;
-	FunctionNtoMxN jacobian;
+	FunctionNtoMxN<DMatrixRMaj> jacobian;
 
 	double[] x;
 	
@@ -66,7 +67,7 @@ public class Individual_to_CoupledJacobian implements CoupledJacobian {
 	}
 
 	@Override
-	public void computeJacobian(double[] jacobian) {
+	public void computeJacobian(DMatrixRMaj jacobian) {
 		this.jacobian.process(x,jacobian);
 	}
 }

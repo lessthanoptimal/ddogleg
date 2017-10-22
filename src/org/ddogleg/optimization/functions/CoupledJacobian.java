@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,20 +18,22 @@
 
 package org.ddogleg.optimization.functions;
 
+import org.ejml.data.DMatrix;
+
 /**
  * @author Peter Abeles
  */
-public interface CoupledJacobian {
+public interface CoupledJacobian<S extends DMatrix> {
 
 	/**
 	 * Number of input parameters being optimized.
 	 */
-	public int getN();
+	int getN();
 
 	/**
 	 * Number of functions.
 	 */
-	public int getM();
+	int getM();
 
 	/**
 	 * Specifies the input parameters.  The user can modify these values and they will be modified inside the
@@ -39,9 +41,9 @@ public interface CoupledJacobian {
 	 *
 	 * @param x Optimization parameters.
 	 */
-	public void setInput(double[] x);
+	void setInput(double[] x);
 	
-	public void computeFunctions( double[] output );
+	void computeFunctions( double[] output );
 
 	/**
 	 * <p>
@@ -54,7 +56,7 @@ public interface CoupledJacobian {
 	 * The user can modify the input parameters here and the optimizer must use those changes.
 	 * </p>
 	 *
-	 * @param jacobian Row major array with M rows and N columns.
+	 * @param jacobian matrix with M rows and N columns.
 	 */
-	public void computeJacobian( double[] jacobian );
+	void computeJacobian( S jacobian );
 }

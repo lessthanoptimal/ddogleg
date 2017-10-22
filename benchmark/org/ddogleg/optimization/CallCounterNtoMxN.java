@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,18 +19,19 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrix;
 
 /**
  * Wraps around a function and counts the number of times it processes an input.
  *
  * @author Peter Abeles
  */
-public class CallCounterNtoMxN implements FunctionNtoMxN {
+public class CallCounterNtoMxN<S extends DMatrix> implements FunctionNtoMxN<S> {
 
 	public int count;
-	public FunctionNtoMxN func;
+	public FunctionNtoMxN<S> func;
 
-	public CallCounterNtoMxN(FunctionNtoMxN func) {
+	public CallCounterNtoMxN(FunctionNtoMxN<S> func) {
 		this.func = func;
 	}
 
@@ -45,8 +46,13 @@ public class CallCounterNtoMxN implements FunctionNtoMxN {
 	}
 
 	@Override
-	public void process(double[] input, double[] output) {
+	public void process(double[] input, S output) {
 		count++;
 		func.process(input,output);
+	}
+
+	@Override
+	public S declareMatrixMxN() {
+		return func.declareMatrixMxN();
 	}
 }

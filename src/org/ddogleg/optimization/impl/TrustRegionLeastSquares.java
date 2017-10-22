@@ -143,7 +143,7 @@ public class TrustRegionLeastSquares {
 		updated = false;
 		if( mode == 0 ) {
 			// compute the Jacobian and gradient
-			function.computeJacobian(J.data);
+			function.computeJacobian(J);
 			CommonOps_DDRM.multTransA(J, residuals, gradient);
 
 			// check for convergence

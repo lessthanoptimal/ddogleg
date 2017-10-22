@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -53,21 +53,21 @@ public interface IterativeOptimization extends Serializable {
 	 * </p>
 	 * @return true if it has converged or that no more progress can be made.
 	 */
-	public boolean iterate() throws OptimizationException;
+	boolean iterate() throws OptimizationException;
 
 	/**
 	 * True if the parameter(s) being optimized have been updated
 	 *
 	 * @return True if parameters have been updated
 	 */
-	public boolean isUpdated();
+	boolean isUpdated();
 
 	/**
 	 * Indicates if iteration stopped due to convergence or not.
 	 *
 	 * @return True if iteration stopped because it converged.
 	 */
-	public boolean isConverged();
+	boolean isConverged();
 
 	/**
 	 * Provides feed back if something went wrong, but still produced a solution.
@@ -76,5 +76,5 @@ public interface IterativeOptimization extends Serializable {
 	 *
 	 * @return Additional info on the computed solution.
 	 */
-	public String getWarning();
+	String getWarning();
 }

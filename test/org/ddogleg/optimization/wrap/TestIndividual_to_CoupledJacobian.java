@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization.wrap;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -63,7 +64,7 @@ public class TestIndividual_to_CoupledJacobian {
 		}
 	}
 
-	protected class DummyJacobian implements FunctionNtoMxN {
+	protected class DummyJacobian implements FunctionNtoMxN<DMatrixRMaj> {
 
 		double []input;
 
@@ -78,8 +79,13 @@ public class TestIndividual_to_CoupledJacobian {
 		}
 
 		@Override
-		public void process(double[] input, double[] output) {
+		public void process(double[] input, DMatrixRMaj output) {
 			this.input = input;
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(5,4);
 		}
 	}
 }

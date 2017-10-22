@@ -88,7 +88,7 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 		}
 	}
 	
-	public static class Deriv implements FunctionNtoMxN
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -101,11 +101,15 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 		}
 
 		@Override
-		public void process(double[] input, double[] output) {
-			DMatrixRMaj J = DMatrixRMaj.wrap(3,3,output);
+		public void process(double[] input,DMatrixRMaj J) {
 			double x1 = input[0];
 			double x2 = input[1];
 			double x3 = input[2];
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(3,3);
 		}
 	}
 }

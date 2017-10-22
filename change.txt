@@ -13,6 +13,7 @@ Date:
   * Added flip()
   * Added static function zeros(N)
   * Added static function array(...)
+- Support for sparse matrix solvers in optimization
 
 ------------------------------------------------------
 Version:  0.12

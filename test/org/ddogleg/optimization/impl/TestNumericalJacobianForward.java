@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,16 +38,16 @@ public class TestNumericalJacobianForward {
 		SimpleFunction f = new SimpleFunction();
 		NumericalJacobianForward alg = new NumericalJacobianForward(f);
 
-		double output[] = new double[]{1,1,1,1,1,1};
+		DMatrixRMaj output = alg.declareMatrixMxN();
 		alg.process(new double[]{2,3,7},output);
 
-		assertEquals(3, output[0], tol);
-		assertEquals(-36, output[1], tol);
-		assertEquals(0, output[2], tol);
+		assertEquals(3, output.data[0], tol);
+		assertEquals(-36, output.data[1], tol);
+		assertEquals(0, output.data[2], tol);
 
-		assertEquals(3, output[3], tol);
-		assertEquals(2, output[4], tol);
-		assertEquals(1, output[5], tol);
+		assertEquals(3, output.data[3], tol);
+		assertEquals(2, output.data[4], tol);
+		assertEquals(1, output.data[5], tol);
 	}
 
 	private static class SimpleFunction implements FunctionNtoM

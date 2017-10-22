@@ -44,7 +44,7 @@ public interface TrustRegionStep {
 	 * @param numParam Number of parameters being optimizes.  This is the length of 'x'
 	 * @param numFunctions Number of functions. Number of outputs to f(x)
 	 */
-	public void init( int numParam , int numFunctions );
+	void init( int numParam , int numFunctions );
 
 	/**
 	 * Specifies the state of the system being optimized.  Call before {@link #computeStep}.
@@ -55,8 +55,8 @@ public interface TrustRegionStep {
 	 * @param gradient Gradient: J<sup>T</sup>(x)*f(x)
 	 * @param fx Residual at x: 0.5*f<sup>T</sup>(x)*f(x)
 	 */
-	public void setInputs( DMatrixRMaj x , DMatrixRMaj residuals , DMatrixRMaj J ,
-						   DMatrixRMaj gradient , double fx );
+	void setInputs( DMatrixRMaj x , DMatrixRMaj residuals , DMatrixRMaj J ,
+					DMatrixRMaj gradient , double fx );
 
 	/**
 	 * Computes the next step to take for a given trust region.  Must invoke {@link #setInputs} before, but it only
@@ -65,7 +65,7 @@ public interface TrustRegionStep {
 	 * @param regionRadius Size of the trust region.
 	 * @param step Output, the computed step.
 	 */
-	public void computeStep( double regionRadius , DMatrixRMaj step );
+	void computeStep( double regionRadius , DMatrixRMaj step );
 
 	/**
 	 * Returns the predicted reduction for the step.  A linear model is used to predict the reduction.  See
@@ -73,12 +73,12 @@ public interface TrustRegionStep {
 	 * 
 	 * @return The predicted reduction.
 	 */
-	public double predictedReduction();
+	double predictedReduction();
 
 	/**
 	 * Was a step equal to the regionRadius taken?
 	 * 
 	 * @return true if maximum step and false if less than the maximum step
 	 */
-	public boolean isMaxStep();
+	boolean isMaxStep();
 }

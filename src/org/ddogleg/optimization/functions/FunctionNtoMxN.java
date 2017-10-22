@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,12 +18,14 @@
 
 package org.ddogleg.optimization.functions;
 
+import org.ejml.data.DMatrix;
+
 /**
  * Function that takes in a vector of length N and outputs a matrix with dimension M x N.
  *
  * @author Peter Abeles
  */
-public interface FunctionNtoMxN {
+public interface FunctionNtoMxN<S extends DMatrix> {
 
 	/**
 	 * Number of input parameters and columns in output matrix.
@@ -31,7 +33,7 @@ public interface FunctionNtoMxN {
 	 *
 	 * @return Number of input parameters
 	 */
-	public int getNumOfInputsN();
+	int getNumOfInputsN();
 
 	/**
 	 * Number of rows in output matrix.
@@ -39,13 +41,12 @@ public interface FunctionNtoMxN {
 	 *
 	 * @return Number of rows in output matrix.
 	 */
-	public int getNumOfOutputsM();
+	int getNumOfOutputsM();
 
 	/**
 	 * <p>
 	 * Processes the input vector to output a 2D a matrix.  The matrix has a dimension of M rows and N columns
-	 * and is formatted as a row major 1D-array.  EJML can be used to provide a matrix wrapper around
-	 * the output array: DenseMatrix J = DenseMatrix.wrap(m,n,output);
+	 * and is formatted as a row major 1D-array.
 	 * </p>
 	 *
 	 * <p>
@@ -55,5 +56,11 @@ public interface FunctionNtoMxN {
 	 * @param input Vector with input parameters.
 	 * @param output Row major array with M rows and N columns.
 	 */
-	public void process( double input[] , double[] output );
+	void process( double input[] , S output );
+
+	/**
+	 * Creates a matrix which can store the jacobian. Size is set by M and N
+	 * @return new instance of a matrix
+	 */
+	S declareMatrixMxN();
 }
