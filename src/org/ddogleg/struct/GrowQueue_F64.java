@@ -49,6 +49,14 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		return out;
 	}
 
+	public static GrowQueue_F64 array( double ...values ) {
+		GrowQueue_F64 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -200,6 +208,19 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		GrowQueue_F64 ret = new GrowQueue_F64(size);
 		ret.setTo(this);
 		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			double tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	public double pop() {

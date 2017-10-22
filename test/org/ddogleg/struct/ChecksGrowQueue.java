@@ -82,4 +82,30 @@ public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
 		check(alg,1,3);
 		assertEquals(4,alg.size());
 	}
+
+	@Test
+	public void flip() {
+		T alg = declare(10);
+
+		alg.flip();
+		assertEquals(0,alg.size());
+
+		push(alg, 1);
+		alg.flip();
+		assertEquals(1,alg.size());
+		check(alg,0,1);
+
+		push(alg, 2);
+		alg.flip();
+		assertEquals(2,alg.size());
+		check(alg,0,2);
+		check(alg,1,1);
+
+		push(alg, 3);
+		alg.flip();
+		assertEquals(3,alg.size());
+		check(alg,0,3);
+		check(alg,1,1);
+		check(alg,2,2);
+	}
 }

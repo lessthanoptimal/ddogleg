@@ -49,6 +49,14 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		return out;
 	}
 
+	public static GrowQueue_F32 array( float ...values ) {
+		GrowQueue_F32 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -191,6 +199,19 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		GrowQueue_F32 ret = new GrowQueue_F32(size);
 		ret.setTo(this);
 		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			float tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	public float pop() {

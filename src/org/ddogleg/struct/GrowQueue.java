@@ -57,6 +57,11 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	void setMaxSize( int size );
 
 	/**
+	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.
+	 */
+	void flip();
+
+	/**
 	 * Number of elements in the queue
 	 * @return size of queue
 	 */

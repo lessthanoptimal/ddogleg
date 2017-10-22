@@ -49,6 +49,14 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		return out;
 	}
 
+	public static GrowQueue_I8 array( int ...values ) {
+		GrowQueue_I8 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = (byte)values[i];
+		}
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -187,6 +195,19 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		GrowQueue_I8 ret = new GrowQueue_I8(size);
 		ret.setTo(this);
 		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			byte tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	/**

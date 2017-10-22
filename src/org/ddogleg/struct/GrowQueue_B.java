@@ -40,6 +40,34 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		this(10);
 	}
 
+	/**
+	 * Creates a queue with the specified length as its size filled with false
+	 */
+	public static GrowQueue_B zeros( int length ) {
+		GrowQueue_B out = new GrowQueue_B(length);
+		out.size = length;
+		return out;
+	}
+
+	public static GrowQueue_B array( boolean ...values ) {
+		GrowQueue_B out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
+		return out;
+	}
+
+	/**
+	 * Non-zero values are set to true
+	 */
+	public static GrowQueue_B array( int ...values ) {
+		GrowQueue_B out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i] != 0;
+		}
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -150,6 +178,19 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		GrowQueue_B ret = new GrowQueue_B(size);
 		ret.setTo(this);
 		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			boolean tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	public boolean pop() {

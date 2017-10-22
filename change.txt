@@ -10,7 +10,9 @@ Date:
   * Created an interface for GrowQueue
   * Added zero()
   * Added extend()
+  * Added flip()
   * Added static function zeros(N)
+  * Added static function array(...)
 
 ------------------------------------------------------
 Version:  0.12
