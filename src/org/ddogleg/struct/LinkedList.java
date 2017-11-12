@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,14 +29,14 @@ import java.util.Stack;
 public class LinkedList<T> {
 
 	// first element in the list
-	Element first;
+	Element<T> first;
 	// last element in the list
-	Element last;
+	Element<T> last;
 	// total number of elements in the list
 	int size;
 
 	// recycled elements.  It is assumed that all elements inside of here have all parameters set to null already
-	Stack<Element> available = new Stack<Element>();
+	Stack<Element<T>> available = new Stack<>();
 
 	/**
 	 * Puts the linked list back into its initial state.  Elements are saved for later use.
@@ -68,18 +68,18 @@ public class LinkedList<T> {
 	 * @return if true then the number of elements will be from first otherwise last
 	 */
 
-	public Element getElement( int index , boolean fromFront ) {
+	public Element<T> getElement( int index , boolean fromFront ) {
 		if( index > size || index < 0 ) {
 			throw new IllegalArgumentException("index is out of bounds");
 		}
 		if( fromFront ) {
-			Element e = first;
+			Element<T> e = first;
 			for( int i = 0; i < index; i++ ) {
 				e = e.next;
 			}
 			return e;
 		} else {
-			Element e = last;
+			Element<T> e = last;
 			for( int i = 0; i < index; i++ ) {
 				e = e.previous;
 			}
@@ -93,8 +93,8 @@ public class LinkedList<T> {
 	 * @param object Object being added.
 	 * @return The element it was placed inside of
 	 */
-	public Element pushHead( T object ) {
-		Element e = requestNew();
+	public Element<T> pushHead( T object ) {
+		Element<T> e = requestNew();
 		e.object = object;
 
 		if( first == null ) {
@@ -115,8 +115,8 @@ public class LinkedList<T> {
 	 * @param object Object being added.
 	 * @return The element it was placed inside of
 	 */
-	public Element pushTail( T object ) {
-		Element e = requestNew();
+	public Element<T> pushTail( T object ) {
+		Element<T> e = requestNew();
 		e.object = object;
 
 		if( last == null ) {
@@ -138,8 +138,8 @@ public class LinkedList<T> {
 	 * @param object The object which goes into the new element
 	 * @return The new element
 	 */
-	public Element insertAfter( Element previous , T object ) {
-		Element e = requestNew();
+	public Element<T> insertAfter( Element<T> previous , T object ) {
+		Element<T> e = requestNew();
 		e.object = object;
 		e.previous = previous;
 		e.next = previous.next;
@@ -160,8 +160,8 @@ public class LinkedList<T> {
 	 * @param object The object which goes into the new element
 	 * @return The new element
 	 */
-	public Element insertBefore( Element next , T object ) {
-		Element e = requestNew();
+	public Element<T> insertBefore( Element<T> next , T object ) {
+		Element<T> e = requestNew();
 		e.object = object;
 		e.previous = next.previous;
 		e.next = next;
@@ -182,7 +182,7 @@ public class LinkedList<T> {
 	 * @param a Element
 	 * @param b Element
 	 */
-	public void swap( Element a , Element b ) {
+	public void swap( Element<T> a , Element<T> b ) {
 		if (a.next == b) {
 			if( a.previous != null ) {
 				a.previous.next = b;
@@ -190,7 +190,7 @@ public class LinkedList<T> {
 			if( b.next != null ) {
 				b.next.previous = a;
 			}
-			Element tmp = a.previous;
+			Element<T> tmp = a.previous;
 			a.previous = b;
 			a.next = b.next;
 			b.previous = tmp;
@@ -206,7 +206,7 @@ public class LinkedList<T> {
 			if( b.previous != null ) {
 				b.previous.next = a;
 			}
-			Element tmp = a.next;
+			Element<T> tmp = a.next;
 			a.next = b;
 			a.previous = b.previous;
 			b.previous = a;
@@ -229,8 +229,8 @@ public class LinkedList<T> {
 			if (b.previous != null) {
 				b.previous.next = a;
 			}
-			Element tempNext = b.next;
-			Element tempPrev = b.previous;
+			Element<T> tempNext = b.next;
+			Element<T> tempPrev = b.previous;
 			b.next = a.next;
 			b.previous = a.previous;
 			a.next = tempNext;
@@ -251,7 +251,7 @@ public class LinkedList<T> {
 	 * Removes the element from the list and saves the element data structure for later reuse.
 	 * @param element The item which is to be removed from the list
 	 */
-	public void remove( Element element ) {
+	public void remove( Element<T> element ) {
 		if( element.next == null ) {
 			last = element.previous;
 		} else {
@@ -271,12 +271,12 @@ public class LinkedList<T> {
 	 * Removes the first element from the list
 	 * @return The object which was contained in the first element
 	 */
-	public Object removeHead() {
+	public T removeHead() {
 		if( first == null )
 			throw new IllegalArgumentException("Empty list");
 
-		Object ret = first.getObject();
-		Element e = first;
+		T ret = first.getObject();
+		Element<T> e = first;
 		available.push(first);
 
 		if( first.next != null ) {
@@ -300,7 +300,7 @@ public class LinkedList<T> {
 			throw new IllegalArgumentException("Empty list");
 
 		Object ret = last.getObject();
-		Element e = last;
+		Element<T> e = last;
 		available.add(last);
 
 		if( last.previous != null ) {
@@ -321,7 +321,7 @@ public class LinkedList<T> {
 	 * @return First element which contains object or null if none can be found
 	 */
 	public Element find( T object ) {
-		Element e = first;
+		Element<T> e = first;
 		while( e != null ) {
 			if( e.object == object ) {
 				return e;
@@ -335,7 +335,7 @@ public class LinkedList<T> {
 	 * Returns the first element in the list
 	 * @return first element
 	 */
-	public Element getHead() {
+	public Element<T> getHead() {
 		return first;
 	}
 
@@ -343,7 +343,7 @@ public class LinkedList<T> {
 	 * Returns the last element in the list
 	 * @return last element
 	 */
-	public Element getTail() {
+	public Element<T> getTail() {
 		return last;
 	}
 
@@ -355,7 +355,7 @@ public class LinkedList<T> {
 		if( list.isEmpty() )
 			return;
 
-		Element a = requestNew();
+		Element<T> a = requestNew();
 		a.object = list.get(0);
 
 		if( first == null ) {
@@ -366,7 +366,7 @@ public class LinkedList<T> {
 		}
 
 		for (int i = 1; i < list.size(); i++) {
-			Element b = requestNew();
+			Element<T> b = requestNew();
 			b.object = list.get(i);
 
 			a.next = b;
@@ -388,7 +388,7 @@ public class LinkedList<T> {
 		if( length <= 0 )
 			return;
 
-		Element a = requestNew();
+		Element<T> a = requestNew();
 		a.object = array[first];
 
 		if( this.first == null ) {
@@ -399,7 +399,7 @@ public class LinkedList<T> {
 		}
 
 		for (int i = 1; i < length; i++) {
-			Element b = requestNew();
+			Element<T> b = requestNew();
 			b.object =  array[first+i];
 
 			a.next = b;
@@ -423,19 +423,19 @@ public class LinkedList<T> {
 	 *
 	 * @return Unused element.
 	 */
-	protected Element requestNew () {
+	protected Element<T> requestNew () {
 		if( available.isEmpty() ) {
-			return new Element();
+			return new Element<>();
 		} else {
 			return available.pop();
 		}
 	}
 
-	public static class Element
+	public static class Element<T>
 	{
-		public Element next;
-		public Element previous;
-		public Object object;
+		public Element<T> next;
+		public Element<T> previous;
+		public T object;
 
 		public void clear() {
 			next = null;
@@ -447,7 +447,7 @@ public class LinkedList<T> {
 			return next;
 		}
 
-		public void setNext(Element next) {
+		public void setNext(Element<T> next) {
 			this.next = next;
 		}
 
@@ -455,15 +455,15 @@ public class LinkedList<T> {
 			return previous;
 		}
 
-		public void setPrevious(Element previous) {
+		public void setPrevious(Element<T> previous) {
 			this.previous = previous;
 		}
 
-		public Object getObject() {
+		public T getObject() {
 			return object;
 		}
 
-		public void setObject(Object object) {
+		public void setObject(T object) {
 			this.object = object;
 		}
 	}
