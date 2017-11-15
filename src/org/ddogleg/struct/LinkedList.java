@@ -320,7 +320,7 @@ public class LinkedList<T> {
 	 * @param object Object which is being searched for
 	 * @return First element which contains object or null if none can be found
 	 */
-	public Element find( T object ) {
+	public Element<T> find( T object ) {
 		Element<T> e = first;
 		while( e != null ) {
 			if( e.object == object ) {
