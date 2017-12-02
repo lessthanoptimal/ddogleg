@@ -55,8 +55,7 @@ public class DerivativeChecker {
 		jacobian.process(param,found);
 		numerical.process(param,expected);
 
-		if( expected.getNumRows() != found.getNumRows() || expected.getNumCols() != found.getNumCols() )
-			throw new RuntimeException("Unexpected jacobian shape");
+		checkJacobianShape((S) found, expected);
 
 		System.out.println("FOUND:");
 		found.print();
@@ -105,7 +104,17 @@ public class DerivativeChecker {
 		jacobian.process(param,found);
 		numerical.process(param,expected);
 
+		checkJacobianShape(found, expected);
+
 		return MatrixFeatures_D.isIdentical(expected,found,tol);
+	}
+
+	private static <S extends DMatrix> void checkJacobianShape(S found, DMatrixRMaj expected) {
+		if( expected.getNumRows() != found.getNumRows() || expected.getNumCols() != found.getNumCols() ) {
+			String message = "Expected "+expected.getNumRows()+"x"+expected.getNumCols() +
+					" Found "+found.getNumRows()+"x"+found.getNumCols();
+			throw new RuntimeException("Unexpected jacobian shape. "+message);
+		}
 	}
 
 	/**
@@ -130,6 +139,8 @@ public class DerivativeChecker {
 
 		jacobian.process(param,found);
 		numerical.process(param,expected);
+
+		checkJacobianShape( found, expected);
 
 		System.out.println("FOUND:");
 		found.print();
@@ -191,6 +202,8 @@ public class DerivativeChecker {
 
 		jacobian.process(param, found);
 		numerical.process(param, expected);
+
+		checkJacobianShape((S) found, expected);
 
 		for( int y = 0; y < expected.numRows; y++ ) {
 			for( int x = 0; x < expected.numCols; x++ ) {
