@@ -14,6 +14,8 @@ Date:
   * Added static function zeros(N)
   * Added static function array(...)
 - Support for sparse matrix solvers in optimization
+- LeastMedianOfSquares
+  * Can make it optimize for values other than median
 
 ------------------------------------------------------
 Version:  0.12

@@ -65,6 +65,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	private Model bestParam;
 	private double bestMedian;
 
+	// The specifies the error fraction its optimizing against. Almost always this should be 0.5
+	private double errorFraction = 0.5; // 0.5 = median
+
 	// copy of the input data set so that it can be modified
 	protected List<Point> dataSet = new ArrayList<>();
 
@@ -164,7 +167,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 				errorMetric.setModel(candidate);
 				errorMetric.computeDistance(_dataSet,errors);
 
-				double median = QuickSelect.select(errors, N / 2, N);
+				double median = QuickSelect.select(errors, (int)(N*errorFraction+0.5), N);
 
 				if( median < bestMedian ) {
 					bestMedian = median;
@@ -199,6 +202,14 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		} else {
 			inlierSet = dataSet;
 		}
+	}
+
+	public double getErrorFraction() {
+		return errorFraction;
+	}
+
+	public void setErrorFraction(double errorFraction) {
+		this.errorFraction = errorFraction;
 	}
 
 	@Override
