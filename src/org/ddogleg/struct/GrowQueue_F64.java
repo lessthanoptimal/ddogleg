@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -238,5 +238,10 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public void sort() {
+		Arrays.sort(data,0,size);
 	}
 }

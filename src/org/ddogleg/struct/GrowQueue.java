@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -73,4 +73,9 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	void zero();
 
 	T copy();
+
+	/**
+	 * Sorts the data from smallest to largest
+	 */
+	void sort();
 }

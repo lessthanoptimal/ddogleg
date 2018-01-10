@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -208,5 +208,10 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public void sort() {
+		throw new RuntimeException("Undefined for boolean");
 	}
 }
