@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -154,5 +154,25 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 		assertEquals(1,alg.indexOf((byte)3));
 		assertEquals(-1,alg.indexOf((byte)8));
+	}
+
+	@Test
+	public void sort() {
+		GrowQueue_I8 alg = new GrowQueue_I8(6);
+
+		alg.push(8);
+		alg.push(2);
+		alg.push(4);
+		alg.push(3);
+		alg.push(-1);
+
+		alg.sort();
+
+		assertEquals(5,alg.size);
+		assertEquals(-1,alg.get(0));
+		assertEquals(2,alg.get(1));
+		assertEquals(3,alg.get(2));
+		assertEquals(4,alg.get(3));
+		assertEquals(8,alg.get(4));
 	}
 }
