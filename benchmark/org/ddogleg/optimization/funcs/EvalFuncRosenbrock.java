@@ -74,7 +74,7 @@ public class EvalFuncRosenbrock implements EvalFuncLeastSquares {
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -87,14 +87,18 @@ public class EvalFuncRosenbrock implements EvalFuncLeastSquares {
 		}
 
 		@Override
-		public void process(double[] input, double[] output) {
-			DMatrixRMaj J = DMatrixRMaj.wrap(2,2,output);
+		public void process(double[] input, DMatrixRMaj J) {
 			double x1 = input[0];
 			
 			J.set(0,0,-20*x1);
 			J.set(0,1,10);
 			J.set(1,0,-1);
 			J.set(1,1,0);
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(2,2);
 		}
 	}
 }

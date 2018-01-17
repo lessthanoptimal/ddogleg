@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,7 +32,7 @@ public interface OptimizationDerivative<State>
 	 *
 	 * @param model Model parameters.
 	 */
-	public void setModel( double[] model );
+	void setModel( double[] model );
 
 	/**
 	 * <p>
@@ -47,5 +47,5 @@ public interface OptimizationDerivative<State>
 	 * @param gradient Gradient with respect to the current model parameters,
 	 * @return true if successful or false if it failed.
 	 */
-	public boolean computeDerivative( State state, double[][] gradient );
+	boolean computeDerivative( State state, double[][] gradient );
 }

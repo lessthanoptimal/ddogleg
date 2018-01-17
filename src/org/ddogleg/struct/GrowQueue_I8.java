@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_I8 {
+public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 
 	public byte data[];
 	public int size;
@@ -40,6 +40,24 @@ public class GrowQueue_I8 {
 		this(10);
 	}
 
+	/**
+	 * Creates a queue with the specified length as its size filled with all zeros
+	 */
+	public static GrowQueue_I8 zeros( int length ) {
+		GrowQueue_I8 out = new GrowQueue_I8(length);
+		out.size = length;
+		return out;
+	}
+
+	public static GrowQueue_I8 array( int ...values ) {
+		GrowQueue_I8 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = (byte)values[i];
+		}
+		return out;
+	}
+
+	@Override
 	public void reset() {
 		size = 0;
 	}
@@ -134,9 +152,20 @@ public class GrowQueue_I8 {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new byte[size];
+		}
+		this.size = size;
+	}
+
+	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			byte []tmp = new byte[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
 		}
 		this.size = size;
 	}
@@ -147,12 +176,65 @@ public class GrowQueue_I8 {
 		}
 	}
 
+	@Override
 	public int size() {
 		return size;
 	}
 
 	public int pop() {
 		return data[--size];
+	}
+
+	@Override
+	public void zero() {
+		Arrays.fill(data,0,size,(byte)0);
+	}
+
+	@Override
+	public GrowQueue_I8 copy() {
+		GrowQueue_I8 ret = new GrowQueue_I8(size);
+		ret.setTo(this);
+		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			byte tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
+	}
+
+	/**
+	 * Prints the queue to stdout as a hex array
+	 */
+	public void printHex() {
+		System.out.print("[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.printf("0x%02X ",data[i]);
+		}
+		System.out.print("]");
+	}
+
+	public static GrowQueue_I8 parseHex( String message ) {
+		message = message.replaceAll("\\[","");
+		message = message.replaceAll("\\]","");
+		message = message.replaceAll(" ","");
+
+		String words[] = message.split(",");
+
+		GrowQueue_I8 out = new GrowQueue_I8(words.length);
+		out.size = words.length;
+
+		for (int i = 0; i < words.length; i++) {
+			out.data[i] = Integer.decode(words[i]).byteValue();
+		}
+		return out;
 	}
 
 	/**
@@ -167,4 +249,10 @@ public class GrowQueue_I8 {
 		}
 		return -1;
 	}
+
+	@Override
+	public void sort() {
+		Arrays.sort(data,0,size);
+	}
+
 }

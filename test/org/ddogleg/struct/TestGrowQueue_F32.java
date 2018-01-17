@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestGrowQueue_F32 {
+public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 
 	@Test
 	public void addAll_queue() {
@@ -140,42 +140,24 @@ public class TestGrowQueue_F32 {
 		assertEquals(5,alg.get(2),1e-4f);
 	}
 
-	@Test
-	public void insert() {
+	@Override
+	public GrowQueue_F32 declare(int maxsize) {
+		return new GrowQueue_F32(maxsize);
+	}
 
-		GrowQueue_F32 alg = new GrowQueue_F32(10);
+	@Override
+	public void push(GrowQueue_F32 queue, double value) {
+		queue.push((float)value);
+	}
 
-		// insert with no array resize
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
+	@Override
+	public void insert(GrowQueue_F32 queue, int index, double value) {
+		queue.insert(index,(float)value);
+	}
 
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size, 1e-4f);
-		assertEquals(1,alg.get(0), 1e-4f);
-		assertEquals(3,alg.get(1), 1e-4f);
-		assertEquals(6,alg.get(2), 1e-4f);
-		assertEquals(4,alg.get(3), 1e-4f);
-		assertEquals(5,alg.get(4), 1e-4f);
-
-		// insert with array resize
-
-		alg = new GrowQueue_F32(4);
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
-
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size);
-		assertEquals(1,alg.get(0), 1e-4f);
-		assertEquals(3,alg.get(1), 1e-4f);
-		assertEquals(6,alg.get(2), 1e-4f);
-		assertEquals(4,alg.get(3), 1e-4f);
-		assertEquals(5,alg.get(4), 1e-4f);
+	@Override
+	public void check(GrowQueue_F32 queue, int index, double value) {
+		assertEquals((float)value,queue.get(index),1e-4f);
 	}
 
 	@Test
@@ -189,6 +171,24 @@ public class TestGrowQueue_F32 {
 
 		assertEquals(1,alg.indexOf(3));
 		assertEquals(-1,alg.indexOf(8));
+	}
+
+	@Test
+	public void sort() {
+		GrowQueue_F32 alg = new GrowQueue_F32(6);
+
+		alg.push(8);
+		alg.push(2);
+		alg.push(4);
+		alg.push(3);
+
+		alg.sort();
+
+		assertEquals(4,alg.size);
+		assertEquals(2,alg.get(0),1e-4f);
+		assertEquals(3,alg.get(1),1e-4f);
+		assertEquals(4,alg.get(2),1e-4f);
+		assertEquals(8,alg.get(3),1e-4f);
 	}
 }
 

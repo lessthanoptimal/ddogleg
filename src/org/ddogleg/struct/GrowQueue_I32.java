@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_I32 {
+public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	public int data[];
 	public int size;
@@ -40,6 +40,24 @@ public class GrowQueue_I32 {
 		this(10);
 	}
 
+	/**
+	 * Creates a queue with the specified length as its size filled with all zeros
+	 */
+	public static GrowQueue_I32 zeros( int length ) {
+		GrowQueue_I32 out = new GrowQueue_I32(length);
+		out.size = length;
+		return out;
+	}
+
+	public static GrowQueue_I32 array( int ...values ) {
+		GrowQueue_I32 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
+		return out;
+	}
+
+	@Override
 	public void reset() {
 		size = 0;
 	}
@@ -96,6 +114,7 @@ public class GrowQueue_I32 {
 		data[index] = value;
 	}
 
+	@Override
 	public void setTo( GrowQueue_I32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
@@ -149,6 +168,7 @@ public class GrowQueue_I32 {
 		}
 	}
 
+	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];
@@ -156,6 +176,17 @@ public class GrowQueue_I32 {
 		this.size = size;
 	}
 
+	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			int []tmp = new int[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];
@@ -166,12 +197,38 @@ public class GrowQueue_I32 {
 		Arrays.fill(data,0,size,value);
 	}
 
+	@Override
 	public int size() {
 		return size;
 	}
 
 	public int pop() {
 		return data[--size];
+	}
+
+	@Override
+	public void zero() {
+		Arrays.fill(data,0,size,0);
+	}
+
+	@Override
+	public GrowQueue_I32 copy() {
+		GrowQueue_I32 ret = new GrowQueue_I32(size);
+		ret.setTo(this);
+		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			int tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	/**
@@ -185,5 +242,10 @@ public class GrowQueue_I32 {
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public void sort() {
+		Arrays.sort(data,0,size);
 	}
 }

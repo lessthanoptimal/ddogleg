@@ -21,7 +21,7 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrix;
 
 /**
  * Convert the Jacobian of a least squares function into a nonlinear optimization gradient.
@@ -30,19 +30,19 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class LsToNonLinearDeriv implements FunctionNtoN {
+public class LsToNonLinearDeriv<S extends DMatrix> implements FunctionNtoN {
 
 	FunctionNtoM func;
-	FunctionNtoMxN deriv;
+	FunctionNtoMxN<S> deriv;
 
 	double funcOutput[];
-	double jacobian[];
+	S J; // the jacobian
 
-	public LsToNonLinearDeriv(FunctionNtoM func,FunctionNtoMxN deriv) {
+	public LsToNonLinearDeriv(FunctionNtoM func,FunctionNtoMxN<S> deriv) {
 		this.func = func;
 		this.deriv = deriv;
 		funcOutput = new double[ deriv.getNumOfOutputsM() ];
-		jacobian = new double[ deriv.getNumOfOutputsM()*deriv.getNumOfInputsN() ];
+		J = deriv.declareMatrixMxN();
 	}
 
 	@Override
@@ -53,10 +53,8 @@ public class LsToNonLinearDeriv implements FunctionNtoN {
 	@Override
 	public void process(double[] input, double []output) {
 		func.process(input,funcOutput);
-		deriv.process(input,jacobian);
+		deriv.process(input, J);
 
-		DMatrixRMaj J = DMatrixRMaj.wrap(deriv.getNumOfOutputsM(),deriv.getNumOfInputsN(),jacobian);
-		
 		int N = deriv.getNumOfInputsN();
 		int M = deriv.getNumOfOutputsM();
 		for( int i = 0; i < N; i++ ) {

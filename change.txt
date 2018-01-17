@@ -3,6 +3,22 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.13
+Date:     2018/01/17
+
+- GrowQueue
+  * Created an interface for GrowQueue
+  * Added zero()
+  * Added extend()
+  * Added flip()
+  * Added sort()
+  * Added static function zeros(N)
+  * Added static function array(...)
+- Support for sparse matrix solvers in optimization
+- LeastMedianOfSquares
+  * Can make it optimize for values other than median
+
+------------------------------------------------------
 Version:  0.12
 Date:     2017/09/18
 

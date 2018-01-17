@@ -73,7 +73,7 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -86,8 +86,7 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 		}
 
 		@Override
-		public void process(double[] input, double[] output) {
-			DMatrixRMaj J = DMatrixRMaj.wrap(2,2,output);
+		public void process( double[] input, DMatrixRMaj J ) {
 			double x1 = input[0];
 			double x2 = input[1];
 			
@@ -95,6 +94,11 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 			J.set(0,1,0);
 			J.set(1,0,1.0/Math.pow(x1 + 0.1, 2));
 			J.set(1,1,4*x2);
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
 }

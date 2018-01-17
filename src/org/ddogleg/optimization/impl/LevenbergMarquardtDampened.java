@@ -69,7 +69,7 @@ public class LevenbergMarquardtDampened extends LevenbergDenseBase {
 	@Override
 	protected void computeJacobian( DMatrixRMaj residuals , DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
-		function.computeJacobian(jacobianVals.data);
+		function.computeJacobian(jacobianVals);
 
 		// compute helper matrices
 		// B = J'*J;   g = J'*r

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestGrowQueue_I64 {
+public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 
 	@Test
 	public void addAll_queue() {
@@ -140,42 +140,24 @@ public class TestGrowQueue_I64 {
 		assertEquals(5,alg.get(2));
 	}
 
-	@Test
-	public void insert() {
+	@Override
+	public GrowQueue_I64 declare(int maxsize) {
+		return new GrowQueue_I64(maxsize);
+	}
 
-		GrowQueue_I64 alg = new GrowQueue_I64(10);
+	@Override
+	public void push(GrowQueue_I64 queue, double value) {
+		queue.push((long)value);
+	}
 
-		// insert with no array resize
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
+	@Override
+	public void insert(GrowQueue_I64 queue, int index, double value) {
+		queue.insert(index,(long)value);
+	}
 
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size);
-		assertEquals(1,alg.get(0));
-		assertEquals(3,alg.get(1));
-		assertEquals(6,alg.get(2));
-		assertEquals(4,alg.get(3));
-		assertEquals(5,alg.get(4));
-
-		// insert with array resize
-
-		alg = new GrowQueue_I64(4);
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
-
-		alg.insert(2, 6);
-
-		assertEquals(5,alg.size);
-		assertEquals(1,alg.get(0));
-		assertEquals(3,alg.get(1));
-		assertEquals(6,alg.get(2));
-		assertEquals(4,alg.get(3));
-		assertEquals(5,alg.get(4));
+	@Override
+	public void check(GrowQueue_I64 queue, int index, double value) {
+		assertEquals((long)value,queue.get(index));
 	}
 
 	@Test
@@ -189,5 +171,23 @@ public class TestGrowQueue_I64 {
 
 		assertEquals(1,alg.indexOf(3));
 		assertEquals(-1,alg.indexOf(8));
+	}
+
+	@Test
+	public void sort() {
+		GrowQueue_I64 alg = new GrowQueue_I64(6);
+
+		alg.push(8);
+		alg.push(2);
+		alg.push(4);
+		alg.push(3);
+
+		alg.sort();
+
+		assertEquals(4,alg.size);
+		assertEquals(2,alg.get(0));
+		assertEquals(3,alg.get(1));
+		assertEquals(4,alg.get(2));
+		assertEquals(8,alg.get(3));
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_B {
+public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 
 	public boolean data[];
 	public int size;
@@ -40,6 +40,35 @@ public class GrowQueue_B {
 		this(10);
 	}
 
+	/**
+	 * Creates a queue with the specified length as its size filled with false
+	 */
+	public static GrowQueue_B zeros( int length ) {
+		GrowQueue_B out = new GrowQueue_B(length);
+		out.size = length;
+		return out;
+	}
+
+	public static GrowQueue_B array( boolean ...values ) {
+		GrowQueue_B out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
+		return out;
+	}
+
+	/**
+	 * Non-zero values are set to true
+	 */
+	public static GrowQueue_B array( int ...values ) {
+		GrowQueue_B out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i] != 0;
+		}
+		return out;
+	}
+
+	@Override
 	public void reset() {
 		size = 0;
 	}
@@ -109,6 +138,7 @@ public class GrowQueue_B {
 		}
 	}
 
+	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
 			data = new boolean[size];
@@ -116,14 +146,51 @@ public class GrowQueue_B {
 		this.size = size;
 	}
 
+	@Override
+	public void extend( int size ) {
+		if( data.length < size ) {
+			boolean []tmp = new boolean[size];
+			System.arraycopy(data,0,tmp,0,this.size);
+			data = tmp;
+		}
+		this.size = size;
+	}
+
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new boolean[size];
 		}
 	}
 
+	@Override
 	public int size() {
 		return size;
+	}
+
+	@Override
+	public void zero() {
+		Arrays.fill(data,0,size,false);
+	}
+
+	@Override
+	public GrowQueue_B copy() {
+		GrowQueue_B ret = new GrowQueue_B(size);
+		ret.setTo(this);
+		return ret;
+	}
+
+	@Override
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			boolean tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
 	}
 
 	public boolean pop() {
@@ -141,5 +208,10 @@ public class GrowQueue_B {
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public void sort() {
+		throw new RuntimeException("Undefined for boolean");
 	}
 }

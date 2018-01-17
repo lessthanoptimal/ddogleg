@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,6 +23,7 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.NumericalGradientForward;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -76,7 +77,7 @@ public class TestLsToNonLinearDeriv {
 		}
 	}
 
-	public static class DerivLS implements FunctionNtoMxN
+	public static class DerivLS implements FunctionNtoMxN<DMatrixRMaj>
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -89,16 +90,21 @@ public class TestLsToNonLinearDeriv {
 		}
 
 		@Override
-		public void process(double[] input, double[] output) {
+		public void process(double[] input, DMatrixRMaj output) {
 			double x1 = input[0];
 			double x2 = input[1];
 
-			output[0] = 1;
-			output[1] = 20*x2;
-			output[2] = 0;
-			output[3] = 1;
-			output[4] = 2;
-			output[5] = 1;
+			output.data[0] = 1;
+			output.data[1] = 20*x2;
+			output.data[2] = 0;
+			output.data[3] = 1;
+			output.data[4] = 2;
+			output.data[5] = 1;
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
 }

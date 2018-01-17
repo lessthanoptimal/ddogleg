@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  *
@@ -71,7 +72,7 @@ public class EvalFuncBadlyScaledBrown implements EvalFuncLeastSquares {
 		}
 	}
 
-	public class Deriv implements FunctionNtoMxN
+	public class Deriv implements FunctionNtoMxN<DMatrixRMaj>
 	{
 		@Override
 		public int getNumOfInputsN() {return 2;}
@@ -80,16 +81,21 @@ public class EvalFuncBadlyScaledBrown implements EvalFuncLeastSquares {
 		public int getNumOfOutputsM() {return 3;}
 
 		@Override
-		public void process(double[] input, double[] output) {
+		public void process(double[] input, DMatrixRMaj output) {
 			double x1 = input[0];
 			double x2 = input[1];
 
-			output[0] = 1;
-			output[1] = 0;
-			output[2] = 0;
-			output[3] = 1;
-			output[4] = x2;
-			output[5] = x1;
+			output.data[0] = 1;
+			output.data[1] = 0;
+			output.data[2] = 0;
+			output.data[3] = 1;
+			output.data[4] = x2;
+			output.data[5] = x1;
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
 }

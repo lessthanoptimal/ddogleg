@@ -2,6 +2,7 @@
   * cd docs/website/
   * conf.py, Download.rst, index.rst, Documentation.rst
   * examples/ <-- the source code
+    See what needs to be updated since TAG_NAME "git diff --name-status TAG_NAME ddogleg/examples"
   * git tag links to github *.rst example files
   * make html
   * scp _build to ddogleg.org

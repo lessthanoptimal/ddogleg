@@ -35,7 +35,7 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class NumericalJacobianFB implements FunctionNtoMxN
+public class NumericalJacobianFB implements FunctionNtoMxN<DMatrixRMaj>
 {
 	// number of input variables
 	private final int N;
@@ -75,8 +75,8 @@ public class NumericalJacobianFB implements FunctionNtoMxN
 	}
 
 	@Override
-	public void process(double[] input, double[] jacobian) {
-		DMatrixRMaj J = DMatrixRMaj.wrap(M,N,jacobian);
+	public void process(double[] input, DMatrixRMaj jacobian) {
+		DMatrixRMaj J = jacobian;
 		
 		for( int i = 0; i < N; i++ ) {
 			double x = input[i];
@@ -98,5 +98,10 @@ public class NumericalJacobianFB implements FunctionNtoMxN
 			}
 			input[i] = x;
 		}
+	}
+
+	@Override
+	public DMatrixRMaj declareMatrixMxN() {
+		return new DMatrixRMaj(M,N);
 	}
 }
