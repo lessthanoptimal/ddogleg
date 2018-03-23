@@ -180,10 +180,3 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.3'
 }
 
-idea {
-    project {
-        jdkName = '1.7 (64bit)'
-        languageLevel = '1.7'
-    }
-}
-
