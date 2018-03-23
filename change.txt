@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.14
+Date:     2018
+
+
+
+------------------------------------------------------
 Version:  0.13
 Date:     2018/01/17
 
