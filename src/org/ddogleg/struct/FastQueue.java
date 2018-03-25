@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -186,6 +186,12 @@ public class FastQueue<T> implements Serializable {
 	public void addAll( FastQueue<T> list ) {
 		for( int i = 0; i < list.size; i++ ) {
 			add( list.data[i]);
+		}
+	}
+
+	public void add( T[] array , int first, int length ) {
+		for( int i = 0; i < length; i++ ) {
+			add( array[first+i]);
 		}
 	}
 
