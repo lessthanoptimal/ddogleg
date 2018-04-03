@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -80,7 +80,7 @@ public class TestGaussianGmm_F64 {
 
 			g.addCovariance(x.data,0.4+i*0.1);
 		}
-		DMatrixRMaj Q = eq.lookupMatrix("Q");
+		DMatrixRMaj Q = eq.lookupDDRM("Q");
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(Q, g.covariance, 1e-8));
 	}
