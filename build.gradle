@@ -1,7 +1,7 @@
 
-//plugins {
-//    id "com.peterabeles.gversion" version "1.1"
-//}
+plugins {
+    id "com.peterabeles.gversion" version "1.1"
+}
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -9,16 +9,6 @@ apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'com.peterabeles.gversion'
-
-buildscript {
-    repositories {
-        mavenLocal()
-    }
-    dependencies {
-        classpath "com.peterabeles.gversion:gversion:1.1"
-    }
-}
 
 group = 'org.ddogleg'
 version = '0.14-SNAPSHOT'
