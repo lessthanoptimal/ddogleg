@@ -1,10 +1,24 @@
 
+//plugins {
+//    id "com.peterabeles.gversion" version "1.1"
+//}
+
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'com.peterabeles.gversion'
+
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.peterabeles.gversion:gversion:1.1"
+    }
+}
 
 group = 'org.ddogleg'
 version = '0.14-SNAPSHOT'
@@ -12,6 +26,12 @@ project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+gversion {
+    srcDir       = "src"
+    classPackage = "org.ddogleg"
+    className    = "DDoglegVersion"
+}
 
 repositories {
     mavenCentral()
@@ -175,6 +195,8 @@ task alljavadoc(type: Javadoc) {
         bottom = file('misc/bottom.txt').text
     }
 }
+
+project.compileJava.dependsOn(createVersionFile)
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.3'
