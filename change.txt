@@ -6,7 +6,7 @@ Date Format: YEAR-MONTH-DAY
 Version:  0.14
 Date:     2018
 
-
+- Added Stoppable
 
 ------------------------------------------------------
 Version:  0.13
