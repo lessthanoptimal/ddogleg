@@ -38,12 +38,12 @@ To include the latest stable release in your Maven projects add the following de
     <dependency>
         <groupId>org.ddogleg</groupId>
         <artifactId>ddogleg</artifactId>
-        <version>0.13</version>
+        <version>0.14</version>
     </dependency>
  
 **Gradle:**
 ::
-    compile group: 'org.ddogleg', name: 'ddogleg', version: '0.13'
+    compile group: 'org.ddogleg', name: 'ddogleg', version: '0.14'
 
 
 Dependencies

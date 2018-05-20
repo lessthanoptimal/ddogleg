@@ -11,7 +11,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.14-SNAPSHOT'
+version = '0.14'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.8
