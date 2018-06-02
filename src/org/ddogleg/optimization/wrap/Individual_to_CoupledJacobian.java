@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,21 +21,21 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrix;
 
 /**
  * Wrapper around {@link org.ddogleg.optimization.functions.FunctionNtoM} and {@link FunctionNtoMxN} for {@link org.ddogleg.optimization.functions.CoupledJacobian}.
  * 
  * @author Peter Abeles
  */
-public class Individual_to_CoupledJacobian implements CoupledJacobian<DMatrixRMaj> {
+public class Individual_to_CoupledJacobian<S extends DMatrix> implements CoupledJacobian<S> {
 	
 	FunctionNtoM func;
-	FunctionNtoMxN<DMatrixRMaj> jacobian;
+	FunctionNtoMxN<S> jacobian;
 
 	double[] x;
 	
-	public Individual_to_CoupledJacobian(FunctionNtoM func, FunctionNtoMxN jacobian) {
+	public Individual_to_CoupledJacobian(FunctionNtoM func, FunctionNtoMxN<S> jacobian) {
 		if( func.getNumOfOutputsM() != jacobian.getNumOfOutputsM() )
 			throw new IllegalArgumentException("M not equal");
 
@@ -67,7 +67,7 @@ public class Individual_to_CoupledJacobian implements CoupledJacobian<DMatrixRMa
 	}
 
 	@Override
-	public void computeJacobian(DMatrixRMaj jacobian) {
+	public void computeJacobian(S jacobian) {
 		this.jacobian.process(x,jacobian);
 	}
 }

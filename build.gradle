@@ -1,6 +1,6 @@
 
 plugins {
-    id "com.peterabeles.gversion" version "1.2"
+    id "com.peterabeles.gversion" version "1.2.2"
 }
 
 apply plugin: 'idea'
@@ -57,7 +57,9 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.34'}
+        compile group: 'org.ejml', name: a, version: '0.35-SNAPSHOT'}
+
+    compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -180,7 +182,7 @@ task alljavadoc(type: Javadoc) {
     configure(options) {
         failOnError = false
         docTitle = "DDogleg ($project.version)"
-        links = [ 'http://docs.oracle.com/javase/7/docs/api/',
+        links = [ 'http://docs.oracle.com/javase/8/docs/api/',
                   'http://ejml.org/javadoc/' ]
         bottom = file('misc/bottom.txt').text
     }
@@ -189,6 +191,6 @@ task alljavadoc(type: Javadoc) {
 project.compileJava.dependsOn(createVersionFile)
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.3'
+    gradleVersion = '4.4'
 }
 

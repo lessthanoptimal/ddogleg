@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,29 +19,40 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
+import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.data.IGrowArray;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.interfaces.linsol.LinearSolverSparse;
 
 /**
- * Base class for Levenberg solvers which use dense matrices.
+ * Base class for Levenberg solvers which use {@link org.ejml.data.DMatrixSparseCSC}
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergDenseBase extends LevenbergBase {
+public abstract class LevenbergBase_DSCC extends LevenbergBase {
 
-	// jacobian at x
-	protected DMatrixRMaj jacobianVals = new DMatrixRMaj(1,1);
+	// jacobian at x. M by N matrix.
+	protected DMatrixSparseCSC jacobianVals = new DMatrixSparseCSC(1,1);
 
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
-	protected DMatrixRMaj B = new DMatrixRMaj(1,1);
+	protected DMatrixSparseCSC B = new DMatrixSparseCSC(1,1);
 	// diagonal elements of JtJ
 	protected DMatrixRMaj Bdiag = new DMatrixRMaj(1,1);
 
 	// Least-squares Function being optimized
-	protected CoupledJacobian function;
+	protected CoupledJacobian<DMatrixSparseCSC> function;
 
-	public LevenbergDenseBase(double initialDampParam) {
+	// Workspace variables
+	IGrowArray gw = new IGrowArray();
+	DGrowArray gx = new DGrowArray();
+
+	// solver used to compute (A + mu*diag(A))d = g
+	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver;
+
+	public LevenbergBase_DSCC(double initialDampParam) {
 		super(initialDampParam);
 	}
 
@@ -65,13 +76,13 @@ public abstract class LevenbergDenseBase extends LevenbergBase {
 	 *
 	 * @param function Computes residuals and Jacobian.
 	 */
-	public void setFunction( CoupledJacobian function ) {
+	public void setFunction( CoupledJacobian<DMatrixSparseCSC> function ) {
 		internalInitialize(function.getN(),function.getM());
 		this.function = function;
 
-		jacobianVals.reshape(M,N);
+		jacobianVals.reshape(M,N,M);
 
-		B.reshape(N, N);
+		B.reshape(N, N, N);
 		Bdiag.reshape(N,1);
 	}
 }

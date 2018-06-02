@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,7 +22,7 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.LevenbergDenseBase;
+import org.ddogleg.optimization.impl.LevenbergBase_DDRM;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
 
 /**
@@ -32,9 +32,9 @@ import org.ddogleg.optimization.impl.NumericalJacobianForward;
  */
 public class LevenbergDampened_to_UnconstrainedLeastSquares implements UnconstrainedLeastSquares {
 
-	LevenbergDenseBase alg;
+	LevenbergBase_DDRM alg;
 
-	public LevenbergDampened_to_UnconstrainedLeastSquares(LevenbergDenseBase alg) {
+	public LevenbergDampened_to_UnconstrainedLeastSquares(LevenbergBase_DDRM alg) {
 		this.alg = alg;
 	}
 

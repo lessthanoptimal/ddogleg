@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,8 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ddogleg.optimization.EvaluateLevenbergDampened;
+import org.ddogleg.optimization.EvaluateLevenbergMarquardtDampened;
 import org.ddogleg.optimization.NonlinearResults;
-import org.ddogleg.optimization.functions.FunctionNtoM;
-import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,43 +28,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLevenbergDampened {
+public class CommonChecksLevenbergMarquardtDampened {
 
-	EvaluateLevenbergDampened evaluator = new EvaluateLevenbergDampened(false);
-
-	@Test
-	public void basicTest() {
-		double a=2,b=0.1;
-
-		LevenbergDampened alg = createAlg(a,b);
-		
-		alg.initialize(new double[]{1,0.5});
-		
-		int i;
-		for( i = 0; i < 200 && !alg.iterate(); i++ ) { }
-
-		// should converge way before this
-		assertTrue(i != 200);
-		assertTrue(alg.isConverged());
-
-		double found[] = alg.getParameters();
-
-		assertEquals(a, found[0], 1e-4);
-		assertEquals(b, found[1], 1e-4);
-	}
-
-	private LevenbergDampened createAlg( double a, double b ) {
-
-		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
-
-		LevenbergDampened alg = new LevenbergDampened(1e-3);
-
-		alg.setConvergence(1e-6,1e-6);
-		alg.setFunction(new Individual_to_CoupledJacobian(residual,jacobian));
-
-		return alg;
-	}
+	EvaluateLevenbergMarquardtDampened evaluator = new EvaluateLevenbergMarquardtDampened(false);
 
 	@Test
 	public void helicalvalley() {

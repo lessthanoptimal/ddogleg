@@ -19,14 +19,14 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.LinearSolverSafe;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.CommonOps_DDRM;
-import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.dense.row.mult.MatrixMultProduct_DDRM;
+import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolverDense;
+import org.ejml.sparse.FillReducing;
+import org.ejml.sparse.LinearSolverSparseSafe;
+import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
 /**
  * <p>
@@ -61,20 +61,16 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
  */
 // After some minor modifications it was compared against Matlab code in [1] and produced identical results
 // in each step.  Stopping conditions and initialization is a bit different.
-public class LevenbergDampened extends LevenbergBase_DDRM {
-
-	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolverDense<DMatrixRMaj> solver;
+public class LevenbergDampened_DSCC extends LevenbergBase_DSCC {
 
 	/**
 	 * Specifies termination condition and dampening parameter
 	 *
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergDampened(double initialDampParam) {
+	public LevenbergDampened_DSCC(double initialDampParam) {
 		super(initialDampParam);
 	}
-
 
 	@Override
 	protected void computeJacobian( DMatrixRMaj residuals , DMatrixRMaj gradient) {
@@ -85,32 +81,32 @@ public class LevenbergDampened extends LevenbergBase_DDRM {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		MatrixMultProduct_DDRM.inner_reorder_upper(jacobianVals, B);
-		CommonOps_DDRM.multTransA(jacobianVals, residuals, gradient);
+		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B,gw,gx );
+		CommonOps_DSCC.multTransA(jacobianVals, residuals, gradient, gx);
 
 		// extract diagonal elements from B
-		CommonOps_DDRM.extractDiag(B, Bdiag);
+		CommonOps_DSCC.extractDiag(B, Bdiag);
+
+		solver.setStructureLocked(false);
 	}
 
 	@Override
 	protected boolean computeStep(double lambda, DMatrixRMaj gradientNegative , DMatrixRMaj step) {
 		// add dampening parameter
 		for( int i = 0; i < N; i++ ) {
-			int index = B.getIndex(i,i);
-			B.data[index] = Bdiag.data[i] + lambda;
+			B.set(i,i, Bdiag.data[i] + lambda);
 		}
 
 		// compute the change in step.
-		if( solver.setA(B) ) {
-			if( solver.quality() > UtilEjml.EPS ) {
-
-				// solve for change in x
-				solver.solve(gradientNegative, step);
-
-				return true;
-			}
+		if( !solver.setA(B) || solver.quality() <= UtilEjml.EPS) {
+			return false;
 		}
-		return false;
+		// solve for change in x
+		solver.solve(gradientNegative, step);
+
+		// lock the structure so that if this is called again it isn't recomputed
+		solver.setStructureLocked(true);
+		return true;
 	}
 
 	/**
@@ -119,11 +115,11 @@ public class LevenbergDampened extends LevenbergBase_DDRM {
 	 * @param function Computes residuals and Jacobian.
 	 */
 	@Override
-	public void setFunction( CoupledJacobian<DMatrixRMaj> function ) {
+	public void setFunction( CoupledJacobian<DMatrixSparseCSC> function ) {
 		super.setFunction(function);
 
-		solver = LinearSolverFactory_DDRM.symmPosDef(N);
-		this.solver = new LinearSolverSafe<>(solver);
+		solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+		solver = new LinearSolverSparseSafe<>(solver);
 	}
 
 	/**

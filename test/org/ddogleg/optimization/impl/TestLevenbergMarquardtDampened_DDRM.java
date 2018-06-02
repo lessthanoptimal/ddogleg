@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,8 +18,6 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ddogleg.optimization.EvaluateLevenbergMarquardtDampened;
-import org.ddogleg.optimization.NonlinearResults;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
@@ -34,9 +32,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLevenbergMarquardtDampened {
-
-	EvaluateLevenbergMarquardtDampened evaluator = new EvaluateLevenbergMarquardtDampened(false);
+public class TestLevenbergMarquardtDampened_DDRM extends CommonChecksLevenbergMarquardtDampened {
 
 	@Test
 	public void basicTest() {
@@ -73,54 +69,4 @@ public class TestLevenbergMarquardtDampened {
 
 		return alg;
 	}
-
-	@Test
-	public void helicalvalley() {
-		NonlinearResults results = evaluator.helicalValley();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(1, results.x[0], 1e-4);
-		assertEquals(0, results.x[1], 1e-4);
-		assertEquals(0, results.x[2], 1e-4);
-		assertEquals(0, results.f, 1e-4);
-	}
-
-	@Test
-	public void rosenbrock() {
-		NonlinearResults results = evaluator.rosenbrock();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(1, results.x[0], 1e-4);
-		assertEquals(1, results.x[1], 1e-4);
-		assertEquals(0, results.f, 1e-4);
-	}
-
-	// Omitting this test because LM is known to have scaling issues and the problem
-	// should be reformulated for LM
-//	@Test
-//	public void badlyScaledBrown() {
-//		NonlinearResults results = evaluator.badlyScaledBrown();
-//
-//		// no algorithm to compare it against, just do some sanity checks for changes
-//		assertTrue(results.numFunction<100);
-//		assertTrue(results.numGradient<100);
-//		assertEquals(1e6,results.x[0],1e-4);
-//		assertEquals(2e-6,results.x[1],1e-4);
-//		assertEquals(0,results.f,1e-4);
-//	}
-
-
-//	@Test
-//	public void trigonometric() {
-//		NonlinearResults results = evaluator.trigonometric();
-//
-//		// no algorithm to compare it against, just do some sanity checks for changes
-//		assertTrue(results.numFunction<100);
-//		assertTrue(results.numGradient < 100);
-//		assertEquals(0,results.f,1e-4);
-//	}
 }

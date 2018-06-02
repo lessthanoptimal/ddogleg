@@ -18,11 +18,12 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.LinearSolverSafe;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.interfaces.linsol.LinearSolverDense;
+import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.LinearSolverSparseSafe;
+import org.ejml.sparse.csc.CommonOps_DSCC;
 
 /**
  * <p>
@@ -46,11 +47,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
  *
  * @author Peter Abeles
  */
-public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
-
-	// solver used to compute (A + mu*diag(A))d = g
-	protected LinearSolverDense<DMatrixRMaj> solver;
-
+public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 	/**
 	 * Specifies termination condition and linear solver.  Selection of the linear solver an effect
 	 * speed and robustness.
@@ -58,12 +55,11 @@ public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
 	 * @param solver		   Linear solver. Cholesky or pseudo-inverse are recommended.
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergMarquardtDampened(LinearSolverDense<DMatrixRMaj> solver,
-									  double initialDampParam) {
+	public LevenbergMarquardtDampened_DSCC(LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver,
+										   double initialDampParam) {
 		super(initialDampParam);
 		this.solver = solver;
-		if( solver.modifiesB() )
-			this.solver = new LinearSolverSafe<DMatrixRMaj>(solver);
+		this.solver = new LinearSolverSparseSafe<>(solver);
 	}
 
 	@Override
@@ -75,19 +71,20 @@ public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_DDRM.multInner(jacobianVals, B);
-		CommonOps_DDRM.multTransA(jacobianVals, residuals, gradient);
+		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B, gw,gx);
+		CommonOps_DSCC.multTransA(jacobianVals, residuals, gradient, gx);
 
 		// extract diagonal elements from B
-		CommonOps_DDRM.extractDiag(B, Bdiag);
+		CommonOps_DSCC.extractDiag(B, Bdiag);
+
+		solver.setStructureLocked(false);
 	}
 
 	@Override
 	protected boolean computeStep(double lambda, DMatrixRMaj gradientNegative, DMatrixRMaj step) {
 		// add dampening parameter
 		for( int i = 0; i < N; i++ ) {
-			int index = B.getIndex(i,i);
-			B.data[index] = (1+lambda)*Bdiag.data[i];
+			B.set(i,i, Bdiag.data[i] *(1.0 + lambda));
 		}
 
 		// compute the change in step.
@@ -97,6 +94,7 @@ public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
 		}
 		// solve for change in x
 		solver.solve(gradientNegative, step);
+		solver.setStructureLocked(true);
 
 		return true;
 	}

@@ -3,6 +3,16 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.15
+Date:     2018
+
+- Added Sparse non-linear optimization
+  * LevenbergDampened
+  * LevenbergMarquardtDampened
+
+TODO Rename original algorithms to DDRM suffix
+
+------------------------------------------------------
 Version:  0.14
 Date:     2018/06/20
 

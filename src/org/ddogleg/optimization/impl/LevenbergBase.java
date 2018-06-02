@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -163,6 +163,13 @@ public abstract class LevenbergBase {
 	protected abstract void computeJacobian( DMatrixRMaj residuals ,
 											 DMatrixRMaj gradient );
 
+	/**
+	 *
+	 * @param dampeningParam
+	 * @param gradientNegative Negative of the gradient. DO NOT MODIFY.
+	 * @param step
+	 * @return
+	 */
 	protected abstract boolean computeStep( double dampeningParam ,
 											DMatrixRMaj gradientNegative ,
 											DMatrixRMaj step );
