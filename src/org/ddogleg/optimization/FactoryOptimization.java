@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -69,8 +69,8 @@ public class FactoryOptimization {
 	 * @param robust If true a slower, more robust algorithm that can handle more degenerate cases will be used.
 	 * @return UnconstrainedLeastSquares
 	 */
-	public static UnconstrainedLeastSquares leastSquaresLM( double dampInit ,
-															boolean robust )
+	public static UnconstrainedLeastSquares<DMatrixRMaj> leastSquaresLM( double dampInit ,
+																		 boolean robust )
 	{
 		LinearSolverDense<DMatrixRMaj> solver;
 
@@ -81,7 +81,7 @@ public class FactoryOptimization {
 		}
 
 		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
-		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class FactoryOptimization {
 	public static UnconstrainedLeastSquares leastSquareLevenberg( double dampInit )
 	{
 		LevenbergDampened alg = new LevenbergDampened(dampInit);
-		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 
 	/**

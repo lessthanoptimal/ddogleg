@@ -22,19 +22,21 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.LevenbergBase_DDRM;
+import org.ddogleg.optimization.impl.LevenbergBase;
 import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ejml.data.DMatrix;
 
 /**
  * Wrapper around {@link org.ddogleg.optimization.impl.LevenbergMarquardtDampened} for {@link org.ddogleg.optimization.UnconstrainedLeastSquares}
  *
  * @author Peter Abeles
  */
-public class LevenbergDampened_to_UnconstrainedLeastSquares implements UnconstrainedLeastSquares {
+public class LevenbergDampened_to_UnconstrainedLeastSquares<S extends DMatrix>
+		implements UnconstrainedLeastSquares<S> {
 
-	LevenbergBase_DDRM alg;
+	private LevenbergBase<S> alg;
 
-	public LevenbergDampened_to_UnconstrainedLeastSquares(LevenbergBase_DDRM alg) {
+	public LevenbergDampened_to_UnconstrainedLeastSquares(LevenbergBase<S> alg) {
 		this.alg = alg;
 	}
 

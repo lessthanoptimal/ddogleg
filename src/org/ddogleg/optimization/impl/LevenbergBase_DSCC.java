@@ -31,7 +31,7 @@ import org.ejml.interfaces.linsol.LinearSolverSparse;
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase_DSCC extends LevenbergBase {
+public abstract class LevenbergBase_DSCC extends LevenbergBase<DMatrixSparseCSC> {
 
 	// jacobian at x. M by N matrix.
 	protected DMatrixSparseCSC jacobianVals = new DMatrixSparseCSC(1,1);
@@ -39,11 +39,6 @@ public abstract class LevenbergBase_DSCC extends LevenbergBase {
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
 	protected DMatrixSparseCSC B = new DMatrixSparseCSC(1,1);
-	// diagonal elements of JtJ
-	protected DMatrixRMaj Bdiag = new DMatrixRMaj(1,1);
-
-	// Least-squares Function being optimized
-	protected CoupledJacobian<DMatrixSparseCSC> function;
 
 	// Workspace variables
 	IGrowArray gw = new IGrowArray();
@@ -57,16 +52,6 @@ public abstract class LevenbergBase_DSCC extends LevenbergBase {
 	}
 
 	@Override
-	protected void setFunctionParameters(double[] param) {
-		function.setInput(param);
-	}
-
-	@Override
-	protected void computeResiduals(double[] output) {
-		function.computeFunctions(output);
-	}
-
-	@Override
 	protected double getMinimumDampening() {
 		return CommonOps_DDRM.elementMax(Bdiag);
 	}
@@ -76,6 +61,7 @@ public abstract class LevenbergBase_DSCC extends LevenbergBase {
 	 *
 	 * @param function Computes residuals and Jacobian.
 	 */
+	@Override
 	public void setFunction( CoupledJacobian<DMatrixSparseCSC> function ) {
 		internalInitialize(function.getN(),function.getM());
 		this.function = function;

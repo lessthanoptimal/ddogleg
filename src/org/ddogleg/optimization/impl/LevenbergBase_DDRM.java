@@ -27,7 +27,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase_DDRM extends LevenbergBase {
+public abstract class LevenbergBase_DDRM extends LevenbergBase<DMatrixRMaj> {
 
 	// jacobian at x
 	protected DMatrixRMaj jacobianVals = new DMatrixRMaj(1,1);
@@ -35,24 +35,9 @@ public abstract class LevenbergBase_DDRM extends LevenbergBase {
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
 	protected DMatrixRMaj B = new DMatrixRMaj(1,1);
-	// diagonal elements of JtJ
-	protected DMatrixRMaj Bdiag = new DMatrixRMaj(1,1);
-
-	// Least-squares Function being optimized
-	protected CoupledJacobian function;
 
 	public LevenbergBase_DDRM(double initialDampParam) {
 		super(initialDampParam);
-	}
-
-	@Override
-	protected void setFunctionParameters(double[] param) {
-		function.setInput(param);
-	}
-
-	@Override
-	protected void computeResiduals(double[] output) {
-		function.computeFunctions(output);
 	}
 
 	@Override
@@ -65,6 +50,7 @@ public abstract class LevenbergBase_DDRM extends LevenbergBase {
 	 *
 	 * @param function Computes residuals and Jacobian.
 	 */
+	@Override
 	public void setFunction( CoupledJacobian<DMatrixRMaj> function ) {
 		internalInitialize(function.getN(),function.getM());
 		this.function = function;

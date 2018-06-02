@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ddogleg.optimization.functions.CoupledJacobian;
+import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
@@ -29,7 +31,7 @@ import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase {
+public abstract class LevenbergBase<S extends DMatrix> {
 
 	// number of parameters
 	protected int N;
@@ -47,6 +49,9 @@ public abstract class LevenbergBase {
 	private DMatrixRMaj g = new DMatrixRMaj(1,1);
 	// function residuals values at x
 	private DMatrixRMaj funcVals = new DMatrixRMaj(1,1);
+
+	// diagonal elements of JtJ
+	protected DMatrixRMaj Bdiag = new DMatrixRMaj(1,1);
 
 	// Current x being considered
 	private DMatrixRMaj xtest = new DMatrixRMaj(1,1);
@@ -78,6 +83,9 @@ public abstract class LevenbergBase {
 
 	// message explaining failure
 	private String message;
+
+	// Least-squares Function being optimized
+	protected CoupledJacobian<S> function;
 
 	/**
 	 * Specifies termination condition and dampening parameter
@@ -153,9 +161,13 @@ public abstract class LevenbergBase {
 		message = "";
 	}
 
-	protected abstract void setFunctionParameters( double []param );
+	protected void setFunctionParameters(double[] param) {
+		function.setInput(param);
+	}
 
-	protected abstract void computeResiduals( double[] output );
+	protected void computeResiduals(double[] output) {
+		function.computeFunctions(output);
+	}
 
 	/**
 	 * Computes the Jacobian matrix,
@@ -317,6 +329,8 @@ public abstract class LevenbergBase {
 
 		return true;
 	}
+
+	public abstract void setFunction( CoupledJacobian<S> function );
 
 	/**
 	 * Helper function that lets converged and the final message bet set in one line
