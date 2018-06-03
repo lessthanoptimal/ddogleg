@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestNumericalJacobianForward {
+public class TestNumericalJacobianForward_DDRM {
 
 	double tol = 1e-6;
 
@@ -36,7 +36,7 @@ public class TestNumericalJacobianForward {
 		// give it a function where one variable does not effect the output
 		// to make the test more interesting
 		SimpleFunction f = new SimpleFunction();
-		NumericalJacobianForward alg = new NumericalJacobianForward(f);
+		NumericalJacobianForward_DDRM alg = new NumericalJacobianForward_DDRM(f);
 
 		DMatrixRMaj output = alg.declareMatrixMxN();
 		alg.process(new double[]{2,3,7},output);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,7 +22,7 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.impl.TrustRegionLeastSquares;
 
 /**
@@ -41,7 +41,7 @@ public class TrustRegionLeastSquares_to_UnconstrainedLeastSquares implements Unc
 	@Override
 	public void setFunction(FunctionNtoM function, FunctionNtoMxN jacobian) {
 		if( jacobian == null )
-			jacobian = new NumericalJacobianForward(function);
+			jacobian = new NumericalJacobianForward_DDRM(function);
 
 		alg.setFunction(new Individual_to_CoupledJacobian(function,jacobian));
 	}

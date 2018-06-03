@@ -26,7 +26,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * <p>
- * Modification of {@link LevenbergDampened} which incorporates the insight of Marquardt.  The insight
+ * Modification of {@link LevenbergDampened_DDRM} which incorporates the insight of Marquardt.  The insight
  * was to use the function's curvature information to increase dampening along directions with
  * a larger gradient.  In practice this method seems to do better on nearly singular systems.
  * </p>
@@ -46,7 +46,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
  *
  * @author Peter Abeles
  */
-public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
+public class LevenbergMarquardtDampened_DDRM extends LevenbergBase_DDRM {
 
 	// solver used to compute (A + mu*diag(A))d = g
 	protected LinearSolverDense<DMatrixRMaj> solver;
@@ -55,15 +55,15 @@ public class LevenbergMarquardtDampened extends LevenbergBase_DDRM {
 	 * Specifies termination condition and linear solver.  Selection of the linear solver an effect
 	 * speed and robustness.
 	 *
-	 * @param solver		   Linear solver. Cholesky or pseudo-inverse are recommended.
-	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
+	 * @param solver Linear solver. Cholesky or pseudo-inverse are recommended.
+	 * @param initialDampParam Initial value of the dampening parameter.  Tune. try 1e-3;
 	 */
-	public LevenbergMarquardtDampened(LinearSolverDense<DMatrixRMaj> solver,
-									  double initialDampParam) {
+	public LevenbergMarquardtDampened_DDRM(LinearSolverDense<DMatrixRMaj> solver,
+										   double initialDampParam) {
 		super(initialDampParam);
 		this.solver = solver;
 		if( solver.modifiesB() )
-			this.solver = new LinearSolverSafe<DMatrixRMaj>(solver);
+			this.solver = new LinearSolverSafe<>(solver);
 	}
 
 	@Override

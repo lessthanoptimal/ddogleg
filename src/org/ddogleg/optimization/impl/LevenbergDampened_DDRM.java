@@ -61,7 +61,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
  */
 // After some minor modifications it was compared against Matlab code in [1] and produced identical results
 // in each step.  Stopping conditions and initialization is a bit different.
-public class LevenbergDampened extends LevenbergBase_DDRM {
+public class LevenbergDampened_DDRM extends LevenbergBase_DDRM {
 
 	// solver used to compute (A + mu*diag(A))d = g
 	protected LinearSolverDense<DMatrixRMaj> solver;
@@ -71,7 +71,7 @@ public class LevenbergDampened extends LevenbergBase_DDRM {
 	 *
 	 * @param initialDampParam Initial value of the dampening parameter.  Tune.. try 1e-3;
 	 */
-	public LevenbergDampened(double initialDampParam) {
+	public LevenbergDampened_DDRM(double initialDampParam) {
 		super(initialDampParam);
 	}
 

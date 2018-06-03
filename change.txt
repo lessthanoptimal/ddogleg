@@ -10,12 +10,6 @@ Date:     2018
   * LevenbergDampened
   * LevenbergMarquardtDampened
 
-TODO Rename original algorithms to DDRM suffix
-
-TODO See if the number of times the graph structure is computed can be reduced even more
-     Does it ever need to be recomputed after the first solve?
-
-
 ------------------------------------------------------
 Version:  0.14
 Date:     2018/06/20

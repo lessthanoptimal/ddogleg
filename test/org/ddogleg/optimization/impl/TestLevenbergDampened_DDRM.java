@@ -36,7 +36,7 @@ public class TestLevenbergDampened_DDRM extends CommonChecksLevenbergDampened {
 	public void basicTest() {
 		double a=2,b=0.1;
 
-		LevenbergDampened alg = createAlg(a,b);
+		LevenbergDampened_DDRM alg = createAlg(a,b);
 		
 		alg.initialize(new double[]{1,0.5});
 		
@@ -53,12 +53,12 @@ public class TestLevenbergDampened_DDRM extends CommonChecksLevenbergDampened {
 		assertEquals(b, found[1], 1e-4);
 	}
 
-	private LevenbergDampened createAlg( double a, double b ) {
+	private LevenbergDampened_DDRM createAlg(double a, double b ) {
 
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward(residual);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
-		LevenbergDampened alg = new LevenbergDampened(1e-3);
+		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(1e-3);
 
 		alg.setConvergence(1e-6,1e-6);
 		alg.setFunction(new Individual_to_CoupledJacobian<>(residual,jacobian));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.LevenbergDampened;
+import org.ddogleg.optimization.impl.LevenbergDampened_DDRM;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 
 /**
@@ -35,7 +35,7 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 
-		LevenbergDampened alg = new LevenbergDampened(dampInit);
+		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(dampInit);
 		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.NumericalGradientForward;
-import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
@@ -47,7 +47,7 @@ public class DerivativeChecker {
 	void jacobianPrint( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 						double param[] , double tol , double differenceScale )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+		NumericalJacobianForward_DDRM numerical = new NumericalJacobianForward_DDRM(func,differenceScale);
 
 		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
@@ -90,7 +90,7 @@ public class DerivativeChecker {
 	boolean jacobian( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 					  double param[] , double tol ,  double differenceScale )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+		NumericalJacobianForward_DDRM numerical = new NumericalJacobianForward_DDRM(func,differenceScale);
 
 		if( numerical.getNumOfOutputsM() != jacobian.getNumOfOutputsM() )
 			throw new RuntimeException("M is not equal "+numerical.getNumOfOutputsM()+"  "+jacobian.getNumOfOutputsM());
@@ -132,7 +132,7 @@ public class DerivativeChecker {
 	void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 						 double param[] , double tol , double differenceScale )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+		NumericalJacobianForward_DDRM numerical = new NumericalJacobianForward_DDRM(func,differenceScale);
 
 		S found = jacobian.declareMatrixMxN();
 		DMatrixRMaj expected = new DMatrixRMaj(func.getNumOfOutputsM(),func.getNumOfInputsN());
@@ -189,7 +189,7 @@ public class DerivativeChecker {
 	boolean jacobianR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 								 double param[] , double tol ,  double differenceScale )
 	{
-		NumericalJacobianForward numerical = new NumericalJacobianForward(func,differenceScale);
+		NumericalJacobianForward_DDRM numerical = new NumericalJacobianForward_DDRM(func,differenceScale);
 
 		if( numerical.getNumOfOutputsM() != jacobian.getNumOfOutputsM() )
 			throw new RuntimeException("M is not equal "+numerical.getNumOfOutputsM()+"  "+jacobian.getNumOfOutputsM());

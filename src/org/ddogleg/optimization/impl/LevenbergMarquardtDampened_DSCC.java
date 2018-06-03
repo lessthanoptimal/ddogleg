@@ -27,7 +27,7 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
 
 /**
  * <p>
- * Modification of {@link LevenbergDampened} which incorporates the insight of Marquardt.  The insight
+ * Modification of {@link LevenbergDampened_DDRM} which incorporates the insight of Marquardt.  The insight
  * was to use the function's curvature information to increase dampening along directions with
  * a larger gradient.  In practice this method seems to do better on nearly singular systems.
  * </p>
@@ -71,7 +71,7 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B, gw,gx);
+		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B, gw,gx); // TODO take advantage of symmetry
 		CommonOps_DSCC.multTransA(jacobianVals, residuals, gradient, gx);
 
 		// extract diagonal elements from B

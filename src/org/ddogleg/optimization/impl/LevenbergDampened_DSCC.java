@@ -81,13 +81,11 @@ public class LevenbergDampened_DSCC extends LevenbergBase_DSCC {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B,gw,gx );
+		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B,gw,gx ); // TODO take advantage of symmetry
 		CommonOps_DSCC.multTransA(jacobianVals, residuals, gradient, gx);
 
 		// extract diagonal elements from B
 		CommonOps_DSCC.extractDiag(B, Bdiag);
-
-		solver.setStructureLocked(false);
 	}
 
 	@Override

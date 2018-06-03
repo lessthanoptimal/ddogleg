@@ -80,7 +80,7 @@ public class FactoryOptimization {
 			solver = LinearSolverFactory_DDRM.symmPosDef(10);
 		}
 
-		LevenbergMarquardtDampened alg = new LevenbergMarquardtDampened(solver,dampInit);
+		LevenbergMarquardtDampened_DDRM alg = new LevenbergMarquardtDampened_DDRM(solver,dampInit);
 		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 
@@ -94,7 +94,7 @@ public class FactoryOptimization {
 	 */
 	public static UnconstrainedLeastSquares leastSquareLevenberg( double dampInit )
 	{
-		LevenbergDampened alg = new LevenbergDampened(dampInit);
+		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(dampInit);
 		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 

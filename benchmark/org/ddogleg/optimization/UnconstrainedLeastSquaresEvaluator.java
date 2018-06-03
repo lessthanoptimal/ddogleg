@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.funcs.*;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 
 /**
  * @author Peter Abeles
@@ -56,7 +56,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator {
 										  double initial[] , double optimal[] , double minimValue)
 	{
 		if( deriv == null ) {
-			deriv = new NumericalJacobianForward(func);
+			deriv = new NumericalJacobianForward_DDRM(func);
 		}
 
 		CallCounterNtoM f = new CallCounterNtoM(func);

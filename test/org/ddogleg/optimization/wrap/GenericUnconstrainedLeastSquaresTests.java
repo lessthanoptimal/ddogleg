@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
 import org.junit.Test;
 
@@ -45,7 +45,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
+		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
 
 		UnconstrainedLeastSquares alg = createAlgorithm();
 
@@ -93,7 +93,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
+		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
 
 		UnconstrainedLeastSquares alg = createAlgorithm();
 

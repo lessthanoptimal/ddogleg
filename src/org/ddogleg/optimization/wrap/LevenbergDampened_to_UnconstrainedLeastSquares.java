@@ -23,11 +23,12 @@ import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.LevenbergBase;
-import org.ddogleg.optimization.impl.NumericalJacobianForward;
+import org.ddogleg.optimization.impl.LevenbergMarquardtDampened_DDRM;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ejml.data.DMatrix;
 
 /**
- * Wrapper around {@link org.ddogleg.optimization.impl.LevenbergMarquardtDampened} for {@link org.ddogleg.optimization.UnconstrainedLeastSquares}
+ * Wrapper around {@link LevenbergMarquardtDampened_DDRM} for {@link org.ddogleg.optimization.UnconstrainedLeastSquares}
  *
  * @author Peter Abeles
  */
@@ -44,7 +45,7 @@ public class LevenbergDampened_to_UnconstrainedLeastSquares<S extends DMatrix>
 	public void setFunction(FunctionNtoM function, FunctionNtoMxN jacobian) {
 
 		if( jacobian == null )
-			jacobian = new NumericalJacobianForward(function);
+			jacobian = new NumericalJacobianForward_DDRM(function);
 
 		alg.setFunction(new Individual_to_CoupledJacobian(function,jacobian));
 	}

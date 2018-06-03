@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -55,7 +55,7 @@ public class TestTrustRegionLeastSquares {
 	private TrustRegionLeastSquares createAlg( double a, double b , TrustRegionStep stepAlg ) {
 
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward(residual);
+		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
 
 		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(2,stepAlg);
 

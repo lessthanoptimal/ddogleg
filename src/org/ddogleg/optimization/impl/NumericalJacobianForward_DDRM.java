@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,7 +35,7 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class NumericalJacobianForward implements FunctionNtoMxN<DMatrixRMaj>
+public class NumericalJacobianForward_DDRM implements FunctionNtoMxN<DMatrixRMaj>
 {
 	// number of input variables
 	private final int N;
@@ -51,7 +51,7 @@ public class NumericalJacobianForward implements FunctionNtoMxN<DMatrixRMaj>
 	private double output0[];
 	private double output1[];
 
-	public NumericalJacobianForward(FunctionNtoM function, double differenceScale) {
+	public NumericalJacobianForward_DDRM(FunctionNtoM function, double differenceScale) {
 		this.function = function;
 		this.differenceScale = differenceScale;
 		this.N = function.getNumOfInputsN();
@@ -60,7 +60,7 @@ public class NumericalJacobianForward implements FunctionNtoMxN<DMatrixRMaj>
 		output1 = new double[M];
 	}
 
-	public NumericalJacobianForward(FunctionNtoM function) {
+	public NumericalJacobianForward_DDRM(FunctionNtoM function) {
 		this(function,Math.sqrt(UtilEjml.EPS));
 	}
 
