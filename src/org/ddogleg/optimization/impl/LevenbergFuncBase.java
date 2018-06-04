@@ -19,45 +19,32 @@
 package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
-import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.data.DMatrix;
 
 /**
- * Base class for Levenberg solvers which use dense matrices.
+ * {@link LevenbergBase} with a {@link CoupledJacobian}
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase_DDRM extends LevenbergFuncBase<DMatrixRMaj> {
+public abstract class LevenbergFuncBase<S extends DMatrix> extends LevenbergBase {
 
-	// jacobian at x
-	protected DMatrixRMaj jacobianVals = new DMatrixRMaj(1,1);
+	// Least-squares Function being optimized
+	protected CoupledJacobian<S> function;
 
-	// Jacobian inner product. Used to approximate Hessian
-	// B=J'*J
-	protected DMatrixRMaj B = new DMatrixRMaj(1,1);
 
-	public LevenbergBase_DDRM(double initialDampParam) {
+	public LevenbergFuncBase(double initialDampParam) {
 		super(initialDampParam);
 	}
 
 	@Override
-	protected double getMinimumDampening() {
-		return CommonOps_DDRM.elementMax(Bdiag);
+	protected void setFunctionParameters(double[] param) {
+		function.setInput(param);
 	}
 
-	/**
-	 * Specifies function being optimized.
-	 *
-	 * @param function Computes residuals and Jacobian.
-	 */
 	@Override
-	public void setFunction( CoupledJacobian<DMatrixRMaj> function ) {
-		internalInitialize(function.getN(),function.getM());
-		this.function = function;
-
-		jacobianVals.reshape(M,N);
-
-		B.reshape(N, N);
-		Bdiag.reshape(N,1);
+	protected void computeResiduals(double[] output) {
+		function.computeFunctions(output);
 	}
+
+	public abstract void setFunction( CoupledJacobian<S> function );
 }

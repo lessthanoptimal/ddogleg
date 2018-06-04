@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
@@ -76,8 +77,6 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 
 		// extract diagonal elements from B
 		CommonOps_DSCC.extractDiag(B, Bdiag);
-
-		solver.setStructureLocked(false);
 	}
 
 	@Override
@@ -88,7 +87,7 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 		}
 
 		// compute the change in step.
-		if( !solver.setA(B) ) {
+		if( !solver.setA(B) || solver.quality() <= UtilEjml.EPS ) {
 //			addToMessage("Singularity encountered.  Try a more robust solver line pseudo inverse");
 			return false;
 		}

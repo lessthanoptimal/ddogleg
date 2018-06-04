@@ -19,6 +19,7 @@
 package org.ddogleg.optimization.impl;
 
 import org.ejml.LinearSolverSafe;
+import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
@@ -91,7 +92,7 @@ public class LevenbergMarquardtDampened_DDRM extends LevenbergBase_DDRM {
 		}
 
 		// compute the change in step.
-		if( !solver.setA(B) ) {
+		if( !solver.setA(B) || solver.quality() <= UtilEjml.EPS ) {
 //			addToMessage("Singularity encountered.  Try a more robust solver line pseudo inverse");
 			return false;
 		}

@@ -31,7 +31,7 @@ import org.ejml.interfaces.linsol.LinearSolverSparse;
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase_DSCC extends LevenbergBase<DMatrixSparseCSC> {
+public abstract class LevenbergBase_DSCC extends LevenbergFuncBase<DMatrixSparseCSC> {
 
 	// jacobian at x. M by N matrix.
 	protected DMatrixSparseCSC jacobianVals = new DMatrixSparseCSC(1,1);
