@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,7 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrixSparseCSC;
 
 /**
  *
@@ -40,7 +40,7 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
+	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
 		return null;
 	}
 
@@ -85,31 +85,6 @@ public class EvalFuncHelicalValley implements EvalFuncLeastSquares {
 			} else {
 				return left*Math.atan(b/a) + 0.5;
 			}
-		}
-	}
-	
-	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
-	{
-		@Override
-		public int getNumOfInputsN() {
-			return 3;
-		}
-
-		@Override
-		public int getNumOfOutputsM() {
-			return 3;
-		}
-
-		@Override
-		public void process(double[] input,DMatrixRMaj J) {
-			double x1 = input[0];
-			double x2 = input[1];
-			double x3 = input[2];
-		}
-
-		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return new DMatrixRMaj(3,3);
 		}
 	}
 }

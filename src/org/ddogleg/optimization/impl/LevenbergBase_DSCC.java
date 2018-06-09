@@ -35,6 +35,7 @@ public abstract class LevenbergBase_DSCC extends LevenbergFuncBase<DMatrixSparse
 
 	// jacobian at x. M by N matrix.
 	protected DMatrixSparseCSC jacobianVals = new DMatrixSparseCSC(1,1);
+	protected DMatrixSparseCSC tmp = new DMatrixSparseCSC(1,1);
 
 	// Jacobian inner product. Used to approximate Hessian
 	// B=J'*J
@@ -73,7 +74,7 @@ public abstract class LevenbergBase_DSCC extends LevenbergFuncBase<DMatrixSparse
 	 */
 	@Override
 	public void setFunction( CoupledJacobian<DMatrixSparseCSC> function ) {
-		internalInitialize(function.getN(),function.getM());
+		internalInitialize(function.getNumOfInputsN(),function.getNumOfOutputsM());
 		this.function = function;
 
 		jacobianVals.reshape(M,N,M);

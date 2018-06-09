@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,17 +20,18 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrix;
 
 /**
  * @author Peter Abeles
  */
-public interface EvalFuncLeastSquares {
+public interface EvalFuncLeastSquares<S extends DMatrix> {
 
-	public FunctionNtoM getFunction();
+	FunctionNtoM getFunction();
 
-	public FunctionNtoMxN getJacobian();
+	FunctionNtoMxN<S> getJacobian();
 
-	public double[] getInitial();
+	double[] getInitial();
 
-	public double[] getOptimal();
+	double[] getOptimal();
 }

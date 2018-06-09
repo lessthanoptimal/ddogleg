@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,28 +20,25 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrixSparseCSC;
 
 /**
- * Frandsen et al 1999
+ *
+ * <p>
+ * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
+ * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
+ * </p>
  *
  * @author Peter Abeles
  */
-public class EvalFuncRosenbrockMod implements EvalFuncLeastSquares {
-
-	double lambda;
-
-	public EvalFuncRosenbrockMod(double lambda) {
-		this.lambda = lambda;
-	}
-
+public class EvalFuncRosenbrock_DSCC implements EvalFuncLeastSquares<DMatrixSparseCSC> {
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
+	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
 		return new Deriv();
 	}
 
@@ -55,7 +52,7 @@ public class EvalFuncRosenbrockMod implements EvalFuncLeastSquares {
 		return new double[]{1,1};
 	}
 	
-	public class Func implements FunctionNtoM
+	public static class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -64,7 +61,7 @@ public class EvalFuncRosenbrockMod implements EvalFuncLeastSquares {
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 3;
+			return 2;
 		}
 
 		@Override
@@ -74,11 +71,10 @@ public class EvalFuncRosenbrockMod implements EvalFuncLeastSquares {
 			
 			output[0] = 10.0*(x2-x1*x1);
 			output[1] = 1.0 - x1;
-			output[2] = lambda;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
+	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -87,24 +83,22 @@ public class EvalFuncRosenbrockMod implements EvalFuncLeastSquares {
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 3;
+			return 2;
 		}
 
 		@Override
-		public void process(double[] input, DMatrixRMaj J) {
+		public void process(double[] input, DMatrixSparseCSC J) {
 			double x1 = input[0];
-			
+
+			J.zero();
 			J.set(0,0,-20*x1);
 			J.set(0,1,10);
 			J.set(1,0,-1);
-			J.set(1,1,0);
-			J.set(2,0,0);
-			J.set(2,1,0);
 		}
 
 		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
+		public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(2,2);
 		}
 	}
 }

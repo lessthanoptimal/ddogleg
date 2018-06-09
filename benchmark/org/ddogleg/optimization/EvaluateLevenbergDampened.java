@@ -24,7 +24,7 @@ import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSqua
 /**
  * @author Peter Abeles
  */
-public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluator {
+public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	double dampInit = 1e-3;
 

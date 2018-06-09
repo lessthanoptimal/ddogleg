@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  *
@@ -30,13 +31,7 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  *
  * @author Peter Abeles
  */
-public class EvalFuncVariablyDimensioned implements EvalFuncLeastSquares {
-	
-	int N;
-
-	public EvalFuncVariablyDimensioned(int n) {
-		N = n;
-	}
+public class EvalFuncBadlyScaledBrown_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
 
 	@Override
 	public FunctionNtoM getFunction() {
@@ -44,54 +39,63 @@ public class EvalFuncVariablyDimensioned implements EvalFuncLeastSquares {
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
-		return null;
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		double x[] = new double[N];
-		
-		for( int i = 0; i < N; i++ ) {
-			x[i] = 1-((double)i/(double)N);
-		}
-		
-		return x;
+		return new double[]{1,1};
 	}
 
 	@Override
 	public double[] getOptimal() {
-		double x[] = new double[N];
-		for( int i = 0; i < N; i++ )
-			x[i] = 1;
-		return x;
+		return new double[]{1e6,2e-6};
 	}
 
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getNumOfInputsN() {
-			return N;
-		}
+		public int getNumOfInputsN() {return 2;}
 
 		@Override
-		public int getNumOfOutputsM() {
-			return N+2;
-		}
+		public int getNumOfOutputsM() {return 3;}
 
 		@Override
 		public void process(double[] input, double[] output) {
-			for( int i = 0; i < N; i++ ) {
-				output[i] = input[i]-1;
-			}
-			double sum = 0;
-			for( int i = 0; i < N; i++ ) {
-				sum += (i+1)*(input[i]-1);
-			}
-			
-			output[N] = sum;
-			output[N+1] = sum*sum;
+			double x1 = input[0];
+			double x2 = input[1];
+
+			output[0] = x1-1e6;
+			output[1] = x2-2e-6;
+			output[2] = x1*x2-2;
 		}
 	}
 
+	public class Deriv implements FunctionNtoMxN<DMatrixRMaj>
+	{
+		@Override
+		public int getNumOfInputsN() {return 2;}
+
+		@Override
+		public int getNumOfOutputsM() {return 3;}
+
+		@Override
+		public void process(double[] input, DMatrixRMaj output) {
+			double x1 = input[0];
+			double x2 = input[1];
+
+			output.data[0] = 1;
+			output.data[1] = 0;
+			output.data[2] = 0;
+			output.data[3] = 1;
+			output.data[4] = x2;
+			output.data[5] = x1;
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
+		}
+	}
 }

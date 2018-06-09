@@ -47,12 +47,12 @@ public class Individual_to_CoupledJacobian<S extends DMatrix> implements Coupled
 	}
 
 	@Override
-	public int getN() {
+	public int getNumOfInputsN() {
 		return func.getNumOfInputsN();
 	}
 
 	@Override
-	public int getM() {
+	public int getNumOfOutputsM() {
 		return func.getNumOfOutputsM();
 	}
 

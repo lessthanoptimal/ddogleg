@@ -162,17 +162,21 @@ public abstract class LevenbergBase<S extends DMatrix> {
 	protected abstract void computeResiduals(double[] output);
 
 	/**
-	 * Computes the Jacobian matrix,
+	 * Computes the Jacobian matrix.
+	 *
+	 * @param residuals (Input) Residual for each output. (Mx1)
+	 * @param gradient (Output) Derivative for each parameter. (Nx1)
 	 */
 	protected abstract void computeJacobian( DMatrixRMaj residuals ,
 											 DMatrixRMaj gradient );
 
 	/**
+	 * Computes the iterative step for parameter values.
 	 *
-	 * @param dampeningParam
-	 * @param gradientNegative Negative of the gradient. DO NOT MODIFY.
-	 * @param step
-	 * @return
+	 * @param dampeningParam See paper
+	 * @param gradientNegative Negative of the gradient. DO NOT MODIFY. (Nx1)
+	 * @param step Step for this iteration. (Nx1)
+	 * @return true if successful or false if it failed.
 	 */
 	protected abstract boolean computeStep( double dampeningParam ,
 											DMatrixRMaj gradientNegative ,

@@ -23,8 +23,10 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.LinearSolverSparseSafe;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
 /**
  * <p>
@@ -63,6 +65,10 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 		this.solver = new LinearSolverSparseSafe<>(solver);
 	}
 
+	public LevenbergMarquardtDampened_DSCC( double initialDampParam ) {
+		this(LinearSolverFactory_DSCC.cholesky(FillReducing.NONE),initialDampParam);
+	}
+
 	@Override
 	protected void computeJacobian( DMatrixRMaj residuals , DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
@@ -72,7 +78,8 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 		// B = J'*J;   g = J'*r
 		// Take advantage of symmetry when computing B and only compute the upper triangular
 		// portion used by cholesky decomposition
-		CommonOps_DSCC.multTransA(jacobianVals, jacobianVals, B, gw,gx); // TODO take advantage of symmetry
+		CommonOps_DSCC.innerProductLower(jacobianVals, tmp, gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp,B,gw);
 		CommonOps_DSCC.multTransA(jacobianVals, residuals, gradient);
 
 		// extract diagonal elements from B

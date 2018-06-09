@@ -18,23 +18,28 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.funcs.*;
+import org.ddogleg.optimization.funcs.EvalFuncLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DSCC;
+import org.ejml.data.DMatrix;
 
 /**
  * @author Peter Abeles
  */
-public abstract class UnconstrainedLeastSquaresEvaluator {
+public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 
 	boolean verbose = true;
 	boolean printSummary;
 	int maxIteration = 500;
+	boolean dense;
 
-	protected UnconstrainedLeastSquaresEvaluator(boolean verbose, boolean printSummary) {
+	protected UnconstrainedLeastSquaresEvaluator(boolean verbose, boolean printSummary,
+												 boolean dense ) {
 		this.verbose = verbose;
 		this.printSummary = printSummary;
+		this.dense = dense;
 	}
 
 	/**
@@ -42,7 +47,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator {
 	 *
 	 * @return Line search algorithm
 	 */
-	protected abstract UnconstrainedLeastSquares createSearch( double minimumValue );
+	protected abstract UnconstrainedLeastSquares<M> createSearch(double minimumValue );
 
 	/**
 	 * Run the line search algorithm on the two inputs and compute statistics
@@ -52,17 +57,20 @@ public abstract class UnconstrainedLeastSquaresEvaluator {
 	 * @param initial Initial point
 	 * @return statics
 	 */
-	private NonlinearResults performTest( FunctionNtoM func , FunctionNtoMxN deriv ,
+	private NonlinearResults performTest( FunctionNtoM func , FunctionNtoMxN<M> deriv ,
 										  double initial[] , double optimal[] , double minimValue)
 	{
 		if( deriv == null ) {
-			deriv = new NumericalJacobianForward_DDRM(func);
+			if( dense )
+				deriv = (FunctionNtoMxN)new NumericalJacobianForward_DDRM(func);
+			else
+				deriv = (FunctionNtoMxN)new NumericalJacobianForward_DSCC(func);
 		}
 
 		CallCounterNtoM f = new CallCounterNtoM(func);
-		CallCounterNtoMxN d = new CallCounterNtoMxN(deriv);
+		CallCounterNtoMxN<M> d = new CallCounterNtoMxN<>(deriv);
 
-		UnconstrainedLeastSquares alg = createSearch(minimValue);
+		UnconstrainedLeastSquares<M> alg = createSearch(minimValue);
 		alg.setFunction(f,d);
 
 		alg.initialize(initial,1e-10,1e-20);
@@ -103,37 +111,9 @@ public abstract class UnconstrainedLeastSquaresEvaluator {
 		return ret;
 	}
 
-	private NonlinearResults performTest( EvalFuncLeastSquares func ) {
+	NonlinearResults performTest( EvalFuncLeastSquares<M> func ) {
 		double[] initial = func.getInitial();
 
 		return performTest(func.getFunction(),func.getJacobian(),initial,func.getOptimal(),0);
-	}
-
-
-	public NonlinearResults helicalValley() {
-		return performTest(new EvalFuncHelicalValley());
-	}
-
-	public NonlinearResults rosenbrock() {
-		return performTest(new EvalFuncRosenbrock());
-	}
-
-	public NonlinearResults rosenbrockMod( double lambda ) {
-		return performTest(new EvalFuncRosenbrockMod(lambda));
-	}
-
-	public NonlinearResults variably() {
-		return performTest(new EvalFuncVariablyDimensioned(10));
-	}
-
-	public NonlinearResults trigonometric() {
-		return performTest(new EvalFuncTrigonometric(10));
-	}
-	public NonlinearResults badlyScaledBrown() {
-		return performTest(new EvalFuncBadlyScaledBrown());
-	}
-
-	public NonlinearResults powell() {
-		return performTest(new EvalFuncPowell());
 	}
 }

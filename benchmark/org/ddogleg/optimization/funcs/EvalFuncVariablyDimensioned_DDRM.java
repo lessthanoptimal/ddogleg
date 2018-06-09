@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,74 +31,68 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class EvalFuncRosenbrock implements EvalFuncLeastSquares {
+public class EvalFuncVariablyDimensioned_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
+	
+	int N;
+
+	public EvalFuncVariablyDimensioned_DDRM(int n) {
+		N = n;
+	}
+
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
-		return new Deriv();
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+		return null;
 	}
 
 	@Override
 	public double[] getInitial() {
-		return new double[]{-1.2,1};
+		double x[] = new double[N];
+		
+		for( int i = 0; i < N; i++ ) {
+			x[i] = 1-((double)i/(double)N);
+		}
+		
+		return x;
 	}
 
 	@Override
 	public double[] getOptimal() {
-		return new double[]{1,1};
+		double x[] = new double[N];
+		for( int i = 0; i < N; i++ )
+			x[i] = 1;
+		return x;
 	}
-	
-	public static class Func implements FunctionNtoM
+
+	public class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {
-			return 2;
+			return N;
 		}
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 2;
+			return N+2;
 		}
 
 		@Override
 		public void process(double[] input, double[] output) {
-			double x1 = input[0];
-			double x2 = input[1];
+			for( int i = 0; i < N; i++ ) {
+				output[i] = input[i]-1;
+			}
+			double sum = 0;
+			for( int i = 0; i < N; i++ ) {
+				sum += (i+1)*(input[i]-1);
+			}
 			
-			output[0] = 10.0*(x2-x1*x1);
-			output[1] = 1.0 - x1;
+			output[N] = sum;
+			output[N+1] = sum*sum;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
-	{
-		@Override
-		public int getNumOfInputsN() {
-			return 2;
-		}
-
-		@Override
-		public int getNumOfOutputsM() {
-			return 2;
-		}
-
-		@Override
-		public void process(double[] input, DMatrixRMaj J) {
-			double x1 = input[0];
-			
-			J.set(0,0,-20*x1);
-			J.set(0,1,10);
-			J.set(1,0,-1);
-			J.set(1,1,0);
-		}
-
-		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return new DMatrixRMaj(2,2);
-		}
-	}
 }

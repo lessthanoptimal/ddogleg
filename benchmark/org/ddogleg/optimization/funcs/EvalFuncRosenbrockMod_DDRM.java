@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,35 +23,39 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrixRMaj;
 
 /**
- *
- * <p>
- * Powel 1970
- * </p>
+ * Frandsen et al 1999
  *
  * @author Peter Abeles
  */
-public class EvalFuncPowell implements EvalFuncLeastSquares {
+public class EvalFuncRosenbrockMod_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
+
+	double lambda;
+
+	public EvalFuncRosenbrockMod_DDRM(double lambda) {
+		this.lambda = lambda;
+	}
+
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
 		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		return new double[]{3,1};
+		return new double[]{-1.2,1};
 	}
 
 	@Override
 	public double[] getOptimal() {
-		return new double[]{0,0};
+		return new double[]{1,1};
 	}
 	
-	public static class Func implements FunctionNtoM
+	public class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -60,7 +64,7 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -68,8 +72,9 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 			double x1 = input[0];
 			double x2 = input[1];
 			
-			output[0] = x1;
-			output[1] = 10*x1/(x1+0.1) + 2*x2*x2;
+			output[0] = 10.0*(x2-x1*x1);
+			output[1] = 1.0 - x1;
+			output[2] = lambda;
 		}
 	}
 
@@ -82,18 +87,19 @@ public class EvalFuncPowell implements EvalFuncLeastSquares {
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 2;
+			return 3;
 		}
 
 		@Override
-		public void process( double[] input, DMatrixRMaj J ) {
+		public void process(double[] input, DMatrixRMaj J) {
 			double x1 = input[0];
-			double x2 = input[1];
 			
-			J.set(0,0,1);
-			J.set(0,1,0);
-			J.set(1,0,1.0/Math.pow(x1 + 0.1, 2));
-			J.set(1,1,4*x2);
+			J.set(0,0,-20*x1);
+			J.set(0,1,10);
+			J.set(1,0,-1);
+			J.set(1,1,0);
+			J.set(2,0,0);
+			J.set(2,1,0);
 		}
 
 		@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,12 +28,12 @@ public interface CoupledJacobian<S extends DMatrix> {
 	/**
 	 * Number of input parameters being optimized.
 	 */
-	int getN();
+	int getNumOfInputsN();
 
 	/**
 	 * Number of functions.
 	 */
-	int getM();
+	int getNumOfOutputsM();
 
 	/**
 	 * Specifies the input parameters.  The user can modify these values and they will be modified inside the

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -138,11 +138,11 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	}
 
 	public NonlinearResults rosenbrock() {
-		return performTest(new EvalFuncRosenbrock());
+		return performTest(new EvalFuncRosenbrock_DDRM());
 	}
 
 	public NonlinearResults rosenbrockMod( double lambda ) {
-		return performTest(new EvalFuncRosenbrockMod(lambda));
+		return performTest(new EvalFuncRosenbrockMod_DDRM(lambda));
 	}
 
 	public NonlinearResults dodcfg() {
@@ -150,18 +150,18 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	}
 
 	public NonlinearResults variably() {
-		return performTest(new EvalFuncVariablyDimensioned(10));
+		return performTest(new EvalFuncVariablyDimensioned_DDRM(10));
 	}
 
 	public NonlinearResults trigonometric() {
-		return performTest(new EvalFuncTrigonometric(10));
+		return performTest(new EvalFuncTrigonometric_DDRM(10));
 	}
 
 	public NonlinearResults badlyScaledBrown() {
-		return performTest(new EvalFuncBadlyScaledBrown());
+		return performTest(new EvalFuncBadlyScaledBrown_DDRM());
 	}
 
 	public NonlinearResults powell() {
-		return performTest(new EvalFuncPowell());
+		return performTest(new EvalFuncPowell_DDRM());
 	}
 }

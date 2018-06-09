@@ -27,7 +27,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
 /**
  * @author Peter Abeles
  */
-public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquaresEvaluator {
+public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	boolean robust = true;
 	double dampInit = 1e-3;

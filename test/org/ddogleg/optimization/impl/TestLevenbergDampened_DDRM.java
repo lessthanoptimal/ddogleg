@@ -18,9 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.Test;
 
@@ -30,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLevenbergDampened_DDRM extends CommonChecksLevenbergDampened {
+public class TestLevenbergDampened_DDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
 
 	@Test
 	public void basicTest() {
@@ -64,5 +66,11 @@ public class TestLevenbergDampened_DDRM extends CommonChecksLevenbergDampened {
 		alg.setFunction(new Individual_to_CoupledJacobian<>(residual,jacobian));
 
 		return alg;
+	}
+
+	@Override
+	protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(1e-3);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 }

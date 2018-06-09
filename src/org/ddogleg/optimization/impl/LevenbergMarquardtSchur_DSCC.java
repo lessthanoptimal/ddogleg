@@ -26,7 +26,9 @@ import org.ejml.data.IGrowArray;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
 /**
  * Sparse Levenberg-Marquardt implementation which uses the Schur Complement
@@ -46,9 +48,8 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  *
  * @author Peter Abeles
  */
-public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC> {
-
-
+public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC>
+{
 	Jacobian jacobian;
 
 	// Left and right side of the jacobian matrix
@@ -73,6 +74,7 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 	DMatrixSparseCSC tmp0 = new DMatrixSparseCSC(1,1);
 	DMatrixSparseCSC D_m = new DMatrixSparseCSC(1,1);
 
+	// Two solvers are created so that the structure can be saved and not recomputed each iteration
 	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solverA, solverD;
 
 	/**
@@ -82,6 +84,9 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 	 */
 	public LevenbergMarquardtSchur_DSCC(double initialDampParam) {
 		super(initialDampParam);
+
+		solverA = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+		solverD = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 	}
 
 	@Override
@@ -127,8 +132,12 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 		// Find the gradient using the two matrices for Jacobian
 		// g = J'*r = [L,R]'*r
-		CommonOps_DSCC.multTransA(jacLeft,residuals,gradient);
-		CommonOps_DSCC.multAddTransA(jacRight,residuals,gradient);
+		x1.reshape(jacLeft.numCols,1);
+		x2.reshape(jacRight.numCols,1);
+		CommonOps_DSCC.multTransA(jacLeft,residuals,x1);
+		CommonOps_DSCC.multTransA(jacRight,residuals,x2);
+		CommonOps_DDRM.insert(x1,gradient,0,0);
+		CommonOps_DDRM.insert(x2,gradient,x1.numRows,0);
 
 		// extract diagonal elements from Hessian matrix
 		CommonOps_DSCC.extractDiag(A, x1);
@@ -139,6 +148,11 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		CommonOps_DDRM.insert(x2,Bdiag,x1.numRows,0);
 	}
 
+	/**
+	 *
+	 * @param Y Negative of the gradient. DO NOT MODIFY. (Nx1)
+	 * @param step Step for this iteration. (Nx1)
+	 */
 	@Override
 	protected boolean computeStep(double lambda, DMatrixRMaj Y, DMatrixRMaj step) {
 		// add dampening parameter
@@ -154,19 +168,21 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		solverA.setStructureLocked(true);
 
 		// extract b1
-		CommonOps_DDRM.extract(Y,0,A.numCols,0,Y.numCols, b1,0,0);
-		CommonOps_DDRM.extract(Y,A.numCols,Y.numRows,0,Y.numCols, b2,0,0);
+		CommonOps_DDRM.extract(Y,0,A.numCols,0,Y.numCols, b1);
+		CommonOps_DDRM.extract(Y,A.numCols,Y.numRows,0,Y.numCols, b2);
 
-		// C = B'
-		// C*inv(A)*b1
+		// x=inv(A)*b1
+		x.reshape(A.numRows,1);
 		solverA.solve(b1,x);
-		// b2_m = b_2 - C*inv(A)*b1
-		CommonOps_DSCC.multTransA(B,b1,b2_m);
-		CommonOps_DDRM.add(b2,-1,b2_m,b2_m);
+		// b2_m = b_2 - C*inv(A)*b1 = b_2 - C*x
+		// C = B'
+		CommonOps_DSCC.multTransA(B,x,b2_m); // C*x
+		CommonOps_DDRM.add(b2,-1,b2_m,b2_m); // b2_m = b_2 - C*x
 
 		// D_m = D - C*inv(A)*B
-		solverA.solveSparse(B,D_m);
-		CommonOps_DSCC.multTransA(B,D_m,tmp0,gw,gx);
+		D_m.reshape(A.numRows,B.numCols);
+		solverA.solveSparse(B,D_m); // D_m = inv(A)*B
+		CommonOps_DSCC.multTransA(B,D_m,tmp0,gw,gx); // tmp0 = C*D_m = C*inv(A)*B
 		CommonOps_DSCC.add(1,D,-1,tmp0,D_m,gw,gx);
 
 		// Reduced System
@@ -174,12 +190,13 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		if( !solverD.setA(D_m) || solverD.quality() <= UtilEjml.EPS)
 			return false;
 		solverD.setStructureLocked(true);
+		x2.reshape(D_m.numRows,b2_m.numCols);
 		solverD.solve(b2_m,x2);
 
-		// back-substition
+		// back-substitution
 		// A*x1 = b1-B*x2
 		CommonOps_DSCC.mult(B,x2,x1);
-		CommonOps_DDRM.subtract(b1,x1,x1);
+		CommonOps_DDRM.subtract(b1,x1,b1);
 		solverA.solve(b1,x1);
 
 		// copy into the output

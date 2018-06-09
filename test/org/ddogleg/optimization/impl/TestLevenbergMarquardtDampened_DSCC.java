@@ -18,9 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
@@ -34,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLevenbergMarquardtDampened_DSCC extends CommonChecksLevenbergMarquardtDampened {
+public class TestLevenbergMarquardtDampened_DSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
 
 	@Test
 	public void basicTest() {
@@ -70,5 +72,11 @@ public class TestLevenbergMarquardtDampened_DSCC extends CommonChecksLevenbergMa
 		alg.setFunction(new Individual_to_CoupledJacobian<>(residual,jacobian));
 
 		return alg;
+	}
+
+	@Override
+	protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
+		LevenbergMarquardtDampened_DSCC alg = new LevenbergMarquardtDampened_DSCC(1e-3);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 }

@@ -18,9 +18,11 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledJacobian;
+import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverDense;
@@ -32,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLevenbergMarquardtDampened_DDRM extends CommonChecksLevenbergMarquardtDampened {
+public class TestLevenbergMarquardtDampened_DDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
 
 	@Test
 	public void basicTest() {
@@ -58,15 +60,21 @@ public class TestLevenbergMarquardtDampened_DDRM extends CommonChecksLevenbergMa
 	private LevenbergMarquardtDampened_DDRM createAlg(double a, double b ) {
 
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
 		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.pseudoInverse(true);
 
 		LevenbergMarquardtDampened_DDRM alg = new LevenbergMarquardtDampened_DDRM(solver,1e-3);
 
 		alg.setConvergence(1e-6,1e-6);
-		alg.setFunction(new Individual_to_CoupledJacobian(residual,jacobian));
+		alg.setFunction(new Individual_to_CoupledJacobian<>(residual,jacobian));
 
 		return alg;
+	}
+
+	@Override
+	protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+		LevenbergMarquardtDampened_DDRM alg = new LevenbergMarquardtDampened_DDRM(1e-3);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
 	}
 }

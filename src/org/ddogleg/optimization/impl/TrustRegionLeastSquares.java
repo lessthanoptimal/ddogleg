@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -91,8 +91,8 @@ public class TrustRegionLeastSquares {
 	public void setFunction( CoupledJacobian function ) {
 		this.function = function;
 
-		int m = function.getM();
-		int n = function.getN();
+		int m = function.getNumOfOutputsM();
+		int n = function.getNumOfInputsN();
 
 		x.reshape(n,1);
 		candidate.reshape(n,1);

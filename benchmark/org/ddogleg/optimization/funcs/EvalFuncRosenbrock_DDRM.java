@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  *
@@ -30,62 +31,74 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
  *
  * @author Peter Abeles
  */
-public class EvalFuncTrigonometric implements EvalFuncLeastSquares {
-	
-	int N;
-
-	public EvalFuncTrigonometric(int n) {
-		N = n;
-	}
-
+public class EvalFuncRosenbrock_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
-		return null;
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		double[] x = new double[N];
-		for( int i = 0; i < N; i++ ) {
-			x[i] = 1/(double)N;
-		}
-		return x;
+		return new double[]{-1.2,1};
 	}
 
 	@Override
 	public double[] getOptimal() {
-		return null;
+		return new double[]{1,1};
 	}
-
-	public class Func implements FunctionNtoM
+	
+	public static class Func implements FunctionNtoM
 	{
 		@Override
-		public int getNumOfInputsN() {return N;}
+		public int getNumOfInputsN() {
+			return 2;
+		}
 
 		@Override
-		public int getNumOfOutputsM() {return N;}
+		public int getNumOfOutputsM() {
+			return 2;
+		}
 
 		@Override
 		public void process(double[] input, double[] output) {
-			for( int i = 0; i < input.length; i++ ) {
-				output[i] = F(input,i);
-			}
+			double x1 = input[0];
+			double x2 = input[1];
+			
+			output[0] = 10.0*(x2-x1*x1);
+			output[1] = 1.0 - x1;
+		}
+	}
+
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
+	{
+		@Override
+		public int getNumOfInputsN() {
+			return 2;
 		}
 
-		public double F( double[]x , int degree ) {
-			double total = N;
-			for( int i = 0; i < N; i++ ) {
-				total -= Math.cos(x[i]);
-			}
+		@Override
+		public int getNumOfOutputsM() {
+			return 2;
+		}
 
-			total += (degree+1)*(1-Math.cos(x[degree])) - Math.sin(x[degree]);
+		@Override
+		public void process(double[] input, DMatrixRMaj J) {
+			double x1 = input[0];
+			
+			J.set(0,0,-20*x1);
+			J.set(0,1,10);
+			J.set(1,0,-1);
+			J.set(1,1,0);
+		}
 
-			return total;
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(2,2);
 		}
 	}
 }

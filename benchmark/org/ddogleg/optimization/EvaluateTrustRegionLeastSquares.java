@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,7 +25,7 @@ import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLea
 /**
  * @author Peter Abeles
  */
-public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEvaluator {
+public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	public EvaluateTrustRegionLeastSquares(boolean verbose) {
 		super(verbose, false);

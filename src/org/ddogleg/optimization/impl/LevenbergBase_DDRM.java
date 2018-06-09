@@ -52,7 +52,7 @@ public abstract class LevenbergBase_DDRM extends LevenbergFuncBase<DMatrixRMaj> 
 	 */
 	@Override
 	public void setFunction( CoupledJacobian<DMatrixRMaj> function ) {
-		internalInitialize(function.getN(),function.getM());
+		internalInitialize(function.getNumOfInputsN(),function.getNumOfOutputsM());
 		this.function = function;
 
 		jacobianVals.reshape(M,N);

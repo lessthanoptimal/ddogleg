@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,73 +24,34 @@ import org.ejml.data.DMatrixRMaj;
 
 /**
  *
+ * <p>
+ * Powel 1970
+ * </p>
+ *
  * @author Peter Abeles
  */
-public class EvalFuncCurveFit implements EvalFuncLeastSquares {
-	
-	double t[];
-	double f[];
-
-	public EvalFuncCurveFit(double x1, double x2, double x3, double x4, double deltaT, int N) {
-		t = new double[N];
-		f = new double[N];
-		
-		for( int i = 0; i < N; i++ ) {
-			t[i] = deltaT*i;
-			f[i] = model(x1,x2,x3,x4,t[i]);
-		}
-	}
-
+public class EvalFuncPowell_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
 	@Override
-	public FunctionNtoMxN getJacobian() {
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
 		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		return new double[]{-1.2,1};
+		return new double[]{3,1};
 	}
 
 	@Override
 	public double[] getOptimal() {
-		return new double[]{1,1};
+		return new double[]{0,0};
 	}
 	
-	public static double model( double x1 ,double x2, double x3 , double x4 , double t ) {
-		return x3*Math.exp(x1*t) + x4*Math.exp(x2*t);
-	}
-	
-	public class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {
-			return 4;
-		}
-
-		@Override
-		public int getNumOfOutputsM() {
-			return t.length;
-		}
-
-		@Override
-		public void process(double[] input, double[] output) {
-			double x1 = input[0];
-			double x2 = input[1];
-			double x3 = input[2];
-			double x4 = input[3];
-			
-			for( int i = 0; i < t.length; i++ ) {
-				output[i] = f[i] - model(x1,x2,x3,x4,t[i]);
-			}
-		}
-	}
-
-	public class Deriv implements FunctionNtoMxN<DMatrixRMaj>
+	public static class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {
@@ -99,32 +60,39 @@ public class EvalFuncCurveFit implements EvalFuncLeastSquares {
 
 		@Override
 		public int getNumOfOutputsM() {
-			return t.length;
+			return 2;
 		}
 
 		@Override
-		public void process(double[] input, DMatrixRMaj J ) {
+		public void process(double[] input, double[] output) {
 			double x1 = input[0];
 			double x2 = input[1];
-			double x3 = input[2];
-			double x4 = input[3];
+			
+			output[0] = x1;
+			output[1] = 10*x1/(x1+0.1) + 2*x2*x2;
+		}
+	}
 
-			for( int i = 0; i < t.length; i++ ) {
-				double g1 = -x3*t[i]*Math.exp(x1*t[i]);
-				double g2 = -x4*t[i]*Math.exp(x2*t[i]);
-				double g3 = -Math.exp(x1*t[i]);
-				double g4 = -Math.exp(x2*t[i]);
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
+	{
+		@Override
+		public int getNumOfInputsN() {
+			return 2;
+		}
 
-				J.set(i,0,g1);
-				J.set(i,1,g2);
-				J.set(i,2,g3);
-				J.set(i,3,g4);
-			}
+		@Override
+		public int getNumOfOutputsM() {
+			return 2;
+		}
 
+		@Override
+		public void process( double[] input, DMatrixRMaj J ) {
+			double x1 = input[0];
+			double x2 = input[1];
 			
 			J.set(0,0,1);
 			J.set(0,1,0);
-			J.set(1,0,1.0/Math.pow(x1+0.1,2));
+			J.set(1,0,1.0/Math.pow(x1 + 0.1, 2));
 			J.set(1,1,4*x2);
 		}
 
@@ -133,5 +101,4 @@ public class EvalFuncCurveFit implements EvalFuncLeastSquares {
 			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
-
 }
