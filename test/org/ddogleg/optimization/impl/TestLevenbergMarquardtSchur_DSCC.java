@@ -23,11 +23,25 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 
 /**
+ * TODO add all the usual tests
+ *
  * @author Peter Abeles
  */
 public class TestLevenbergMarquardtSchur_DSCC {
+
+	/**
+	 * Compare the by blocks solution to the normal way
+	 */
 	@Test
-	public void dummy() {
+	public void computeJacobian() {
+		fail("implement");
+	}
+
+	/**
+	 * Compare the by blocks solution to the normal way
+	 */
+	@Test
+	public void computeStep() {
 		fail("implement");
 	}
 }

@@ -117,14 +117,18 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		B.reshape(jacLeft.numCols,jacRight.numCols,1);
 		D.reshape(jacRight.numCols,jacRight.numCols,1);
 
-		CommonOps_DSCC.multTransA(jacLeft,jacLeft,A,gw,gx);
+		// take advantage of the inner product's symmetry when possible to reduce
+		// the number of calculations
+		CommonOps_DSCC.innerProductLower(jacLeft,tmp0,gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp0,A,gw);
 		CommonOps_DSCC.multTransA(jacLeft,jacRight,B,gw,gx);
-		CommonOps_DSCC.multTransA(jacRight,jacRight,D,gw,gx);
+		CommonOps_DSCC.innerProductLower(jacRight,tmp0,gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp0,D,gw);
 
 		// Find the gradient using the two matrices for Jacobian
 		// g = J'*r = [L,R]'*r
-		CommonOps_DSCC.multTransA(jacLeft,residuals,gradient,gx);
-		CommonOps_DSCC.multAddTransA(jacRight,residuals,gradient,gx);
+		CommonOps_DSCC.multTransA(jacLeft,residuals,gradient);
+		CommonOps_DSCC.multAddTransA(jacRight,residuals,gradient);
 
 		// extract diagonal elements from Hessian matrix
 		CommonOps_DSCC.extractDiag(A, x1);
@@ -133,7 +137,6 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		Bdiag.reshape(N,1);
 		CommonOps_DDRM.insert(x1,Bdiag,0,0);
 		CommonOps_DDRM.insert(x2,Bdiag,x1.numRows,0);
-
 	}
 
 	@Override
@@ -158,7 +161,7 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		// C*inv(A)*b1
 		solverA.solve(b1,x);
 		// b2_m = b_2 - C*inv(A)*b1
-		CommonOps_DSCC.multTransA(B,b1,b2_m,gx);
+		CommonOps_DSCC.multTransA(B,b1,b2_m);
 		CommonOps_DDRM.add(b2,-1,b2_m,b2_m);
 
 		// D_m = D - C*inv(A)*B
