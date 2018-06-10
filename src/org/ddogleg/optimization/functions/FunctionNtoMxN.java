@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,23 +25,7 @@ import org.ejml.data.DMatrix;
  *
  * @author Peter Abeles
  */
-public interface FunctionNtoMxN<S extends DMatrix> {
-
-	/**
-	 * Number of input parameters and columns in output matrix.
-	 * Typically the parameters you are optimizing.
-	 *
-	 * @return Number of input parameters
-	 */
-	int getNumOfInputsN();
-
-	/**
-	 * Number of rows in output matrix.
-	 * Typically the functions that are being optimized.
-	 *
-	 * @return Number of rows in output matrix.
-	 */
-	int getNumOfOutputsM();
+public interface FunctionNtoMxN<S extends DMatrix> extends FunctionInOut {
 
 	/**
 	 * <p>

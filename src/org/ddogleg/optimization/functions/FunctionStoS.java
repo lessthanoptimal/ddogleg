@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,5 +30,5 @@ public interface FunctionStoS {
 	 * @param input input parameter
 	 * @return output value
 	 */
-	public double process( double input );
+	double process( double input );
 }

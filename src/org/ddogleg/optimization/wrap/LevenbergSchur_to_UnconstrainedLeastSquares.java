@@ -22,6 +22,7 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.impl.LevenbergMarquardtSchur_DSCC;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DSCC;
 import org.ejml.data.DMatrixSparseCSC;
@@ -49,45 +50,35 @@ public class LevenbergSchur_to_UnconstrainedLeastSquares
 		if( _jacobian == null )
 			_jacobian = new NumericalJacobianForward_DSCC(function);
 
-		FunctionNtoMxN<DMatrixSparseCSC> jacobian = _jacobian;
+		FunctionNtoMxN<DMatrixSparseCSC> j = _jacobian;
 
-		alg.setFunction(new LevenbergMarquardtSchur_DSCC.FunctionJacobian() {
-
+		SchurJacobian<DMatrixSparseCSC> jacobian = new SchurJacobian<DMatrixSparseCSC>() {
 			DMatrixSparseCSC J = new DMatrixSparseCSC(1,1);
-			double[] input;
-
 			@Override
 			public int getNumOfInputsN() {
-				return jacobian.getNumOfInputsN();
+				return j.getNumOfInputsN();
 			}
 
 			@Override
 			public int getNumOfOutputsM() {
-				return jacobian.getNumOfOutputsM();
+				return j.getNumOfOutputsM();
 			}
 
 			@Override
-			public void setInput(double[] x) {
-				this.input = x;
-			}
-
-			@Override
-			public void computeFunctions(double[] output) {
-				function.process(input,output);
-			}
-
-			@Override
-			public void computeJacobian(DMatrixSparseCSC left, DMatrixSparseCSC right) {
+			public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
 				J.reshape(getNumOfOutputsM(),getNumOfInputsN());
-				jacobian.process(input,J);
+				j.process(input,J);
 
 				left.reshape(J.numRows,split);
 				right.reshape(J.numRows,J.numCols-split);
 
 				CommonOps_DSCC.extract(J, 0, J.numRows, 0, split, left, 0, 0);
 				CommonOps_DSCC.extract(J, 0, J.numRows, split, J.numCols, right, 0, 0);
+
 			}
-		});
+		};
+
+		alg.setFunction(function,jacobian);
 	}
 
 	@Override

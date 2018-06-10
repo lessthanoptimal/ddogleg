@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
@@ -100,7 +99,7 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 		}
 
 		// compute the change in step.
-		if( !solver.setA(B) || solver.quality() <= UtilEjml.EPS ) {
+		if( !solver.setA(B) ) {
 //			addToMessage("Singularity encountered.  Try a more robust solver line pseudo inverse");
 			return false;
 		}

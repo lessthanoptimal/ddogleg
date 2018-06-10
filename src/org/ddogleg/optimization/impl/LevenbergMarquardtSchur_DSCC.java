@@ -18,7 +18,8 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ejml.UtilEjml;
+import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -50,7 +51,10 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
  */
 public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC>
 {
-	FunctionJacobian function;
+	// computes the function and its derivative
+	FunctionNtoM function;
+	SchurJacobian<DMatrixSparseCSC> jacobian;
+	double[] input;
 
 	// Left and right side of the jacobian matrix
 	DMatrixSparseCSC jacLeft = new DMatrixSparseCSC(1,1,1);
@@ -91,20 +95,20 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 	@Override
 	protected void setFunctionParameters(double[] param) {
-		function.setInput(param);
+		this.input = param;
 		solverA.setStructureLocked(false);
 		solverD.setStructureLocked(false);
 	}
 
 	@Override
 	protected void computeResiduals(double[] output) {
-		function.computeFunctions(output);
+		function.process(input,output);
 	}
 
 	@Override
 	protected void computeJacobian(DMatrixRMaj residuals, DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
-		function.computeJacobian(jacLeft,jacRight);
+		jacobian.process(input, jacLeft,jacRight);
 
 		if( jacLeft.numCols+jacRight.numCols != N )
 			throw new IllegalArgumentException("Unexpected number of jacobian columns");
@@ -157,7 +161,8 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 			D.set(i,i, Bdiag.data[A.numCols+i] *(1.0 + lambda));
 		}
 
-		if( !solverA.setA(A) || solverA.quality() <= UtilEjml.EPS )
+		// Don't use quality to reject a solution since it's meaning is too dependent on implementation
+		if( !solverA.setA(A) )
 			return false;
 		solverA.setStructureLocked(true);
 
@@ -173,7 +178,7 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		CommonOps_DSCC.multTransA(B,x,b2_m); // C*x
 		CommonOps_DDRM.add(b2,-1,b2_m,b2_m); // b2_m = b_2 - C*x
 
-		// D_m = D - C*inv(A)*B
+		// D_m = D - C*inv(A)*B = D - B'*inv(A)*B (thus symmetric)
 		D_m.reshape(A.numRows,B.numCols);
 		solverA.solveSparse(B,D_m); // D_m = inv(A)*B
 		CommonOps_DSCC.multTransA(B,D_m,tmp0,gw,gx); // tmp0 = C*D_m = C*inv(A)*B
@@ -181,8 +186,9 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 		// Reduced System
 		// D_m*x_2 = b_2
-		if( !solverD.setA(D_m) || solverD.quality() <= UtilEjml.EPS)
+		if( !solverD.setA(D_m) )
 			return false;
+
 		solverD.setStructureLocked(true);
 		x2.reshape(D_m.numRows,b2_m.numCols);
 		solverD.solve(b2_m,x2);
@@ -216,37 +222,10 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		return CommonOps_DDRM.elementMax(Bdiag);
 	}
 
-	public void setFunction(FunctionJacobian function ) {
+	public void setFunction(FunctionNtoM function , SchurJacobian<DMatrixSparseCSC> jacobian )
+	{
 		this.function = function;
+		this.jacobian = jacobian;
 		internalInitialize(function.getNumOfInputsN(),function.getNumOfOutputsM());
-	}
-
-	public interface FunctionJacobian {
-		/**
-		 * Number of input parameters and columns in output matrix.
-		 * Typically the parameters you are optimizing.
-		 *
-		 * @return Number of input parameters
-		 */
-		int getNumOfInputsN();
-
-		/**
-		 * Number of rows in output matrix.
-		 * Typically the functions that are being optimized.
-		 *
-		 * @return Number of rows in output matrix.
-		 */
-		int getNumOfOutputsM();
-
-		void setInput(double[] x);
-
-		void computeFunctions( double[] output );
-
-		/**
-		 * Computes the jacobian in two matrices split along a column.
-		 * @param left (Output) left side of jacobian. Will be resized to fit.
-		 * @param right (Output) right side of jacobian. Will be resized to fit.
-		 */
-		void computeJacobian( DMatrixSparseCSC left , DMatrixSparseCSC right );
 	}
 }

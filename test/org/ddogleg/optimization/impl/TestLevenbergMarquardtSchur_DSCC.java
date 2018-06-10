@@ -20,6 +20,8 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.CoupledJacobian;
+import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.wrap.LevenbergSchur_to_UnconstrainedLeastSquares;
 import org.ejml.EjmlUnitTests;
 import org.ejml.data.DMatrixRMaj;
@@ -56,7 +58,7 @@ public class TestLevenbergMarquardtSchur_DSCC extends CommonChecksUnconstrainedL
 		LevenbergMarquardtDampened_DSCC baseline = new LevenbergMarquardtDampened_DSCC(1e-4);
 
 		// -------- computeJacobian
-		alg.setFunction(helper);
+		alg.setFunction(helper,helper);
 		baseline.setFunction(helper);
 
 		alg.internalInitialize(cols,rows);
@@ -92,7 +94,8 @@ public class TestLevenbergMarquardtSchur_DSCC extends CommonChecksUnconstrainedL
 	}
 
 	public class HelperJacobian implements
-			LevenbergMarquardtSchur_DSCC.FunctionJacobian,
+			FunctionNtoM,
+			SchurJacobian<DMatrixSparseCSC>,
 			CoupledJacobian<DMatrixSparseCSC>
 	{
 
@@ -131,11 +134,16 @@ public class TestLevenbergMarquardtSchur_DSCC extends CommonChecksUnconstrainedL
 		}
 
 		@Override
-		public void computeJacobian(DMatrixSparseCSC left, DMatrixSparseCSC right) {
+		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
 			left.reshape(J.numRows,split);
 			right.reshape(J.numRows, J.numCols-split);
 			CommonOps_DDRM.extract(J,0, J.numRows,0,split,left,0,0);
 			CommonOps_DDRM.extract(J,0, J.numRows,split, J.numCols,right,0,0);
+		}
+
+		@Override
+		public void process(double[] input, double[] output) {
+
 		}
 	}
 }

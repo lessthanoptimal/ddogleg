@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,11 +23,11 @@ package org.ddogleg.optimization.functions;
  */
 public interface CoupledGradient {
 	
-	public int getN();
+	int getN();
 	
-	public void setInput( double []x );
+	void setInput( double []x );
 	
-	public double computeFunction();
+	double computeFunction();
 	
-	public void computeGradient( double []gradient );
+	void computeGradient( double []gradient );
 }

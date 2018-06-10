@@ -23,17 +23,7 @@ import org.ejml.data.DMatrix;
 /**
  * @author Peter Abeles
  */
-public interface CoupledJacobian<S extends DMatrix> {
-
-	/**
-	 * Number of input parameters being optimized.
-	 */
-	int getNumOfInputsN();
-
-	/**
-	 * Number of functions.
-	 */
-	int getNumOfOutputsM();
+public interface CoupledJacobian<S extends DMatrix> extends FunctionInOut {
 
 	/**
 	 * Specifies the input parameters.  The user can modify these values and they will be modified inside the

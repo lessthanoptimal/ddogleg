@@ -20,7 +20,6 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.CoupledJacobian;
 import org.ejml.LinearSolverSafe;
-import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -101,16 +100,12 @@ public class LevenbergDampened_DDRM extends LevenbergBase_DDRM {
 		}
 
 		// compute the change in step.
-		if( solver.setA(B) ) {
-			if( solver.quality() > UtilEjml.EPS ) {
-
-				// solve for change in x
-				solver.solve(gradientNegative, step);
-
-				return true;
-			}
+		if( !solver.setA(B) ) {
+			return false;
 		}
-		return false;
+		// solve for change in x
+		solver.solve(gradientNegative, step);
+		return true;
 	}
 
 	/**
@@ -140,5 +135,4 @@ public class LevenbergDampened_DDRM extends LevenbergBase_DDRM {
 		double p_dot_g = VectorVectorMult_DDRM.innerProd(param,gradientNegative);
 		return 0.5*(mu*p_dot_p + p_dot_g);
 	}
-
 }

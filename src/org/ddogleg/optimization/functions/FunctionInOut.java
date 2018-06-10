@@ -19,24 +19,22 @@
 package org.ddogleg.optimization.functions;
 
 /**
- * Function for non-linear optimization that has a single output and N inputs.
+ * Base class for functions which take in an array of inputs and outputs
  *
  * @author Peter Abeles
  */
-public interface FunctionNtoS {
-
+public interface FunctionInOut {
 	/**
-	 * The number of inputs.  Typically the parameters you are optimizing.
+	 * Number of input elements.  Typically the parameters you are optimizing.
 	 *
-	 * @return Number of inputs.
+	 * @return number of input elements
 	 */
 	int getNumOfInputsN();
 
 	/**
-	 * Computes the output given an array of inputs.
+	 * Number of output elements. Typically the functions that are being optimized.
 	 *
-	 * @param input Array containing input values
-	 * @return The output.
+	 * @return number of output elements
 	 */
-	double process( double input[] );
+	int getNumOfOutputsM();
 }

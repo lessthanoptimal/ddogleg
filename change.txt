@@ -9,6 +9,7 @@ Date:     2018
 - Added Sparse non-linear optimization
   * LevenbergDampened
   * LevenbergMarquardtDampened
+  * LevenbergMarquardtSchur
 - Added float circular queues
 
 ------------------------------------------------------

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,7 +28,7 @@ public interface FunctionNtoN {
 	/**
 	 * Returns the number of inputs and outputs for this function.
 	 */
-	public int getN();
+	int getN();
 
 	/**
 	 * Processes the function.
@@ -36,5 +36,5 @@ public interface FunctionNtoN {
 	 * @param input Array with the inputs of length N.  Not modified.
 	 * @param output Array for storing the output of length N.  Modified.
 	 */
-	public void process( double input[] , double[] output );
+	void process( double input[] , double[] output );
 }
