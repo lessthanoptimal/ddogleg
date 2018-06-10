@@ -71,6 +71,6 @@ public class TestLevenbergDampened_DDRM extends CommonChecksUnconstrainedLeastSq
 	@Override
 	protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(1e-3);
-		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 }

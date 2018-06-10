@@ -50,7 +50,7 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
  */
 public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC>
 {
-	Jacobian jacobian;
+	FunctionJacobian function;
 
 	// Left and right side of the jacobian matrix
 	DMatrixSparseCSC jacLeft = new DMatrixSparseCSC(1,1,1);
@@ -90,27 +90,21 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 	}
 
 	@Override
-	protected void internalInitialize( int numParameters , int numFunctions ) {
-		super.internalInitialize(numParameters, numFunctions);
-
+	protected void setFunctionParameters(double[] param) {
+		function.setInput(param);
 		solverA.setStructureLocked(false);
 		solverD.setStructureLocked(false);
 	}
 
 	@Override
-	protected void setFunctionParameters(double[] param) {
-		jacobian.setInput(param);
-	}
-
-	@Override
 	protected void computeResiduals(double[] output) {
-		jacobian.computeFunctions(output);
+		function.computeFunctions(output);
 	}
 
 	@Override
 	protected void computeJacobian(DMatrixRMaj residuals, DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
-		jacobian.computeJacobian(jacLeft,jacRight);
+		function.computeJacobian(jacLeft,jacRight);
 
 		if( jacLeft.numCols+jacRight.numCols != N )
 			throw new IllegalArgumentException("Unexpected number of jacobian columns");
@@ -222,11 +216,12 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		return CommonOps_DDRM.elementMax(Bdiag);
 	}
 
-	public void setJacobian( Jacobian jacobian ) {
-		this.jacobian = jacobian;
+	public void setFunction(FunctionJacobian function ) {
+		this.function = function;
+		internalInitialize(function.getNumOfInputsN(),function.getNumOfOutputsM());
 	}
 
-	public interface Jacobian {
+	public interface FunctionJacobian {
 		/**
 		 * Number of input parameters and columns in output matrix.
 		 * Typically the parameters you are optimizing.
@@ -247,6 +242,11 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 		void computeFunctions( double[] output );
 
+		/**
+		 * Computes the jacobian in two matrices split along a column.
+		 * @param left (Output) left side of jacobian. Will be resized to fit.
+		 * @param right (Output) right side of jacobian. Will be resized to fit.
+		 */
 		void computeJacobian( DMatrixSparseCSC left , DMatrixSparseCSC right );
 	}
 }

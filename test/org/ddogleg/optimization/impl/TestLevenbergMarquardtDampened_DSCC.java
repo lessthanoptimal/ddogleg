@@ -77,6 +77,6 @@ public class TestLevenbergMarquardtDampened_DSCC extends CommonChecksUnconstrain
 	@Override
 	protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 		LevenbergMarquardtDampened_DSCC alg = new LevenbergMarquardtDampened_DSCC(1e-3);
-		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
+		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
 	}
 }

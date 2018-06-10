@@ -23,12 +23,11 @@ import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.LevenbergFuncBase;
-import org.ddogleg.optimization.impl.LevenbergMarquardtDampened_DDRM;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ejml.data.DMatrix;
 
 /**
- * Wrapper around {@link LevenbergMarquardtDampened_DDRM} for {@link org.ddogleg.optimization.UnconstrainedLeastSquares}
+ * Wrapper around {@link LevenbergFuncBase} for {@link org.ddogleg.optimization.UnconstrainedLeastSquares}
  *
  * @author Peter Abeles
  */

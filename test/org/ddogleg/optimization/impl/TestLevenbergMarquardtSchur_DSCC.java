@@ -18,7 +18,9 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.CoupledJacobian;
+import org.ddogleg.optimization.wrap.LevenbergSchur_to_UnconstrainedLeastSquares;
 import org.ejml.EjmlUnitTests;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -29,21 +31,14 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.fail;
-
 /**
  * TODO add all the usual tests
  *
  * @author Peter Abeles
  */
-public class TestLevenbergMarquardtSchur_DSCC {
+public class TestLevenbergMarquardtSchur_DSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
 
 	private Random rand = new Random(234);
-
-	@Test
-	public void addCommon() {
-		fail("Implement");
-	}
 
 	/**
 	 * Compare the by blocks solution to the normal way
@@ -61,7 +56,7 @@ public class TestLevenbergMarquardtSchur_DSCC {
 		LevenbergMarquardtDampened_DSCC baseline = new LevenbergMarquardtDampened_DSCC(1e-4);
 
 		// -------- computeJacobian
-		alg.setJacobian(helper);
+		alg.setFunction(helper);
 		baseline.setFunction(helper);
 
 		alg.internalInitialize(cols,rows);
@@ -88,8 +83,16 @@ public class TestLevenbergMarquardtSchur_DSCC {
 		EjmlUnitTests.assertEquals(expectedStep,foundStep);
 	}
 
+	@Override
+	protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
+		LevenbergMarquardtSchur_DSCC alg = new LevenbergMarquardtSchur_DSCC(1e-4);
+
+		// just pick some location to split. Would be better if always in the middle...
+		return new LevenbergSchur_to_UnconstrainedLeastSquares(alg,1);
+	}
+
 	public class HelperJacobian implements
-			LevenbergMarquardtSchur_DSCC.Jacobian ,
+			LevenbergMarquardtSchur_DSCC.FunctionJacobian,
 			CoupledJacobian<DMatrixSparseCSC>
 	{
 

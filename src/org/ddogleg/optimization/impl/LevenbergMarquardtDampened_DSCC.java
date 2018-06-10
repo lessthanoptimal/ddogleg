@@ -70,6 +70,12 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 	}
 
 	@Override
+	protected void setFunctionParameters(double[] param) {
+		super.setFunctionParameters(param);
+		solver.setStructureLocked(false);
+	}
+
+	@Override
 	protected void computeJacobian( DMatrixRMaj residuals , DMatrixRMaj gradient) {
 		// calculate the Jacobian values at the current sample point
 		function.computeJacobian(jacobianVals);

@@ -53,16 +53,6 @@ public abstract class LevenbergBase_DSCC extends LevenbergFuncBase<DMatrixSparse
 	}
 
 	@Override
-	public void initialize(double[] initial) {
-		super.initialize(initial);
-
-		// Structure only needs to be computed once when optimizing
-		// after each solve the structure is locked so this effectively tells it
-		// to recompute the structure the first time
-		solver.setStructureLocked(false);
-	}
-
-	@Override
 	protected double getMinimumDampening() {
 		return CommonOps_DDRM.elementMax(Bdiag);
 	}
