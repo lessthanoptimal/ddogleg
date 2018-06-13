@@ -106,6 +106,15 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		return data[index];
 	}
 
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public long getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
 	public long unsafe_get( int index ) {
 		return data[index];
 	}
