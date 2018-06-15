@@ -28,6 +28,10 @@ package org.ddogleg.example;
  * Point-Slope requires 4 variables and each line has an infinite number of parametrizations. Using a model with
  * the minimum number of variables isn't important for RANSAC, but is very important for non-linear optimization.
  *
+ * <pre>x = a + t*b
+ * y = b - t*a</pre>
+ * where (a,b) is the closest point on the line to the origin.
+ *
  * @author Peter Abeles
  */
 public class Line2D {
