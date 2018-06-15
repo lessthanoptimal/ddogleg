@@ -175,4 +175,21 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 		assertEquals(4,alg.get(3));
 		assertEquals(8,alg.get(4));
 	}
+
+	@Test
+	public void getFraction() {
+		GrowQueue_I8 alg = new GrowQueue_I8(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+		}
+
+		assertEquals(0,alg.getFraction(0.0));
+		assertEquals(0,alg.getFraction(0.02));
+		assertEquals(0,alg.getFraction(0.03));
+		assertEquals(1,alg.getFraction(1.0/19.0));
+		assertEquals(1,alg.getFraction(1.7/19.0));
+		assertEquals(19/2,alg.getFraction(0.5));
+		assertEquals(19,alg.getFraction(1.0));
+	}
 }

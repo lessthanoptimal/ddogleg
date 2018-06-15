@@ -142,6 +142,15 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		return data[index];
 	}
 
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public float getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
 	public float unsafe_get( int index ) {
 		return data[index];
 	}

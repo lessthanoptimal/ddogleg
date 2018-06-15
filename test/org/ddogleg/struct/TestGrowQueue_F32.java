@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.UtilEjml;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -189,6 +190,23 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 		assertEquals(3,alg.get(1),1e-4f);
 		assertEquals(4,alg.get(2),1e-4f);
 		assertEquals(8,alg.get(3),1e-4f);
+	}
+
+	@Test
+	public void getFraction() {
+		GrowQueue_F32 alg = new GrowQueue_F32(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+		}
+
+		assertEquals(0,alg.getFraction(0.0), UtilEjml.TEST_F32);
+		assertEquals(0,alg.getFraction(0.02), UtilEjml.TEST_F32);
+		assertEquals(0,alg.getFraction(0.03), UtilEjml.TEST_F32);
+		assertEquals(1,alg.getFraction(1.0/19.0), UtilEjml.TEST_F32);
+		assertEquals(1,alg.getFraction(1.7/19.0), UtilEjml.TEST_F32);
+		assertEquals(19/2,alg.getFraction(0.5), UtilEjml.TEST_F32);
+		assertEquals(19,alg.getFraction(1.0), UtilEjml.TEST_F32);
 	}
 }
 
