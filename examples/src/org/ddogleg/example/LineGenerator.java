@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,12 +37,12 @@ public class LineGenerator implements ModelGenerator<Line2D,Point2D> {
 		Point2D p1 = dataSet.get(0);
 		Point2D p2 = dataSet.get(1);
 
-		// create parametric line equation
+		// First find the slope of the line
 		double slopeX = p2.x - p1.x;
 		double slopeY = p2.y - p1.y;
 
-		// find the closet point to the origin
-		// find the closest point on the line to the point
+		// Now that we have the slope, all we need is a line on the point (we pick p1) to find
+		// the closest point on the line to the origin. This closest point is the parametrization.
 		double t = slopeX * ( origin.x - p1.x) + slopeY * ( origin.y - p1.y);
 		t /= slopeX * slopeX + slopeY * slopeY;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,13 +19,22 @@
 package org.ddogleg.example;
 
 /**
- * Line in 2D space parameterized by the closest point to the origin.
+ * Line in 2D space parameterized by the closest point to the origin. Almost every line in 2D can be uniquely defined
+ * by the point on the line which lies closest to the original. The slope of the line will then be the vector
+ * which is perpendicular to the slope of the line defined by the original to the closest point on the line being
+ * parameterised. The one exception to this rule is the set of lines which pass through the origin.
+ *
+ * We use this less common line parameterization because it only requires 2 variables and uniquely defines the line.
+ * Point-Slope requires 4 variables and each line has an infinite number of parametrizations. Using a model with
+ * the minimum number of variables isn't important for RANSAC, but is very important for non-linear optimization.
  *
  * @author Peter Abeles
  */
 public class Line2D {
-	double x;
-	double y;
+	/**
+	 * Coordinate of the closest point on the line to the origin.
+	 */
+	double x,y;
 
 	public String toString() {
 		return "Line2D( x="+x+" y="+y+" )";

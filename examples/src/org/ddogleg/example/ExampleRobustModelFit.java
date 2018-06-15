@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -53,7 +53,7 @@ public class ExampleRobustModelFit {
 
 		// RANSAC or LMedS work well here
 		ModelMatcher<Line2D,Point2D> alg =
-				new Ransac<Line2D,Point2D>(234234,manager,generator,distance,500,0.01);
+				new Ransac<>(234234, manager, generator, distance, 500, 0.01);
 //		ModelMatcher<Line2D,Point2D> alg =
 //				new LeastMedianOfSquares<Line2D, Point2D>(234234,100,0.1,0.5,generator,distance);
 
