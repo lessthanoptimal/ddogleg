@@ -11,6 +11,8 @@ Date:     2018
   * LevenbergMarquardtDampened
   * LevenbergMarquardtSchur
 - Added float circular queues
+- GrowQueue
+  * Added contains()
 
 ------------------------------------------------------
 Version:  0.14

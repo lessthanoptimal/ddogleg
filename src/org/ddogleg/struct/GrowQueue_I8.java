@@ -161,6 +161,14 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	public boolean contains( byte value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {

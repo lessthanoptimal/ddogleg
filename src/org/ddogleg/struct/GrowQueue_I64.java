@@ -187,6 +187,14 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	public boolean contains( long value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
