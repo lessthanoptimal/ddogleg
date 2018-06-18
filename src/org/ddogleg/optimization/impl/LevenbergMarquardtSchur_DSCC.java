@@ -20,6 +20,7 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
+import org.ddogleg.struct.GrowQueue_F64;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -78,6 +79,12 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 	DMatrixSparseCSC tmp0 = new DMatrixSparseCSC(1,1);
 	DMatrixSparseCSC D_m = new DMatrixSparseCSC(1,1);
 
+	// If true then columns will be scaled so that the largest value is one. This is done to prevent
+	// numerical overflow.
+	boolean scaleColumns = false;  // TODO remove if this feature doesn't prove to be useful
+	GrowQueue_F64 scaleLeft = new GrowQueue_F64();
+	GrowQueue_F64 scaleRight = new GrowQueue_F64();
+
 	// Two solvers are created so that the structure can be saved and not recomputed each iteration
 	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solverA, solverD;
 
@@ -115,6 +122,13 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		if( jacLeft.numRows!= M || jacRight.numRows != M )
 			throw new IllegalArgumentException("Unexpected number of jacobian rows");
 
+		scaleLeft.resize(jacLeft.numCols); scaleRight.resize(jacRight.numCols);
+		if( scaleColumns ) {
+			CommonOps_DSCC.columnMaxAbs(jacLeft, scaleLeft.data);
+			CommonOps_DSCC.columnMaxAbs(jacRight, scaleRight.data);
+			CommonOps_DSCC.columnDiv(jacLeft, scaleLeft.data);
+			CommonOps_DSCC.columnDiv(jacRight, scaleRight.data);
+		}
 		// Compute the Hessian in blocks
 		A.reshape(jacLeft.numCols,jacLeft.numCols,1);
 		B.reshape(jacLeft.numCols,jacRight.numCols,1);
@@ -134,6 +148,12 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		x2.reshape(jacRight.numCols,1);
 		CommonOps_DSCC.multTransA(jacLeft,residuals,x1);
 		CommonOps_DSCC.multTransA(jacRight,residuals,x2);
+
+		if( scaleColumns ) {
+			// NOTE: This should really be done to residuals before multiplication
+			CommonOps_DDRM.rowMult(x1, scaleLeft.data);
+			CommonOps_DDRM.rowMult(x2, scaleRight.data);
+		}
 		CommonOps_DDRM.insert(x1,gradient,0,0);
 		CommonOps_DDRM.insert(x2,gradient,x1.numRows,0);
 
@@ -170,6 +190,11 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		CommonOps_DDRM.extract(Y,0,A.numCols,0,Y.numCols, b1);
 		CommonOps_DDRM.extract(Y,A.numCols,Y.numRows,0,Y.numCols, b2);
 
+		if( scaleColumns ) {
+			CommonOps_DDRM.rowDiv(b1, scaleLeft.data);
+			CommonOps_DDRM.rowDiv(b2, scaleRight.data);
+		}
+
 		// x=inv(A)*b1
 		x.reshape(A.numRows,1);
 		solverA.solve(b1,x);
@@ -200,6 +225,11 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		solverA.solve(b1,x1);
 
 		// copy into the output
+		if( scaleColumns ) {
+			CommonOps_DDRM.rowDiv(x1, scaleLeft.data);
+			CommonOps_DDRM.rowDiv(x2, scaleRight.data);
+		}
+//		x1.print();
 		CommonOps_DDRM.insert(x1,step,0,0);
 		CommonOps_DDRM.insert(x2,step,x1.numRows,0);
 
