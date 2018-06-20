@@ -13,6 +13,8 @@ Date:     2018
 - Added float circular queues
 - GrowQueue
   * Added contains()
+- Misc
+  * Added SwapElement
 
 ------------------------------------------------------
 Version:  0.14
