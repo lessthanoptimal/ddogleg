@@ -100,8 +100,8 @@ public class FactoryNearestNeighbor {
 	 *
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static NearestNeighbor<double[]> exhaustive() {
-		return new WrapExhaustiveNeighbor();
+	public static  <P> NearestNeighbor<P> exhaustive(KdTreeDistance<P> distance) {
+		return new WrapExhaustiveNeighbor<>(distance);
 	}
 
 	/**

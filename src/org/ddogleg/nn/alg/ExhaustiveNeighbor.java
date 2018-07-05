@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,12 +29,12 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class ExhaustiveNeighbor {
+public class ExhaustiveNeighbor<P> {
 
 	// Number of elements in each point
 	int N;
 	// List of points
-	List<double[]> points;
+	List<P> points;
 
 	// the distance to the closest node found so far
 	double bestDistance;
@@ -43,7 +43,10 @@ public class ExhaustiveNeighbor {
 	GrowQueue_I32 indexes = new GrowQueue_I32();
 	GrowQueue_I32 indexesSort = new GrowQueue_I32();
 
-	public ExhaustiveNeighbor(int n) {
+	KdTreeDistance<P> distance;
+
+	public ExhaustiveNeighbor( KdTreeDistance<P> distance , int n) {
+		this.distance = distance;
 		N = n;
 	}
 
@@ -64,7 +67,7 @@ public class ExhaustiveNeighbor {
 	 *
 	 * @param points List od points
 	 */
-	public void setPoints( List<double[]> points ) {
+	public void setPoints( List<P> points ) {
 		this.points = points;
 	}
 
@@ -76,18 +79,14 @@ public class ExhaustiveNeighbor {
 	 * @param maxDistance The maximum distance (Euclidean squared) the neighbor can be.
 	 * @return Index of the closest point.
 	 */
-	public int findClosest( double[] p , double maxDistance ) {
+	public int findClosest( P p , double maxDistance ) {
 		int best = -1;
 		bestDistance = maxDistance;
 
 		for( int i = 0; i < points.size(); i++ ) {
-			double[] c = points.get(i);
+			P c = points.get(i);
 
-			double distanceC = 0;
-			for( int j = 0; j < N; j++ ) {
-				double d = p[j] - c[j];
-				distanceC += d*d;
-			}
+			double distanceC = distance.compute(p,c);
 
 			if( distanceC <= bestDistance ) {
 				bestDistance = distanceC;
@@ -108,7 +107,7 @@ public class ExhaustiveNeighbor {
 	 * @param outputIndex Storage for the index of the closest elements
 	 * @param outputDistance Storage for the distance of the closest elements
 	 */
-	public void findClosestN( double[] p , double maxDistance , int numNeighbors ,
+	public void findClosestN( P p , double maxDistance , int numNeighbors ,
 							  GrowQueue_I32 outputIndex ,
 							  GrowQueue_F64 outputDistance ) {
 
@@ -117,13 +116,9 @@ public class ExhaustiveNeighbor {
 		indexes.reset();
 
 		for( int i = 0; i < points.size(); i++ ) {
-			double[] c = points.get(i);
+			P c = points.get(i);
 
-			double distanceC = 0;
-			for( int j = 0; j < N; j++ ) {
-				double d = p[j] - c[j];
-				distanceC += d*d;
-			}
+			double distanceC = distance.compute(p,c);
 
 			if( distanceC <= maxDistance ) {
 				distances.add(distanceC);

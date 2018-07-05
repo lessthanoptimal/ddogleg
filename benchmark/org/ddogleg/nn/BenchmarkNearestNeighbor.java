@@ -101,7 +101,7 @@ public class BenchmarkNearestNeighbor {
 
 		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
 
-		ret.add( new Set(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Set(FactoryNearestNeighbor.exhaustive(distance),"Exhaustive"));
 		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
 		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
 		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));
@@ -116,7 +116,7 @@ public class BenchmarkNearestNeighbor {
 
 		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
 
-		ret.add( new Search(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Search(FactoryNearestNeighbor.exhaustive(distance),"Exhaustive"));
 		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
 		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
 		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));

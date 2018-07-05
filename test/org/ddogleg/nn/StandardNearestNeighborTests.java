@@ -19,6 +19,7 @@
 package org.ddogleg.nn;
 
 import org.ddogleg.nn.alg.ExhaustiveNeighbor;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
 import org.ddogleg.struct.GrowQueue_I32;
@@ -35,12 +36,13 @@ import static org.junit.Assert.*;
  */
 public abstract class StandardNearestNeighborTests {
 
-	Random rand = new Random(234);
+	private Random rand = new Random(234);
 
-	NearestNeighbor<double[]> alg;
+	private KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+	private NearestNeighbor<double[]> alg;
 
-	NnData found = new NnData();
-	FastQueue<NnData<double[]>> foundN = new FastQueue<NnData<double[]>>((Class)NnData.class,true);
+	private NnData<double[]> found = new NnData<>();
+	private FastQueue<NnData<double[]>> foundN = new FastQueue<>((Class)NnData.class,true);
 
 	public void setAlg(NearestNeighbor<double[]> alg) {
 		this.alg = alg;
@@ -110,7 +112,7 @@ public abstract class StandardNearestNeighborTests {
 
 			assertTrue(alg.findNearest(where, 10, found));
 
-			ExhaustiveNeighbor exhaustive = new ExhaustiveNeighbor(2);
+			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance,2);
 			exhaustive.setPoints(points);
 			double[] expected = points.get( exhaustive.findClosest(where,1000) );
 
@@ -146,13 +148,13 @@ public abstract class StandardNearestNeighborTests {
 		// Should search for a perfect match
 		assertFalse(alg.findNearest(target, 0, found));
 		assertTrue(alg.findNearest(points.get(3), 0, found));
-		assertTrue(found.point==points.get(3));
+		assertSame(found.point, points.get(3));
 		// Should be treated as unconstrained
 		assertTrue(alg.findNearest(target, -1, found));
-		assertTrue(found.point==points.get(3));
+		assertSame(found.point, points.get(3));
 		// should find a solution
 		assertTrue(alg.findNearest(target, 10, found));
-		assertTrue(found.point==points.get(3));
+		assertSame(found.point, points.get(3));
 	}
 
 	/**
@@ -172,9 +174,9 @@ public abstract class StandardNearestNeighborTests {
 		alg.setPoints(points,false);
 
 		assertTrue(alg.findNearest(target, 1.00000001, found));
-		assertTrue(found.point==points.get(2));
+		assertSame(found.point, points.get(2));
 		assertTrue(alg.findNearest(target, 1, found));
-		assertTrue(found.point==points.get(2));
+		assertSame(found.point, points.get(2));
 		assertFalse(alg.findNearest(target, 0.99999999, found));
 	}
 
@@ -231,7 +233,7 @@ public abstract class StandardNearestNeighborTests {
 	// make sure the return distance is correct
 	@Test
 	public void findNearestN_checkDistance() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 		points.add(new double[]{-1, 3});
@@ -254,7 +256,7 @@ public abstract class StandardNearestNeighborTests {
 
 	@Test
 	public void findNearestN_checkData() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
@@ -272,7 +274,7 @@ public abstract class StandardNearestNeighborTests {
 	 */
 	@Test
 	public void findNearestN_resultsCleared() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
@@ -312,7 +314,7 @@ public abstract class StandardNearestNeighborTests {
 			// see if it found more points than expected
 			assertTrue(foundN.size <= numNeighbors);
 
-			ExhaustiveNeighbor exhaustive = new ExhaustiveNeighbor(2);
+			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance,2);
 			exhaustive.setPoints(points);
 
 			outputIndex.reset();
@@ -342,7 +344,7 @@ public abstract class StandardNearestNeighborTests {
 	 */
 	@Test
 	public void findNearestN_duplicates() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{3,4});
 		points.add(new double[]{3,4});

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.GrowQueue_F64;
 import org.ddogleg.struct.GrowQueue_I32;
 import org.junit.Test;
@@ -32,52 +33,54 @@ import static org.junit.Assert.*;
  */
 public class TestExhaustiveNeighbor {
 
+	KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+
 	@Test
 	public void findClosest_zero() {
 		List<double[]> list = new ArrayList<double[]>();
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
-		assertTrue(alg.findClosest(new double[]{1,2},10) == -1);
+		assertEquals(alg.findClosest(new double[]{1, 2}, 10), -1);
 	}
 
 	@Test
 	public void findClosest_one() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2);
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
-		assertTrue(alg.findClosest(new double[]{1,2.1},10) == 0);
-		assertFalse(alg.findClosest(new double[]{1, 200}, 10) == 0);
+		assertEquals(0, alg.findClosest(new double[]{1, 2.1}, 10));
+		assertNotEquals(0, alg.findClosest(new double[]{1, 200}, 10));
 	}
 
 	@Test
 	public void findClosest_two() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
-		assertTrue(alg.findClosest(new double[]{1, 2.1}, 10) == 0);
+		assertEquals(0, alg.findClosest(new double[]{1, 2.1}, 10));
 	}
 
 	@Test
 	public void findClosest_three() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4,  6,7);
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
-		assertTrue(alg.findClosest(new double[]{3.1, 3.9}, 10) == 1);
+		assertEquals(1, alg.findClosest(new double[]{3.1, 3.9}, 10));
 	}
 
 	@Test
 	public void findClosestN_zero() {
 		List<double[]> list = new ArrayList<double[]>();
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]>  alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
 		GrowQueue_I32 outputIndex = new GrowQueue_I32();
@@ -96,7 +99,7 @@ public class TestExhaustiveNeighbor {
 	public void findClosestN_toomany() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
 		GrowQueue_I32 outputIndex = new GrowQueue_I32();
@@ -118,7 +121,7 @@ public class TestExhaustiveNeighbor {
 	public void findClosestN_toomany_distance() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
 		GrowQueue_I32 outputIndex = new GrowQueue_I32();
@@ -137,7 +140,7 @@ public class TestExhaustiveNeighbor {
 	public void findClosestN_standard() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4 , 4,5, 6,7 , 8,9 );
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
 		GrowQueue_I32 outputIndex = new GrowQueue_I32();
@@ -160,7 +163,7 @@ public class TestExhaustiveNeighbor {
 	public void findClosestN_multiple_calls() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4 , 4,5, 6,7 , 8,9 );
 
-		ExhaustiveNeighbor alg = new ExhaustiveNeighbor(2);
+		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance,2);
 		alg.setPoints(list);
 
 		GrowQueue_I32 outputIndex = new GrowQueue_I32();

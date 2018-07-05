@@ -38,7 +38,8 @@ public class BenchmarkNearestNeighborCorrect {
 	double maxDistance;
 	NnData<double[]> result = new NnData<>();
 
-	NearestNeighbor<double[]> exhaustive = FactoryNearestNeighbor.exhaustive();
+	KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+	NearestNeighbor<double[]> exhaustive = FactoryNearestNeighbor.exhaustive(distance);
 
 	private double computeCorrectness( NearestNeighbor<double[]> alg ) {
 		alg.init(dimen);
@@ -60,9 +61,7 @@ public class BenchmarkNearestNeighborCorrect {
 	public List<Subject> createAlg() {
 		List<Subject> ret = new ArrayList<Subject>();
 
-		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
-
-		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(distance),"Exhaustive"));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(),"kdtree"));
 		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,200),"kdtree P=200"));
 		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"Random Forest 200"));

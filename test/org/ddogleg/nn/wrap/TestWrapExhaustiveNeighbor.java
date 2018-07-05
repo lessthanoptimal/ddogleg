@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.nn.wrap;
 
 import org.ddogleg.nn.FactoryNearestNeighbor;
 import org.ddogleg.nn.StandardNearestNeighborTests;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 /**
  * @author Peter Abeles
@@ -27,7 +28,7 @@ import org.ddogleg.nn.StandardNearestNeighborTests;
 public class TestWrapExhaustiveNeighbor extends StandardNearestNeighborTests {
 
 	public TestWrapExhaustiveNeighbor() {
-		setAlg(FactoryNearestNeighbor.<Double>exhaustive());
+		setAlg(FactoryNearestNeighbor.exhaustive(new KdTreeEuclideanSq_F64()));
 	}
 
 }
