@@ -38,17 +38,16 @@ public class BenchmarkNearestNeighbor {
 	double maxDistance;
 	NnData result = new NnData();
 
-	public class SetAndSearch implements Performer {
+	public class Set implements Performer {
 
 		NearestNeighbor alg;
 		String name;
 		boolean trackIndicies = false;
 
-		public SetAndSearch(NearestNeighbor alg, String name) {
-			this.alg = alg;
-			this.name = name;
+		public Set(NearestNeighbor alg, String name) {
+			this(alg,name,false);
 		}
-		public SetAndSearch(NearestNeighbor alg, String name, boolean track) {
+		public Set(NearestNeighbor alg, String name, boolean track) {
 			this.alg = alg;
 			this.name = name;
 			this.trackIndicies = track;
@@ -58,7 +57,34 @@ public class BenchmarkNearestNeighbor {
 		public void process() {
 			alg.init(dimen);
 			alg.setPoints(cloud,trackIndicies);
+		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+	}
+
+	public class Search implements Performer {
+
+		NearestNeighbor alg;
+		String name;
+		boolean trackIndicies = false;
+
+		public Search(NearestNeighbor alg, String name) {
+			this(alg,name,false);
+		}
+		public Search(NearestNeighbor alg, String name, boolean track) {
+			this.alg = alg;
+			this.name = name;
+			this.trackIndicies = track;
+
+			alg.init(dimen);
+			alg.setPoints(cloud,trackIndicies);
+		}
+
+		@Override
+		public void process() {
 			for( double[]p : searchSet ) {
 				alg.findNearest(p,maxDistance,result);
 			}
@@ -70,17 +96,32 @@ public class BenchmarkNearestNeighbor {
 		}
 	}
 
-	public List<Performer> createAlg() {
+	public List<Performer> createSet() {
 		List<Performer> ret = new ArrayList<Performer>();
 
 		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
 
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.vptree(0xDEADBEEF),"VP-Tree"));
+		ret.add( new Set(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
+		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
+		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));
+		ret.add( new Set(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new Set(FactoryNearestNeighbor.vptree(0xDEADBEEF),"VP-Tree"));
+
+		return ret;
+	}
+
+	public List<Performer> createSearch() {
+		List<Performer> ret = new ArrayList<Performer>();
+
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+
+		ret.add( new Search(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
+		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
+		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));
+		ret.add( new Search(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new Search(FactoryNearestNeighbor.vptree(0xDEADBEEF),"VP-Tree"));
 
 		return ret;
 	}
@@ -94,16 +135,26 @@ public class BenchmarkNearestNeighbor {
 
 		System.out.println("Uniform data");
 		this.cloud = createData(rand, cloudSize, dimen);
-		System.out.println("K = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
-		for( Performer alg : createAlg() ) {
+		System.out.println("Dimen = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
+		System.out.println("           Set");
+		for( Performer alg : createSet() ) {
+			ProfileOperation.printOpsPerSec(alg,100);
+		}
+		System.out.println("           Search");
+		for( Performer alg : createSearch() ) {
 			ProfileOperation.printOpsPerSec(alg,100);
 		}
 
 		System.out.println();
 		System.out.println("Linear data");
 		this.cloud = createLinearData(rand, cloudSize, dimen);
-		System.out.println("K = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
-		for( Performer alg : createAlg() ) {
+		System.out.println("Dimen = "+dimen+"  cloud = "+cloudSize+"  search = "+searchSize);
+		System.out.println("           Set");
+		for( Performer alg : createSet() ) {
+			ProfileOperation.printOpsPerSec(alg,100);
+		}
+		System.out.println("           Search");
+		for( Performer alg : createSearch() ) {
 			ProfileOperation.printOpsPerSec(alg,100);
 		}
 	}
@@ -150,7 +201,7 @@ public class BenchmarkNearestNeighbor {
 //		app.evaluateDataSet(5,10000,10000);
 //		app.evaluateDataSet(10,10000,10000);
 //		app.evaluateDataSet(20,10000,10000);
-		app.evaluateDataSet(60,10000,10000);
-//		app.evaluateDataSet(120,10000,10000);
+//		app.evaluateDataSet(60,10000,10000);
+		app.evaluateDataSet(120,10000,10000);
 	}
 }

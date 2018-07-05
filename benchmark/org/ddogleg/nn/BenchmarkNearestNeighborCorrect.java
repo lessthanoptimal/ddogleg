@@ -36,11 +36,11 @@ public class BenchmarkNearestNeighborCorrect {
 	List<double[]> searchSet;
 	double[] solutions[];
 	double maxDistance;
-	NnData result = new NnData();
+	NnData<double[]> result = new NnData<>();
 
-	NearestNeighbor exhaustive = FactoryNearestNeighbor.exhaustive();
+	NearestNeighbor<double[]> exhaustive = FactoryNearestNeighbor.exhaustive();
 
-	private double computeCorrectness( NearestNeighbor alg ) {
+	private double computeCorrectness( NearestNeighbor<double[]> alg ) {
 		alg.init(dimen);
 		alg.setPoints(cloud,false);
 
@@ -62,13 +62,13 @@ public class BenchmarkNearestNeighborCorrect {
 
 		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
 
-//		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
+		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(),"kdtree"));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,200),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,500),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,2000),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,200),"kdtree P=200"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"Random Forest 200"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,500),"kdtree P=500"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P=1000"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,2000),"kdtree P=2000"));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(5000),"kdtree P "));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(10000),"kdtree P "));
 
@@ -82,14 +82,14 @@ public class BenchmarkNearestNeighborCorrect {
 		this.cloud = createData(rand,cloudSize,dimen);
 		this.searchSet = createData(rand,searchSize,dimen);
 		this.solutions = new double[ searchSize ][];
-		this.maxDistance = 10;
+		this.maxDistance = 4*dimen;
 
 		System.out.println("Computing solutions");
 		exhaustive.init(dimen);
 		exhaustive.setPoints(cloud,false);
 		for( int i = 0; i < searchSize; i++ ) {
 			exhaustive.findNearest(searchSet.get(i),maxDistance,result);
-			solutions[i] = (double[])result.point;
+			solutions[i] = result.point;
 		}
 
 		System.out.println("K = "+dimen+"  cloud = "+cloudSize);
@@ -101,9 +101,9 @@ public class BenchmarkNearestNeighborCorrect {
 
 	private static class Subject {
 		public String name;
-		public NearestNeighbor alg;
+		public NearestNeighbor<double[]> alg;
 
-		private Subject(NearestNeighbor alg,String name) {
+		private Subject(NearestNeighbor<double[]> alg,String name) {
 			this.name = name;
 			this.alg = alg;
 		}
@@ -122,7 +122,7 @@ public class BenchmarkNearestNeighborCorrect {
 		app.evaluateDataSet(10,100000,1000);
 		app.evaluateDataSet(20,100000,1000);
 		app.evaluateDataSet(60,100000,1000);
-//		app.evaluateDataSet(120,100000,1000);
+		app.evaluateDataSet(120,100000,1000);
 
 		try {
 			synchronized ( app ) {
