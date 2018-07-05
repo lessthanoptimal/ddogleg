@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public interface NearestNeighbor<D> {
+public interface NearestNeighbor<P> {
 
 	/**
 	 * Initializes data structures.
@@ -49,9 +49,9 @@ public interface NearestNeighbor<D> {
 	 * Specifies the set of points which are to be searched.
 	 *
 	 * @param points Set of points.
-	 * @param data (Optional) Associated data.  Can be null.
+	 * @param trackIndices If true it will keep track of the index. Making it easy to associate data.
 	 */
-	void setPoints( List<double[]> points , List<D> data );
+	void setPoints( List<P> points , boolean trackIndices );
 
 	/**
 	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
@@ -67,7 +67,7 @@ public interface NearestNeighbor<D> {
 	 * @param result (Output) Storage for the result.
 	 * @return true if a match within the max distance was found.
 	 */
-	boolean findNearest( double[] point , double maxDistance , NnData<D> result );
+	boolean findNearest( P point , double maxDistance , NnData<P> result );
 
 	/**
 	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
@@ -83,5 +83,5 @@ public interface NearestNeighbor<D> {
 	 * @param numNeighbors (Input) The number of neighbors it will search for.
 	 * @param results (Output) Storage for the result. Reset() is called. Must support grow() function.
 	 */
-	void findNearest( double[] point , double maxDistance , int numNeighbors , FastQueue<NnData<D>> results );
+	void findNearest( P point , double maxDistance , int numNeighbors , FastQueue<NnData<P>> results );
 }

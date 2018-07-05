@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,14 +16,17 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
+
+import org.ddogleg.nn.alg.KdTreeSearchN;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 /**
  * @author Peter Abeles
  */
 public class TestKdTreeSearchNStandard extends StandardKdTreeSearchNTests {
 	@Override
-	public KdTreeSearchN createAlg() {
-		return new KdTreeSearchNStandard();
+	public KdTreeSearchN<double[]> createAlg() {
+		return new KdTreeSearchNStandard<>(new KdTreeEuclideanSq_F64());
 	}
 }

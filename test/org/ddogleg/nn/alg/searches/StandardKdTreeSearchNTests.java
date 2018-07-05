@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,8 +16,11 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeResult;
+import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_F64;
@@ -44,14 +47,14 @@ public abstract class StandardKdTreeSearchNTests {
 	/**
 	 * Creates a KdTreeSearch which will produce optimal results
 	 */
-	public abstract KdTreeSearchN createAlg();
+	public abstract KdTreeSearchN<double[]> createAlg();
 
 	/**
 	 * Try several searches and see if they all produce good results.  Just fine the nearest-neighbor
 	 */
 	@Test
 	public void findClosest_basic_1() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 		alg.setTree(tree);
@@ -84,7 +87,7 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void findClosest_nullLeaf() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeWithNull();
 		alg.setTree(tree);
@@ -102,7 +105,7 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void randomTests() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 		alg.setTree(tree);
@@ -135,7 +138,7 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void findClosest_empty() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 		alg.setTree( new KdTree(2) );
 
 		found.reset();
@@ -149,9 +152,9 @@ public abstract class StandardKdTreeSearchNTests {
 	@Test
 	public void findClosest_leaf() {
 		KdTree tree = new KdTree(2);
-		tree.root = new KdTree.Node(new double[]{1,2},null);
+		tree.root = new KdTree.Node(new double[]{1,2});
 
-		KdTreeSearchN alg =createAlg();
+		KdTreeSearchN<double[]> alg =createAlg();
 		alg.setTree( tree );
 
 		found.reset();
@@ -170,9 +173,9 @@ public abstract class StandardKdTreeSearchNTests {
 	@Test
 	public void findClosest_maxDistance() {
 		KdTree tree = new KdTree(2);
-		tree.root = new KdTree.Node(new double[]{1,2},null);
+		tree.root = new KdTree.Node(new double[]{1,2});
 
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 		alg.setTree( tree );
 		alg.setMaxDistance(2);
 
@@ -190,7 +193,7 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void checkDistance() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 		alg.setTree(tree);
@@ -201,8 +204,8 @@ public abstract class StandardKdTreeSearchNTests {
 		alg.findNeighbor(pt, 1, found);
 
 		assertEquals(1,found.size);
-		double d0 = found.get(0).node.point[0]-pt[0];
-		double d1 = found.get(0).node.point[1]-pt[1];
+		double d0 = ((double[])found.get(0).node.point)[0]-pt[0];
+		double d1 = ((double[])found.get(0).node.point)[1]-pt[1];
 
 		assertEquals(d0*d0 + d1*d1,found.get(0).distance,1e-8);
 	}
@@ -212,7 +215,7 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void checkDuplicates() {
-		KdTreeSearchN alg = createAlg();
+		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = createTreeDuplicates();
 		alg.setTree(tree);
@@ -225,7 +228,7 @@ public abstract class StandardKdTreeSearchNTests {
 
 		// make sure each instance is unique
 		for( int i = 0; i < 3; i++ ) {
-			double[] a = found.get(i).node.point;
+			double[] a = (double[])found.get(i).node.point;
 			for( int j = i+1; j < 3; j++ ) {
 				assertTrue(found.get(j).node.point != a);
 			}
@@ -244,7 +247,7 @@ public abstract class StandardKdTreeSearchNTests {
 	private void checkContains( double[] d ) {
 		for( int i = 0; i < found.size; i++ ) {
 			boolean identical = true;
-			double f[] = found.data[i].node.point;
+			double f[] = (double[])found.data[i].node.point;
 			for( int j = 0; j < d.length; j++ ) {
 				if( d[j] != f[j] ) {
 					identical = false;
@@ -258,8 +261,8 @@ public abstract class StandardKdTreeSearchNTests {
 		fail("can't find");
 	}
 
-	private static void flattenTree( KdTree.Node n , List<double[]> data ) {
-		data.add(n.point);
+	private static void flattenTree(KdTree.Node n , List<double[]> data ) {
+		data.add((double[])n.point);
 		if( !n.isLeaf() ) {
 			flattenTree(n.left,data);
 			flattenTree(n.right,data);
@@ -304,14 +307,14 @@ public abstract class StandardKdTreeSearchNTests {
 
 		KdTree tree = new KdTree(2);
 
-		tree.root = new KdTree.Node(new double[]{1,2},null);
+		tree.root = new KdTree.Node(new double[]{1,2});
 		tree.root.split = 1;
-		tree.root.left = new KdTree.Node(new double[]{1,2},null);
+		tree.root.left = new KdTree.Node(new double[]{1,2});
 		tree.root.left.split = 0;
-		tree.root.left.left = new KdTree.Node(new double[]{1,2},null);
+		tree.root.left.left = new KdTree.Node(new double[]{1,2});
 		tree.root.left.left.split = -1;
 		tree.root.left.right = null;
-		tree.root.right = new KdTree.Node(new double[]{1,2},null);
+		tree.root.right = new KdTree.Node(new double[]{1,2});
 		tree.root.right.split = -1;
 
 		return tree;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,11 +19,12 @@
 package org.ddogleg.nn.alg;
 
 /**
+ * Computes the distance between two points
+ *
  * @author Peter Abeles
  */
-public class TestKdTreeSearch1Standard extends StandardKdTreeSearch1Tests {
-	@Override
-	public KdTreeSearch1 createAlg() {
-		return new KdTreeSearch1Standard();
-	}
+public interface KdTreeDistance<P> {
+	double compute( P a , P b );
+
+	double valueAt( P point , int index );
 }

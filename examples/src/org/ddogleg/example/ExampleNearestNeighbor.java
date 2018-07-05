@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.example;
 import org.ddogleg.nn.FactoryNearestNeighbor;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,28 +37,29 @@ public class ExampleNearestNeighbor {
 
 	public static void main( String args[] ) {
 		// Easiest way to create a NN algorithm is using the factory below
-		NearestNeighbor<Double> nn = FactoryNearestNeighbor.kdtree();
+		// KdTreeEuclideanSq_F64 tells it what type of data structure is being searched
+		// F64 standards for double and means double[]. You can easily specify your own
+		// data type by changing what you pass in here
+		NearestNeighbor<double[]> nn = FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64());
 
 		// specify the dimension of each point
 		nn.init(2);
 
 		// Create data that's going to be searched
-		List<double[]> points = new ArrayList<double[]>();
-		List<Double> data = new ArrayList<Double>();
+		List<double[]> points = new ArrayList<>();
 
 		// For sake of demonstration add a set of points along the line
 		for( int i = 0; i < 10; i++ ) {
 			double[] p = new double[]{i,i*2};
 			points.add(p);
-			data.add((double)i);
 		}
 
 		// Pass the points and associated data.  Internally a data structure is constructed that enables fast lookup.
 		// This can be one of the more expensive operations, depending on which implementation is used.
-		nn.setPoints(points,data);
+		nn.setPoints(points,true);
 
 		// declare storage for where to store the result
-		NnData<Double> result = new NnData<Double>();
+		NnData<double[]> result = new NnData<>();
 
 		// It will look for the closest point to [1.1,2.2] which will be [1,2]
 		// The second parameter specifies the maximum distance away that it will consider for a neighbor
@@ -65,7 +67,7 @@ public class ExampleNearestNeighbor {
 		if( nn.findNearest(new double[]{1.1,2.2},-1,result) ) {
 			System.out.println("Best match:");
 			System.out.println("   point     = "+result.point[0]+" "+result.point[1]);
-			System.out.println("   data      = "+result.data);
+			System.out.println("   data      = "+result.index);
 			System.out.println("   distance  = "+result.distance);
 		} else {
 			System.out.println("No match found");

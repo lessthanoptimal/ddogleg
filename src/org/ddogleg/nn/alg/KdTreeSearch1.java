@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,19 +23,19 @@ package org.ddogleg.nn.alg;
  *
  * @author Peter Abeles
  */
-public interface KdTreeSearch1 {
+public interface KdTreeSearch1<P> {
 
 	/**
 	 * Specifies the tree which is to be searched
 	 */
-	public void setTree( KdTree tree );
+	void setTree( KdTree tree );
 
 	/**
 	 * Specifies the maximum distance a closest-point needs to be to be considered
 	 *
 	 * @param maxDistance maximum distance from target
 	 */
-	public void setMaxDistance(double maxDistance );
+	void setMaxDistance(double maxDistance );
 
 	/**
 	 * Searches for the nearest neighbor to the target.  If no point is found that is less than maxDistance
@@ -44,12 +44,12 @@ public interface KdTreeSearch1 {
 	 * @param target Point whose nearest neighbor is being searched for
 	 * @return The closest point or null if there is none.
 	 */
-	public KdTree.Node findNeighbor(double[] target);
+	KdTree.Node findNeighbor(P target);
 
 	/**
 	 * Returns the distance of the closest node.
 	 *
 	 * @return distance to closest node.
 	 */
-	public double getDistance();
+	double getDistance();
 }

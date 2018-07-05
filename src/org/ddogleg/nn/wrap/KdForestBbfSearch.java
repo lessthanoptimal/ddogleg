@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,8 @@ package org.ddogleg.nn.wrap;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
 import org.ddogleg.nn.alg.*;
+import org.ddogleg.nn.alg.searches.KdTreeSearch1Bbf;
+import org.ddogleg.nn.alg.searches.KdTreeSearchNBbf;
 import org.ddogleg.struct.FastQueue;
 
 import java.util.List;
@@ -30,53 +32,54 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
+public class KdForestBbfSearch<P> implements NearestNeighbor<P> {
 
 	// set of K-D trees which are to be searched
 	KdTree[]forest;
 
 	// creates the set of K-D trees given the same input
-	KdTreeConstructor<D> constructor;
+	KdTreeConstructor<P> constructor;
 
 	KdTreeSearch1Bbf search1;
 	KdTreeSearchNBbf searchN;
 
-	AxisSplitter<D> splitter;
+	AxisSplitter<P> splitter;
 
-	KdTreeMemory memory = new KdTreeMemory();
+	KdTreeMemory<P> memory = new KdTreeMemory<>();
 
 	// storage for multiple results
-	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
+	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult.class,true);
 
 	public KdForestBbfSearch(int numberOfTrees,
 							 int maxNodesSearched,
-							 AxisSplitter<D> splitter) {
+							 KdTreeDistance<P> distance ,
+							 AxisSplitter<P> splitter) {
 		this.forest = new KdTree[ numberOfTrees ];
 		this.splitter = splitter;
-		this.search1 = new KdTreeSearch1Bbf(maxNodesSearched);
-		this.searchN = new KdTreeSearchNBbf(maxNodesSearched);
+		this.search1 = new KdTreeSearch1Bbf<>(distance,maxNodesSearched);
+		this.searchN = new KdTreeSearchNBbf<>(distance,maxNodesSearched);
 	}
 
 
 	@Override
 	public void init(int pointDimension) {
-		constructor = new KdTreeConstructor<D>(memory,pointDimension,splitter);
+		constructor = new KdTreeConstructor<P>(memory,pointDimension,splitter);
 	}
 
 	@Override
-	public void setPoints(List<double[]> points, List<D> data) {
+	public void setPoints(List<P> points , boolean trackIndicies ) {
 		if( forest[0] != null ) {
 			for( int i = 0; i < forest.length; i++ )
 				memory.recycleGraph(forest[i]);
 		}
 		for( int i = 0; i < forest.length; i++ )
-			forest[i] = constructor.construct(points,data);
+			forest[i] = constructor.construct(points,trackIndicies);
 		search1.setTrees(forest);
 		searchN.setTrees(forest);
 	}
 
 	@Override
-	public boolean findNearest(double[] point, double maxDistance, NnData<D> result) {
+	public boolean findNearest(P point, double maxDistance, NnData<P> result) {
 		if( maxDistance < 0 )
 			search1.setMaxDistance(Double.MAX_VALUE);
 		else
@@ -85,15 +88,15 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 		if( found == null )
 			return false;
 
-		result.point = found.point;
-		result.data = (D)found.data;
+		result.point = (P)found.point;
+		result.index = found.index;
 		result.distance = search1.getDistance();
 
 		return true;
 	}
 
 	@Override
-	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> results) {
+	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
 		results.reset();
 		if( maxDistance <= 0 )
 			searchN.setMaxDistance(Double.MAX_VALUE);
@@ -105,10 +108,10 @@ public class KdForestBbfSearch<D> implements NearestNeighbor<D> {
 
 		for( int i = 0; i < found.size; i++ ) {
 			KdTreeResult k = found.get(i);
-			NnData<D> r = results.grow();
+			NnData<P> r = results.grow();
 
-			r.point = k.node.point;
-			r.data = (D)k.node.data;
+			r.point = (P)k.node.point;
+			r.index = k.node.index;
 			r.distance = k.distance;
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,19 +25,19 @@ import org.ddogleg.struct.FastQueue;
  *
  * @author Peter Abeles
  */
-public interface KdTreeSearchN {
+public interface KdTreeSearchN<P> {
 
 	/**
 	 * Specifies the tree which is to be searched
 	 */
-	public void setTree(KdTree tree);
+	void setTree(KdTree tree);
 
 	/**
 	 * Specifies the maximum distance a closest-point needs to be to be considered
 	 *
 	 * @param maxDistance maximum distance from target
 	 */
-	public void setMaxDistance(double maxDistance);
+	void setMaxDistance(double maxDistance);
 
 	/**
 	 * Searches for the N nearest-neighbors to the target.  The results are added to the 'results' list.
@@ -46,6 +46,6 @@ public interface KdTreeSearchN {
 	 * @param searchN Number of closest points it will find.  Must be {@code >=} 1
 	 * @param results Storage for the found neighbors.
 	 */
-	public void findNeighbor(double[] target, int searchN, FastQueue<KdTreeResult> results);
+	void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results);
 }
 

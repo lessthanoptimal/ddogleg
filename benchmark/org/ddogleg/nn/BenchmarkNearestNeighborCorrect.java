@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,8 @@
  */
 
 package org.ddogleg.nn;
+
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class BenchmarkNearestNeighborCorrect {
 
 	private double computeCorrectness( NearestNeighbor alg ) {
 		alg.init(dimen);
-		alg.setPoints(cloud,null);
+		alg.setPoints(cloud,false);
 
 		int numCorrect = 0;
 		for( int i = 0; i < searchSet.size(); i++ ) {
@@ -58,13 +60,15 @@ public class BenchmarkNearestNeighborCorrect {
 	public List<Subject> createAlg() {
 		List<Subject> ret = new ArrayList<Subject>();
 
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+
 //		ret.add( new Subject(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(),"kdtree"));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(200),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(200,20,5,23423432),"K-D Random Forest"));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(500),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(1000),"kdtree P "));
-		ret.add( new Subject(FactoryNearestNeighbor.kdtree(2000),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,200),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,500),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P "));
+		ret.add( new Subject(FactoryNearestNeighbor.kdtree(distance,2000),"kdtree P "));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(5000),"kdtree P "));
 //		ret.add( new Subject(FactoryNearestNeighbor.kdtree(10000),"kdtree P "));
 
@@ -82,10 +86,10 @@ public class BenchmarkNearestNeighborCorrect {
 
 		System.out.println("Computing solutions");
 		exhaustive.init(dimen);
-		exhaustive.setPoints(cloud,null);
+		exhaustive.setPoints(cloud,false);
 		for( int i = 0; i < searchSize; i++ ) {
 			exhaustive.findNearest(searchSet.get(i),maxDistance,result);
-			solutions[i] = result.point;
+			solutions[i] = (double[])result.point;
 		}
 
 		System.out.println("K = "+dimen+"  cloud = "+cloudSize);

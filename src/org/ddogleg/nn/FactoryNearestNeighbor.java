@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,12 @@
 
 package org.ddogleg.nn;
 
-import org.ddogleg.nn.alg.*;
+import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
+import org.ddogleg.nn.alg.AxisSplitterMedian;
+import org.ddogleg.nn.alg.KdTreeDistance;
+import org.ddogleg.nn.alg.VpTree;
+import org.ddogleg.nn.alg.searches.KdTreeSearch1Bbf;
+import org.ddogleg.nn.alg.searches.KdTreeSearchNBbf;
 import org.ddogleg.nn.wrap.KdForestBbfSearch;
 import org.ddogleg.nn.wrap.KdTreeNearestNeighbor;
 import org.ddogleg.nn.wrap.WrapExhaustiveNeighbor;
@@ -38,11 +43,11 @@ public class FactoryNearestNeighbor {
 	 * @see KdTreeNearestNeighbor
 	 * @see AxisSplitterMedian
 	 *
-	 * @param <D> Associated data type.
+	 * @param <P> Point type.
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static <D> NearestNeighbor<D> kdtree() {
-		return new KdTreeNearestNeighbor<D>();
+	public static <P> NearestNeighbor<P> kdtree( KdTreeDistance<P> distance ) {
+		return new KdTreeNearestNeighbor<>(distance);
 	}
 
 	/**
@@ -50,16 +55,16 @@ public class FactoryNearestNeighbor {
 	 * order.  Distance measure is Euclidean squared.
 	 *
 	 * @see KdTreeNearestNeighbor
-	 * @see org.ddogleg.nn.alg.KdTreeSearch1Bbf
+	 * @see KdTreeSearch1Bbf
 	 * @see AxisSplitterMedian
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Controls speed and accuracy.
-	 * @param <D> Associated data type.
+	 * @param <P> Point type.
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static <D> NearestNeighbor<D> kdtree( int maxNodesSearched ) {
-		return new KdTreeNearestNeighbor<D>(new KdTreeSearch1Bbf(maxNodesSearched),
-				new KdTreeSearchNBbf(maxNodesSearched),new AxisSplitterMedian<D>());
+	public static <P> NearestNeighbor<P> kdtree( KdTreeDistance<P> distance , int maxNodesSearched ) {
+		return new KdTreeNearestNeighbor<P>(new KdTreeSearch1Bbf<>(distance,maxNodesSearched),
+				new KdTreeSearchNBbf<>(distance,maxNodesSearched),new AxisSplitterMedian<>(distance));
 	}
 
 	/**
@@ -74,16 +79,17 @@ public class FactoryNearestNeighbor {
 	 * @param numConsiderSplit Number of nodes that are considered when generating a tree.  Must be less than the
 	 *                         point's dimension.  Try 5
 	 * @param randomSeed Seed used by random number generator
-	 * @param <D> Associated data type.
+	 * @param <P> Point type.
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static <D> NearestNeighbor<D> kdRandomForest( int maxNodesSearched , int numTrees , int numConsiderSplit ,
-														 long randomSeed ) {
+	public static <P> NearestNeighbor<P> kdRandomForest(  KdTreeDistance<P> distance ,
+														  int maxNodesSearched , int numTrees , int numConsiderSplit ,
+														  long randomSeed ) {
 
 		Random rand = new Random(randomSeed);
 
-		return new KdForestBbfSearch<D>(numTrees,maxNodesSearched,
-				new AxisSplitterMedian<D>(new AxisSplitRuleRandomK(rand,numConsiderSplit)));
+		return new KdForestBbfSearch<>(numTrees,maxNodesSearched,distance,
+				new AxisSplitterMedian<>(distance,new AxisSplitRuleRandomK(rand,numConsiderSplit)));
 	}
 
 	/**
@@ -92,11 +98,10 @@ public class FactoryNearestNeighbor {
 	 *
 	 * @see org.ddogleg.nn.alg.ExhaustiveNeighbor
 	 *
-	 * @param <D> Associated data type.
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static <D> NearestNeighbor<D> exhaustive() {
-		return new WrapExhaustiveNeighbor<D>();
+	public static NearestNeighbor<double[]> exhaustive() {
+		return new WrapExhaustiveNeighbor();
 	}
 
 	/**
@@ -106,10 +111,9 @@ public class FactoryNearestNeighbor {
 	 * @see VpTree
 	 *
 	 * @param randSeed Random seed
-	 * @param <D> Associated data type.
 	 * @return {@link NearestNeighbor} implementation
 	 */
-	public static <D> NearestNeighbor<D> vptree( long randSeed ) {
-		return new VpTree<D>(randSeed);
+	public static NearestNeighbor<double[]> vptree( long randSeed ) {
+		return new VpTree(randSeed);
 	}
 }

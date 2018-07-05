@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,64 +37,61 @@ public abstract class StandardNearestNeighborTests {
 
 	Random rand = new Random(234);
 
-	NearestNeighbor<Double> alg;
+	NearestNeighbor<double[]> alg;
 
 	NnData found = new NnData();
-	FastQueue<NnData<Double>> foundN = new FastQueue<NnData<Double>>((Class)NnData.class,true);
+	FastQueue<NnData<double[]>> foundN = new FastQueue<NnData<double[]>>((Class)NnData.class,true);
 
-	public void setAlg(NearestNeighbor<Double> alg) {
+	public void setAlg(NearestNeighbor<double[]> alg) {
 		this.alg = alg;
 	}
 
 	@Test
 	public void findNearest_zero() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 
 		alg.init(2);
-		alg.setPoints(points,null);
+		alg.setPoints(points,false);
 		assertFalse(alg.findNearest(new double[]{1, 2}, 10, found));
 	}
 
 	@Test
 	public void findNearest_one() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 
 		alg.init(2);
-		alg.setPoints(points,null);
+		alg.setPoints(points,false);
 		assertTrue(alg.findNearest(new double[]{1, 2}, 10, found));
 
-		assertTrue(points.get(0) == found.point);
+		assertSame(points.get(0), found.point);
 	}
 
 	@Test
 	public void findNearest_two() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
 		alg.init(2);
-		alg.setPoints(points,null);
+		alg.setPoints(points,false);
 		assertTrue(alg.findNearest(new double[]{6, 7}, 10, found));
 
-		assertTrue(points.get(1) == found.point);
+		assertSame(points.get(1), found.point);
 	}
 
 	@Test
 	public void findNearest_checkData() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		List<Double> data = new ArrayList<Double>();
-		data.add(3.0);
-		data.add(7.0);
 
 		alg.init(2);
-		alg.setPoints(points,data);
+		alg.setPoints(points,true);
 		assertTrue(alg.findNearest(new double[]{6, 7}, 10, found));
 
-		assertTrue(data.get(1)== found.data);
+		assertEquals(1, found.index);
 	}
 
 	@Test
@@ -107,7 +104,7 @@ public abstract class StandardNearestNeighborTests {
 				points.add(randPoint(2));
 
 			alg.init(2);
-			alg.setPoints(points,null);
+			alg.setPoints(points,false);
 
 			double[] where = randPoint(2);
 
@@ -117,7 +114,7 @@ public abstract class StandardNearestNeighborTests {
 			exhaustive.setPoints(points);
 			double[] expected = points.get( exhaustive.findClosest(where,1000) );
 
-			assertTrue(expected == found.point);
+			assertSame(expected, found.point);
 		}
 	}
 
@@ -142,7 +139,7 @@ public abstract class StandardNearestNeighborTests {
 		double target[] = new double[]{1.1,3.9};
 
 		alg.init(2);
-		alg.setPoints(points, null);
+		alg.setPoints(points,false);
 
 		// should fail because the tolerance is too tight
 		assertFalse(alg.findNearest(target, 0.01, found));
@@ -163,7 +160,7 @@ public abstract class StandardNearestNeighborTests {
 	 */
 	@Test
 	public void checkSetMaxDistance_inclusive() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 		points.add(new double[]{-1, 3});
@@ -172,7 +169,7 @@ public abstract class StandardNearestNeighborTests {
 		double target[] = new double[]{-2,3};
 
 		alg.init(2);
-		alg.setPoints(points, null);
+		alg.setPoints(points,false);
 
 		assertTrue(alg.findNearest(target, 1.00000001, found));
 		assertTrue(found.point==points.get(2));
@@ -186,7 +183,7 @@ public abstract class StandardNearestNeighborTests {
 	 */
 	@Test
 	public void checkSetMaxDistance_inclusiveN() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 		points.add(new double[]{-1, 3});
@@ -196,7 +193,7 @@ public abstract class StandardNearestNeighborTests {
 		double target[] = new double[]{-2,3};
 
 		alg.init(2);
-		alg.setPoints(points, null);
+		alg.setPoints(points,false);
 
 		foundN.reset();
 		alg.findNearest(target, 1.00000001, 2, foundN);
@@ -212,7 +209,7 @@ public abstract class StandardNearestNeighborTests {
 	// make sure the return distance is correct
 	@Test
 	public void findNearest_checkDistance() {
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 		points.add(new double[]{-1, 3});
@@ -221,12 +218,12 @@ public abstract class StandardNearestNeighborTests {
 		double target[] = new double[]{1.1,3.9};
 
 		alg.init(2);
-		alg.setPoints(points,null);
+		alg.setPoints(points,false);
 
 		assertTrue(alg.findNearest(target, 10, found));
 
-		double d0 = found.point[0]-target[0];
-		double d1 = found.point[1]-target[1];
+		double d0 = ((double[])found.point)[0]-target[0];
+		double d1 = ((double[])found.point)[1]-target[1];
 
 		assertEquals(d0*d0 + d1*d1,found.distance,1e-8);
 	}
@@ -243,7 +240,7 @@ public abstract class StandardNearestNeighborTests {
 		double target[] = new double[]{1.1,3.9};
 
 		alg.init(2);
-		alg.setPoints(points,null);
+		alg.setPoints(points,false);
 
 		foundN.reset();
 		alg.findNearest(target, 10, 1, foundN);
@@ -261,17 +258,13 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		List<Double> data = new ArrayList<Double>();
-		data.add(3.0);
-		data.add(7.0);
-
 		alg.init(2);
-		alg.setPoints(points,data);
+		alg.setPoints(points,true);
 
 		foundN.reset();
 		alg.findNearest(new double[]{6, 7}, 10, 1, foundN);
 
-		assertTrue(data.get(1) == foundN.get(0).data);
+		assertEquals(1, foundN.get(0).index);
 	}
 
 	/**
@@ -283,14 +276,10 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		List<Double> data = new ArrayList<Double>();
-		data.add(3.0);
-		data.add(7.0);
-
 		alg.init(2);
-		alg.setPoints(points,data);
+		alg.setPoints(points,false);
 
-		foundN.add(new NnData<Double>());
+		foundN.add(new NnData<>());
 		alg.findNearest(new double[]{6, 7}, 10, 1, foundN);
 
 		assertEquals(1,foundN.size);
@@ -313,7 +302,7 @@ public abstract class StandardNearestNeighborTests {
 				points.add(randPoint(2));
 
 			alg.init(2);
-			alg.setPoints(points,null);
+			alg.setPoints(points,false);
 
 			double[] where = randPoint(2);
 
@@ -361,16 +350,8 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		List<Double> data = new ArrayList<Double>();
-		data.add(3.0);
-		data.add(3.1);
-		data.add(3.2);
-		data.add(3.3);
-		data.add(3.4);
-		data.add(7.0);
-
 		alg.init(2);
-		alg.setPoints(points,data);
+		alg.setPoints(points,false);
 
 		foundN.reset();
 		alg.findNearest(new double[]{6, 7}, 50, 5, foundN);

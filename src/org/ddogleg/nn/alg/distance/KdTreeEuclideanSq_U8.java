@@ -16,19 +16,31 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.wrap;
+package org.ddogleg.nn.alg.distance;
 
-import org.ddogleg.nn.FactoryNearestNeighbor;
-import org.ddogleg.nn.StandardNearestNeighborTests;
-import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
+import org.ddogleg.nn.alg.KdTreeDistance;
 
 /**
+ * Euclidian squared distance
+ *
  * @author Peter Abeles
  */
-public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
+public class KdTreeEuclideanSq_U8 implements KdTreeDistance<byte[]> {
+	@Override
+	public double compute(byte[] a, byte[] b) {
+		int sum = 0;
 
-	public TestKdTreeNearestNeighbor() {
-		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64()));
+		final int N = a.length;
+		for (int i = 0; i < N; i++) {
+			double d = (a[i]&0xFF)-(b[i]&0xFF);
+			sum += d*d;
+		}
+
+		return sum;
 	}
 
+	@Override
+	public double valueAt(byte[] point, int index) {
+		return point[index]&0xFF;
+	}
 }

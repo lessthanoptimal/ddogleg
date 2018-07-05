@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,23 +16,27 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeDistance;
+import org.ddogleg.nn.alg.KdTreeResult;
+import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.struct.FastQueue;
 
 /**
- * Standard algorithm for searching a {@link org.ddogleg.nn.alg.KdTree} for the nearest-neighbor of a search.
+ * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.
  * This is an adaptation of {@link KdTreeSearch1Standard} for N-nearest-neighbors.
  *
  * @author Peter Abeles
  */
-public class KdTreeSearchNStandard implements KdTreeSearchN {
+public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 
 	// the targeted tree
 	private KdTree tree;
 
 	// point being searched for
-	private double[] target;
+	private P target;
 
 	// the maximum distance a neighbor is allowed to be
 	private double maxDistanceSq = Double.MAX_VALUE;
@@ -43,6 +47,12 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 
 	// then number of nearest-neighbors it's searching for
 	private int searchN;
+
+	KdTreeDistance<P> distance;
+
+	public KdTreeSearchNStandard(KdTreeDistance<P> distance) {
+		this.distance = distance;
+	}
 
 	@Override
 	public void setTree( KdTree tree ) {
@@ -67,7 +77,7 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 	 * @param results Storage for the found neighbors
 	 */
 	@Override
-	public void findNeighbor(double[] target, int searchN, FastQueue<KdTreeResult> results) {
+	public void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results) {
 		if( searchN <= 0 )
 			throw new IllegalArgumentException("I'm sorry, but I refuse to search for less than or equal to 0 neighbors.");
 
@@ -98,9 +108,10 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 		// select the most promising branch to investigate first
 		KdTree.Node nearer,further;
 
-		double splitValue = node.point[ node.split ];
+		double splitValue = distance.valueAt((P)node.point, node.split );
 
-		if( target[node.split ] <= splitValue ) {
+		double targetAtSplit = distance.valueAt(target,node.split);
+		if( targetAtSplit<= splitValue ) {
 			nearer = node.left;
 			further = node.right;
 		} else {
@@ -112,7 +123,7 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 
 		// See if it is possible for 'further' to contain a better node
 		// Or if N matches have yet to be find, if it is possible to meet the maximum distance requirement
-		double dx = splitValue - target[ node.split ];
+		double dx = splitValue - targetAtSplit;
 		if( dx*dx <= mostDistantNeighborSq) {
 			if( neighbors.size() < searchN || dx*dx < mostDistantNeighborSq) {
 				stepClosest(further,neighbors);
@@ -124,7 +135,7 @@ public class KdTreeSearchNStandard implements KdTreeSearchN {
 	 * See if the node being considered is a new nearest-neighbor
 	 */
 	private void checkBestDistance(KdTree.Node node, FastQueue<KdTreeResult> neighbors) {
-		double distSq = KdTree.distanceSq(node,target,tree.N);
+		double distSq = distance.compute((P)node.point,target);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distSq <= mostDistantNeighborSq) {
 			if( neighbors.size() < searchN ) {

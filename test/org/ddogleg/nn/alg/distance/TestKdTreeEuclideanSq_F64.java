@@ -16,19 +16,33 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.wrap;
+package org.ddogleg.nn.alg.distance;
 
-import org.ddogleg.nn.FactoryNearestNeighbor;
-import org.ddogleg.nn.StandardNearestNeighborTests;
-import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
+import org.ejml.UtilEjml;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Peter Abeles
  */
-public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
+public class TestKdTreeEuclideanSq_F64 {
+	@Test
+	public void compute() {
+		double a[] = {1,2,3,4};
+		double b[] = {1,2,3,7};
 
-	public TestKdTreeNearestNeighbor() {
-		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64()));
+		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64();
+		assertEquals( 9,alg.compute(a,b) , UtilEjml.TEST_F64);
 	}
 
+	@Test
+	public void distance() {
+		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64();
+
+		double a[] = {1,2,3,4};
+		for (int i = 0; i < 4; i++) {
+			assertEquals( i+1,alg.valueAt(a,i) , UtilEjml.TEST_F64);
+		}
+	}
 }

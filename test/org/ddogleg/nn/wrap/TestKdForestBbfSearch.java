@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,6 +22,7 @@ import org.ddogleg.nn.StandardNearestNeighborTests;
 import org.ddogleg.nn.alg.AxisSplitRule;
 import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
 import org.ddogleg.nn.alg.AxisSplitterMedian;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.Random;
 
@@ -33,6 +34,8 @@ public class TestKdForestBbfSearch extends StandardNearestNeighborTests {
 	public TestKdForestBbfSearch() {
 		// set the max nodes so it that it will produce perfect results
 		AxisSplitRule rule = new AxisSplitRuleRandomK(new Random(234),1);
-		setAlg(new KdForestBbfSearch(5,10000,new AxisSplitterMedian(rule)));
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+		setAlg(new KdForestBbfSearch<>(5,10000,distance,
+				new AxisSplitterMedian<>(distance,rule)));
 	}
 }

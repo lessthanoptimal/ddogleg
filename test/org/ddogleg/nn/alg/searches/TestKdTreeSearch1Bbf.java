@@ -16,19 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.wrap;
+package org.ddogleg.nn.alg.searches;
 
-import org.ddogleg.nn.FactoryNearestNeighbor;
-import org.ddogleg.nn.StandardNearestNeighborTests;
+import org.ddogleg.nn.alg.KdTreeSearch1;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 /**
  * @author Peter Abeles
  */
-public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
-
-	public TestKdTreeNearestNeighbor() {
-		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64()));
+public class TestKdTreeSearch1Bbf extends StandardKdTreeSearch1Tests {
+	@Override
+	public KdTreeSearch1<double[]> createAlg() {
+		// specify so many max nodes that it will be optimal
+		return new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),10000);
 	}
-
 }

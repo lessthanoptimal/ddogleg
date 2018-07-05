@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,7 +16,10 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
+
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeDistance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ import java.util.PriorityQueue;
 
 /**
  * <p>
- * Approximate search for {@link org.ddogleg.nn.alg.KdTree K-D Trees} using the best-bin-first method [1] that supports
+ * Approximate search for {@link KdTree K-D Trees} using the best-bin-first method [1] that supports
  * multiple trees. A priority queue is created where nodes that are more likely to contain points close to the target are given
  * higher priority. It is approximate since only predetermined number of nodes are considered.
  * </p>
@@ -44,7 +47,7 @@ import java.util.PriorityQueue;
  *
  * @author Peter Abeles
  */
-public abstract class KdTreeSearchBestBinFirst {
+public abstract class KdTreeSearchBestBinFirst<P> {
 
 	// the maximum number of nodes it will search
 	private int maxNodesSearched;
@@ -70,12 +73,15 @@ public abstract class KdTreeSearchBestBinFirst {
 	// number of nodes which have been searched
 	protected int numNodesSearched = 0;
 
+	KdTreeDistance<P> distance;;
+
 	/**
 	 * Configures the search
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Used to limit CPU time.
 	 */
-	public KdTreeSearchBestBinFirst(int maxNodesSearched) {
+	public KdTreeSearchBestBinFirst(KdTreeDistance<P> distance, int maxNodesSearched) {
+		this.distance = distance;
 		this.maxNodesSearched = maxNodesSearched;
 	}
 
@@ -84,7 +90,7 @@ public abstract class KdTreeSearchBestBinFirst {
 		this.N = tree.N;
 	}
 
-	public void setTrees(KdTree []trees ) {
+	public void setTrees(KdTree[]trees ) {
 		this.trees = trees;
 		this.N = trees[0].N;
 	}
@@ -93,7 +99,7 @@ public abstract class KdTreeSearchBestBinFirst {
 		this.maxDistance = maxDistance;
 	}
 
-	public void _findClosest(double[] target) {
+	public void _findClosest(P target) {
 
 		numNodesSearched = 0;
 		bestDistanceSq = maxDistance;
@@ -127,7 +133,7 @@ public abstract class KdTreeSearchBestBinFirst {
 	/**
 	 * Traverse a node down to a leaf.  Unexplored branches are added to the priority queue.
 	 */
-	protected void searchNode(double[] target, KdTree.Node n) {
+	protected void searchNode(P target, KdTree.Node n) {
 		while( n != null) {
 			checkBestDistance(n, target);
 
@@ -137,9 +143,9 @@ public abstract class KdTreeSearchBestBinFirst {
 			// select the most promising branch to investigate first
 			KdTree.Node nearer,further;
 
-			double splitValue = n.point[ n.split ];
+			double splitValue = distance.valueAt( (P)n.point , n.split );
 
-			if( target[n.split ] <= splitValue ) {
+			if( distance.valueAt( target , n.split ) <= splitValue ) {
 				nearer = n.left;
 				further = n.right;
 			} else {
@@ -148,7 +154,7 @@ public abstract class KdTreeSearchBestBinFirst {
 			}
 
 			// See if it is possible for 'further' to contain a better node
-			double dx = splitValue - target[ n.split ];
+			double dx = splitValue - distance.valueAt(target, n.split );
 			if( further != null && canImprove(dx*dx) ) {
 				addToQueue(dx*dx, further, target );
 			}
@@ -162,7 +168,7 @@ public abstract class KdTreeSearchBestBinFirst {
 	 *
 	 * @param closestDistanceSq The closest distance that a point in the region could possibly be target
 	 */
-	protected void addToQueue( double closestDistanceSq , KdTree.Node node , double []target ) {
+	protected void addToQueue(double closestDistanceSq , KdTree.Node node , P target ) {
 
 		if( !node.isLeaf() ) {
 			Helper h;
@@ -184,7 +190,7 @@ public abstract class KdTreeSearchBestBinFirst {
 	/**
 	 * Checks to see if the current node's point is the closet point found so far
 	 */
-	protected abstract void checkBestDistance(KdTree.Node node, double[] target);
+	protected abstract void checkBestDistance(KdTree.Node node, P target);
 
 	/**
 	 * Checks to see if it is possible for this distance to improve upon the current best

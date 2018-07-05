@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,7 +16,11 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
+
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeDistance;
+import org.ddogleg.nn.alg.KdTreeSearch1;
 
 /**
  * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.  This is the algorithm
@@ -27,13 +31,13 @@ package org.ddogleg.nn.alg;
  *
  * @author Peter Abeles
  */
-public class KdTreeSearch1Standard implements KdTreeSearch1 {
+public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 
 	// the targeted tree
 	private KdTree tree;
 
 	// point being searched for
-	private double[] target;
+	private P target;
 
 	// the maximum distance a neighbor is allowed to be
 	private double maxDistanceSq = Double.MAX_VALUE;
@@ -42,6 +46,12 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 
 	// the node which has been found to be the closest so far
 	private KdTree.Node closest;
+
+	KdTreeDistance<P> distance;
+
+	public KdTreeSearch1Standard(KdTreeDistance<P> distance) {
+		this.distance = distance;
+	}
 
 	@Override
 	public void setTree( KdTree tree ) {
@@ -65,7 +75,7 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 	 * @return Closest node or null if none is within the minimum distance.
 	 */
 	@Override
-	public KdTree.Node findNeighbor(double[] target) {
+	public KdTree.Node findNeighbor(P target) {
 		if( tree.root == null )
 			return null;
 
@@ -94,7 +104,7 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 		if( node.isLeaf() ) {
 			// a leaf can be empty.
 			if( node.point != null ) {
-				double distSq = KdTree.distanceSq(node,target,tree.N);
+				double distSq = distance.compute((P)node.point,target);
 				if( distSq <= bestDistanceSq ) {
 					if( closest == null || distSq < bestDistanceSq ) {
 						closest = node;
@@ -104,7 +114,7 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 			}
 			return;
 		} else {
-			double distSq = KdTree.distanceSq(node,target,tree.N);
+			double distSq = distance.compute((P)node.point,target);
 			if( distSq <= bestDistanceSq ) {
 				if( closest == null || distSq < bestDistanceSq ) {
 					closest = node;
@@ -116,9 +126,10 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 		// select the most promising branch to investigate first
 		KdTree.Node nearer,further;
 
-		double splitValue = node.point[ node.split ];
+		double splitValue = distance.valueAt((P)node.point,node.split);
 
-		if( target[node.split ] <= splitValue ) {
+		double targetAtSplit = distance.valueAt(target,node.split);
+		if( targetAtSplit	 <= splitValue ) {
 			nearer = node.left;
 			further = node.right;
 		} else {
@@ -129,7 +140,7 @@ public class KdTreeSearch1Standard implements KdTreeSearch1 {
 		stepClosest(nearer);
 
 		// See if it is possible for 'further' to contain a better node
-		double dx = splitValue - target[ node.split ];
+		double dx = splitValue - targetAtSplit;
 		double dx2 = dx*dx;
 		if( dx2 <= bestDistanceSq ) {
 			if( closest == null || dx2 < bestDistanceSq )

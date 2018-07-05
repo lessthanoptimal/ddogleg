@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,10 +16,14 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeSearchN;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.junit.Test;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,9 +31,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	@Override
-	public KdTreeSearchN createAlg() {
+	public KdTreeSearchN<double[]> createAlg() {
 		// specify so many max nodes that it will be optimal
-		return new KdTreeSearchNBbf(10000);
+		return new KdTreeSearchNBbf<>(new KdTreeEuclideanSq_F64(),10000);
 	}
 
 	/**
@@ -40,7 +44,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	public void checkMaxNodes() {
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
-		KdTreeSearch1Bbf alg = new KdTreeSearch1Bbf(0);
+		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),0);
 		alg.setTree(tree);
 
 		KdTree.Node found = alg.findNeighbor(new double[]{12, 2});
@@ -57,9 +61,9 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 		KdTree forest[] = new KdTree[2];
 		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);
-		forest[1].root = new KdTree.Node(new double[]{12,2},null);
+		forest[1].root = new KdTree.Node(new double[]{12,2});
 
-		KdTreeSearch1Bbf alg = new KdTreeSearch1Bbf(200);
+		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),200);
 		alg.setTrees(forest);
 
 		KdTree.Node found = alg.findNeighbor(new double[]{12, 3});
@@ -67,7 +71,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 		// make sure it searched some nodes besides the root ones
 		assertTrue(alg.numNodesSearched>0);
 		// the best node should be the root node in the second forest
-		assertTrue(found==forest[1].root);
+		assertSame(found, forest[1].root);
 	}
 
 }

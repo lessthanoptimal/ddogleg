@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,8 @@ package org.ddogleg.nn.wrap;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
 import org.ddogleg.nn.alg.*;
+import org.ddogleg.nn.alg.searches.KdTreeSearch1Standard;
+import org.ddogleg.nn.alg.searches.KdTreeSearchNStandard;
 import org.ddogleg.struct.FastQueue;
 
 import java.util.List;
@@ -30,18 +32,18 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
+public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 
 	// tree being searched
 	KdTree tree;
 	// creates a tree from data
-	KdTreeConstructor<D> constructor;
+	KdTreeConstructor<P> constructor;
 	// searches the tree for the nearest neighbor
-	KdTreeSearch1 search;
+	KdTreeSearch1<P> search;
 	// searches the tree for the N nearest neighbors
-	KdTreeSearchN searchN;
+	KdTreeSearchN<P> searchN;
 	// Used internally during tree construction
-	AxisSplitter<D> splitter;
+	AxisSplitter<P> splitter;
 
 	// storage for multiple results
 	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
@@ -49,32 +51,32 @@ public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
 	// used to recycle memory
 	KdTreeMemory memory = new KdTreeMemory();
 
-	public KdTreeNearestNeighbor(KdTreeSearch1 search, KdTreeSearchN searchN, AxisSplitter<D> splitter) {
+	public KdTreeNearestNeighbor(KdTreeSearch1<P> search, KdTreeSearchN<P> searchN, AxisSplitter<P> splitter) {
 		this.search = search;
 		this.searchN = searchN;
 		this.splitter = splitter;
 	}
 
-	public KdTreeNearestNeighbor() {
-		this( new KdTreeSearch1Standard(), new KdTreeSearchNStandard(), new AxisSplitterMedian<D>());
+	public KdTreeNearestNeighbor( KdTreeDistance<P> distance ) {
+		this( new KdTreeSearch1Standard<>(distance), new KdTreeSearchNStandard<>(distance), new AxisSplitterMedian<>(distance));
 	}
 
 	@Override
 	public void init( int N ) {
-		constructor = new KdTreeConstructor<D>(memory,N,splitter);
+		constructor = new KdTreeConstructor<P>(memory,N,splitter);
 	}
 
 	@Override
-	public void setPoints(List<double[]> points, List<D> data) {
+	public void setPoints(List<P> points, boolean trackIndicies) {
 		if( tree != null )
 			memory.recycleGraph(tree);
-		tree = constructor.construct(points,data);
+		tree = constructor.construct(points,trackIndicies);
 		search.setTree(tree);
 		searchN.setTree(tree);
 	}
 
 	@Override
-	public boolean findNearest( double[] point , double maxDistance , NnData<D> result ) {
+	public boolean findNearest( P point , double maxDistance , NnData<P> result ) {
 		if( maxDistance < 0 )
 			search.setMaxDistance(Double.MAX_VALUE);
 		else
@@ -83,15 +85,15 @@ public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
 		if( found == null )
 			return false;
 
-		result.point = found.point;
-		result.data = (D)found.data;
+		result.point = (P)found.point;
+		result.index = found.index;
 		result.distance = search.getDistance();
 
 		return true;
 	}
 
 	@Override
-	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> results) {
+	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
 		results.reset();
 
 		if( maxDistance <= 0 )
@@ -104,10 +106,10 @@ public class KdTreeNearestNeighbor<D> implements NearestNeighbor<D> {
 
 		for( int i = 0; i < found.size; i++ ) {
 			KdTreeResult k = found.get(i);
-			NnData<D> r = results.grow();
+			NnData<P> r = results.grow();
 
-			r.point = k.node.point;
-			r.data = (D)k.node.data;
+			r.point = (P)k.node.point;
+			r.index = k.node.index;
 			r.distance = k.distance;
 		}
 	}

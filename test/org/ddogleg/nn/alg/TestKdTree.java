@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,22 +20,13 @@ package org.ddogleg.nn.alg;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Peter Abeles
  */
 public class TestKdTree {
-
-	@Test
-	public void distanceSq() {
-		KdTree alg = new KdTree(2);
-		KdTree.Node n = new KdTree.Node(new double[]{1,2},null);
-		double p[] = new double[]{2,5};
-
-		double expected = 1*1 + 3*3;
-		assertEquals(expected,KdTree.distanceSq(n,p,2),1e-8);
-	}
 
 	@Test
 	public void isLeaf() {

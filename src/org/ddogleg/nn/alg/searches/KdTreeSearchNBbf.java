@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeDistance;
+import org.ddogleg.nn.alg.KdTreeResult;
+import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.struct.FastQueue;
 
 /**
@@ -27,7 +31,7 @@ import org.ddogleg.struct.FastQueue;
  *
  * @author Peter Abeles
  */
-public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTreeSearchN {
+public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements KdTreeSearchN<P> {
 
 
 	// number of nearest-neighbors it will find
@@ -41,13 +45,14 @@ public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTree
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Used to limit CPU time.
 	 */
-	public KdTreeSearchNBbf(int maxNodesSearched) {
-		super(maxNodesSearched);
+	public KdTreeSearchNBbf(KdTreeDistance<P> distance,
+							int maxNodesSearched) {
+		super(distance,maxNodesSearched);
 	}
 
 
 	@Override
-	public void findNeighbor(double[] target, int searchN, FastQueue<KdTreeResult> results) {
+	public void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results) {
 
 		this.searchN = searchN;
 		this.neighbors = results;
@@ -58,9 +63,9 @@ public class KdTreeSearchNBbf extends KdTreeSearchBestBinFirst implements KdTree
 	/**
 	 * Checks to see if the current node's point is the closet point found so far
 	 */
-	protected void checkBestDistance(KdTree.Node node, double[] target) {
+	protected void checkBestDistance(KdTree.Node node, P target) {
 
-		double distanceSq = KdTree.distanceSq(node,target,N);
+		double distanceSq = distance.compute((P)node.point,target);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distanceSq <= bestDistanceSq ) {
 

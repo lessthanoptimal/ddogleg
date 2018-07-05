@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,11 +32,10 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
+public class WrapExhaustiveNeighbor implements NearestNeighbor<double[]> {
 
 	ExhaustiveNeighbor alg = new ExhaustiveNeighbor();
 	List<double[]> points;
-	List<D> data;
 
 	GrowQueue_I32 outputIndex = new GrowQueue_I32();
 	GrowQueue_F64 outputDistance = new GrowQueue_F64();
@@ -47,14 +46,13 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 	}
 
 	@Override
-	public void setPoints(List<double[]> points, List<D> data) {
+	public void setPoints(List<double[]> points, boolean trackIndicies) {
 		alg.setPoints(points);
 		this.points = points;
-		this.data = data;
 	}
 
 	@Override
-	public boolean findNearest(double[] point, double maxDistance, NnData<D> result) {
+	public boolean findNearest(double[] point, double maxDistance, NnData<double[]> result) {
 		if( maxDistance < 0 )
 			maxDistance = Double.MAX_VALUE;
 
@@ -62,8 +60,7 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 		if( index >= 0 ) {
 			result.point = points.get(index);
 			result.distance = alg.getBestDistance();
-			if( data != null )
-				result.data = data.get(index);
+			result.index = index;
 			return true;
 		} else {
 			return false;
@@ -71,7 +68,7 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 	}
 
 	@Override
-	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<D>> results) {
+	public void findNearest(double[] point, double maxDistance, int numNeighbors, FastQueue<NnData<double[]>> results) {
 		results.reset();
 
 		if( maxDistance < 0 )
@@ -83,11 +80,10 @@ public class WrapExhaustiveNeighbor<D> implements NearestNeighbor<D> {
 
 		for( int i = 0; i < outputIndex.size; i++ ) {
 			int index = outputIndex.get(i);
-			NnData<D> r = results.grow();
+			NnData<double[]> r = results.grow();
 			r.distance = outputDistance.get(i);
 			r.point = points.get(index);
-			if( data != null )
-				r.data = data.get( index );
+			r.index = index;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,8 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.struct.GrowQueue_I32;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +34,16 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class KdTreeConstructor<D> {
+public class KdTreeConstructor<P> {
 
 	// Number of elements/axes in each data point
 	private int N;
 
 	// selects which axis to split along and divides the set of points
-	AxisSplitter<D> splitter;
+	AxisSplitter<P> splitter;
 
 	// Used to recycles memory and avoid GC calls
-	KdTreeMemory memory;
+	KdTreeMemory<P> memory;
 
 	/**
 	 * Constructor which allows for maximum configurable.
@@ -49,7 +51,7 @@ public class KdTreeConstructor<D> {
 	 * @param memory Used to recycle data
 	 * @param N Number of elements/axes in each data point
 	 */
-	public KdTreeConstructor( KdTreeMemory memory , int N , AxisSplitter<D> splitter ) {
+	public KdTreeConstructor(KdTreeMemory<P> memory , int N , AxisSplitter<P> splitter ) {
 		this.memory = memory;
 		this.N = N;
 		this.splitter = splitter;
@@ -62,8 +64,8 @@ public class KdTreeConstructor<D> {
 	 *
 	 * @param N N Number of elements/axes in each data point
 	 */
-	public KdTreeConstructor( int N ) {
-		this(new KdTreeMemory(), N, new AxisSplitterMedian<D>(new AxisSplitRuleMax()));
+	public KdTreeConstructor( KdTreeDistance<P> distance , int N ) {
+		this(new KdTreeMemory<>(), N, new AxisSplitterMedian<P>(distance,new AxisSplitRuleMax()));
 	}
 
 	/**
@@ -72,19 +74,26 @@ public class KdTreeConstructor<D> {
 	 * WARNING: Reference to each point is saved to reduce memory usage..
 	 *
 	 * @param points Data points.
-	 * @param data (Optional) Data associated to each point.  Can be null.
 	 * @return KdTre
 	 */
-	public KdTree construct( List<double[]> points ,
-							 List<D> data )
+	public KdTree construct(List<P> points , boolean trackIndexes )
 	{
+		GrowQueue_I32 indexes = null;
+		if( trackIndexes ) {
+			indexes = new GrowQueue_I32();
+			indexes.resize(points.size());
+			for (int i = 0; i < indexes.size; i++) {
+				indexes.data[i] = i;
+			}
+		}
+
 		KdTree tree = memory.requestTree();
 		tree.N = N;
 
 		if( points.size() == 1 ) {
-			tree.root = createLeaf(points,data);
+			tree.root = createLeaf(points,indexes);
 		} else if( points.size() > 1 ) {
-			tree.root = computeBranch(points, data );
+			tree.root = computeBranch(points, indexes );
 		}
 
 		return tree;
@@ -96,35 +105,35 @@ public class KdTreeConstructor<D> {
 	 *
 	 * @return The node associated with this region
 	 */
-	protected KdTree.Node computeBranch(List<double[]> points, List<D> data ) {
-
+	protected KdTree.Node computeBranch(List<P> points, GrowQueue_I32 indexes)
+	{
 		// declare storage for the split data
-		List<double[]> left = new ArrayList<double[]>(points.size()/2);
-		List<double[]> right = new ArrayList<double[]>(points.size()/2);
-		List<D> leftData,rightData;
+		List<P> left = new ArrayList<>(points.size()/2);
+		List<P> right = new ArrayList<>(points.size()/2);
+		GrowQueue_I32 leftIndexes,rightIndexes;
 
-		if( data == null ) {
-			leftData = null; rightData = null;
+		if( indexes == null ) {
+			leftIndexes = null; rightIndexes = null;
 		} else {
-			leftData = new ArrayList<D>(points.size()/2);
-			rightData = new ArrayList<D>(points.size()/2);
+			leftIndexes = new GrowQueue_I32(points.size()/2);
+			rightIndexes = new GrowQueue_I32(points.size()/2);
 		}
 
 		// perform the splitting
-		splitter.splitData(points,data,left,leftData,right,rightData);
+		splitter.splitData(points,indexes,left,leftIndexes,right,rightIndexes);
 
 		// save the results into the current node and its children
 		KdTree.Node node = memory.requestNode();
 
 		node.split = splitter.getSplitAxis();
 		node.point = splitter.getSplitPoint();
-		node.data = splitter.getSplitData();
+		node.index = splitter.getSplitIndex();
 
 		// Compute the left and right children
-		node.left = computeChild(left,leftData);
+		node.left = computeChild(left,leftIndexes);
 		// free memory
-		left = null; leftData = null;
-		node.right = computeChild(right,rightData);
+		left = null; leftIndexes = null;
+		node.right = computeChild(right,rightIndexes);
 
 		return node;
 	}
@@ -132,22 +141,22 @@ public class KdTreeConstructor<D> {
 	/**
 	 * Creates a child by checking to see if it is a leaf or branch.
 	 */
-	protected KdTree.Node computeChild( List<double[]> points , List<D> data )
+	protected KdTree.Node computeChild(List<P> points , GrowQueue_I32 indexes )
 	{
 		if( points.size() == 0 )
 			return null;
 		if( points.size() == 1 ) {
-			return createLeaf(points,data);
+			return createLeaf(points,indexes);
 		} else {
-			return computeBranch(points,data);
+			return computeBranch(points,indexes);
 		}
 	}
 
 	/**
 	 * Convenient function for creating a leaf node
 	 */
-	private KdTree.Node createLeaf( List<double[]> points , List<D> data ) {
-		D d = data == null ? null : data.get(0);
-		return memory.requestNode(points.get(0),d);
+	private KdTree.Node createLeaf(List<P> points , GrowQueue_I32 indexes ) {
+		int index = indexes == null ? -1 : indexes.get(0);
+		return memory.requestNode(points.get(0),index);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,9 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.struct.GrowQueue_I32;
+
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -28,9 +31,9 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public interface AxisSplitter<D> {
+public interface AxisSplitter<P> {
 
-	public void setDimension( int N );
+	void setDimension( int N );
 
 	/**
 	 * Given the a set of points, select the axis to split the data along and select a point to divide the data.
@@ -38,29 +41,28 @@ public interface AxisSplitter<D> {
 	 * into left and above into right.  Data is optional and should be ignored if null. The selected
 	 *
 	 * @param points Input: Set of points.
-	 * @param data Input: (Optional) Set of data associated with the points.  Can be null.
+	 * @param indexes Input: (Optional) Option index asssociated with points.  Can be null.
 	 * @param left Output: Storage for points less than the split point.
-	 * @param leftData Output: (Optional) Storage for data associated with left. Can be null.
+	 * @param leftIndexes Output: (Optional) Storage for indexes associated with left. Can be null.
 	 * @param right Output: Storage for points more than the split point.
-	 * @param rightData Output: (Optional) Storage for data associated with right. Can be null.
+	 * @param righrIndexes Output: (Optional) Storage for indexes associated with right. Can be null.
 	 */
-	public void splitData( List<double[]> points , List<D> data ,
-						   List<double[]> left , List<D> leftData ,
-						   List<double[]> right , List<D> rightData );
+	void splitData( List<P> points , @Nullable GrowQueue_I32 indexes ,
+					List<P> left , @Nullable GrowQueue_I32 leftIndexes ,
+					List<P> right , @Nullable GrowQueue_I32 righrIndexes );
 
 	/**
 	 * Returns the point used to split the data
 	 */
-	public double[] getSplitPoint();
+	P getSplitPoint();
 
 	/**
-	 * Data associated with the split point
+	 * Index associated with the split point
 	 */
-	public D getSplitData();
+	int getSplitIndex();
 
 	/**
 	 * The axis/dimension that the input list was split on
-	 * @return
 	 */
-	public int getSplitAxis();
+	int getSplitAxis();
 }

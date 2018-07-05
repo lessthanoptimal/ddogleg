@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class KdTreeMemory {
+public class KdTreeMemory<P> {
 
 	// unused structures that are available for use
 	protected List<KdTree.Node> unusedNodes = new ArrayList<KdTree.Node>();
@@ -49,10 +49,10 @@ public class KdTreeMemory {
 	 * Request a leaf node be returned.  All data parameters will be automatically assigned appropriate
 	 * values for a leaf.
 	 */
-	public KdTree.Node requestNode(  double[] point , Object data ) {
+	public KdTree.Node requestNode(P point , int index ) {
 		KdTree.Node n = requestNode();
 		n.point = point;
-		n.data = data;
+		n.index = index;
 		n.split = -1;
 		return n;
 	}

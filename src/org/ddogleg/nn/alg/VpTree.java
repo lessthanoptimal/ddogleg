@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.nn.alg;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
 import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.GrowQueue_I32;
 
 import java.util.List;
 import java.util.PriorityQueue;
@@ -47,11 +48,9 @@ import java.util.Random;
  * </p>
  *
  * @author Karel Petránek
- *
- * @param <PointData> Type of user data attached to each point
  */
-public class VpTree<PointData> implements NearestNeighbor<PointData> {
-	private PointData[] itemData;
+public class VpTree implements NearestNeighbor<double[]> {
+	GrowQueue_I32 indexes;
 	private double[][] items;
 	private Node root;
 	private Random random;
@@ -65,17 +64,17 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 		random = new Random(randSeed);
    }
 
-   @Override
+	@Override
 	public void findNearest(double[] target, double maxDistance,
-							int numNeighbors, FastQueue<NnData<PointData>> results)
+							int numNeighbors, FastQueue<NnData<double[]>> results)
 	{
 		results.reset();
 		PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);
 
 		while (!heap.isEmpty()) {
 			final HeapItem heapItem = heap.poll();
-			NnData<PointData> objects = new NnData<PointData>();
-			objects.data = itemData[heapItem.index];
+			NnData<double[]> objects = new NnData<>();
+			objects.index = indexes.get(heapItem.index);
 			objects.point = items[heapItem.index];
 			objects.distance = heapItem.dist * heapItem.dist; // squared distance is expected
 			results.add(objects);
@@ -104,7 +103,7 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 			// choose an arbitrary vantage point and move it to the start
 			int i = random.nextInt(upper - lower - 1) + lower;
 			listSwap(items, lower, i);
-			listSwap(itemData, lower, i);
+			listSwap(indexes, lower, i);
 
 			int median = (upper + lower + 1) / 2;
 
@@ -150,17 +149,17 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 	private int partitionItems(int left, int right, int pivot, double[] origin) {
 		double pivotDistance = distance(origin, items[pivot]);
 		listSwap(items, pivot, right - 1);
-		listSwap(itemData, pivot, right - 1);
+		listSwap(indexes, pivot, right - 1);
 		int storeIndex = left;
 		for (int i = left; i < right - 1; i++) {
 			if (distance(origin, items[i]) <= pivotDistance) {
 				listSwap(items, i, storeIndex);
-				listSwap(itemData, i, storeIndex);
+				listSwap(indexes, i, storeIndex);
 				storeIndex++;
 			}
 		}
 		listSwap(items, storeIndex, right - 1);
-		listSwap(itemData, storeIndex, right - 1);
+		listSwap(indexes, storeIndex, right - 1);
 		return storeIndex;
 	}
 
@@ -175,6 +174,12 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 		final E tmp = list[a];
 		list[a] = list[b];
 		list[b] = tmp;
+	}
+
+	private void listSwap(GrowQueue_I32 list, int a, int b) {
+		int tmp = list.get(a);
+		list.data[a] = list.data[b];
+		list.data[b] = tmp;
 	}
 
 	/**
@@ -248,7 +253,7 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 	 * @param result information about the nearest point (output parameter)
 	 * @return true if a nearest point was found within maxDistance
 	 */
-	private boolean searchNearest(final double[] target, double maxDistance, NnData<PointData> result) {
+	private boolean searchNearest(final double[] target, double maxDistance, NnData<double[]> result) {
 		if (root == null) {
 			return false;
 		}
@@ -266,7 +271,7 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 
 			if (dist <= tau && dist < result.distance) {
 				result.distance = dist;
-				result.data = itemData[node.index];
+				result.index = indexes.data[node.index];
 				result.point = items[node.index];
 				tau = dist;
 				found = true;
@@ -291,15 +296,20 @@ public class VpTree<PointData> implements NearestNeighbor<PointData> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setPoints(List<double[]> points, List<PointData> data) {
+	public void setPoints(List<double[]> points, boolean trackIndicies) {
 		// Make a copy because we mutate the lists
 		this.items = points.toArray(new double[0][]);
-		this.itemData = data == null ? (PointData[])new Object[points.size()] : (PointData[])data.toArray();  // todo remove pointless list if null?
+		this.indexes = new GrowQueue_I32();
+		indexes.resize(points.size());
+		for (int i = 0; i < points.size(); i++) {
+			indexes.data[i] = i;
+		}
+
 		this.root = buildFromPoints(0, items.length);
 	}
 
 	@Override
-	public boolean findNearest(double[] point, double maxDistance, NnData<PointData> result) {
+	public boolean findNearest(double[] point, double maxDistance, NnData<double[]> result) {
 		boolean r = searchNearest(point, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), result);
 		result.distance *= result.distance; // Callee expects squared distance
 		return r;

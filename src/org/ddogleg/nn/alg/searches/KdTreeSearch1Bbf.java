@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,7 +16,11 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
+
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.KdTreeDistance;
+import org.ddogleg.nn.alg.KdTreeSearch1;
 
 /**
  * <p>
@@ -25,7 +29,7 @@ package org.ddogleg.nn.alg;
  *
  * @author Peter Abeles
  */
-public class KdTreeSearch1Bbf extends KdTreeSearchBestBinFirst implements KdTreeSearch1 {
+public class KdTreeSearch1Bbf<P> extends KdTreeSearchBestBinFirst<P> implements KdTreeSearch1<P> {
 
 	// the best node so far
 	private KdTree.Node bestNode;
@@ -35,12 +39,12 @@ public class KdTreeSearch1Bbf extends KdTreeSearchBestBinFirst implements KdTree
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Used to limit CPU time.
 	 */
-	public KdTreeSearch1Bbf(int maxNodesSearched) {
-		super(maxNodesSearched);
+	public KdTreeSearch1Bbf(KdTreeDistance<P> distance, int maxNodesSearched) {
+		super(distance,maxNodesSearched);
 	}
 
 	@Override
-	public KdTree.Node findNeighbor(double[] target) {
+	public KdTree.Node findNeighbor(P target) {
 
 		bestNode = null;
 
@@ -58,8 +62,8 @@ public class KdTreeSearch1Bbf extends KdTreeSearchBestBinFirst implements KdTree
 	 * Checks to see if the current node's point is the closet point found so far
 	 */
 	@Override
-	protected void checkBestDistance(KdTree.Node node, double[] target) {
-		double distanceSq = KdTree.distanceSq(node,target,N);
+	protected void checkBestDistance(KdTree.Node node, P target) {
+		double distanceSq = distance.compute((P)node.point,target);
 		if( distanceSq <= bestDistanceSq ) {
 			if( bestNode == null || distanceSq < bestDistanceSq ) {
 				bestDistanceSq = distanceSq;

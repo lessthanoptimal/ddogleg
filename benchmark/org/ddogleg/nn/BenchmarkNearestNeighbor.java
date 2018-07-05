@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.nn;
 
 import org.ddogleg.Performer;
 import org.ddogleg.ProfileOperation;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,19 +42,22 @@ public class BenchmarkNearestNeighbor {
 
 		NearestNeighbor alg;
 		String name;
+		boolean trackIndicies = false;
 
 		public SetAndSearch(NearestNeighbor alg, String name) {
 			this.alg = alg;
 			this.name = name;
-
-//			alg.init(dimen);
-//			alg.setPoints(cloud,null);
+		}
+		public SetAndSearch(NearestNeighbor alg, String name, boolean track) {
+			this.alg = alg;
+			this.name = name;
+			this.trackIndicies = track;
 		}
 
 		@Override
 		public void process() {
 			alg.init(dimen);
-			alg.setPoints(cloud,null);
+			alg.setPoints(cloud,trackIndicies);
 
 			for( double[]p : searchSet ) {
 				alg.findNearest(p,maxDistance,result);
@@ -69,10 +73,13 @@ public class BenchmarkNearestNeighbor {
 	public List<Performer> createAlg() {
 		List<Performer> ret = new ArrayList<Performer>();
 
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.exhaustive(),"Exhaustive"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(),"kdtree"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(1000),"kdtree P"));
-		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdRandomForest(200,20,5,23423432),"K-D Random Forest"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance),"kdtree-tracking",true));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdtree(distance,1000),"kdtree P"));
+		ret.add( new SetAndSearch(FactoryNearestNeighbor.kdRandomForest(distance,200,20,5,23423432),"K-D Random Forest"));
 		ret.add( new SetAndSearch(FactoryNearestNeighbor.vptree(0xDEADBEEF),"VP-Tree"));
 
 		return ret;
@@ -102,7 +109,7 @@ public class BenchmarkNearestNeighbor {
 	}
 
 	public static List<double[]> createData( Random rand , int size , int k ) {
-		List<double[]> ret = new ArrayList<double[]>();
+		List<double[]> ret = new ArrayList<>();
 
 		for( int i = 0; i < size; i++ ) {
 			double []d = new double[ k ];
@@ -115,7 +122,7 @@ public class BenchmarkNearestNeighbor {
 	}
 
 	public static List<double[]> createLinearData(Random rand, int size, int k) {
-		List<double[]> ret = new ArrayList<double[]>();
+		List<double[]> ret = new ArrayList<>();
 
 		double v[] = new double[k];
 		for( int j = 0; j < k; j++ ) {

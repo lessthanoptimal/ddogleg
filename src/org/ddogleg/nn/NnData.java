@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,11 +23,11 @@ package org.ddogleg.nn;
  *
  * @author Peter Abeles
  */
-public class NnData<D> {
+public class NnData<P> {
 	// tuple data
-	public double[] point;
+	public P point;
 	// data associated with point
-	public D data;
+	public int index;
 	// the fit distance
 	public double distance;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,15 +16,31 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.distance;
+
+import org.ddogleg.nn.alg.KdTreeDistance;
 
 /**
+ * Euclidian squared distance
+ *
  * @author Peter Abeles
  */
-public class TestKdTreeSearch1Bbf extends StandardKdTreeSearch1Tests {
+public class KdTreeEuclideanSq_F64 implements KdTreeDistance<double[]> {
 	@Override
-	public KdTreeSearch1 createAlg() {
-		// specify so many max nodes that it will be optimal
-		return new KdTreeSearch1Bbf(10000);
+	public double compute(double[] a, double[] b) {
+		double sum = 0;
+
+		final int N = a.length;
+		for (int i = 0; i < N; i++) {
+			double d = a[i]-b[i];
+			sum += d*d;
+		}
+
+		return sum;
+	}
+
+	@Override
+	public double valueAt(double[] point, int index) {
+		return point[index];
 	}
 }

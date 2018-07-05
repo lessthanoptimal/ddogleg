@@ -19,6 +19,7 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.sorting.QuickSelect;
+import org.ddogleg.struct.GrowQueue_I32;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class AxisSplitterMedian<D> implements AxisSplitter<D> {
+public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 
 	// Number of elements/axes in each data point
 	private int N;
@@ -46,19 +47,24 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 	// This abstraction was done so that random trees could use the same code
 	AxisSplitRule splitRule;
 
+	KdTreeDistance<P> distance;
+
 	// storage for output
 	int splitAxis;
-	double[] splitPoint;
-	D splitData;
+	P splitPoint;
+	int splitIndex;
 
-	public AxisSplitterMedian(AxisSplitRule splitRule ) {
+	public AxisSplitterMedian(KdTreeDistance<P> distance,
+							  AxisSplitRule splitRule ) {
+		this.distance = distance;
 		this.splitRule = splitRule;
 	}
 
 	/**
 	 * Defaults to selecting the split axis with maximum variance
 	 */
-	public AxisSplitterMedian() {
+	public AxisSplitterMedian(KdTreeDistance<P> distance) {
+		this.distance = distance;
 		this.splitRule = new AxisSplitRuleMax();
 	}
 
@@ -74,9 +80,9 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 	}
 
 	@Override
-	public void splitData(List<double[]> points, List<D> data,
-						  List<double[]> left, List<D> leftData,
-						  List<double[]> right, List<D> rightData) {
+	public void splitData(List<P> points, GrowQueue_I32 indexes,
+						  List<P> left, GrowQueue_I32 leftIndexes,
+						  List<P> right, GrowQueue_I32 rightIndexes) {
 		computeAxisVariance(points);
 		for (int i = 0; i < N; i++) {
 			if( Double.isNaN(var[i])) {
@@ -91,41 +97,42 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 		// sort until the median is found
 		quickSelect(points, splitAxis,medianNum);
 
-		splitPoint = points.get( indexes[medianNum] );
+		splitPoint = points.get( this.indexes[medianNum] );
 
 		// split into left and right lists.  Skip over the median point
-		if( data == null ) {
+		if( indexes == null ) {
 			for( int i = 0; i < medianNum; i++ ) {
-				left.add(points.get(indexes[i]));
+				left.add(points.get(this.indexes[i]));
 			}
 			for( int i = medianNum+1; i < points.size(); i++ ) {
-				right.add(points.get(indexes[i]));
+				right.add(points.get(this.indexes[i]));
 			}
-			splitData = null;
 		} else {
+			leftIndexes.reset();
+			rightIndexes.reset();
 
 			for( int i = 0; i < medianNum; i++ ) {
-				int index = indexes[i];
+				int index = this.indexes[i];
 				left.add(points.get(index));
-				leftData.add(data.get(index));
+				leftIndexes.add(indexes.get(index));
 			}
 			for( int i = medianNum+1; i < points.size(); i++ ) {
-				int index = indexes[i];
+				int index = this.indexes[i];
 				right.add(points.get(index));
-				rightData.add(data.get(index));
+				rightIndexes.add(indexes.get(index));
 			}
-			splitData = data.get( indexes[medianNum] );
+			splitIndex = indexes.get( this.indexes[medianNum] );
 		}
 	}
 
 	@Override
-	public double[] getSplitPoint() {
+	public P getSplitPoint() {
 		return splitPoint;
 	}
 
 	@Override
-	public D getSplitData() {
-		return splitData;
+	public int getSplitIndex() {
+		return splitIndex;
 	}
 
 	@Override
@@ -136,7 +143,7 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 	/**
 	 * Select the maximum variance as the split
 	 */
-	private void computeAxisVariance(List<double[]> points) {
+	private void computeAxisVariance(List<P> points) {
 		int numPoints = points.size();
 
 		for( int i = 0; i < N; i++ ) {
@@ -146,10 +153,10 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 
 		// compute the mean
 		for( int i = 0; i < numPoints; i++ ) {
-			double[] p = points.get(i);
+			P p = points.get(i);
 
 			for( int j = 0; j < N; j++ ) {
-				mean[j] += p[j];
+				mean[j] += distance.valueAt(p,j);
 			}
 		}
 
@@ -159,10 +166,10 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 
 		// compute the variance * N
 		for( int i = 0; i < numPoints; i++ ) {
-			double[] p = points.get(i);
+			P p = points.get(i);
 
 			for( int j = 0; j < N; j++ ) {
-				double d = mean[j] - p[j];
+				double d = mean[j] - distance.valueAt(p,j);
 				var[j] += d*d;
 			}
 		}
@@ -171,7 +178,7 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 	/**
 	 * Uses quick-select to find the median value
 	 */
-	private void quickSelect(List<double[]> points, int splitAxis, int medianNum) {
+	private void quickSelect(List<P> points, int splitAxis, int medianNum) {
 		int numPoints = points.size();
 
 		if( tmp.length < numPoints ) {
@@ -179,7 +186,7 @@ public class AxisSplitterMedian<D> implements AxisSplitter<D> {
 			indexes = new int[ numPoints ];
 		}
 		for( int i = 0; i < numPoints; i++ ) {
-			tmp[i] = points.get(i)[splitAxis];
+			tmp[i] = distance.valueAt(points.get(i),splitAxis);
 		}
 
 		QuickSelect.selectIndex(tmp, medianNum, numPoints, indexes);

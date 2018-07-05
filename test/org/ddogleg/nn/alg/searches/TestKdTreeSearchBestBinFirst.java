@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -16,8 +16,10 @@
  * limitations under the License.
  */
 
-package org.ddogleg.nn.alg;
+package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.nn.alg.KdTree;
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -52,7 +54,7 @@ public class TestKdTreeSearchBestBinFirst {
 		KdTree forest[] = new KdTree[2];
 		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);
-		forest[1].root = new KdTree.Node(new double[]{12,2},null);
+		forest[1].root = new KdTree.Node(new double[]{12,2});
 
 		BBF alg = new BBF(200);
 		alg.setTrees(forest);
@@ -65,13 +67,13 @@ public class TestKdTreeSearchBestBinFirst {
 		assertTrue(found==forest[1].root);
 	}
 
-	private static class BBF extends KdTreeSearchBestBinFirst {
+	private static class BBF extends KdTreeSearchBestBinFirst<double[]> {
 
 		// the best node so far
 		private KdTree.Node bestNode;
 
 		public BBF(int maxNodesSearched) {
-			super(maxNodesSearched);
+			super(new KdTreeEuclideanSq_F64(),maxNodesSearched);
 		}
 
 
@@ -86,7 +88,7 @@ public class TestKdTreeSearchBestBinFirst {
 
 		@Override
 		protected void checkBestDistance(KdTree.Node node, double[] target) {
-			double distanceSq = KdTree.distanceSq(node,target,N);
+			double distanceSq = distance.compute((double[])node.point,target);
 			if( distanceSq <= bestDistanceSq ) {
 				bestDistanceSq = distanceSq;
 				bestNode = node;

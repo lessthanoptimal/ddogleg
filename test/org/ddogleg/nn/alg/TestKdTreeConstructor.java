@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,88 +18,92 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
+import org.ddogleg.struct.GrowQueue_I32;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
  */
 public class TestKdTreeConstructor {
 
+	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64();
+
 	/**
 	 * Makes sure a branch is created correctly given the results from the splitter
 	 */
 	@Test
-	public void computeBranch() {
+	public void computeBranch_dontTrack() {
 		DummySplitter splitter = createSplitter(1,1,false);
 		splitter.splitAxis = 1;
 		splitter.splitPoint = new double[]{2,3};
 
-		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,splitter);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,splitter);
 
-		KdTree.Node n = alg.computeBranch(new ArrayList<double[]>(),null);
+		KdTree.Node n = alg.computeBranch(new ArrayList<>(),null);
 
-		assertTrue(n.point == splitter.splitPoint);
-		assertTrue(n.split == splitter.splitAxis);
-		assertTrue(n.data == null);
+		assertSame(n.point, splitter.splitPoint);
+		assertEquals(n.split, splitter.splitAxis);
+		assertEquals(-2, n.index); // default value in splitter
 		assertTrue(n.left.isLeaf());
 		assertTrue(n.right.isLeaf());
-		assertTrue(n.left.point == splitter.left.get(0));
-		assertTrue(n.left.data == null);
-		assertTrue(n.right.point == splitter.right.get(0));
-		assertTrue(n.right.data == null);
+		assertSame(n.left.point, splitter.left.get(0));
+		assertEquals(-1, n.left.index);
+		assertSame(n.right.point, splitter.right.get(0));
+		assertEquals(-1, n.right.index);
 	}
 
 	/**
 	 * Same test as above but with associated data
 	 */
 	@Test
-	public void computeBranch_widthData() {
+	public void computeBranch_trackIndexes() {
 		DummySplitter splitter = createSplitter(1,1,true);
 		splitter.splitAxis = 1;
 		splitter.splitPoint = new double[]{2,3};
-		splitter.splitData = 2;
+		splitter.splitIndex = 2;
 
-		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,splitter);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,splitter);
 
-		KdTree.Node n = alg.computeBranch(new ArrayList<double[]>(),new ArrayList());
+		KdTree.Node n = alg.computeBranch(new ArrayList<>(),new GrowQueue_I32());
 
-		assertTrue(n.point == splitter.splitPoint);
-		assertTrue(n.split == splitter.splitAxis);
-		assertTrue(n.data == splitter.splitData);
+		assertSame(n.point, splitter.splitPoint);
+		assertEquals(n.split, splitter.splitAxis);
+		assertEquals(n.index, splitter.splitIndex);
 		assertTrue(n.left.isLeaf());
 		assertTrue(n.right.isLeaf());
-		assertTrue(n.left.point == splitter.left.get(0));
-		assertTrue(n.left.data == splitter.leftData.get(0));
-		assertTrue(n.right.point == splitter.right.get(0));
-		assertTrue(n.right.data == splitter.rightData.get(0));
+		assertSame(n.left.point, splitter.left.get(0));
+		assertEquals(n.left.index, splitter.leftIndex.get(0));
+		assertSame(n.right.point, splitter.right.get(0));
+		assertEquals(n.right.index, splitter.rightIndex.get(0));
 	}
 
 	@Test
 	public void computeChild() {
-		KdTreeConstructor alg = new KdTreeConstructor(2);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(distance,2);
 
-		List points = new ArrayList();
-		List data = new ArrayList();
+		List<double[]> points = new ArrayList<>();
+		GrowQueue_I32 data = new GrowQueue_I32();
 
 		// empty lists should be null
 		KdTree.Node n = new KdTree.Node();
 		n.point = new double[2];
-		n.data = 1;
+		n.index = 1;
 		KdTree.Node found = alg.computeChild(points,data);
-		assertTrue(found == null);
+		assertNull(found);
 
 		// add a point
 		points.add( new double[2] );
 		data.add(2);
 		found = alg.computeChild(points,data);
 		assertTrue(found.isLeaf());
-		assertTrue(found.point == points.get(0));
-		assertTrue(found.data == data.get(0));
+		assertSame(found.point, points.get(0));
+		assertEquals(found.index, data.get(0));
 
 		// for all the other cases it will create a branch.  testing that will require a bit more work...
 	}
@@ -109,25 +113,25 @@ public class TestKdTreeConstructor {
 	 */
 	@Test
 	public void construct() {
-		KdTreeConstructor<?> alg = new KdTreeConstructor(new KdTreeMemory(),2,createSplitter(1,1,false));
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,createSplitter(1,1,false));
 
 		// test an empty list
-		List<double[]> points = new ArrayList<double[]>();
-		KdTree tree = alg.construct(points,null);
-		assertTrue(tree.N == 2);
-		assertTrue(tree.root == null);
+		List<double[]> points = new ArrayList<>();
+		KdTree tree = alg.construct(points,false);
+		assertEquals(2, tree.N);
+		assertNull(tree.root);
 
 		// add a point
 		points.add( new double[]{1,2});
-		tree = alg.construct(points,null);
-		assertTrue(tree.N == 2);
-		assertTrue(tree.root.point == points.get(0));
+		tree = alg.construct(points,false);
+		assertEquals(2, tree.N);
+		assertSame(tree.root.point, points.get(0));
 		assertTrue(tree.root.isLeaf());
 
 		// add another point.  These input points are ignored by the dummy splitter
 		points.add( new double[]{1,2,4,5});
-		tree = alg.construct(points,null);
-		assertTrue(tree.N == 2);
+		tree = alg.construct(points,false);
+		assertEquals(2, tree.N);
 		assertTrue(tree.root.left.isLeaf());
 		assertTrue(tree.root.right.isLeaf());
 	}
@@ -150,10 +154,10 @@ public class TestKdTreeConstructor {
 	}
 
 	private DummySplitter createSplitter( int numLeft , int numRight , boolean withData) {
-		List<double[]> left = new ArrayList<double[]>();
-		List<double[]> right = new ArrayList<double[]>();
-		List<Integer> leftData = null;
-		List<Integer> rightData = null;
+		List<double[]> left = new ArrayList<>();
+		List<double[]> right = new ArrayList<>();
+		GrowQueue_I32 leftData = null;
+		GrowQueue_I32 rightData = null;
 
 		for( int i = 0; i < numLeft; i++ ) {
 			left.add( new double[2] );
@@ -163,8 +167,8 @@ public class TestKdTreeConstructor {
 		}
 
 		if( withData ) {
-			leftData = new ArrayList<Integer>();
-			rightData = new ArrayList<Integer>();
+			leftData = new GrowQueue_I32();
+			rightData = new GrowQueue_I32();
 
 			for( int i = 0; i < numLeft; i++ ) {
 				leftData.add( i );
@@ -175,31 +179,31 @@ public class TestKdTreeConstructor {
 		}
 
 
-		return new DummySplitter(null,null,1,left,leftData,right,rightData);
+		return new DummySplitter(-2,null,1,left,leftData,right,rightData);
 	}
 
-	public static class DummySplitter implements AxisSplitter<Integer> {
+	public static class DummySplitter implements AxisSplitter<double[]> {
 
 		boolean calledSetDimension = false;
-		Integer splitData;
+		int splitIndex;
 		double[] splitPoint;
 		int splitAxis;
 		List<double[]> left;
-		List<Integer> leftData;
+		GrowQueue_I32 leftIndex;
 		List<double[]> right;
-		List<Integer> rightData;
+		GrowQueue_I32 rightIndex;
 
-		public DummySplitter(Integer splitData, double[] splitPoint, int splitAxis,
-							 List<double[]> left, List<Integer> leftData,
-							 List<double[]> right, List<Integer> rightData)
+		public DummySplitter(int splitIndex, double[] splitPoint, int splitAxis,
+							 List<double[]> left, GrowQueue_I32 leftIndex,
+							 List<double[]> right, GrowQueue_I32 rightIndex)
 		{
-			this.splitData = splitData;
+			this.splitIndex = splitIndex;
 			this.splitPoint = splitPoint;
 			this.splitAxis = splitAxis;
 			this.left = left;
-			this.leftData = leftData;
+			this.leftIndex = leftIndex;
 			this.right = right;
-			this.rightData = rightData;
+			this.rightIndex = rightIndex;
 		}
 
 		@Override
@@ -208,16 +212,16 @@ public class TestKdTreeConstructor {
 		}
 
 		@Override
-		public void splitData(List<double[]> points, List<Integer> data,
-							  List<double[]> left, List<Integer> leftData,
-							  List<double[]> right, List<Integer> rightData)
+		public void splitData(List<double[]> points, GrowQueue_I32 data,
+							  List<double[]> left, GrowQueue_I32 leftData,
+							  List<double[]> right, GrowQueue_I32 rightData)
 		{
 			left.addAll(this.left);
 			right.addAll(this.right);
 			if( leftData != null )
-				leftData.addAll(this.leftData);
+				leftData.addAll(this.leftIndex);
 			if( rightData != null )
-				rightData.addAll(this.rightData);
+				rightData.addAll(this.rightIndex);
 		}
 
 		@Override
@@ -226,8 +230,8 @@ public class TestKdTreeConstructor {
 		}
 
 		@Override
-		public Integer getSplitData() {
-			return splitData;
+		public int getSplitIndex() {
+			return splitIndex;
 		}
 
 		@Override

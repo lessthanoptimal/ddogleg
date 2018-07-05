@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,9 +36,9 @@ package org.ddogleg.nn.alg;
 public class KdTree {
 
 	// Number of elements/dimension in each point
-	int N;
+	public int N;
 	// tree data structure
-	Node root;
+	public Node root;
 
 	/**
 	 * Specifies the type of points it can process.
@@ -53,23 +53,6 @@ public class KdTree {
 	}
 
 	/**
-	 * Euclidean distance squared between the node's point and a point.
-	 *
-	 * @param a Node in the graph
-	 * @param point A point
-	 * @return Euclidean distance squared.
-	 */
-	public static double distanceSq( Node a , double[] point , int N) {
-		double ret = 0;
-
-		for( int i = 0; i < N; i++ ) {
-			double d = a.point[i] - point[i];
-			ret += d*d;
-		}
-		return ret;
-	}
-
-	/**
 	 * Data type for each node in the binary tree.  A branch will have two non-null left and right children
 	 * and the value for split will be {@code >= 0}.  If any of those conditions are not meet then it is a leaf.
 	 */
@@ -78,9 +61,9 @@ public class KdTree {
 		/** The node's point.  For branches this is used to split the data. NOTE: This is a reference to the
 		 * original input data.
 		 **/
-		public double[] point;
-		/** Optional associated data to the point */
-		public Object data;
+		public Object point;
+		/**Optional index that can be associated with the point to an array or look up in a hash table*/
+		public int index;
 		/** axis used to split the data. -1 for leafs */
 		public int split = -1;
 		/** Branch &le; point[split] */
@@ -88,12 +71,21 @@ public class KdTree {
 		/** Branch &ge; point[split] */
 		public Node right;
 
-		public Node( double[] point , Object data ) {
+		public Node( double[] point , int index ) {
 			this.point = point;
-			this.data = data;
+			this.index = index;
+		}
+
+		public Node( double[] point ) {
+			this.point = point;
+			this.index = -1;
 		}
 
 		public Node() {
+		}
+
+		public <T>T getPoint() {
+			return (T)point;
 		}
 
 		public boolean isLeaf() {

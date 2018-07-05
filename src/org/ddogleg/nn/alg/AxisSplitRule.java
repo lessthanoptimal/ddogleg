@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,12 +30,12 @@ public interface AxisSplitRule {
 	 *
 	 * @param N dimension
 	 */
-	public void setDimension( int N );
+	void setDimension( int N );
 
 	/**
 	 * Selects the index for splitting using the provided variances.  The input list can be modified.
 	 * @param variance List of variances for each dimension in the point
 	 * @return The selected split axis
 	 */
-	public int select( double []variance );
+	int select( double []variance );
 }

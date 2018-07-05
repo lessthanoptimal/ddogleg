@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -51,7 +51,7 @@ public class TestKdTreeMemory {
 		KdTree.Node n = new KdTree.Node();
 		n.point = new double[2];
 		n.split = 123;
-		n.data = 3;
+		n.index = 3;
 
 		KdTreeMemory alg = new KdTreeMemory();
 		alg.unusedNodes.add(n);
@@ -59,8 +59,8 @@ public class TestKdTreeMemory {
 		KdTree.Node m = alg.requestNode(new double[]{1,2},4);
 
 		assertTrue(m==n);
-		assertTrue(m.point[0]==1);
-		assertTrue(m.data.equals(4));
+		assertTrue(((double[])m.point)[0]==1);
+		assertEquals(m.index,4);
 		assertTrue(m.split==-1);
 	}
 
