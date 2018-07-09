@@ -32,9 +32,6 @@ import java.util.List;
  * @author Peter Abeles
  */
 public interface AxisSplitter<P> {
-
-	void setDimension( int N );
-
 	/**
 	 * Given the a set of points, select the axis to split the data along and select a point to divide the data.
 	 * Points whput items below the threshold
@@ -65,4 +62,9 @@ public interface AxisSplitter<P> {
 	 * The axis/dimension that the input list was split on
 	 */
 	int getSplitAxis();
+
+	/**
+	 * Number of elements in a point
+	 */
+	int getPointLength();
 }

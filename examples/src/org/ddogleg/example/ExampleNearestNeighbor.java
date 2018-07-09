@@ -40,10 +40,7 @@ public class ExampleNearestNeighbor {
 		// KdTreeEuclideanSq_F64 tells it what type of data structure is being searched
 		// F64 standards for double and means double[]. You can easily specify your own
 		// data type by changing what you pass in here
-		NearestNeighbor<double[]> nn = FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64());
-
-		// specify the dimension of each point
-		nn.init(2);
+		NearestNeighbor<double[]> nn = FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64(2));
 
 		// Create data that's going to be searched
 		List<double[]> points = new ArrayList<>();

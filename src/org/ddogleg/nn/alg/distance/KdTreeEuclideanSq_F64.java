@@ -26,8 +26,15 @@ import org.ddogleg.nn.alg.KdTreeDistance;
  * @author Peter Abeles
  */
 public class KdTreeEuclideanSq_F64 implements KdTreeDistance<double[]> {
+
+	int N;
+
+	public KdTreeEuclideanSq_F64(int n) {
+		N = n;
+	}
+
 	@Override
-	public double compute(double[] a, double[] b) {
+	public double distance(double[] a, double[] b) {
 		double sum = 0;
 
 		final int N = a.length;
@@ -42,5 +49,10 @@ public class KdTreeEuclideanSq_F64 implements KdTreeDistance<double[]> {
 	@Override
 	public double valueAt(double[] point, int index) {
 		return point[index];
+	}
+
+	@Override
+	public int length() {
+		return N;
 	}
 }

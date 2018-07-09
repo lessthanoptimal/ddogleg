@@ -42,12 +42,7 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 	GrowQueue_F64 outputDistance = new GrowQueue_F64();
 
 	public WrapExhaustiveNeighbor(KdTreeDistance<P> distance ) {
-		alg = new ExhaustiveNeighbor(distance,0);
-	}
-
-	@Override
-	public void init( int N ) {
-		alg.setN(N);
+		alg = new ExhaustiveNeighbor(distance);
 	}
 
 	@Override

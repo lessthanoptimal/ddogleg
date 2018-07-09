@@ -27,6 +27,6 @@ import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 public class TestKdTreeSearchNStandard extends StandardKdTreeSearchNTests {
 	@Override
 	public KdTreeSearchN<double[]> createAlg() {
-		return new KdTreeSearchNStandard<>(new KdTreeEuclideanSq_F64());
+		return new KdTreeSearchNStandard<>(new KdTreeEuclideanSq_F64(N));
 	}
 }

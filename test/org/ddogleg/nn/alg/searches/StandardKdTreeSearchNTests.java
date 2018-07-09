@@ -40,6 +40,7 @@ import static org.junit.Assert.*;
  */
 public abstract class StandardKdTreeSearchNTests {
 
+	public int N = 2;
 	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
 
 	Random rand = new Random(234);

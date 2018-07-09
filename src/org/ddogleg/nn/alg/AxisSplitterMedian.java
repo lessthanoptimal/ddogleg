@@ -58,25 +58,19 @@ public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 							  AxisSplitRule splitRule ) {
 		this.distance = distance;
 		this.splitRule = splitRule;
+		this.N = distance.length();
+
+		this.mean = new double[N];
+		this.var = new double[N];
+
+		splitRule.setDimension(N);
 	}
 
 	/**
 	 * Defaults to selecting the split axis with maximum variance
 	 */
 	public AxisSplitterMedian(KdTreeDistance<P> distance) {
-		this.distance = distance;
-		this.splitRule = new AxisSplitRuleMax();
-	}
-
-	@Override
-	public void setDimension(int N) {
-		this.N = N;
-		this.mean = new double[N];
-		this.var = new double[N];
-
-		if( splitRule == null )
-			throw new RuntimeException("You must call setRule() before setDimension()");
-		splitRule.setDimension(N);
+		this(distance,new AxisSplitRuleMax());
 	}
 
 	@Override
@@ -138,6 +132,11 @@ public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 	@Override
 	public int getSplitAxis() {
 		return splitAxis;
+	}
+
+	@Override
+	public int getPointLength() {
+		return N;
 	}
 
 	/**

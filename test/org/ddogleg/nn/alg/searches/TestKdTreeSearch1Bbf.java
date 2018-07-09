@@ -28,6 +28,6 @@ public class TestKdTreeSearch1Bbf extends StandardKdTreeSearch1Tests {
 	@Override
 	public KdTreeSearch1<double[]> createAlg() {
 		// specify so many max nodes that it will be optimal
-		return new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),10000);
+		return new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(N),10000);
 	}
 }

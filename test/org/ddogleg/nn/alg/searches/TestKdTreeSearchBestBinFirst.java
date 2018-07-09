@@ -37,7 +37,7 @@ public class TestKdTreeSearchBestBinFirst {
 	public void checkMaxNodes() {
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
-		BBF alg = new BBF(0);
+		BBF alg = new BBF(0,2);
 		alg.setTree(tree);
 
 		KdTree.Node found = alg.findClosest(new double[]{12,2});
@@ -56,7 +56,7 @@ public class TestKdTreeSearchBestBinFirst {
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2});
 
-		BBF alg = new BBF(200);
+		BBF alg = new BBF(200,3);
 		alg.setTrees(forest);
 
 		KdTree.Node found = alg.findClosest(new double[]{12,3});
@@ -72,8 +72,8 @@ public class TestKdTreeSearchBestBinFirst {
 		// the best node so far
 		private KdTree.Node bestNode;
 
-		public BBF(int maxNodesSearched) {
-			super(new KdTreeEuclideanSq_F64(),maxNodesSearched);
+		public BBF(int maxNodesSearched , int N ) {
+			super(new KdTreeEuclideanSq_F64(N),maxNodesSearched);
 		}
 
 
@@ -88,7 +88,7 @@ public class TestKdTreeSearchBestBinFirst {
 
 		@Override
 		protected void checkBestDistance(KdTree.Node node, double[] target) {
-			double distanceSq = distance.compute((double[])node.point,target);
+			double distanceSq = distance.distance((double[])node.point,target);
 			if( distanceSq <= bestDistanceSq ) {
 				bestDistanceSq = distanceSq;
 				bestNode = node;

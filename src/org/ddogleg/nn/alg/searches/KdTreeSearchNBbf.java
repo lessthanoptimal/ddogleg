@@ -65,7 +65,7 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	 */
 	protected void checkBestDistance(KdTree.Node node, P target) {
 
-		double distanceSq = distance.compute((P)node.point,target);
+		double distanceSq = distance.distance((P)node.point,target);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distanceSq <= bestDistanceSq ) {
 

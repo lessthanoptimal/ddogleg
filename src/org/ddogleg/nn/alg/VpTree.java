@@ -289,11 +289,6 @@ public class VpTree implements NearestNeighbor<double[]> {
 		return found;
 	}
 
-	@Override
-	public void init(int pointDimension) {
-
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setPoints(List<double[]> points, boolean trackIndicies) {

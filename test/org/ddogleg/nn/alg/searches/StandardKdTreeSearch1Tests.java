@@ -31,6 +31,9 @@ import static org.junit.Assert.*;
  */
 public abstract class StandardKdTreeSearch1Tests {
 
+	// DOF of a point
+	public int N = 2;
+
 	/**
 	 * Creates a KdTreeSearch which will produce optimal results
 	 */

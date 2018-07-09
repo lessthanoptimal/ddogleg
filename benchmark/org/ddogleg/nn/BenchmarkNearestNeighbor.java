@@ -55,7 +55,6 @@ public class BenchmarkNearestNeighbor {
 
 		@Override
 		public void process() {
-			alg.init(dimen);
 			alg.setPoints(cloud,trackIndicies);
 		}
 
@@ -79,7 +78,6 @@ public class BenchmarkNearestNeighbor {
 			this.name = name;
 			this.trackIndicies = track;
 
-			alg.init(dimen);
 			alg.setPoints(cloud,trackIndicies);
 		}
 
@@ -99,7 +97,7 @@ public class BenchmarkNearestNeighbor {
 	public List<Performer> createSet() {
 		List<Performer> ret = new ArrayList<Performer>();
 
-		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(dimen);
 
 		ret.add( new Set(FactoryNearestNeighbor.exhaustive(distance),"Exhaustive"));
 		ret.add( new Set(FactoryNearestNeighbor.kdtree(distance),"kdtree"));
@@ -114,7 +112,7 @@ public class BenchmarkNearestNeighbor {
 	public List<Performer> createSearch() {
 		List<Performer> ret = new ArrayList<Performer>();
 
-		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(dimen);
 
 		ret.add( new Search(FactoryNearestNeighbor.exhaustive(distance),"Exhaustive"));
 		ret.add( new Search(FactoryNearestNeighbor.kdtree(distance),"kdtree"));

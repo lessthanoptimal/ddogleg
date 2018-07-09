@@ -38,11 +38,10 @@ public class BenchmarkNearestNeighborCorrect {
 	double maxDistance;
 	NnData<double[]> result = new NnData<>();
 
-	KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
-	NearestNeighbor<double[]> exhaustive = FactoryNearestNeighbor.exhaustive(distance);
+	KdTreeEuclideanSq_F64 distance;
+	NearestNeighbor<double[]> exhaustive;
 
 	private double computeCorrectness( NearestNeighbor<double[]> alg ) {
-		alg.init(dimen);
 		alg.setPoints(cloud,false);
 
 		int numCorrect = 0;
@@ -77,6 +76,8 @@ public class BenchmarkNearestNeighborCorrect {
 	public void evaluateDataSet( int dimen , int cloudSize , int searchSize ) {
 		Random rand = new Random(234);
 
+		this.distance = new KdTreeEuclideanSq_F64(dimen);
+		this.exhaustive = FactoryNearestNeighbor.exhaustive(distance);
 		this.dimen = dimen;
 		this.cloud = createData(rand,cloudSize,dimen);
 		this.searchSet = createData(rand,searchSize,dimen);
@@ -84,7 +85,6 @@ public class BenchmarkNearestNeighborCorrect {
 		this.maxDistance = 4*dimen;
 
 		System.out.println("Computing solutions");
-		exhaustive.init(dimen);
 		exhaustive.setPoints(cloud,false);
 		for( int i = 0; i < searchSize; i++ ) {
 			exhaustive.findNearest(searchSet.get(i),maxDistance,result);

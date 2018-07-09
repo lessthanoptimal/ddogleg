@@ -35,12 +35,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestAxisSplitterMedian {
 
-	List<double[]> left = new ArrayList<double[]>();
-	List<double[]> right = new ArrayList<double[]>();
+	List<double[]> left = new ArrayList<>();
+	List<double[]> right = new ArrayList<>();
 	GrowQueue_I32 leftData = new GrowQueue_I32();
 	GrowQueue_I32 rightData = new GrowQueue_I32();
 
-	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64();
+	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
 
 	@Before
 	public void init() {
@@ -152,7 +152,6 @@ public class TestAxisSplitterMedian {
 	public void checkRuleSetCalled() {
 		DummyRule rule = new DummyRule(2);
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,rule);
-		alg.setDimension(2);
 
 		assertTrue(rule.calledSetDimension);
 	}

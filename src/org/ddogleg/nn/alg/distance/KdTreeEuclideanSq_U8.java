@@ -26,8 +26,15 @@ import org.ddogleg.nn.alg.KdTreeDistance;
  * @author Peter Abeles
  */
 public class KdTreeEuclideanSq_U8 implements KdTreeDistance<byte[]> {
+
+	int N;
+
+	public KdTreeEuclideanSq_U8(int n) {
+		N = n;
+	}
+
 	@Override
-	public double compute(byte[] a, byte[] b) {
+	public double distance(byte[] a, byte[] b) {
 		int sum = 0;
 
 		final int N = a.length;
@@ -42,5 +49,10 @@ public class KdTreeEuclideanSq_U8 implements KdTreeDistance<byte[]> {
 	@Override
 	public double valueAt(byte[] point, int index) {
 		return point[index]&0xFF;
+	}
+
+	@Override
+	public int length() {
+		return N;
 	}
 }

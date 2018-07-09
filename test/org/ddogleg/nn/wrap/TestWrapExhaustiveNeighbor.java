@@ -28,7 +28,7 @@ import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 public class TestWrapExhaustiveNeighbor extends StandardNearestNeighborTests {
 
 	public TestWrapExhaustiveNeighbor() {
-		setAlg(FactoryNearestNeighbor.exhaustive(new KdTreeEuclideanSq_F64()));
+		setAlg(FactoryNearestNeighbor.exhaustive(new KdTreeEuclideanSq_F64(N)));
 	}
 
 }

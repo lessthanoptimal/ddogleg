@@ -28,7 +28,7 @@ import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
 
 	public TestKdTreeNearestNeighbor() {
-		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64()));
+		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64(N)));
 	}
 
 }

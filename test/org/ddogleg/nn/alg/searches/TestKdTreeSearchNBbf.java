@@ -33,7 +33,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	@Override
 	public KdTreeSearchN<double[]> createAlg() {
 		// specify so many max nodes that it will be optimal
-		return new KdTreeSearchNBbf<>(new KdTreeEuclideanSq_F64(),10000);
+		return new KdTreeSearchNBbf<>(new KdTreeEuclideanSq_F64(2),10000);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	public void checkMaxNodes() {
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
-		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),0);
+		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(2),0);
 		alg.setTree(tree);
 
 		KdTree.Node found = alg.findNeighbor(new double[]{12, 2});
@@ -63,7 +63,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2});
 
-		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(),200);
+		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(2),200);
 		alg.setTrees(forest);
 
 		KdTree.Node found = alg.findNeighbor(new double[]{12, 3});

@@ -104,7 +104,7 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 		if( node.isLeaf() ) {
 			// a leaf can be empty.
 			if( node.point != null ) {
-				double distSq = distance.compute((P)node.point,target);
+				double distSq = distance.distance((P)node.point,target);
 				if( distSq <= bestDistanceSq ) {
 					if( closest == null || distSq < bestDistanceSq ) {
 						closest = node;
@@ -114,7 +114,7 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 			}
 			return;
 		} else {
-			double distSq = distance.compute((P)node.point,target);
+			double distSq = distance.distance((P)node.point,target);
 			if( distSq <= bestDistanceSq ) {
 				if( closest == null || distSq < bestDistanceSq ) {
 					closest = node;

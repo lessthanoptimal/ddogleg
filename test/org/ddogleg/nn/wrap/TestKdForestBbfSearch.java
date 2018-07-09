@@ -34,7 +34,7 @@ public class TestKdForestBbfSearch extends StandardNearestNeighborTests {
 	public TestKdForestBbfSearch() {
 		// set the max nodes so it that it will produce perfect results
 		AxisSplitRule rule = new AxisSplitRuleRandomK(new Random(234),1);
-		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+		KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);
 		setAlg(new KdForestBbfSearch<>(5,10000,distance,
 				new AxisSplitterMedian<>(distance,rule)));
 	}

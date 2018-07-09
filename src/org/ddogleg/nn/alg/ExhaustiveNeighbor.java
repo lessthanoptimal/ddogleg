@@ -31,8 +31,6 @@ import java.util.List;
  */
 public class ExhaustiveNeighbor<P> {
 
-	// Number of elements in each point
-	int N;
 	// List of points
 	List<P> points;
 
@@ -45,21 +43,11 @@ public class ExhaustiveNeighbor<P> {
 
 	KdTreeDistance<P> distance;
 
-	public ExhaustiveNeighbor( KdTreeDistance<P> distance , int n) {
+	public ExhaustiveNeighbor( KdTreeDistance<P> distance) {
 		this.distance = distance;
-		N = n;
 	}
 
 	public ExhaustiveNeighbor() {
-	}
-
-	/**
-	 * Specifies the point's dimension
-	 *
-	 * @param n dimension
-	 */
-	public void setN(int n) {
-		N = n;
 	}
 
 	/**
@@ -86,7 +74,7 @@ public class ExhaustiveNeighbor<P> {
 		for( int i = 0; i < points.size(); i++ ) {
 			P c = points.get(i);
 
-			double distanceC = distance.compute(p,c);
+			double distanceC = distance.distance(p,c);
 
 			if( distanceC <= bestDistance ) {
 				bestDistance = distanceC;
@@ -118,7 +106,7 @@ public class ExhaustiveNeighbor<P> {
 		for( int i = 0; i < points.size(); i++ ) {
 			P c = points.get(i);
 
-			double distanceC = distance.compute(p,c);
+			double distanceC = distance.distance(p,c);
 
 			if( distanceC <= maxDistance ) {
 				distances.add(distanceC);

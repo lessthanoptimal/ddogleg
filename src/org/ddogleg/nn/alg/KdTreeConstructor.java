@@ -36,9 +36,6 @@ import java.util.List;
  */
 public class KdTreeConstructor<P> {
 
-	// Number of elements/axes in each data point
-	private int N;
-
 	// selects which axis to split along and divides the set of points
 	AxisSplitter<P> splitter;
 
@@ -49,23 +46,18 @@ public class KdTreeConstructor<P> {
 	 * Constructor which allows for maximum configurable.
 	 *
 	 * @param memory Used to recycle data
-	 * @param N Number of elements/axes in each data point
 	 */
-	public KdTreeConstructor(KdTreeMemory<P> memory , int N , AxisSplitter<P> splitter ) {
+	public KdTreeConstructor(KdTreeMemory<P> memory , AxisSplitter<P> splitter ) {
 		this.memory = memory;
-		this.N = N;
 		this.splitter = splitter;
-
-		splitter.setDimension(N);
 	}
 
 	/**
 	 * Creates canonical K-D Tree by selecting the maximum variance axis and splitting the points at the median.
 	 *
-	 * @param N N Number of elements/axes in each data point
 	 */
-	public KdTreeConstructor( KdTreeDistance<P> distance , int N ) {
-		this(new KdTreeMemory<>(), N, new AxisSplitterMedian<P>(distance,new AxisSplitRuleMax()));
+	public KdTreeConstructor( KdTreeDistance<P> distance ) {
+		this(new KdTreeMemory<>(), new AxisSplitterMedian<>(distance, new AxisSplitRuleMax()));
 	}
 
 	/**
@@ -87,8 +79,7 @@ public class KdTreeConstructor<P> {
 			}
 		}
 
-		KdTree tree = memory.requestTree();
-		tree.N = N;
+		KdTree tree = memory.requestTree(splitter.getPointLength());
 
 		if( points.size() == 1 ) {
 			tree.root = createLeaf(points,indexes);

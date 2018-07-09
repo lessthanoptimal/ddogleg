@@ -135,7 +135,7 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 	 * See if the node being considered is a new nearest-neighbor
 	 */
 	private void checkBestDistance(KdTree.Node node, FastQueue<KdTreeResult> neighbors) {
-		double distSq = distance.compute((P)node.point,target);
+		double distSq = distance.distance((P)node.point,target);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distSq <= mostDistantNeighborSq) {
 			if( neighbors.size() < searchN ) {

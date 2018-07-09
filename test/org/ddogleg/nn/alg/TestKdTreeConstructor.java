@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class TestKdTreeConstructor {
 
-	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64();
+	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
 
 	/**
 	 * Makes sure a branch is created correctly given the results from the splitter
@@ -43,7 +43,7 @@ public class TestKdTreeConstructor {
 		splitter.splitAxis = 1;
 		splitter.splitPoint = new double[]{2,3};
 
-		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,splitter);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),splitter);
 
 		KdTree.Node n = alg.computeBranch(new ArrayList<>(),null);
 
@@ -68,7 +68,7 @@ public class TestKdTreeConstructor {
 		splitter.splitPoint = new double[]{2,3};
 		splitter.splitIndex = 2;
 
-		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,splitter);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),splitter);
 
 		KdTree.Node n = alg.computeBranch(new ArrayList<>(),new GrowQueue_I32());
 
@@ -85,7 +85,7 @@ public class TestKdTreeConstructor {
 
 	@Test
 	public void computeChild() {
-		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(distance,2);
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(distance);
 
 		List<double[]> points = new ArrayList<>();
 		GrowQueue_I32 data = new GrowQueue_I32();
@@ -113,7 +113,7 @@ public class TestKdTreeConstructor {
 	 */
 	@Test
 	public void construct() {
-		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),2,createSplitter(1,1,false));
+		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),createSplitter(1,1,false));
 
 		// test an empty list
 		List<double[]> points = new ArrayList<>();
@@ -184,7 +184,6 @@ public class TestKdTreeConstructor {
 
 	public static class DummySplitter implements AxisSplitter<double[]> {
 
-		boolean calledSetDimension = false;
 		int splitIndex;
 		double[] splitPoint;
 		int splitAxis;
@@ -204,11 +203,6 @@ public class TestKdTreeConstructor {
 			this.leftIndex = leftIndex;
 			this.right = right;
 			this.rightIndex = rightIndex;
-		}
-
-		@Override
-		public void setDimension(int N) {
-			calledSetDimension = true;
 		}
 
 		@Override
@@ -237,6 +231,11 @@ public class TestKdTreeConstructor {
 		@Override
 		public int getSplitAxis() {
 			return splitAxis;
+		}
+
+		@Override
+		public int getPointLength() {
+			return 2;
 		}
 	}
 

@@ -49,7 +49,7 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
 
 	// used to recycle memory
-	KdTreeMemory memory = new KdTreeMemory();
+	KdTreeMemory<P> memory = new KdTreeMemory<>();
 
 	public KdTreeNearestNeighbor(KdTreeSearch1<P> search, KdTreeSearchN<P> searchN, AxisSplitter<P> splitter) {
 		this.search = search;
@@ -59,11 +59,7 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 
 	public KdTreeNearestNeighbor( KdTreeDistance<P> distance ) {
 		this( new KdTreeSearch1Standard<>(distance), new KdTreeSearchNStandard<>(distance), new AxisSplitterMedian<>(distance));
-	}
-
-	@Override
-	public void init( int N ) {
-		constructor = new KdTreeConstructor<P>(memory,N,splitter);
+		constructor = new KdTreeConstructor<>(memory,splitter);
 	}
 
 	@Override

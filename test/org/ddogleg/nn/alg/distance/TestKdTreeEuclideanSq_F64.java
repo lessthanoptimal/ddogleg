@@ -28,17 +28,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestKdTreeEuclideanSq_F64 {
 	@Test
-	public void compute() {
+	public void distance() {
 		double a[] = {1,2,3,4};
 		double b[] = {1,2,3,7};
 
-		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64();
-		assertEquals( 9,alg.compute(a,b) , UtilEjml.TEST_F64);
+		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64(4);
+		assertEquals( 9,alg.distance(a,b) , UtilEjml.TEST_F64);
 	}
 
 	@Test
-	public void distance() {
-		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64();
+	public void valueAt() {
+		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64(4);
 
 		double a[] = {1,2,3,4};
 		for (int i = 0; i < 4; i++) {

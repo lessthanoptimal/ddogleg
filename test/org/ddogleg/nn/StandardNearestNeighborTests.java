@@ -38,7 +38,8 @@ public abstract class StandardNearestNeighborTests {
 
 	private Random rand = new Random(234);
 
-	private KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64();
+	public int N = 2;
+	private KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);
 	private NearestNeighbor<double[]> alg;
 
 	private NnData<double[]> found = new NnData<>();
@@ -52,7 +53,6 @@ public abstract class StandardNearestNeighborTests {
 	public void findNearest_zero() {
 		List<double[]> points = new ArrayList<>();
 
-		alg.init(2);
 		alg.setPoints(points,false);
 		assertFalse(alg.findNearest(new double[]{1, 2}, 10, found));
 	}
@@ -62,7 +62,6 @@ public abstract class StandardNearestNeighborTests {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 
-		alg.init(2);
 		alg.setPoints(points,false);
 		assertTrue(alg.findNearest(new double[]{1, 2}, 10, found));
 
@@ -75,7 +74,6 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		alg.init(2);
 		alg.setPoints(points,false);
 		assertTrue(alg.findNearest(new double[]{6, 7}, 10, found));
 
@@ -88,8 +86,6 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-
-		alg.init(2);
 		alg.setPoints(points,true);
 		assertTrue(alg.findNearest(new double[]{6, 7}, 10, found));
 
@@ -105,14 +101,13 @@ public abstract class StandardNearestNeighborTests {
 			for( int i = 0; i < numPoints; i++ )
 				points.add(randPoint(2));
 
-			alg.init(2);
 			alg.setPoints(points,false);
 
 			double[] where = randPoint(2);
 
 			assertTrue(alg.findNearest(where, 10, found));
 
-			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance,2);
+			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance);
 			exhaustive.setPoints(points);
 			double[] expected = points.get( exhaustive.findClosest(where,1000) );
 
@@ -140,7 +135,6 @@ public abstract class StandardNearestNeighborTests {
 
 		double target[] = new double[]{1.1,3.9};
 
-		alg.init(2);
 		alg.setPoints(points,false);
 
 		// should fail because the tolerance is too tight
@@ -170,7 +164,7 @@ public abstract class StandardNearestNeighborTests {
 
 		double target[] = new double[]{-2,3};
 
-		alg.init(2);
+		
 		alg.setPoints(points,false);
 
 		assertTrue(alg.findNearest(target, 1.00000001, found));
@@ -194,7 +188,6 @@ public abstract class StandardNearestNeighborTests {
 
 		double target[] = new double[]{-2,3};
 
-		alg.init(2);
 		alg.setPoints(points,false);
 
 		foundN.reset();
@@ -219,7 +212,6 @@ public abstract class StandardNearestNeighborTests {
 
 		double target[] = new double[]{1.1,3.9};
 
-		alg.init(2);
 		alg.setPoints(points,false);
 
 		assertTrue(alg.findNearest(target, 10, found));
@@ -241,7 +233,6 @@ public abstract class StandardNearestNeighborTests {
 
 		double target[] = new double[]{1.1,3.9};
 
-		alg.init(2);
 		alg.setPoints(points,false);
 
 		foundN.reset();
@@ -260,7 +251,6 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		alg.init(2);
 		alg.setPoints(points,true);
 
 		foundN.reset();
@@ -278,7 +268,6 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		alg.init(2);
 		alg.setPoints(points,false);
 
 		foundN.add(new NnData<>());
@@ -303,7 +292,6 @@ public abstract class StandardNearestNeighborTests {
 			for( int j = 0; j < numPoints; j++ )
 				points.add(randPoint(2));
 
-			alg.init(2);
 			alg.setPoints(points,false);
 
 			double[] where = randPoint(2);
@@ -314,7 +302,7 @@ public abstract class StandardNearestNeighborTests {
 			// see if it found more points than expected
 			assertTrue(foundN.size <= numNeighbors);
 
-			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance,2);
+			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance);
 			exhaustive.setPoints(points);
 
 			outputIndex.reset();
@@ -352,7 +340,7 @@ public abstract class StandardNearestNeighborTests {
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
 
-		alg.init(2);
+		
 		alg.setPoints(points,false);
 
 		foundN.reset();

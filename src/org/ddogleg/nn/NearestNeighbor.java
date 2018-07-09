@@ -39,13 +39,6 @@ import java.util.List;
 public interface NearestNeighbor<P> {
 
 	/**
-	 * Initializes data structures.
-	 *
-	 * @param pointDimension Dimension of input data
-	 */
-	void init( int pointDimension );
-
-	/**
 	 * Specifies the set of points which are to be searched.
 	 *
 	 * @param points Set of points.

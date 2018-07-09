@@ -69,12 +69,12 @@ public class TestKdTreeMemory {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		// Empty unused list
-		KdTree n = alg.requestTree();
+		KdTree n = alg.requestTree(2);
 		assertTrue(n.root==null);
 
 		// put it into the unused list and see if it is returned
 		alg.unusedTrees.add(n);
-		KdTree m = alg.requestTree();
+		KdTree m = alg.requestTree(2);
 
 		assertTrue(n==m);
 	}

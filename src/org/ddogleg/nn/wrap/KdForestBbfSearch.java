@@ -58,12 +58,7 @@ public class KdForestBbfSearch<P> implements NearestNeighbor<P> {
 		this.splitter = splitter;
 		this.search1 = new KdTreeSearch1Bbf<>(distance,maxNodesSearched);
 		this.searchN = new KdTreeSearchNBbf<>(distance,maxNodesSearched);
-	}
-
-
-	@Override
-	public void init(int pointDimension) {
-		constructor = new KdTreeConstructor<P>(memory,pointDimension,splitter);
+		this.constructor = new KdTreeConstructor<P>(memory,splitter);
 	}
 
 	@Override

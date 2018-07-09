@@ -57,10 +57,12 @@ public class KdTreeMemory<P> {
 		return n;
 	}
 
-	public KdTree requestTree() {
+	public KdTree requestTree( int N ) {
 		if( unusedTrees.isEmpty() )
-			return new KdTree();
-		return unusedTrees.remove( unusedTrees.size()-1);
+			return new KdTree(N);
+		KdTree tree = unusedTrees.remove( unusedTrees.size()-1);
+		tree.N = N;
+		return tree;
 	}
 
 	public void recycle( KdTree.Node node ) {
