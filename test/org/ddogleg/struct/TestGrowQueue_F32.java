@@ -125,6 +125,28 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 	}
 
 	@Test
+	public void remove_two() {
+		GrowQueue_F32 alg = new GrowQueue_F32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+		alg.push(6);
+
+		alg.remove(1,1);
+		assertEquals(4,alg.size);
+		assertEquals(1,alg.get(0), UtilEjml.TEST_F32);
+		assertEquals(4,alg.get(1), UtilEjml.TEST_F32);
+		assertEquals(5,alg.get(2), UtilEjml.TEST_F32);
+		assertEquals(6,alg.get(3), UtilEjml.TEST_F32);
+		alg.remove(0,1);
+		assertEquals(2,alg.size);
+		assertEquals(5,alg.get(0), UtilEjml.TEST_F32);
+		assertEquals(6,alg.get(1), UtilEjml.TEST_F32);
+	}
+
+	@Test
 	public void remove() {
 
 		GrowQueue_F32 alg = new GrowQueue_F32(10);

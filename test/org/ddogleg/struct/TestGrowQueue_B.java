@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -70,6 +70,28 @@ public class TestGrowQueue_B {
 		assertTrue(alg.pop());
 		assertTrue(!alg.pop());
 		assertEquals(0, alg.size);
+	}
+
+	@Test
+	public void remove_two() {
+		GrowQueue_B alg = new GrowQueue_B(10);
+
+		alg.push(true);
+		alg.push(true);
+		alg.push(false);
+		alg.push(true);
+		alg.push(false);
+
+		alg.remove(1,1);
+		assertEquals(4,alg.size);
+		assertEquals(true,alg.get(0));
+		assertEquals(false,alg.get(1));
+		assertEquals(true,alg.get(2));
+		assertEquals(false,alg.get(3));
+		alg.remove(0,1);
+		assertEquals(2,alg.size);
+		assertEquals(true,alg.get(0));
+		assertEquals(false,alg.get(1));
 	}
 
 	@Test

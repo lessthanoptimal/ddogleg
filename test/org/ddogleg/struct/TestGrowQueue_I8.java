@@ -123,6 +123,28 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 		assertEquals(0, alg.size);
 	}
 
+	@Test
+	public void remove_two() {
+		GrowQueue_I8 alg = new GrowQueue_I8(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+		alg.push(6);
+
+		alg.remove(1,1);
+		assertEquals(4,alg.size);
+		assertEquals(1,alg.get(0));
+		assertEquals(4,alg.get(1));
+		assertEquals(5,alg.get(2));
+		assertEquals(6,alg.get(3));
+		alg.remove(0,1);
+		assertEquals(2,alg.size);
+		assertEquals(5,alg.get(0));
+		assertEquals(6,alg.get(1));
+	}
+
 	@Override
 	public GrowQueue_I8 declare(int maxsize) {
 		return new GrowQueue_I8(maxsize);

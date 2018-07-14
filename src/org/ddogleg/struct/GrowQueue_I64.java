@@ -136,6 +136,25 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		size--;
 	}
 
+
+	/**
+	 * Removes elements from the list starting at 'first' and ending at 'last'
+	 * @param first First index you wish to remove. Inclusive.
+	 * @param last Last index you wish to remove. Inclusive.
+	 */
+	public void remove( int first , int last ) {
+		if( last < first )
+			throw new IllegalArgumentException("first <= last");
+		if( last >= size )
+			throw new IllegalArgumentException("last must be less than the max size");
+
+		int delta = last-first+1;
+		for( int i = last+1; i < size; i++ ) {
+			data[i-delta] = data[i];
+		}
+		size -= delta;
+	}
+
 	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */

@@ -13,6 +13,7 @@ Date:     2018
 - Added float circular queues
 - GrowQueue
   * Added contains()
+  * Added remove(a,b)
 - Misc
   * Added SwapElement
 - Nearest-Neighbor Search

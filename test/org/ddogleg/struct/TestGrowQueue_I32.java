@@ -124,7 +124,7 @@ public class TestGrowQueue_I32 extends ChecksGrowQueue<GrowQueue_I32> {
 	}
 
 	@Test
-	public void remove() {
+	public void remove_one() {
 
 		GrowQueue_I32 alg = new GrowQueue_I32(10);
 
@@ -138,6 +138,28 @@ public class TestGrowQueue_I32 extends ChecksGrowQueue<GrowQueue_I32> {
 		assertEquals(1,alg.get(0));
 		assertEquals(4,alg.get(1));
 		assertEquals(5,alg.get(2));
+	}
+
+	@Test
+	public void remove_two() {
+		GrowQueue_I32 alg = new GrowQueue_I32(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+		alg.push(6);
+
+		alg.remove(1,1);
+		assertEquals(4,alg.size);
+		assertEquals(1,alg.get(0));
+		assertEquals(4,alg.get(1));
+		assertEquals(5,alg.get(2));
+		assertEquals(6,alg.get(3));
+		alg.remove(0,1);
+		assertEquals(2,alg.size);
+		assertEquals(5,alg.get(0));
+		assertEquals(6,alg.get(1));
 	}
 
 	@Override
