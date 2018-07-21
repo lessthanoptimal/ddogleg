@@ -1,0 +1,278 @@
+%% Template for ENG 401 reports
+%% by Robin Turner
+%% Adapted from the IEEE peer review template
+
+%
+% note that the "draftcls" or "draftclsnofoot", not "draft", option
+% should be used if it is desired that the figures are to be displayed in
+% draft mode.
+
+\documentclass[peerreview,onecolumn]{IEEEtran}
+\usepackage{cite} % Tidies up citation numbers.
+\usepackage{url} % Provides better formatting of URLs.
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables for horizontal lines
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithm}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\hyphenation{op-tical net-works} % Corrects some bad hyphenation 
+
+
+
+\begin{document}
+%\begin{titlepage}
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{Nonlinear Optimization in DDogleg\\Version 0.15}
+
+
+% author names and affiliations
+
+\author{Peter Abeles}
+\date{July 19, 2018}
+
+% make the title area
+\maketitle
+\tableofcontents
+\listoffigures
+\listoftables
+%\end{titlepage}
+
+\IEEEpeerreviewmaketitle
+\begin{abstract}
+This document describes the implementation details and a little bit of the theory behind unconstrained optimization routines found in DDogleg. Specific algorithms are fully described, implementation details justified, source material cited, tuning best practices described, and benchmark results presented. This document does not fully describe the API, which can be found at \url{http://ddogleg.org}.
+\end{abstract}
+
+
+\section{Unconstrained Minimization}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cl}
+$\bm{x}$ & Parameters being optimized. $\bm{x} \in \R^n$ \\
+$\bm{x}_k$ & Value of parameters at iteration $k$ \\
+$f(\bm{x})$ & Scalar cost function being optimized. $f \in \R$ \\
+$f_k$ & Short hand for $f(\bm{x}_k)$ \\
+\textit{FunctionNtoS} & Interface for $f(\bm{x})$ \\
+$g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
+$g_k$ & Short hand for $g(\bm{x}_k)$ \\
+\textit{FunctionNtoN} & Interface for $g(\bm{x})$ \\
+$B(\bm{x})$ & Hessian matrix or an approximation \\ 
+$B_k$ & Short hand for $B(\bm{x}_k)$ \\
+positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all non-zero vectors $y$  \\
+$s.t.$ & subject to \\
+\textit{UnconstrainedMinimization} & Interface for unconstrained minimization
+\end{tabular}
+\caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
+\end{table}
+
+Describe unconstrained minimzation at a high level
+
+Convergence is tested for using two tests. F-test checks to see if the cost function is changing by an insignificant amount. G-test tests to see if the gradient is approximately zero.
+
+\begin{center}
+\begin{tabular}{lc}
+F-test & $ftol  \leq - f(x+p)/f(x)$ \\
+G-test & $gtol \leq \norm{g(x)}_\infty$ \\
+\end{tabular}
+\end{center}
+ 
+\subsection{Linear Search}
+
+\subsection{Trust Region}
+Trust Region refers to a family of methods that operate by assuming a quadratic model can accurately represent the true function within a local "trust region". The size of the trust region is adjusted based on the performance of the quadratic model. A summary of the trust region can be found in Algorithm \ref{alg:trust_region}.
+
+At every iteration a subproblem is solved where an exact or approximate solution for $p$ is found.
+\begin{equation}
+\begin{array}{lr}
+\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
+\end{array}
+\label{eq:trust_region_subproblem}
+\end{equation}
+where $B$ is the Hessian or an approximation of the Hessian. The model $m(\bm{p})$ is a quadratic approximation to $f(x)$, the function being optimized. Without constraints  the solution to Eq. \ref{eq:trust_region_subproblem} can be easily found by setting first deriviative equal to zero and you get:
+\begin{equation}
+p = -B^{-1} g
+\label{eq:TR_unconstrained_solution}
+\end{equation}
+
+
+There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
+
+\subsubsection{Cauchy Point} 
+
+The Caunch Point $p^s_k$ is found by finding the vector $v^s_k$ which minimizes the following equation:
+\begin{equation}
+\begin{array}{lr}
+v^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
+\end{array}
+\end{equation}
+Next the location along the line defined by point $x_k$ and vector $v^k$ which minimizes Eq. \ref{eq:trust_region_subproblem} found
+\begin{equation}
+\begin{array}{lr}
+\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
+\end{array}
+\end{equation}
+Combining the two preceding equations to get the Cauchy Point.
+\begin{equation}
+p^s_k = \tau_k v^s_k
+\end{equation}
+The solution to this problem (see BLAH for details and diagrams) is as follows
+\begin{equation}
+p^s_k = \tau_k \frac{\Delta_k}{\norm{g_k}}g_k
+\end{equation}
+\begin{equation}
+\tau_k = 
+	\begin{cases}
+		\quad 1 & g_k^t B_k g_k \le 0 \\
+		\quad \min\left(\norm{g_k}^3/(\Delta_k g_k^t B_k g_k),1\right) & \mbox{else}
+	\end{cases}
+\end{equation}
+
+\subsubsection{Dogleg} 
+
+Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of Eq. \ref{eq:trust_region_subproblem}. 
+\begin{eqnarray}
+p^u &=& -\frac{g^Tg}{g^T B G}g \\
+p^b &=& -B^{-1}g \\
+p^{dog} &=&
+\begin{cases}
+	\tau p^u & 0 \le \tau < 1 \\
+	p^u + (\tau -1)(p^b-p^u) & 1 \le \tau \le 2
+\end{cases}
+\end{eqnarray}
+where $B$ is positive definite. The solution to $\tau$ can be easily found by solving along each line segment.
+
+\begin{algorithm}{}
+\caption{\label{alg:trust_region}Trust Region}
+\begin{algorithmic}[1]
+	\State $k \gets 0$, $\Delta_0 \in (0,\Delta_{max})$, $\eta \in [0,\frac{1}{4})$
+	\State \quad $\Delta_{max}$ is the maximum trust region size
+	\State \quad $\Delta_{0}$ is the initial trust region size
+	\State \quad $\eta$ model acceptance threshold
+	\While{$k < k_{\mbox{max}}$ and not $done$}
+	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem}
+	\State $\nu \gets (f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k))/(m_k(\bm{0})-m_k(\bm{p}_k))$
+	\Comment{Model prediction accuracy ratio} 
+	\If{$\nu <\frac{1}{4}$} \Comment{Is the model poor?}
+		\State $\Delta_{k+1} \gets \frac{1}{4}\Delta_k$
+	\Else
+		\If{$\nu>\frac{3}{4}$ and $\norm{p_k}=\Delta_k$}
+			\Comment{Is the model good and did it hit the edge of the trust region?}
+			\State $\Delta_{k+1} \gets \mbox{min}(2\Delta_k,\Delta_{\mbox{max}})$
+		\Else
+			\State $\Delta_{k+1} \gets \Delta_k$
+		\EndIf
+	\EndIf
+	\If{$\nu > \eta$} \Comment{Trust the solution?}
+		\State $x_{k+1} \gets x_k + p_k$
+		\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
+	\Else
+		\State $x_{k+1} \gets x_k$
+	\EndIf
+
+	\State $k \gets k + 1$
+	\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\section{Unconstrained Least-Squares}
+\begin{table*}[h]
+\centering
+\begin{tabular}{cl}
+$\bm{x}$ & Parameter vector which is being optimized and has $n$ elements. $x \in \R^n$ \\
+$f(\bm{x})$ & Scalar error function being optimized. $f \ge 0$ \\
+$f_k$ & $f(\bm{x}_k)$ \\
+$\bm{F}(\bm{x})$ &  Residual function from $\mathbb{R}^n \rightarrow \R^m$ \\
+\textit{FunctionNtoM} & Interface for $\bm{F}(\bm{x})$ \\
+$\bm{J}(\bm{x})$ & Jacobian of residual function \\
+\textit{FunctionNtoMxN} & Interface for $\bm{J}(\bm{x})$ \\
+ & Can be computed numerically \\
+$g(\bm{x})$ & Gradient of $f(\bm{x})$, which is $\bm{J}(\bm{x})^T  \bm{F}(\bm{x})$ \\
+$g_k$ & $g(\bm{x}_k)$ \\
+\textit{UnconstrainedLeastSquares} & High level interface for this unconstrained least squares
+\end{tabular}
+\caption{\label{definitions:UNLS}Definitions and API for Unconstrained Nonlinear Least-Squares}
+\end{table*}
+
+Unconstrained Least-Squares is a special case of Unconstrained Minimization. It refers to a problem where the function being optimized has the form
+\begin{equation}
+\min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
+\end{equation}
+where $r_j(\bm{x})$ is a scalar function which outputs the residual or error and by definition $f(\bm{x}) \ge 0$. When implemented, instead of a set of scalar functions $r_j$ a single column vector function $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$ is written and the problem being solved can be restated as
+\begin{eqnarray}
+\min\limits_{\bm{x}} f(\bm{x})&=&\frac{1}{2} \bm{F}(\bm{x})^T \bm{F}(\bm{x})\\
+&=& \frac{1}{2} \norm{\bm{F}(\bm{x})}^2_2
+\end{eqnarray}
+
+The Jacobian can then be defined as
+\begin{eqnarray}
+\bm{J}(\bm{x}) &=& \left[\frac{\partial r_j}{\partial x_i}\right]\begin{array}{l}j=1,\cdots,m\\i=1,\cdots,n \end{array} \\
+&=& \left[ \begin{array}{c}\nabla r_1(\bm{x})^T \\ \nabla r_2(\bm{x})^T \\ \vdots \\ \nabla r_m(\bm{x})^T \end{array}\right] \\
+\nabla r_j(\bm{x})^T &=& \left[ \frac{\partial r_j}{\partial x_1},\frac{\partial r_j}{\partial x_2}, \cdots , \frac{\partial r_j}{\partial x_n} \right]^T
+\end{eqnarray}
+and the Gradient as
+\begin{eqnarray}
+\nabla f(\bm{x}) &=& \sum^m_{j=1}r_j(\bm{x})\nabla r_j(\bm{x}) \\
+&=& \bm{J}(\bm{x})^T \bm{F}(\bm{x})
+\end{eqnarray}
+
+
+\subsection{Levenberg}
+
+
+\subsection{Levenberg-Marquardt}
+
+\subsection{Trust Region}
+
+When trust region methods are applied to least-squares problems they are defined as follow:
+
+\begin{eqnarray}
+f_k &=& f(\bm{x}+\bm{p}) \\
+J_k &=& J(\bm{x}+\bm{p}) \\
+\bm{g}_k &=& p^T J^T_k F_k  \\
+\bm{B}_k &=& J_k^T J_k
+\end{eqnarray}
+
+
+\subsection{Dense and Sparse}
+
+\subsection{Shur Complement}
+
+
+\begin{thebibliography}{1}
+% Here are a few examples of different citations 
+% Book
+\bibitem{kopka_1999} % Note the label in the curly brackets. Use the cite the source; e.g., \cite{kopka_latex}
+H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{horowitz_2005}D.~Horowitz, \emph{End of Time}. New York, NY, USA: Encounter Books, 2005. [E-book] Available: ebrary, \url{http://site.ebrary.com/lib/sait/Doc?id=10080005}. Accessed on: Oct. 8, 2008.
+% Article from database
+\bibitem{castlevecchi_2008}D.~Castelvecchi, ``Nanoparticles Conspire with Free Radicals'' \emph{Science News}, vol.174, no. 6, p. 9, September 13, 2008. [Full Text]. Available: Proquest, \url{http://proquest.umi.com/pqdweb?index=52&did=1557231641&SrchMode=1&sid=3&Fmt=3&VInst=PROD&VType=PQD&RQT=309&VName=PQD&TS=1229451226&clientId=533}. Accessed on: Aug.~3, 2014.
+% Conference Paper from the Internet
+\bibitem{lach_2010}J.~Lach, ``SBFS: Steganography based file system,'' in \emph{Proceedings of the 2008 1st International Conference on Information Technology, IT 2008, 19-21 May 2008, Gdansk, Poland.} Available: IEEE Xplore, \url{http://www.ieee.org}. [Accessed: 10 Sept. 2010].
+% Web page, no author
+\bibitem{a_laymans_explanation}``A `layman's' explanation of Ultra Narrow Band technology,'' Oct.~3, 2003. [Online]. Available: \url{http://www.vmsk.org/Layman.pdf}. [Accessed: Dec.~3, 2003]. 
+\end{thebibliography}
+
+% This is a hand-made bibliography. If you want to use a BibTeX file, you're on your own ;-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
