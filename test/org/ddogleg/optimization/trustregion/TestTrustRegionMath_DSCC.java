@@ -27,7 +27,17 @@ import static org.junit.Assert.fail;
  */
 public class TestTrustRegionMath_DSCC {
 	@Test
-	public void stuff() {
+	public void setIdentity() {
+		fail("Implement");
+	}
+
+	@Test
+	public void innerMatrixProduct() {
+		fail("Implement");
+	}
+
+	@Test
+	public void innerProduct() {
 		fail("Implement");
 	}
 }

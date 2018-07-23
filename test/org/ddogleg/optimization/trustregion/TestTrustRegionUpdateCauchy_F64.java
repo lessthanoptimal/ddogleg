@@ -27,7 +27,12 @@ import static org.junit.Assert.fail;
  */
 public class TestTrustRegionUpdateCauchy_F64 {
 	@Test
-	public void stuff() {
+	public void initializeUpdate() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeUpdate() {
 		fail("Implement");
 	}
 }

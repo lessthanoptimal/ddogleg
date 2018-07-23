@@ -38,9 +38,11 @@ import org.ejml.dense.row.CommonOps_DDRM;
  */
 public abstract class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S>
 {
-	TrustRegionBase_F64<S> owner;
+	// the trust region instance which is using the update function
+	private TrustRegionBase_F64<S> owner;
 
-	double minimumFunctionValue;
+	// minimum possible value from function being optimized
+	private double minimumFunctionValue;
 
 	// direction of the gradient
 	private DMatrixRMaj direction = new DMatrixRMaj(1,1);

@@ -47,7 +47,7 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public double innerProduct(DMatrixRMaj v, DMatrixRMaj M) {
-		tmpM0.reshape(v.numRows,v.numCols);
+		tmpM0.reshape(v.numCols,v.numRows);
 		CommonOps_DDRM.multTransA(v,M,tmpM0);
 		return CommonOps_DDRM.dot(tmpM0,v);
 	}

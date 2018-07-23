@@ -18,6 +18,8 @@
 \usepackage{amssymb}
 \usepackage[noend]{algpseudocode}
 \usepackage{algorithm}
+\usepackage{enumitem}
+\usepackage{tabularx}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
@@ -29,7 +31,7 @@
 %\begin{titlepage}
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Nonlinear Optimization in DDogleg\\Version 0.15}
+\title{DDogleg Technical Report: Nonlinear Optimization\\{\Large Version 1}}
 
 
 % author names and affiliations
@@ -54,6 +56,7 @@ This document describes the implementation details and a little bit of the theor
 
 \begin{table}[h]
 \centering
+\caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
 \begin{tabular}{cl}
 $\bm{x}$ & Parameters being optimized. $\bm{x} \in \R^n$ \\
 $\bm{x}_k$ & Value of parameters at iteration $k$ \\
@@ -69,7 +72,32 @@ positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all n
 $s.t.$ & subject to \\
 \textit{UnconstrainedMinimization} & Interface for unconstrained minimization
 \end{tabular}
-\caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
+\end{table}
+
+\begin{table}[h]
+\caption{\label{summary:UM}Summary of Unconstrained Minimization Methods.}
+\centering
+\begin{tabular}{lccccc}
+Method & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
+\hline
+Quasi-Newton BFGS & Quadratic & ? & ? & ? & ? \rule{0pt}{2.6ex} \\
+Trust Region Cauchy & Linear & Yes & Yes & Yes & Yes \\
+Trust Region Dogleg & Quadratic & [1] & [1] & Yes & Yes\\[1ex]
+\hline
+\multicolumn{6}{l}{
+\begin{minipage}{0.6\textwidth}
+\centering
+\vspace{2mm}
+\begin{itemize}[leftmargin=*]
+\item \emph{Convergence:} how fast it converged.
+\item \emph{Singular:} indicates that it can process singular systems.
+\item \emph{Negative-Definite:} indicate that it can process negative definite systems
+\item \emph{Dense} and \emph{Sparse:} indicate that dense and/or sparse matrices can be processed. 
+\item {[1]} Switches to Cauchy in this situation.
+\end{itemize}
+\end{minipage}
+ }
+\end{tabular}
 \end{table}
 
 Describe unconstrained minimzation at a high level
@@ -78,7 +106,7 @@ Convergence is tested for using two tests. F-test checks to see if the cost func
 
 \begin{center}
 \begin{tabular}{lc}
-F-test & $ftol  \leq - f(x+p)/f(x)$ \\
+F-test & $ftol  \leq 1 - f(x+p)/f(x)$ \\
 G-test & $gtol \leq \norm{g(x)}_\infty$ \\
 \end{tabular}
 \end{center}
@@ -104,49 +132,65 @@ p = -B^{-1} g
 
 There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
 
-\subsubsection{Cauchy Point} 
+\subsection{Cauchy Point} 
 
-The Caunch Point $p^s_k$ is found by finding the vector $v^s_k$ which minimizes the following equation:
+The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, points in the direction of vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms
 \begin{equation}
 \begin{array}{lr}
-v^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
+\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
 \end{array}
 \end{equation}
-Next the location along the line defined by point $x_k$ and vector $v^k$ which minimizes Eq. \ref{eq:trust_region_subproblem} found
+The line segment length is found by minimizing Eq. \ref{eq:trust_region_subproblem} along direction $\hat{p}^s_k$
 \begin{equation}
 \begin{array}{lr}
 \tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
 \end{array}
 \end{equation}
-Combining the two preceding equations to get the Cauchy Point.
-\begin{equation}
-p^s_k = \tau_k v^s_k
-\end{equation}
-The solution to this problem (see BLAH for details and diagrams) is as follows
+
+%\cite{numopt2016}
+The solution to this problem (see for details and diagrams) is as follows
 \begin{equation}
 p^s_k = \tau_k \frac{\Delta_k}{\norm{g_k}}g_k
+\label{eq:cauchy_p}
 \end{equation}
 \begin{equation}
 \tau_k = 
 	\begin{cases}
-		\quad 1 & g_k^t B_k g_k \le 0 \\
-		\quad \min\left(\norm{g_k}^3/(\Delta_k g_k^t B_k g_k),1\right) & \mbox{else}
+		\quad 1 & g_k^T B_k g_k \le 0 \\
+		\quad \min\left(\norm{g_k}^3/(\Delta_k g_k^T B_k g_k),1\right) & g_k^T B_k g_k > 0
+	\end{cases}
+	\label{eq:cauchy_tau}
+\end{equation}
+Both positive semi-definite and negative semi-definite Hessian matrices can be optimized and shouldn't blow up no matter what you throw at it.
+
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues. The power of three in (\ref{eq:cauchy_p}) virtually ensures overflow in larger systems. Another improvement is to only step as far as needed to reach the minimum possible value:
+\begin{eqnarray}
+\bar{g}_k &=& \frac{g_k}{\norm{g_k}} \\
+p^s_k &=& \tau_k \Delta_k \bar{g}_k
+\end{eqnarray}
+\begin{equation}
+\tau_k = \begin{cases}
+		\quad \min\left(1, \max(0,(f_k-f_{min})/\Delta_k)) \right) & \bar{g}_k^T B_k \bar{g}_k\le 0 \\
+		\quad \min\left(\norm{g_k}/(\Delta_k \bar{g}_k^T B_k \bar{g}_k),1\right) & \bar{g}_k^T B_k \bar{g}_k > 0
 	\end{cases}
 \end{equation}
+where $f_{min}$ is the minimum possible value of $f_k$. Set $f_{min}$ to -MAX\_VALUE if not known.
 
-\subsubsection{Dogleg} 
 
-Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of Eq. \ref{eq:trust_region_subproblem}. 
+\subsection{Dogleg} 
+
+Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). Care has been taken to avoid numerical overflow in the equations below, which is why they are not identical to \cite{numopt2016,IMM2004}.
 \begin{eqnarray}
-p^u &=& -\frac{g^Tg}{g^T B G}g \\
-p^b &=& -B^{-1}g \\
+\bar{g} &=& g/\norm{g} \\
+p^u &=& -\frac{g}{\bar{g}^T B \bar{g}} \\
+p^b &=& -\norm{g}B^{-1}\bar{g} \\
 p^{dog} &=&
 \begin{cases}
 	\tau p^u & 0 \le \tau < 1 \\
 	p^u + (\tau -1)(p^b-p^u) & 1 \le \tau \le 2
 \end{cases}
 \end{eqnarray}
-where $B$ is positive definite. The solution to $\tau$ can be easily found by solving along each line segment.
+where $B$ is positive definite, and $p^{dog}$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B$ is not positive definite then the Cauchy Point algorithm is used instead. Alternative approaches for handling this situation are discussed in \cite{numopt2016} but have not yet been added to DDogleg.
 
 \begin{algorithm}{}
 \caption{\label{alg:trust_region}Trust Region}
@@ -235,7 +279,7 @@ When trust region methods are applied to least-squares problems they are defined
 \begin{eqnarray}
 f_k &=& f(\bm{x}+\bm{p}) \\
 J_k &=& J(\bm{x}+\bm{p}) \\
-\bm{g}_k &=& p^T J^T_k F_k  \\
+\bm{g}_k &=& J^T_k F_k  \\
 \bm{B}_k &=& J_k^T J_k
 \end{eqnarray}
 
@@ -244,35 +288,8 @@ J_k &=& J(\bm{x}+\bm{p}) \\
 
 \subsection{Shur Complement}
 
-
-\begin{thebibliography}{1}
-% Here are a few examples of different citations 
-% Book
-\bibitem{kopka_1999} % Note the label in the curly brackets. Use the cite the source; e.g., \cite{kopka_latex}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-\bibitem{horowitz_2005}D.~Horowitz, \emph{End of Time}. New York, NY, USA: Encounter Books, 2005. [E-book] Available: ebrary, \url{http://site.ebrary.com/lib/sait/Doc?id=10080005}. Accessed on: Oct. 8, 2008.
-% Article from database
-\bibitem{castlevecchi_2008}D.~Castelvecchi, ``Nanoparticles Conspire with Free Radicals'' \emph{Science News}, vol.174, no. 6, p. 9, September 13, 2008. [Full Text]. Available: Proquest, \url{http://proquest.umi.com/pqdweb?index=52&did=1557231641&SrchMode=1&sid=3&Fmt=3&VInst=PROD&VType=PQD&RQT=309&VName=PQD&TS=1229451226&clientId=533}. Accessed on: Aug.~3, 2014.
-% Conference Paper from the Internet
-\bibitem{lach_2010}J.~Lach, ``SBFS: Steganography based file system,'' in \emph{Proceedings of the 2008 1st International Conference on Information Technology, IT 2008, 19-21 May 2008, Gdansk, Poland.} Available: IEEE Xplore, \url{http://www.ieee.org}. [Accessed: 10 Sept. 2010].
-% Web page, no author
-\bibitem{a_laymans_explanation}``A `layman's' explanation of Ultra Narrow Band technology,'' Oct.~3, 2003. [Online]. Available: \url{http://www.vmsk.org/Layman.pdf}. [Accessed: Dec.~3, 2003]. 
-\end{thebibliography}
-
-% This is a hand-made bibliography. If you want to use a BibTeX file, you're on your own ;-)
-
-
-
-
-
-
-
-
-
-
-
-
+\bibliographystyle{plain}
+\bibliography{mybib}
 
 
 \end{document}

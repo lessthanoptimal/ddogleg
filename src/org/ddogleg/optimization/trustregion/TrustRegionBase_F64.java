@@ -58,7 +58,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected double gradientNorm;
 
 	/**
-	 * Storage for the hessian
+	 * Storage for the Hessian
 	 */
 	protected S hessian;
 
@@ -66,16 +66,16 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	int numberOfParameters;
 
 	// Curren parameter state
-	DMatrixRMaj x;
+	protected DMatrixRMaj x = new DMatrixRMaj(1,1);
 	// proposed next state of parameters
-	DMatrixRMaj x_next;
+	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
 	// proposed relative change in parameter's state
-	DMatrixRMaj p;
+	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
 
 	// error function at x
 	protected double fx;
 	// the previous error
-	private double fx_prev;
+	protected double fx_prev;
 
 	// if the prediction ratio his higher than this threshold it is accepted
 	private double candidateAcceptThreshold = 0.05;
@@ -84,7 +84,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	private double regionRadiusInitial;
 
 	// size of the current trust region
-	private double regionRadius;
+	double regionRadius;
 
 	// maximum size of the trust region
 	private double regionRadiusMax;
@@ -130,11 +130,18 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		p.reshape(numberOfParameters,1);
 		gradient.reshape(numberOfParameters,1);
 
-		System.arraycopy(initial,0,x,0,numberOfParameters);
+		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		fx = costFunction(x);
 
 		totalFullSteps = 0;
 		totalRetries = 0;
+
+		// a perfect initial guess is a pathological case. easiest to handle it here
+		if( fx <= minimumFunctionValue ) {
+			mode = Mode.CONVERGED;
+		} else {
+			mode = Mode.FULL_STEP;
+		}
 	}
 
 	/**
@@ -154,7 +161,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 				return iterateRetry();
 
 			case CONVERGED:
-				throw new OptimizationException("Already converged. Initialize again");
+				return true;
 
 			default:
 				throw new RuntimeException("BUG! mode="+mode);
@@ -213,7 +220,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected abstract void updateDerivedState(DMatrixRMaj x );
 
 	/**
-	 * Consider updating the system with the change in state p.
+	 * Consider updating the system with the change in state p. The update will never
+	 * be accepted if the cost function increases.
+	 *
 	 * @param p (Input) change in state vector
 	 * @param hitBoundary (Input) true if it hits the region boundary
 	 * @return true if it should update the state or false if it should try agian
@@ -226,7 +235,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		// compute model prediction accuracy
 		double predictionAccuracy = computePredictionAccuracy(p);
 
-		if( predictionAccuracy < 0.25 ) {
+		// if the improvement is too small (or not an improvement) reduce the region size
+		if( fx > fx_prev || predictionAccuracy < 0.25 ) {
 			regionRadius = 0.25*regionRadius;
 		} else {
 			if( predictionAccuracy > 0.75 && hitBoundary ) {
@@ -234,20 +244,25 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			}
 		}
 
-		return predictionAccuracy > candidateAcceptThreshold;
+		return fx < fx_prev && predictionAccuracy > candidateAcceptThreshold;
 	}
 
 	/**
 	 * Computes the prediction's accuracy
-	 * @param p
-	 * @return
+	 * @return prediction ratio
 	 */
 	protected double computePredictionAccuracy(DMatrixRMaj p) {
 
-		double m_k1 = fx_prev + CommonOps_DDRM.dot(gradient,p) + math.innerProduct(p,hessian);
+		// use quadratic model to predict new cost
+		double m_k1 = fx_prev + CommonOps_DDRM.dot(gradient,p) + 0.5*math.innerProduct(p,hessian);
 		// m_k0 = fx_prev
 
-		return (fx-fx_prev)/(m_k1-fx_prev);
+		// the model predicts no change. Something bad is going on
+		if( m_k1 == fx_prev ) {
+			return 0;
+		} else {
+			return (fx - fx_prev) / (m_k1 - fx_prev);
+		}
 	}
 
 	/**
@@ -259,8 +274,16 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if converged or false if it hasn't converged
 	 */
 	protected boolean checkConvergence( ) {
+		// something really bad has happened if this gets triggered before it thinks it converged
+		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
+			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
+
+		if( fx > fx_prev )
+			throw new RuntimeException("BUG! Shouldn't have gotten this far");
+
 		// f-test
-		if( ftol <= 1.0 - fx/fx_prev )
+		double fscore = 1.0 - fx/fx_prev;
+		if( ftol >= fscore )
 			return true;
 
 		// g-test
@@ -273,13 +296,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			if( v > max )
 				max = v;
 		}
-		return gtol <= max;
+		return gtol >= max;
 	}
 
 	/**
 	 * Computes the function's value at x
-	 * @param x
-	 * @return
+	 * @param x parameters
+	 * @return function value
 	 */
 	protected abstract double costFunction( DMatrixRMaj x );
 
@@ -361,6 +384,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	public void setRegionRadiusMax(double regionRadiusMax) {
 		this.regionRadiusMax = regionRadiusMax;
+	}
+
+	public double getCandidateAcceptThreshold() {
+		return candidateAcceptThreshold;
+	}
+
+	public void setCandidateAcceptThreshold(double candidateAcceptThreshold) {
+		this.candidateAcceptThreshold = candidateAcceptThreshold;
 	}
 
 	public double getGtol() {

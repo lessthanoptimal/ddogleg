@@ -32,6 +32,8 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public class TrustRegionUpdateDoglegLS_F64<S extends DMatrix> extends TrustRegionUpdateDogleg_F64<S> {
 
+	// TODO do least-squares ftol test
+
 	private UnconLeastSqTrustRegion_F64<S> owner;
 
 	/**

@@ -45,7 +45,11 @@ import org.ejml.interfaces.linsol.LinearSolver;
  */
 public abstract class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S> {
 
-	TrustRegionBase_F64<S> owner;
+	// the trust region instance which is using the update function
+	private TrustRegionBase_F64<S> owner;
+
+	// minimum possible value from function being optimized
+	private double minimumFunctionValue;
 
 	// used to solve positive definite systems
 	LinearSolver<S,DMatrixRMaj> solver;
@@ -61,8 +65,6 @@ public abstract class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements 
 
 	// is the hessian positive definite?
 	boolean positiveDefinite;
-
-	double minimumFunctionValue;
 
 	/**
 	 * Specifies internal algorithms
@@ -120,7 +122,10 @@ public abstract class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements 
 			// Does the pu point lie inside the trust region?
 			double pu_length = owner.gradientNorm/gBg;
 			if( pu_length < regionRadius ) {
-				// Compute point 'pn', see comments below to explain this equation
+				// Compute point 'pn'
+				// pu = -((g'*g)/(g'*B*g))*g
+				// Since g has been normalized g'*g = 1
+				// this undoes the change in scale
 				CommonOps_DDRM.scale(-owner.gradientNorm/gBg, direction,p);
 				// vector from p to GN in p
 				CommonOps_DDRM.subtract(pointGN,p,p);
@@ -129,17 +134,12 @@ public abstract class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements 
 				// it does, so find the intersection of the second segment with the region's boundary
 				double f = fractionToGN(pu_length, gn_length,length_p_to_gn,regionRadius);
 
-				// Starting from GN add the scaled slope to find p
 				// starting from GN instead of P because P has been over written
 				CommonOps_DDRM.add(pointGN,1.0-f,p,p);
 			} else {
 				// find location that the first segment hits the region's boundary
-				double tau = pu_length/regionRadius;
-
-				// pu = -((g'*g)/(g'*B*g))*g
-				// Since g has been normalized g'*g = 1
-				// this undoes the change in scale
-				CommonOps_DDRM.scale(-tau*owner.gradientNorm/gBg, direction,p);
+				// this is easy since direction is a unit vector
+				CommonOps_DDRM.scale(regionRadius, direction,p);
 			}
 
 			// since the GN solution is outside the region boundary all other solutions must be inside
