@@ -19,15 +19,18 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.OptimizationException;
+import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
-import org.junit.Test;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -130,6 +133,32 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		@Override
 		protected double costFunction(DMatrixRMaj x) {
 			return 0;
+		}
+	}
+
+	@Nested
+	class Unconstrained_DDRM extends CommonChecksUnconstrainedOptimization {
+		public Unconstrained_DDRM() {
+			this.checkFastConvergence = false;
+			this.maxIteration = 10000;
+		}
+
+		@Override
+		protected UnconstrainedMinimization createSearch() {
+			return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DDRM());
+		}
+	}
+
+	@Nested
+	class Unconstrained_DSCC extends CommonChecksUnconstrainedOptimization {
+		public Unconstrained_DSCC() {
+			this.checkFastConvergence = false;
+			this.maxIteration = 10000;
+		}
+
+		@Override
+		protected UnconstrainedMinimization createSearch() {
+			return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DSCC());
 		}
 	}
 }

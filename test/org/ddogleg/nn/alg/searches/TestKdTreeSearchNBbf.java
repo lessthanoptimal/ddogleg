@@ -21,10 +21,10 @@ package org.ddogleg.nn.alg.searches;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles

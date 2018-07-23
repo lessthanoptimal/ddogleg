@@ -25,15 +25,15 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.optimization.wrap.CachedNumericalGradientLineFunction;
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
  */
-public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization_DDRM {
+public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization {
 
 	EvaluateQuasiNewtonBFGS evaluator = new EvaluateQuasiNewtonBFGS(false,false);
 

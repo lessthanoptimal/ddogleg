@@ -20,9 +20,9 @@ package org.ddogleg.nn.alg.searches;
 
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeSearch1;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Standard tests for implemntations of {@link KdTreeSearch1}.

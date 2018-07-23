@@ -31,9 +31,9 @@ import org.ddogleg.optimization.wrap.LsToNonLinearDeriv;
  */
 public abstract class UnconstrainedMinimizationEvaluator {
 
-	boolean verbose = true;
-	boolean printSummary = true;
-	int maxIteration = 1000;
+	protected boolean verbose;
+	protected boolean printSummary;
+	protected int maxIteration = 1000;
 
 	protected UnconstrainedMinimizationEvaluator(boolean verbose, boolean printSummary) {
 		this.verbose = verbose;

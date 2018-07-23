@@ -20,15 +20,15 @@ package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.GrowQueue_I32;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.ddogleg.nn.alg.TestKdTreeConstructor.createPoints;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -42,7 +42,7 @@ public class TestAxisSplitterMedian {
 
 	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
 
-	@Before
+	@BeforeEach
 	public void init() {
 		left.clear();
 		right.clear();

@@ -20,9 +20,9 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ejml.data.DMatrixRMaj;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Peter Abeles

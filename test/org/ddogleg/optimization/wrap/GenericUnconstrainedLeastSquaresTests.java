@@ -23,10 +23,10 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests which make sure the {@link UnconstrainedLeastSquares} contract is followed.

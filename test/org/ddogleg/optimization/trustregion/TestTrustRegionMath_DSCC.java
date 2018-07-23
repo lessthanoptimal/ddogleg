@@ -26,12 +26,12 @@ import org.ejml.equation.Equation;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.MatrixFeatures_DSCC;
 import org.ejml.sparse.csc.RandomMatrices_DSCC;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles

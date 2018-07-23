@@ -18,16 +18,20 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ddogleg.optimization.UnconstrainedMinimization;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization_DDRM;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Peter Abeles
  */
-public class TestUnconMinTrustRegionBFGS_F64 extends CommonChecksUnconstrainedOptimization_DDRM {
+public class TestUnconMinTrustRegionBFGS_F64  {
 
-	@Override
-	protected UnconstrainedMinimization createSearch() {
-		return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DDRM());
+	/**
+	 * Makes sure BFGS is called correctly
+	 */
+	@Test
+	public void invokedBFGS() {
+		fail("Implement");
 	}
 }
