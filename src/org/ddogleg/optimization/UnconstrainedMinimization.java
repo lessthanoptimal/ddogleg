@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -56,7 +56,7 @@ public interface UnconstrainedMinimization extends IterativeOptimization {
 	 * @param minFunctionValue Minimum possible value that 'function' can have.  E.g. for least squares problems
 	 *                         this value should be set to zero.
 	 */
-	public void setFunction( FunctionNtoS function , FunctionNtoN gradient , double minFunctionValue );
+	void setFunction( FunctionNtoS function , FunctionNtoN gradient , double minFunctionValue );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after
@@ -67,13 +67,13 @@ public interface UnconstrainedMinimization extends IterativeOptimization {
 	 *             0 &le; ftol {@code <} 1,  Try 1e-12
 	 * @param gtol Absolute convergence test based on gradient. 0 disables test.  0 &le; gtol. Try 1e-12
 	 */
-	public void initialize( double initial[] , double ftol , double gtol );
+	void initialize( double initial[] , double ftol , double gtol );
 
 	/**
 	 * After each iteration this function can be called to get the current best
 	 * set of parameters.
 	 */
-	public double[] getParameters();
+	double[] getParameters();
 
 	/**
 	 * Returns the value of the objective function being evaluated at the current
@@ -81,6 +81,6 @@ public interface UnconstrainedMinimization extends IterativeOptimization {
 	 *
 	 * @return Objective function's value.
 	 */
-	public double getFunctionValue();
+	double getFunctionValue();
 
 }
