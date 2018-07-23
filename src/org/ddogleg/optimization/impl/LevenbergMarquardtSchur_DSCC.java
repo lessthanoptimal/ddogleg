@@ -34,7 +34,7 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
 /**
  * Sparse Levenberg-Marquardt implementation which uses the Schur Complement
- * to decompose a sparse matrix. The approxmate Hessian matrix (J'*J) is assumed to have the
+ * to decompose a sparse matrix. The approximate Hessian matrix (J'*J) is assumed to have the
  * following block triangle form: [A B;C D]. The system being solved for
  * is as follows: [A B;C D] [x_1;x_2] = [b_1;b_2]. Then the following steps
  * are followed to solve it:
