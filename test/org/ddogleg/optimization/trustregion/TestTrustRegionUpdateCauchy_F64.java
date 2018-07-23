@@ -26,6 +26,9 @@ import static org.junit.Assert.fail;
  * @author Peter Abeles
  */
 public class TestTrustRegionUpdateCauchy_F64 {
+
+	// test PD, ND matrices
+
 	@Test
 	public void initializeUpdate() {
 		fail("Implement");

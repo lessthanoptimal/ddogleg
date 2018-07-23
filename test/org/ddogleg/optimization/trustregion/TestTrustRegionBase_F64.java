@@ -35,51 +35,86 @@ public class TestTrustRegionBase_F64 {
 	Random rand = new Random(234);
 
 	@Test
-	public void updateState() {
-		fail("Implement");
+	public void initialize() {
+		MockParameterUpdate update = new MockParameterUpdate();
+		MockTrustRegionBase_F64 alg = createFixedCost(1,2);
+
+		alg.totalFullSteps = 10;
+		alg.totalRetries = 11;
+
+		double x[] = new double[]{1,2};
+		alg.initialize(x,1e-4,1e-6,2,0);
+
+		assertEquals(1,alg.fx, UtilEjml.TEST_F64);
+		assertEquals(2,alg.x.numRows);
+		assertEquals(2,alg.x_next.numRows);
+		assertEquals(2,alg.gradient.numRows);
+		assertEquals(2,alg.hessian.numRows);
+		assertEquals(2,alg.hessian.numCols);
+
+		assertEquals(alg.regionRadius,alg.regionRadiusInitial, UtilEjml.TEST_F64);
+		assertEquals(0,alg.totalFullSteps);
+		assertEquals(0,alg.totalRetries);
+		assertEquals(2,alg.numberOfParameters);
+		assertTrue(1e-4==alg.ftol);
+		assertTrue(1e-6==alg.gtol);
+
+		assertEquals(TrustRegionBase_F64.Mode.FULL_STEP,alg.mode);
+
 	}
 
 	@Test
 	public void swapOldAndNewParameters() {
-		fail("Implement");
+		MockParameterUpdate update = new MockParameterUpdate();
+		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
+
+		DMatrixRMaj next = alg.x_next;
+		alg.swapOldAndNewParameters();
+		assertTrue(next==alg.x);
+		assertTrue(next!=alg.x_next);
 	}
 
 	/**
 	 * Prediction is low accuracy but the function decreased in value
 	 */
 	@Test
-	public void considerUpdate_lowacc_decrease() {
-		MockParameterUpdate update = new MockParameterUpdate();
-		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
+	public void considerUpdate() {
+		// low accuracy prediction and decreasing score. don't accept and reduce region size
+		considerUpdate(2.5, 0.01, 0.25, false);
+		// medium accuracy prediction and decreasing score.  keep region size and accept
+		considerUpdate(2.5, 0.4, 1.0, true);
+		// high accuracy. Increase region size
+		considerUpdate(2.5, 1.0, 2.0, true);
 
+		// high accuracy but decreased
+		considerUpdate(3.1, 1.0, 0.25, false);
+	}
+
+	protected void considerUpdate(double cost, double predAcc, double radiusFrac, boolean update) {
+		MockTrustRegionBase_F64 alg = createFixedCost(cost,predAcc);
 		double x[] = new double[]{1,2};
 		alg.initialize(x,1e-4,1e-6,2,0);
 
-//		alg.considerUpdate();
+		alg.fx_prev = 3;
+
+		// it should reduce the region size
+		assertEquals(update, alg.considerUpdate(alg.p, predAcc==1.0));
+		assertEquals(radiusFrac*alg.regionRadiusInitial,alg.regionRadius, UtilEjml.TEST_F64);
 	}
 
-	/**
-	 * Prediction is medium accuracy but the function decreased in value
-	 */
-	@Test
-	public void considerUpdate_mediumAcc_decrease() {
+	private MockTrustRegionBase_F64 createFixedCost( double cost , double predAcc ) {
+		MockParameterUpdate update = new MockParameterUpdate();
+		return new MockTrustRegionBase_F64(update) {
+			@Override
+			protected double costFunction(DMatrixRMaj x) {
+				return cost;
+			}
 
-	}
-
-	/**
-	 * Prediction is high accuracy but the function decreased in value
-	 */
-	@Test
-	public void considerUpdate_highAcc_decrease() {
-
-	}
-
-	/**
-	 * Prediction is high accuracy but the function increased in value
-	 */
-	@Test
-	public void considerUpdate_highAcc_increase() {
-
+			@Override
+			protected double computePredictionAccuracy(DMatrixRMaj p) {
+				return predAcc;
+			}
+		};
 	}
 
 	@Test

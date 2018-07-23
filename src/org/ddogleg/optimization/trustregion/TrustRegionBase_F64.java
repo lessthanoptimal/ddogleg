@@ -81,18 +81,18 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	private double candidateAcceptThreshold = 0.05;
 
 	// initial size of the trust region
-	private double regionRadiusInitial;
+	double regionRadiusInitial=1;
 
 	// size of the current trust region
 	double regionRadius;
 
 	// maximum size of the trust region
-	private double regionRadiusMax;
+	double regionRadiusMax = Double.MAX_VALUE;
 
 	// tolerance for termination. magnitude of gradient. absolute
-	private double gtol;
+	double gtol;
 	// tolerance for termination, change in function value.  relative
-	private double ftol;
+	double ftol;
 
 	// which processing step it's on
 	protected Mode mode = Mode.FULL_STEP;
@@ -136,6 +136,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		totalFullSteps = 0;
 		totalRetries = 0;
 
+		regionRadius = regionRadiusInitial;
+
 		// a perfect initial guess is a pathological case. easiest to handle it here
 		if( fx <= minimumFunctionValue ) {
 			mode = Mode.CONVERGED;
@@ -154,11 +156,11 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			case FULL_STEP:
 				totalFullSteps++;
 				updateState();
-				return iterateRetry();
+				return computeAndConsiderNew();
 
 			case RETRY:
 				totalRetries++;
-				return iterateRetry();
+				return computeAndConsiderNew();
 
 			case CONVERGED:
 				return true;
@@ -185,7 +187,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Changes the trust region's size and attempts to do a step again
 	 * @return true if it has converged.
 	 */
-	protected boolean iterateRetry() {
+	protected boolean computeAndConsiderNew() {
 		boolean hitBoundary = parameterUpdate.computeUpdate(p, regionRadius);
 		if (considerUpdate(p, hitBoundary)) {
 			swapOldAndNewParameters();
@@ -203,7 +205,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	/**
 	 * Instead of doing a memory copy just swap the references
 	 */
-	private void swapOldAndNewParameters() {
+	void swapOldAndNewParameters() {
 		DMatrixRMaj tmp = x;
 		x = x_next;
 		x_next = tmp;
@@ -240,7 +242,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			regionRadius = 0.25*regionRadius;
 		} else {
 			if( predictionAccuracy > 0.75 && hitBoundary ) {
-				regionRadius = Math.max(2.0*regionRadius,regionRadiusMax);
+				regionRadius = Math.min(2.0*regionRadius,regionRadiusMax);
 			}
 		}
 
