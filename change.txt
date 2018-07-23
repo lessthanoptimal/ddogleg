@@ -6,6 +6,8 @@ Date Format: YEAR-MONTH-DAY
 Version:  0.15
 Date:     2018
 
+- Non-Linear Optimization
+  * Rewrote and redesigned trust region
 - Added Sparse non-linear optimization
   * LevenbergDampened
   * LevenbergMarquardtDampened

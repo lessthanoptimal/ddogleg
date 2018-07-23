@@ -36,7 +36,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
  *
  * @author Peter Abeles
  */
-public abstract class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S>
+public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S>
 {
 	// the trust region instance which is using the update function
 	private TrustRegionBase_F64<S> owner;
@@ -45,9 +45,9 @@ public abstract class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements 
 	private double minimumFunctionValue;
 
 	// direction of the gradient
-	private DMatrixRMaj direction = new DMatrixRMaj(1,1);
+	DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
-	private double gBg;
+	double gBg;
 
 	@Override
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
@@ -82,7 +82,7 @@ public abstract class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements 
 		}
 		// direction = g/||g||
 		// step = tau*regionRadius*direction
-		CommonOps_DDRM.scale(tau*regionRadius,direction,p);
+		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
 
 		return tau == 1;
 	}

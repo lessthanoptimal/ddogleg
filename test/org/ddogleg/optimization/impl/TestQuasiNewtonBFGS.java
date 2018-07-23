@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,10 +20,11 @@ package org.ddogleg.optimization.impl;
 
 import org.ddogleg.optimization.EvaluateQuasiNewtonBFGS;
 import org.ddogleg.optimization.LineSearch;
-import org.ddogleg.optimization.NonlinearResults;
+import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.optimization.wrap.CachedNumericalGradientLineFunction;
+import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestQuasiNewtonBFGS {
+public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization_DDRM {
 
 	EvaluateQuasiNewtonBFGS evaluator = new EvaluateQuasiNewtonBFGS(false,false);
 
@@ -67,65 +68,10 @@ public class TestQuasiNewtonBFGS {
 		return alg;
 	}
 
-	@Test
-	public void powell() {
-		NonlinearResults results = evaluator.powell();
 
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 300);
-		assertTrue(results.numGradient < 300);
-
-		// The function is degenerate, this test sees if it converges to a solution and improves
-		// the parameter values.  It isn't very precise
-//		assertEquals(0,results.x[0],1e-4);
-//		assertEquals(0,results.x[1],1e-4);
-		assertEquals(0, results.f, 1e-4);
+	@Override
+	protected UnconstrainedMinimization createSearch() {
+		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
 	}
 
-	@Test
-	public void helicalvalley() {
-		NonlinearResults results = evaluator.helicalValley();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(1, results.x[0], 1e-4);
-		assertEquals(0, results.x[1], 1e-4);
-		assertEquals(0, results.x[2], 1e-4);
-		assertEquals(0, results.f, 1e-4);
-	}
-
-	@Test
-	public void rosenbrock() {
-		NonlinearResults results = evaluator.rosenbrock();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(1, results.x[0], 1e-4);
-		assertEquals(1, results.x[1], 1e-4);
-		assertEquals(0, results.f, 1e-4);
-	}
-
-	@Test
-	public void badlyScaledBrown() {
-		NonlinearResults results = evaluator.badlyScaledBrown();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(1e6, results.x[0], 1e-4);
-		assertEquals(2e-6, results.x[1], 1e-4);
-		assertEquals(0, results.f, 1e-4);
-	}
-
-	@Test
-	public void trigonometric() {
-		NonlinearResults results = evaluator.trigonometric();
-
-		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
-		assertEquals(0, results.f, 1e-4);
-	}
 }

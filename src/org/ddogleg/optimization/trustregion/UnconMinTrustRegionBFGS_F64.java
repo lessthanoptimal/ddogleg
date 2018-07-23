@@ -63,7 +63,7 @@ public class UnconMinTrustRegionBFGS_F64<S extends DMatrix>
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
-		super.initialize(initial,ftol,gtol, functionCost.getNumOfInputsN(),minFunctionValue);
+		this.initialize(initial,ftol,gtol, functionCost.getNumOfInputsN(),minFunctionValue);
 	}
 
 	@Override

@@ -18,24 +18,118 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.OptimizationException;
+import org.ejml.UtilEjml;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import java.util.Random;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Peter Abeles
  */
 public class TestTrustRegionUpdateCauchy_F64 {
 
-	// test PD, ND matrices
+	Random rand = new Random(234);
 
 	@Test
 	public void initializeUpdate() {
-		fail("Implement");
+		MockOwner owner = new MockOwner(null);
+		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
+
+		owner.gradient.set(new double[][]{{1},{2}});
+		owner.gradientNorm = NormOps_DDRM.normF(owner.gradient);
+		owner.hessian.reshape(2,2);
+		RandomMatrices_DDRM.fillUniform(owner.hessian,-1,1,rand);
+		alg.initialize(owner,2,-1);
+		alg.initializeUpdate();
+
+		assertTrue( alg.gBg != 0 );
+		assertEquals(1,NormOps_DDRM.normF(alg.direction), UtilEjml.TEST_F64);
 	}
 
 	@Test
-	public void computeUpdate() {
-		fail("Implement");
+	public void initializeUpdate_catchNaN() {
+		MockOwner owner = new MockOwner(null);
+		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
+
+		owner.gradient.set(new double[][]{{1},{2}});
+		owner.gradientNorm = NormOps_DDRM.normF(owner.gradient);
+		owner.hessian.reshape(2,2);
+		RandomMatrices_DDRM.fillUniform(owner.hessian,-1,1,rand);
+		owner.hessian.data[1] = Double.NaN;
+		alg.initialize(owner,2,-1);
+
+		try {
+			alg.initializeUpdate();
+			fail("Exception should have been thrown");
+		} catch( OptimizationException ignore){}
+	}
+
+
+	@Test
+	public void computeUpdate_positiveDefinite() {
+		MockOwner owner = new MockOwner(null);
+		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
+		alg.initialize(owner,2,-1);
+		alg.direction.set(new double[][]{{0.1},{0.4}});
+		NormOps_DDRM.normalizeF(alg.direction);
+		DMatrixRMaj p = new DMatrixRMaj(2,1);
+
+		// make sure it doesn't go outside the region bounds
+		owner.gradientNorm = 1000;
+		alg.gBg = 0.5;
+		assertTrue(alg.computeUpdate(p,2));
+		assertEquals(2,NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
+
+		// should be inside the bounds
+		owner.gradientNorm = 0.1;
+		assertFalse(alg.computeUpdate(p,2));
+		double n = NormOps_DDRM.normF(p);
+		assertTrue(n > 0 && n < 2);
+	}
+
+	@Test
+	public void computeUpdate_negativeDefinite() {
+		MockOwner owner = new MockOwner(null);
+		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
+		alg.initialize(owner,2,-1);
+		alg.direction.set(new double[][]{{0.1},{0.4}});
+		NormOps_DDRM.normalizeF(alg.direction);
+		DMatrixRMaj p = new DMatrixRMaj(2,1);
+
+
+		// should hit the boundary
+		owner.fx = 1000;
+		alg.gBg = -0.5;
+		assertTrue(alg.computeUpdate(p,2));
+		assertEquals(2,NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
+
+		// shouldn't hit the boundary because -1 is the minimum function value
+		owner.fx = 0;
+		assertFalse(alg.computeUpdate(p,2));
+		double n = NormOps_DDRM.normF(p);
+		assertTrue(n > 0 && n < 2);
+	}
+
+	private static class MockOwner extends TrustRegionBase_F64<DMatrixRMaj> {
+
+		public MockOwner(ParameterUpdate parameterUpdate) {
+			super(parameterUpdate, new TrustRegionMath_DDRM());
+		}
+
+		@Override
+		protected void updateDerivedState(DMatrixRMaj x) {
+
+		}
+
+		@Override
+		protected double costFunction(DMatrixRMaj x) {
+			return 0;
+		}
 	}
 }

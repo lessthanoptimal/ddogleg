@@ -18,16 +18,16 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
+import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization_DDRM;
 
 /**
  * @author Peter Abeles
  */
-public class TestUnconMinTrustRegionBFGS_F64 {
-	@Test
-	public void stuff() {
-		fail("Implement");
+public class TestUnconMinTrustRegionBFGS_F64 extends CommonChecksUnconstrainedOptimization_DDRM {
+
+	@Override
+	protected UnconstrainedMinimization createSearch() {
+		return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DDRM());
 	}
 }

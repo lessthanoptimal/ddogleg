@@ -121,9 +121,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		this.ftol = ftol;
 		this.gtol = gtol;
 
-		this.parameterUpdate.initialize(this,numberOfParameters, minimumFunctionValue);
-
 		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
+		math.setIdentity(hessian);
 
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
@@ -144,6 +143,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		} else {
 			mode = Mode.FULL_STEP;
 		}
+
+		this.parameterUpdate.initialize(this,numberOfParameters, minimumFunctionValue);
 	}
 
 	/**

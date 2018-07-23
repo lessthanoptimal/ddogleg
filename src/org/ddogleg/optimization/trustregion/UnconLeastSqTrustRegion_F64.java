@@ -56,14 +56,7 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
-		super.initialize(initial,ftol,gtol, functionResiduals.getNumOfInputsN(),0);
-
-		int M = functionResiduals.getNumOfOutputsM();
-		int N = functionResiduals.getNumOfInputsN();
-
-		tmpM0.reshape(M,1);
-		residuals.reshape(M,1);
-		((ReshapeMatrix)jacobian).reshape(M,N);
+		this.initialize(initial,ftol,gtol, functionResiduals.getNumOfInputsN(),0);
 	}
 
 	@Override
@@ -78,6 +71,13 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
 		gradientPrevious.zero();
+
+		int M = functionResiduals.getNumOfOutputsM();
+		int N = functionResiduals.getNumOfInputsN();
+
+		tmpM0.reshape(M,1);
+		residuals.reshape(M,1);
+		((ReshapeMatrix)jacobian).reshape(M,N);
 	}
 
 
