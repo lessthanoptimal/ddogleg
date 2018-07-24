@@ -22,7 +22,6 @@ import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.EquationsBFGS;
-import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
@@ -34,8 +33,8 @@ import org.ejml.dense.row.CommonOps_DDRM;
  *
  * @author Peter Abeles
  */
-public class UnconMinTrustRegionBFGS_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S>
+public class UnconMinTrustRegionBFGS_F64
+		extends TrustRegionBase_F64<DMatrixRMaj>
 		implements UnconstrainedMinimization
 {
 	// temp variable of length N
@@ -49,8 +48,8 @@ public class UnconMinTrustRegionBFGS_F64<S extends DMatrix>
 
 	private double minFunctionValue;
 
-	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate, MatrixMath<S> math) {
-		super(parameterUpdate, math);
+	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
+		super(parameterUpdate, new TrustRegionMath_DDRM());
 	}
 
 
@@ -100,7 +99,7 @@ public class UnconMinTrustRegionBFGS_F64<S extends DMatrix>
 			CommonOps_DDRM.subtract(gradient,gradientPrevious,tmpN0);
 
 			// Apply BFGS equation and update H
-			EquationsBFGS.inverseUpdate((DMatrixRMaj)hessian,p,tmpN0,tmpN1,tmpN2);
+			EquationsBFGS.inverseUpdate(hessian,p,tmpN0,tmpN1,tmpN2);
 
 			// save the new gradient
 			gradientPrevious.set(gradient);

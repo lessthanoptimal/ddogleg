@@ -23,11 +23,23 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
+ * Specific configurations are tested in their respective TrustRegionUpdate implementations
+ *
  * @author Peter Abeles
  */
 public class TestUnconLeastSqTrustRegion_F64 {
 	@Test
-	public void stuff() {
+	public void initialize() {
+		fail("Implement");
+	}
+
+	@Test
+	public void updateDerivedState() {
+		fail("Implement");
+	}
+
+	@Test
+	public void costFunction() {
 		fail("Implement");
 	}
 }

@@ -153,6 +153,7 @@ public class TestTrustRegionBase_F64 {
 		double x[] = new double[]{1,2};
 		alg.initialize(x,1e-4,1e-6,2,0);
 
+		alg.hessian.zero();
 		alg.fx = 1.2;
 		alg.fx_prev = 1.5;
 		RandomMatrices_DDRM.fillUniform(alg.p,-1,1,rand);

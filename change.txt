@@ -8,6 +8,8 @@ Date:     2018
 
 - Non-Linear Optimization
   * Rewrote and redesigned trust region
+  * TODO ADD L-BFGS
+  * TODO Add scaled Trust Region
 - Added Sparse non-linear optimization
   * LevenbergDampened
   * LevenbergMarquardtDampened

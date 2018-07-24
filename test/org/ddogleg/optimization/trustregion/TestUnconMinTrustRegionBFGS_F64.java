@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
+ * Specific configurations on this class are tested inside of the TrustRegionUpdate implementations
+ *
  * @author Peter Abeles
  */
 public class TestUnconMinTrustRegionBFGS_F64  {

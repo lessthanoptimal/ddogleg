@@ -27,7 +27,32 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class TestTrustRegionUpdateDogleg_F64 {
 	@Test
-	public void stuff() {
+	public void initializeUpdate() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeUpdate_NegativeDefinite() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeUpdate_cauchy_after() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeUpdate_cauchy_inside() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeUpdate_gn_inside() {
+		fail("Implement");
+	}
+
+	@Test
+	public void fractionToGN() {
 		fail("Implement");
 	}
 }

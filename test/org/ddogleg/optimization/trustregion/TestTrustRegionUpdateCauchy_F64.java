@@ -137,28 +137,15 @@ public class TestTrustRegionUpdateCauchy_F64 {
 	}
 
 	@Nested
-	class Unconstrained_DDRM extends CommonChecksUnconstrainedOptimization {
-		public Unconstrained_DDRM() {
+	class UnconstrainedBFGS extends CommonChecksUnconstrainedOptimization {
+		public UnconstrainedBFGS() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
 		}
 
 		@Override
 		protected UnconstrainedMinimization createSearch() {
-			return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DDRM());
-		}
-	}
-
-	@Nested
-	class Unconstrained_DSCC extends CommonChecksUnconstrainedOptimization {
-		public Unconstrained_DSCC() {
-			this.checkFastConvergence = false;
-			this.maxIteration = 10000;
-		}
-
-		@Override
-		protected UnconstrainedMinimization createSearch() {
-			return new UnconMinTrustRegionBFGS_F64<>(new TrustRegionUpdateCauchy_F64(),new TrustRegionMath_DSCC());
+			return new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
 		}
 	}
 }
