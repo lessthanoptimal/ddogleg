@@ -145,7 +145,13 @@ public class TestTrustRegionUpdateCauchy_F64 {
 
 		@Override
 		protected UnconstrainedMinimization createSearch() {
-			return new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
+			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.scalingMinimum = 1e-4;
+			config.scalingMaximum = 1e4;
+//			config.regionMinimum = 0.0001;
+			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
+			tr.configure(config);
+			return tr;
 		}
 	}
 }

@@ -20,11 +20,14 @@ package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.OptimizationException;
 import org.ejml.UtilEjml;
+import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
+
+import java.util.Arrays;
 
 /**
  * <p>Base class for all trust region implementations. The Trust Region approach assumes that a quadratic model is valid
@@ -33,10 +36,18 @@ import org.ejml.dense.row.NormOps_DDRM;
  * or decreased. This implementation is primarily based on [1] and is fully described in the DDogleg Technical
  * Report [2].</p>
  *
+ * <p>
+ *     Scaling can be optionally turned on. By default it is off. If scaling is turned on then a non symmetric
+ *     trust region is used. The length of each axis is determined by the absolute value of diagonal elements in
+ *     the hessian. Minimum and maximum possible scaling values are an important tuning parameter.
+ * </p>
+ *
  * <ul>
  * <li>[1] Jorge Nocedal,and Stephen J. Wright "Numerical Optimization" 2nd Ed. Springer 2006</li>
  * <li>[2] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization R1", July 2018</li>
  * </ul>
+ *
+ * @see ConfigTrustRegion
  *
  * @author Peter Abeles
  */
@@ -65,34 +76,25 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// Number of parameters being optimized
 	int numberOfParameters;
 
-	// Curren parameter state
+	// Current parameter state
 	protected DMatrixRMaj x = new DMatrixRMaj(1,1);
 	// proposed next state of parameters
 	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
 	// proposed relative change in parameter's state
 	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
 
+	// Scaling used to compensate for poorly scaled variables
+	protected DGrowArray scaling = new DGrowArray();
+
+	protected ConfigTrustRegion config = new ConfigTrustRegion();
+
 	// error function at x
 	protected double fx;
 	// the previous error
 	protected double fx_prev;
 
-	// if the prediction ratio his higher than this threshold it is accepted
-	private double candidateAcceptThreshold = 0.05;
-
-	// initial size of the trust region
-	double regionRadiusInitial=1;
-
 	// size of the current trust region
 	double regionRadius;
-
-	// maximum size of the trust region
-	double regionRadiusMax = Double.MAX_VALUE;
-
-	// tolerance for termination. magnitude of gradient. absolute
-	double gtol;
-	// tolerance for termination, change in function value.  relative
-	double ftol;
 
 	// which processing step it's on
 	protected Mode mode = Mode.FULL_STEP;
@@ -110,16 +112,11 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Specifies initial state of the search and completion criteria
 	 *
 	 * @param initial Initial parameter state
-	 * @param ftol ftol completion
-	 * @param gtol gtol completion
 	 * @param numberOfParameters Number many parameters are being optimized.
 	 * @param minimumFunctionValue The minimum possible value that the function can output
 	 */
-	public void initialize(double initial[] , double ftol , double gtol ,
-						   int numberOfParameters , double minimumFunctionValue) {
+	public void initialize(double initial[] , int numberOfParameters , double minimumFunctionValue ) {
 		this.numberOfParameters = numberOfParameters;
-		this.ftol = ftol;
-		this.gtol = gtol;
 
 		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
 		math.setIdentity(hessian);
@@ -129,13 +126,17 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		p.reshape(numberOfParameters,1);
 		gradient.reshape(numberOfParameters,1);
 
+		// initialize scaling to 1, which is no scaling
+		scaling.reshape(numberOfParameters);
+		Arrays.fill(scaling.data,0,numberOfParameters,1);
+
 		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		fx = costFunction(x);
 
 		totalFullSteps = 0;
 		totalRetries = 0;
 
-		regionRadius = regionRadiusInitial;
+		regionRadius = config.regionRadiusInitial;
 
 		// a perfect initial guess is a pathological case. easiest to handle it here
 		if( fx <= minimumFunctionValue ) {
@@ -177,6 +178,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected void updateState() {
 		updateDerivedState(x);
+		if( isScaling() ) {
+			computeScaling();
+			applyScaling();
+		}
 		gradientNorm = NormOps_DDRM.normF(gradient);
 		if(UtilEjml.isUncountable(gradientNorm))
 			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
@@ -185,11 +190,41 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	}
 
 	/**
+	 * Grabs scaling from diagonal elements of the Hessian
+	 */
+	protected void computeScaling() {
+		math.extractDiag(hessian,scaling.data);
+
+		// massage the data just in case there's weird stuff going on in the Hessian that shouldn't be happening
+		for (int i = 0; i < scaling.length; i++) {
+			scaling.data[i] = Math.min(config.scalingMaximum,
+					Math.max(config.scalingMinimum,Math.abs(scaling.data[i])));
+		}
+	}
+
+	protected void applyScaling() {
+		for (int i = 0; i < scaling.length; i++) {
+			gradient.data[i] /= scaling.data[i];
+		}
+		math.divideRows(scaling.data,hessian);
+		math.divideColumns(scaling.data,hessian);
+	}
+
+	protected void undoScalingOnParameters() {
+		for (int i = 0; i < scaling.length; i++) {
+			p.data[i] /= scaling.data[i];
+		}
+	}
+
+	/**
 	 * Changes the trust region's size and attempts to do a step again
 	 * @return true if it has converged.
 	 */
 	protected boolean computeAndConsiderNew() {
 		boolean hitBoundary = parameterUpdate.computeUpdate(p, regionRadius);
+
+		if( isScaling() )
+			undoScalingOnParameters();
 		if (considerUpdate(p, hitBoundary)) {
 			swapOldAndNewParameters();
 			mode = Mode.FULL_STEP;
@@ -240,14 +275,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		// if the improvement is too small (or not an improvement) reduce the region size
 		if( fx > fx_prev || predictionAccuracy < 0.25 ) {
-			regionRadius = 0.25*regionRadius;
+			regionRadius = Math.max(config.regionMinimum,0.25*regionRadius);
 		} else {
 			if( predictionAccuracy > 0.75 && hitBoundary ) {
-				regionRadius = Math.min(2.0*regionRadius,regionRadiusMax);
+				regionRadius = Math.min(2.0*regionRadius,config.regionMaximum);
 			}
 		}
 
-		return fx < fx_prev && predictionAccuracy > candidateAcceptThreshold;
+		return fx < fx_prev && predictionAccuracy > config.candidateAcceptThreshold;
 	}
 
 	/**
@@ -286,7 +321,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		// f-test
 		double fscore = 1.0 - fx/fx_prev;
-		if( ftol >= fscore )
+		if( config.ftol >= fscore )
 			return true;
 
 		// g-test
@@ -299,7 +334,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			if( v > max )
 				max = v;
 		}
-		return gtol >= max;
+		return config.gtol >= max;
 	}
 
 	/**
@@ -327,6 +362,16 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 * output = A'*A
 		 */
 		void innerMatrixProduct( S A , S output );
+
+		void extractDiag( S A , double diag[] );
+
+		void divideRows(double scaling[] , S A );
+
+		void divideColumns(double scaling[] , S A );
+
+		void scaleRows(double scaling[] , S A );
+
+		void scaleColumns(double scaling[] , S A );
 
 		S createMatrix();
 	}
@@ -373,43 +418,19 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		CONVERGED
 	}
 
-	public double getRegionRadiusInitial() {
-		return regionRadiusInitial;
+	/**
+	 * True if scaling is turned on
+	 */
+	public boolean isScaling() {
+		return config.scalingMaximum > config.scalingMinimum;
 	}
 
-	public void setRegionRadiusInitial(double regionRadiusInitial) {
-		this.regionRadiusInitial = regionRadiusInitial;
+
+	public void configure(ConfigTrustRegion config) {
+		this.config = config.copy();
 	}
 
-	public double getRegionRadiusMax() {
-		return regionRadiusMax;
-	}
-
-	public void setRegionRadiusMax(double regionRadiusMax) {
-		this.regionRadiusMax = regionRadiusMax;
-	}
-
-	public double getCandidateAcceptThreshold() {
-		return candidateAcceptThreshold;
-	}
-
-	public void setCandidateAcceptThreshold(double candidateAcceptThreshold) {
-		this.candidateAcceptThreshold = candidateAcceptThreshold;
-	}
-
-	public double getGtol() {
-		return gtol;
-	}
-
-	public void setGtol(double gtol) {
-		this.gtol = gtol;
-	}
-
-	public double getFtol() {
-		return ftol;
-	}
-
-	public void setFtol(double ftol) {
-		this.ftol = ftol;
+	public ConfigTrustRegion getConfig() {
+		return config;
 	}
 }

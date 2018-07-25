@@ -48,6 +48,31 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 	}
 
 	@Override
+	public void extractDiag(DMatrixSparseCSC A, double[] diag) {
+
+	}
+
+	@Override
+	public void divideRows(double[] scaling, DMatrixSparseCSC A) {
+
+	}
+
+	@Override
+	public void divideColumns(double[] scaling, DMatrixSparseCSC A) {
+
+	}
+
+	@Override
+	public void scaleRows(double[] scaling, DMatrixSparseCSC A) {
+
+	}
+
+	@Override
+	public void scaleColumns(double[] scaling, DMatrixSparseCSC A) {
+
+	}
+
+	@Override
 	public DMatrixSparseCSC createMatrix() {
 		return new DMatrixSparseCSC(1,1);
 	}

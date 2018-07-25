@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,6 @@ package org.ddogleg.optimization.impl;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
-import org.ejml.simple.SimpleMatrix;
 
 /**
  * <p>
@@ -53,34 +52,37 @@ import org.ejml.simple.SimpleMatrix;
 public class EquationsBFGS {
 
 	/**
-	 * Naive but easy to visually verify implementation of the inverse BFGS update.  Primarily
-	 * for testing purposes.
+	 * DFP Hessian update equation. See class description for equations
 	 *
-	 * @param H inverse matrix being updated
+	 * @param H symmetric inverse matrix being updated
 	 * @param s change in state
 	 * @param y change in gradient
+	 * @param tempV0 Storage vector
 	 */
-	public static void naiveInverseUpdate(DMatrixRMaj H,
-										  DMatrixRMaj s,
-										  DMatrixRMaj y)
-	{
-		SimpleMatrix _y = new SimpleMatrix(y);
-		SimpleMatrix _s = new SimpleMatrix(s);
-		SimpleMatrix B = new SimpleMatrix(H);
-		SimpleMatrix I = SimpleMatrix.identity(_y.getNumElements());
+	public static void update(DMatrixRMaj H ,
+							  DMatrixRMaj s ,
+							  DMatrixRMaj y ,
+							  DMatrixRMaj tempV0, DMatrixRMaj tempV1) {
+		double p = VectorVectorMult_DDRM.innerProd(y,s);
+		if( p == 0 )
+			return;
 
-		double p = 1.0/_y.dot(_s);
+		p = 1.0/p;
 
-		SimpleMatrix A1 = I.minus(_s.mult(_y.transpose()).scale(p));
-		SimpleMatrix A2 = I.minus(_y.mult(_s.transpose()).scale(p));
-		SimpleMatrix SS = _s.mult(_s.transpose()).scale(p);
-		SimpleMatrix M = A1.mult(B).mult(A2).plus(SS);
+		double sBs = VectorVectorMult_DDRM.innerProdA(s,H,s);
+		if( sBs == 0 )
+			return;
 
-		H.set(M.getMatrix());
+		CommonOps_DDRM.mult(H,s,tempV0);
+		CommonOps_DDRM.multTransA(s,H,tempV1);
+
+		VectorVectorMult_DDRM.rank1Update(-p, H , tempV0, y);
+		VectorVectorMult_DDRM.rank1Update(-p, H , y, tempV1);
+		VectorVectorMult_DDRM.rank1Update(p*(p*sBs+1), H , y, y);
 	}
 
 	/**
-	 * Inverse update equation that orders the multiplications to minimize the number of operations.
+	 * BFGS inverse hessian update equation that orders the multiplications to minimize the number of operations.
 	 *
 	 * @param H symmetric inverse matrix being updated
 	 * @param s change in state
@@ -93,11 +95,6 @@ public class EquationsBFGS {
 	{
 		double alpha = VectorVectorMult_DDRM.innerProdA(y,H,y);
 		double p = 1.0/VectorVectorMult_DDRM.innerProd(s,y);
-
-		// make sure storage variables have the correct dimension
-		int N = H.numCols;
-		tempV0.numRows = N; tempV0.numCols=1;
-		tempV1.numRows = 1; tempV1.numCols=N;
 
 		CommonOps_DDRM.mult(H,y,tempV0);
 		CommonOps_DDRM.multTransA(y, H, tempV1);

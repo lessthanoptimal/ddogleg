@@ -36,14 +36,13 @@ public class TestTrustRegionBase_F64 {
 
 	@Test
 	public void initialize() {
-		MockParameterUpdate update = new MockParameterUpdate();
 		MockTrustRegionBase_F64 alg = createFixedCost(1,2);
 
 		alg.totalFullSteps = 10;
 		alg.totalRetries = 11;
 
 		double x[] = new double[]{1,2};
-		alg.initialize(x,1e-4,1e-6,2,0);
+		alg.initialize(x,2,0);
 
 		assertEquals(1,alg.fx, UtilEjml.TEST_F64);
 		assertEquals(2,alg.x.numRows);
@@ -52,12 +51,10 @@ public class TestTrustRegionBase_F64 {
 		assertEquals(2,alg.hessian.numRows);
 		assertEquals(2,alg.hessian.numCols);
 
-		assertEquals(alg.regionRadius,alg.regionRadiusInitial, UtilEjml.TEST_F64);
+		assertEquals(alg.regionRadius,alg.config.regionRadiusInitial, UtilEjml.TEST_F64);
 		assertEquals(0,alg.totalFullSteps);
 		assertEquals(0,alg.totalRetries);
 		assertEquals(2,alg.numberOfParameters);
-		assertTrue(1e-4==alg.ftol);
-		assertTrue(1e-6==alg.gtol);
 
 		assertEquals(TrustRegionBase_F64.Mode.FULL_STEP,alg.mode);
 
@@ -93,13 +90,13 @@ public class TestTrustRegionBase_F64 {
 	protected void considerUpdate(double cost, double predAcc, double radiusFrac, boolean update) {
 		MockTrustRegionBase_F64 alg = createFixedCost(cost,predAcc);
 		double x[] = new double[]{1,2};
-		alg.initialize(x,1e-4,1e-6,2,0);
+		alg.initialize(x,2,0);
 
 		alg.fx_prev = 3;
 
 		// it should reduce the region size
 		assertEquals(update, alg.considerUpdate(alg.p, predAcc==1.0));
-		assertEquals(radiusFrac*alg.regionRadiusInitial,alg.regionRadius, UtilEjml.TEST_F64);
+		assertEquals(radiusFrac*alg.config.regionRadiusInitial,alg.regionRadius, UtilEjml.TEST_F64);
 	}
 
 	private MockTrustRegionBase_F64 createFixedCost( double cost , double predAcc ) {
@@ -123,7 +120,7 @@ public class TestTrustRegionBase_F64 {
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
 
 		double x[] = new double[]{1,2};
-		alg.initialize(x,1e-4,1e-6,2,0);
+		alg.initialize(x,2,0);
 
 		alg.fx = 1.2;
 		alg.fx_prev = 1.5;
@@ -151,7 +148,7 @@ public class TestTrustRegionBase_F64 {
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
 
 		double x[] = new double[]{1,2};
-		alg.initialize(x,1e-4,1e-6,2,0);
+		alg.initialize(x,2,0);
 
 		alg.hessian.zero();
 		alg.fx = 1.2;
@@ -168,8 +165,8 @@ public class TestTrustRegionBase_F64 {
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
 
 		// just check ftol only
-		alg.setFtol(1e-4);
-		alg.setGtol(-1);
+		alg.getConfig().ftol = 1e-4;
+		alg.getConfig().gtol = -1;
 		alg.regionRadius = 1; // can't be zero
 		alg.fx = 2;
 		alg.fx_prev = 2.5;
@@ -179,8 +176,8 @@ public class TestTrustRegionBase_F64 {
 		assertTrue(alg.checkConvergence());
 
 		// gtol only
-		alg.setFtol(-1);
-		alg.setGtol(1e-4);
+		alg.getConfig().ftol = -1;
+		alg.getConfig().gtol = 1e-4;
 		alg.numberOfParameters = 2;
 		alg.gradient.data = new double[]{-0.1,0.1};
 		assertFalse(alg.checkConvergence());

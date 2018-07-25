@@ -46,29 +46,35 @@ public class UnconMinTrustRegionBFGS_F64
 	private FunctionNtoS functionCost;
 	private FunctionNtoN functionGradient;
 
-	private double minFunctionValue;
+	private double minimumFunctionValue;
+
+	// true if it's the first iteration
+	private boolean firstIteration;
 
 	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
 		super(parameterUpdate, new TrustRegionMath_DDRM());
 	}
 
-
 	@Override
 	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
 		this.functionCost = function;
 		this.functionGradient = gradient;
-		this.minFunctionValue = minFunctionValue;
+		this.minimumFunctionValue = minFunctionValue;
 	}
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
-		this.initialize(initial,ftol,gtol, functionCost.getNumOfInputsN(),minFunctionValue);
+		this.initialize(initial,functionCost.getNumOfInputsN(), minimumFunctionValue);
+		config.ftol = ftol;
+		config.gtol = gtol;
 	}
 
+	/**
+	 * Override parent to initialize matrices
+	 */
 	@Override
-	public void initialize(double[] initial, double ftol, double gtol,
-						   int numberOfParameters, double minFunctionValue) {
-		super.initialize(initial, ftol, gtol, numberOfParameters,minFunctionValue);
+	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
+		super.initialize(initial, numberOfParameters,minimumFunctionValue);
 		tmpN0.reshape(numberOfParameters,1);
 		tmpN1.reshape(numberOfParameters,1);
 		tmpN2.reshape(numberOfParameters,1);
@@ -79,6 +85,8 @@ public class UnconMinTrustRegionBFGS_F64
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
 		gradientPrevious.zero();
+
+		firstIteration = true;
 	}
 
 	@Override
@@ -89,22 +97,6 @@ public class UnconMinTrustRegionBFGS_F64
 	@Override
 	public double getFunctionValue() {
 		return fx;
-	}
-
-	@Override
-	public boolean iterate() {
-		boolean converged = super.iterate();
-		if( !converged && mode == Mode.FULL_STEP ) {
-			// compute the change in Gradient
-			CommonOps_DDRM.subtract(gradient,gradientPrevious,tmpN0);
-
-			// Apply BFGS equation and update H
-			EquationsBFGS.inverseUpdate(hessian,p,tmpN0,tmpN1,tmpN2);
-
-			// save the new gradient
-			gradientPrevious.set(gradient);
-		}
-		return converged;
 	}
 
 	@Override
@@ -125,6 +117,24 @@ public class UnconMinTrustRegionBFGS_F64
 	@Override
 	protected void updateDerivedState(DMatrixRMaj x) {
 		functionGradient.process(x.data, gradient.data);
+
+		if( !firstIteration ) {
+			// undo the scaling which was previous applied to the hessian
+			// The gradient was just computed so it's not scaled yet
+			math.scaleColumns(scaling.data,hessian);
+			math.scaleRows(scaling.data,hessian);
+
+			// compute the change in Gradient
+			CommonOps_DDRM.subtract(gradient, gradientPrevious, tmpN0);
+
+			// Apply DFP equation and update H
+			EquationsBFGS.update(hessian, p, tmpN0, tmpN1, tmpN2);
+		} else {
+			firstIteration = false;
+		}
+
+		// save the new gradient
+		gradientPrevious.set(gradient);
 	}
 
 	@Override

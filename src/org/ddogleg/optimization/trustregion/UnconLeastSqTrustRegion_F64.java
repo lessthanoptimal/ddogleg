@@ -56,17 +56,18 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
-		this.initialize(initial,ftol,gtol, functionResiduals.getNumOfInputsN(),0);
+		this.initialize(initial,functionResiduals.getNumOfInputsN(),0);
+		config.ftol = ftol;
+		config.gtol = gtol;
 	}
 
 	@Override
-	public void initialize(double[] initial, double ftol, double gtol,
-						   int numberOfParameters, double minFunctionValue) {
-		super.initialize(initial, ftol, gtol, numberOfParameters,minFunctionValue);
+	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
+		super.initialize(initial, numberOfParameters, minimumFunctionValue);
 
 		// Set the hessian to identity. There are other potentially better methods
-//		hessian.reshape(numberOfParameters,numberOfParameters);
-//		CommonOps_DDRM.setIdentity(hessian);
+		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
+		math.setIdentity(hessian);
 
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);

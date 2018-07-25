@@ -41,6 +41,55 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 	}
 
 	@Override
+	public void extractDiag(DMatrixRMaj A, double[] diag) {
+		for (int i = 0; i < A.numCols; i++) {
+			diag[i] = A.data[i*A.numCols+i];
+		}
+	}
+
+	@Override
+	public void divideRows(double[] scaling, DMatrixRMaj A) {
+		int index = 0;
+		for (int row = 0; row < A.numRows; row++) {
+			double v = scaling[row];
+			for (int col = 0; col < A.numCols; col++) {
+				A.data[index++] /= v;
+			}
+		}
+	}
+
+	@Override
+	public void divideColumns(double[] scaling, DMatrixRMaj A) {
+		int index = 0;
+		for (int row = 0; row < A.numRows; row++) {
+			for (int col = 0; col < A.numCols; col++) {
+				A.data[index++] /= scaling[col];
+			}
+		}
+	}
+
+	@Override
+	public void scaleRows(double[] scaling, DMatrixRMaj A) {
+		int index = 0;
+		for (int row = 0; row < A.numRows; row++) {
+			double v = scaling[row];
+			for (int col = 0; col < A.numCols; col++) {
+				A.data[index++] *= v;
+			}
+		}
+	}
+
+	@Override
+	public void scaleColumns(double[] scaling, DMatrixRMaj A) {
+		int index = 0;
+		for (int row = 0; row < A.numRows; row++) {
+			for (int col = 0; col < A.numCols; col++) {
+				A.data[index++] *= scaling[col];
+			}
+		}
+	}
+
+	@Override
 	public DMatrixRMaj createMatrix() {
 		return new DMatrixRMaj(1,1);
 	}
