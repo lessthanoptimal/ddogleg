@@ -51,7 +51,7 @@ public class TestTrustRegionBase_F64 {
 		assertEquals(2,alg.hessian.numRows);
 		assertEquals(2,alg.hessian.numCols);
 
-		assertEquals(alg.regionRadius,alg.config.regionRadiusInitial, UtilEjml.TEST_F64);
+		assertEquals(alg.regionRadius,alg.config.regionInitial, UtilEjml.TEST_F64);
 		assertEquals(0,alg.totalFullSteps);
 		assertEquals(0,alg.totalRetries);
 		assertEquals(2,alg.numberOfParameters);
@@ -96,7 +96,7 @@ public class TestTrustRegionBase_F64 {
 
 		// it should reduce the region size
 		assertEquals(update, alg.considerUpdate(alg.p, predAcc==1.0));
-		assertEquals(radiusFrac*alg.config.regionRadiusInitial,alg.regionRadius, UtilEjml.TEST_F64);
+		assertEquals(radiusFrac*alg.config.regionInitial,alg.regionRadius, UtilEjml.TEST_F64);
 	}
 
 	private MockTrustRegionBase_F64 createFixedCost( double cost , double predAcc ) {

@@ -25,6 +25,11 @@ package org.ddogleg.optimization.trustregion;
  */
 public class ConfigTrustRegion {
 	/**
+	 * initial size of the trust region
+	 */
+	public double regionInitial = 1;
+
+	/**
 	 * Trust Region's maximum size
 	 */
 	public double regionMaximum = Double.MAX_VALUE;
@@ -43,17 +48,10 @@ public class ConfigTrustRegion {
 	 */
 	public double ftol=1e-12;
 
-	// if the prediction ratio his higher than this threshold it is accepted
 	/**
-	 *
+	 * if the prediction ratio his higher than this threshold it is accepted
 	 */
 	public double candidateAcceptThreshold = 0.05;
-
-	// initial size of the trust region
-	/**
-	 *
-	 */
-	public double regionRadiusInitial=1;
 
 	/**
 	 * Minimum and maximum scaling possible. If max < min then scaling is turned off. Off by default.
@@ -67,7 +65,7 @@ public class ConfigTrustRegion {
 		out.gtol = gtol;
 		out.ftol = ftol;
 		out.candidateAcceptThreshold = candidateAcceptThreshold;
-		out.regionRadiusInitial = regionRadiusInitial;
+		out.regionInitial = regionInitial;
 		out.scalingMinimum = scalingMinimum;
 		out.scalingMaximum = scalingMaximum;
 

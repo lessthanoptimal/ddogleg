@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.DoglegStepF;
+import org.ddogleg.optimization.impl.CauchyStep;
 import org.ddogleg.optimization.impl.TrustRegionLeastSquares;
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 
@@ -28,14 +28,14 @@ import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLea
 public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	public EvaluateTrustRegionLeastSquares(boolean verbose) {
-		super(verbose, false);
+		super(verbose, true);
 	}
 
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
-		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepF());
+//		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepF());
 //		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepFtF());
-//		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new CauchyStep());
+		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new CauchyStep());
 		return new TrustRegionLeastSquares_to_UnconstrainedLeastSquares(alg);
 	}
 

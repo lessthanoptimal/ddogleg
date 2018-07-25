@@ -136,7 +136,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		totalFullSteps = 0;
 		totalRetries = 0;
 
-		regionRadius = config.regionRadiusInitial;
+		regionRadius = config.regionInitial;
 
 		// a perfect initial guess is a pathological case. easiest to handle it here
 		if( fx <= minimumFunctionValue ) {
@@ -154,6 +154,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged or false if not
 	 */
 	public boolean iterate() {
+		System.out.println("Mode = "+mode);
 		switch( mode ) {
 			case FULL_STEP:
 				totalFullSteps++;
@@ -257,6 +258,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected abstract void updateDerivedState(DMatrixRMaj x );
 
+	int foo = 0;
 	/**
 	 * Consider updating the system with the change in state p. The update will never
 	 * be accepted if the cost function increases.
@@ -266,6 +268,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it should update the state or false if it should try agian
 	 */
 	protected boolean considerUpdate( DMatrixRMaj p , boolean hitBoundary ) {
+		if( foo++ == 100 )
+			System.out.println("AdsaD");
 		// Compute the next possible parameter and the cost function's value
 		CommonOps_DDRM.add(x,p,x_next);
 		fx = costFunction(x_next);
@@ -281,6 +285,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 				regionRadius = Math.min(2.0*regionRadius,config.regionMaximum);
 			}
 		}
+		System.out.println("region radius="+regionRadius);
 
 		return fx < fx_prev && predictionAccuracy > config.candidateAcceptThreshold;
 	}
@@ -334,6 +339,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			if( v > max )
 				max = v;
 		}
+		System.out.println("fscore = "+fscore+"  gscore="+max);
+
 		return config.gtol >= max;
 	}
 
