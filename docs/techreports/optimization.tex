@@ -52,160 +52,32 @@ This document describes the implementation details and a little bit of the theor
 \end{abstract}
 
 
-\section{Unconstrained Minimization}
+\section{Optimization Techiques}
 
 \begin{table}[h]
 \centering
-\caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
+\caption{\label{definitions:Techniques}Definitions for Techniques}
 \begin{tabular}{cl}
 $\bm{x}$ & Parameters being optimized. $\bm{x} \in \R^n$ \\
 $\bm{x}_k$ & Value of parameters at iteration $k$ \\
 $f(\bm{x})$ & Scalar cost function being optimized. $f \in \R$ \\
 $f_k$ & Short hand for $f(\bm{x}_k)$ \\
-\textit{FunctionNtoS} & Interface for $f(\bm{x})$ \\
 $g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
 $g_k$ & Short hand for $g(\bm{x}_k)$ \\
-\textit{FunctionNtoN} & Interface for $g(\bm{x})$ \\
 $B(\bm{x})$ & Hessian matrix or an approximation \\ 
 $B_k$ & Short hand for $B(\bm{x}_k)$ \\
+$H(\bm{x})$ & Inverse Hessian matrix or an approximation \\ 
+$H_k$ & Short hand for $H(\bm{x}_k)$ \\
 positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all non-zero vectors $y$  \\
-$s.t.$ & subject to \\
-\textit{UnconstrainedMinimization} & Interface for unconstrained minimization
+$s.t.$ & subject to 
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
-\caption{\label{summary:UM}Summary of Unconstrained Minimization Methods.}
-\centering
-\begin{tabular}{lccccc}
-Method & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
-\hline
-Quasi-Newton BFGS & Quadratic & ? & ? & Yes &  \rule{0pt}{2.6ex} \\
-Trust Region BFGS Cauchy & Linear & Yes & Yes & Yes &  \\
-Trust Region BFGS Dogleg & Quadratic & [1] & [1] & Yes &  \\
-Quasi-Newton L-BFGS & Quadratic & ? & ? &   & Yes \\
-Trust Region L-BFGS Cauchy & Linear & Yes & Yes &  & Yes \\
-Trust Region L-BFGS Dogleg & Quadratic & [1] & [1] &  & Yes \\[1ex]
-\hline
-\multicolumn{6}{l}{
-\begin{minipage}{0.6\textwidth}
-\centering
-\vspace{2mm}
-\begin{itemize}[leftmargin=*]
-\item \emph{Convergence:} how fast it converged.
-\item \emph{Singular:} indicates that it can process singular systems.
-\item \emph{Negative-Definite:} indicate that it can process negative definite systems
-\item \emph{Dense} and \emph{Sparse:} indicate that dense and/or sparse matrices can be processed. 
-\item {[1]} Switches to Cauchy in this situation.
-\end{itemize}
-\end{minipage}
- }
-\end{tabular}
-\end{table}
-
-Describe unconstrained minimzation at a high level
-
-Convergence is tested for using two tests. F-test checks to see if the cost function is changing by an insignificant amount. G-test tests to see if the gradient is approximately zero.
-
-\subsection{Convergence}
-
-All unconstrained minimization algorithms in DDogleg use the same convergence tests. F-test checks the function's value to see if it has converged. G-test checks the gradient to see if it has converged. To disable a test assign it a value less than zero.
-
-\begin{center}
-\begin{tabular}{lc}
-F-test & $ftol  \leq 1 - f(x+p)/f(x)$ \\
-G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
-\end{tabular}
-\end{center}
- 
-\subsection{Hessian} 
-
-The Hessian $\bm{B}_k$ or an approximation is required at each time step for all unconstrained optimization methods in DDogleg. However, DDogleg does not provide a mechanism for explicitly specify the Hessian. This was done to simplify implementation and in general an exact Hessian does not improve performance.
-
-The for dense systems the BFGS method (CITE) is used by Line Search and Trust Region methods. DESCRIBE IT HERE NOW.
-
-For sparse systems L-BFGS methods (CITE) blah.
-
-If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, copy that class, and substitute the exact Hessian for the approximate Hessian. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
- 
+This section provides overview of different numerical techniques provided in DDogleg for unconstrained optimization. Techniques described here can often be applied to different problems. Specific implementation details are discussed in the problem's section.
 \subsection{Linear Search}
 
 \subsection{Trust Region}
 Trust Region refers to a family of methods that operate by assuming a quadratic model can accurately represent the true function within a local "trust region". The size of the trust region is adjusted based on the performance of the quadratic model. A summary of the trust region can be found in Algorithm \ref{alg:trust_region}.
-
-At every iteration a subproblem is solved where an exact or approximate solution for $p$ is found.
-\begin{equation}
-\begin{array}{lr}
-\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
-\end{array}
-\label{eq:trust_region_subproblem}
-\end{equation}
-where $B$ is the Hessian or an approximation of the Hessian. The model $m(\bm{p})$ is a quadratic approximation to $f(x)$, the function being optimized. Without constraints  the solution to Eq. \ref{eq:trust_region_subproblem} can be easily found by setting first deriviative equal to zero and you get:
-\begin{equation}
-\bm{p} = -\bm{B}^{-1}_k \bm{g}_k
-\label{eq:TR_unconstrained_solution}
-\end{equation}
-
-There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
-
-\subsection{Trust Region: Cauchy Point} 
-
-The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, points in the direction of vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms
-\begin{equation}
-\begin{array}{lr}
-\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
-\end{array}
-\end{equation}
-The line segment length is found by minimizing Eq. \ref{eq:trust_region_subproblem} along direction $\hat{p}^s_k$
-\begin{equation}
-\begin{array}{lr}
-\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
-\end{array}
-\end{equation}
-
-The solution to this problem (see Chapter 4 of \cite{numopt2016} for details and diagrams) is as follows
-\begin{equation}
-p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
-\label{eq:cauchy_p}
-\end{equation}
-\begin{equation}
-\tau_k = 
-	\begin{cases}
-		\quad 1 & g_k^T B_k g_k \le 0 \\
-		\quad \min\left(\norm{g_k}^3/(\Delta_k g_k^T B_k g_k),1\right) & g_k^T B_k g_k > 0
-	\end{cases}
-	\label{eq:cauchy_tau}
-\end{equation}
-Both positive semi-definite and negative semi-definite Hessian matrices can be optimized and shouldn't blow up no matter what you throw at it.
-
-The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues. The power of three in (\ref{eq:cauchy_p}) virtually ensures overflow in larger systems. Another improvement is to only step as far as needed to reach the minimum possible value:
-\begin{eqnarray}
-\bar{g}_k &=& \frac{g_k}{\norm{g_k}} \\
-p^s_k &=& -\tau_k \Delta_k \bar{g}_k
-\end{eqnarray}
-\begin{equation}
-\tau_k = \begin{cases}
-		\quad \min\left(1, \max(0,(f_k-f_{min})/\Delta_k)) \right) & \bar{g}_k^T B_k \bar{g}_k\le 0 \\
-		\quad \min\left(\norm{g_k}/(\Delta_k \bar{g}_k^T B_k \bar{g}_k),1\right) & \bar{g}_k^T B_k \bar{g}_k > 0
-	\end{cases}
-\end{equation}
-where $f_{min}$ is the minimum possible value of $f_k$. Set $f_{min}$ to -MAX\_VALUE if not known.
-
-
-\subsection{Trust Region: Dogleg} 
-
-Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). Care has been taken to avoid numerical overflow in the equations below, which is why they are not identical to \cite{numopt2016,IMM2004}.
-\begin{eqnarray}
-\bar{g_k} &=& \frac{g_k}{\norm{g_k}} \\
-p^u_k &=& -\frac{g_k}{\bar{g_k}^T B_k \bar{g_k}} \\
-p^b_k &=& -\norm{g_k}B^{-1}_k\bar{g_k} \\
-p^{dog}_k &=&
-\begin{cases}
-	\tau p^u_k & 0 \le \tau < 1 \\
-	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
-\end{cases}
-\end{eqnarray}
-where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the Cauchy Point algorithm is used instead. Alternative approaches for handling this situation are discussed in \cite{numopt2016} but have not yet been added to DDogleg.
 
 \begin{algorithm}{}
 \caption{\label{alg:trust_region}Trust Region}
@@ -239,6 +111,160 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 	\EndWhile
 \end{algorithmic}
 \end{algorithm}
+
+At every iteration a subproblem is solved where an exact or approximate solution for $p$ is found.
+\begin{equation}
+\begin{array}{lr}
+\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
+\end{array}
+\label{eq:trust_region_subproblem}
+\end{equation}
+where $B$ is a symmetric matrix and is the Hessian or an approximation of the Hessian. The model $m(\bm{p})$ is a quadratic approximation to $f(x)$, the function being optimized. Without constraints  the solution to Eq. \ref{eq:trust_region_subproblem} can be easily found by setting first deriviative equal to zero and you get:
+\begin{equation}
+\bm{p} = -\bm{B}^{-1}_k \bm{g}_k
+\label{eq:TR_unconstrained_solution}
+\end{equation}
+
+Another important issue is scaling. BLAH BLAH BLAH BLAH
+
+There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
+
+\subsection{Trust Region: Cauchy Point} 
+
+The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, points in the direction of vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms
+\begin{equation}
+\begin{array}{lr}
+\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
+\end{array}
+\end{equation}
+The line segment length is found by minimizing Eq. \ref{eq:trust_region_subproblem} along direction $\hat{p}^s_k$
+\begin{equation}
+\begin{array}{lr}
+\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
+\end{array}
+\end{equation}
+
+The solution to this problem (see Chapter 4 of \cite{numopt2006} for details and diagrams) is as follows
+\begin{equation}
+p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
+\label{eq:cauchy_p}
+\end{equation}
+\begin{equation}
+\tau_k = 
+	\begin{cases}
+		\quad 1 & g_k^T B_k g_k \le 0 \\
+		\quad \min\left(\norm{g_k}^3/(\Delta_k g_k^T B_k g_k),1\right) & g_k^T B_k g_k > 0
+	\end{cases}
+	\label{eq:cauchy_tau}
+\end{equation}
+Both positive semi-definite and negative semi-definite Hessian matrices can be optimized and shouldn't blow up no matter what you throw at it.
+
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues. The power of three in (\ref{eq:cauchy_p}) virtually ensures overflow in larger systems. Another improvement is to only step as far as needed to reach the minimum possible value:
+\begin{eqnarray}
+\bar{g}_k &=& \frac{g_k}{\norm{g_k}} \\
+p^s_k &=& -\tau_k \Delta_k \bar{g}_k
+\end{eqnarray}
+\begin{equation}
+\tau_k = \begin{cases}
+		\quad \min\left(1, \max(0,(f_k-f_{min})/\Delta_k)) \right) & \bar{g}_k^T B_k \bar{g}_k\le 0 \\
+		\quad \min\left(\norm{g_k}/(\Delta_k \bar{g}_k^T B_k \bar{g}_k),1\right) & \bar{g}_k^T B_k \bar{g}_k > 0
+	\end{cases}
+\end{equation}
+where $f_{min}$ is the minimum possible value of $f_k$. Set $f_{min}$ to -MAX\_VALUE if not known.
+
+
+\subsection{Trust Region: Dogleg} 
+
+Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). Care has been taken to avoid numerical overflow in the equations below, which is why they are not identical to \cite{numopt2006,IMM2004}.
+\begin{eqnarray}
+\bar{g_k} &=& \frac{g_k}{\norm{g_k}} \\
+p^u_k &=& -\frac{g_k}{\bar{g_k}^T B_k \bar{g_k}} \\
+p^b_k &=& -\norm{g_k}B^{-1}_k\bar{g_k} \\
+p^{dog}_k &=&
+\begin{cases}
+	\tau p^u_k & 0 \le \tau < 1 \\
+	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
+\end{cases}
+\end{eqnarray}
+where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the Cauchy Point algorithm is used instead. Alternative approaches for handling this situation are discussed in \cite{numopt2006} but have not yet been added to DDogleg.
+
+\section{Unconstrained Minimization}
+
+\begin{table}[h]
+\centering
+\caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
+\begin{tabular}{cl}
+\textit{FunctionNtoS} & Interface for $f(\bm{x})$ \\
+\textit{FunctionNtoN} & Interface for $g(\bm{x})$ \\
+\textit{UnconstrainedMinimization} & Interface for unconstrained minimization
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\label{summary:UM}Summary of Unconstrained Minimization Methods.}
+\centering
+\begin{tabular}{lcccccc}
+Method & Iteration & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
+\hline
+Quasi-Newton BFGS & $O(N^2)$ & Quadratic & ? & ? & Yes &  \rule{0pt}{2.6ex} \\
+Trust Region BFGS Cauchy & $O(N^2)$ & Linear & Yes & Yes & Yes &  \\
+Trust Region BFGS Dogleg & $O(N^2)$ & Quadratic & [1] & [1] & Yes &  \\
+Quasi-Newton L-BFGS & ? & Quadratic & ? & ? &   & Yes \\
+Trust Region L-BFGS Cauchy & ? &  Linear & Yes & Yes &  & Yes \\
+Trust Region L-BFGS Dogleg & ? &  Quadratic & [1] & [1] &  & Yes \\[1ex]
+\hline
+\multicolumn{6}{l}{
+\begin{minipage}{0.6\textwidth}
+\centering
+\vspace{2mm}
+\begin{itemize}[leftmargin=*]
+\item \emph{Iteration:} Runtime complexity of update step. $N$ is number of parameters.
+\item \emph{Convergence:} how fast it converged.
+\item \emph{Singular:} indicates that it can process singular systems.
+\item \emph{Negative-Definite:} indicate that it can process negative definite systems
+\item \emph{Dense} and \emph{Sparse:} indicate that dense and/or sparse matrices can be processed. 
+\item {[1]} Switches to Cauchy in this situation.
+\end{itemize}
+\end{minipage}
+ }
+\end{tabular}
+\end{table}
+
+Describe unconstrained minimization at a high level
+
+
+\subsection{Convergence Test}
+
+All unconstrained minimization algorithms in DDogleg use the same convergence tests. F-test checks the function's value to see if it has converged. G-test checks the gradient to see if it has converged. To disable a test assign it a value less than zero.
+
+\begin{center}
+\begin{tabular}{lc}
+F-test & $ftol  \leq 1 - f(x+p)/f(x)$ \\
+G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
+\end{tabular}
+\end{center}
+ 
+\subsection{Hessian} 
+
+Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP to estimate the Hessian and BFGS to estimate the inverse hessian. See \cite{fletcher1987,numopt2006} for a discussion of these methods.
+
+\begin{flalign}
+\text{DFP} && \bm{B}_{k+1} &= (I- \rho_k \gamma_k s_k^T) \bm{B}_k (I - \rho_k s_k \gamma_k^T) + \rho_k \gamma_k \gamma_k^T && \\
+\text{BFGS} && \bm{H}_{k+1} &= H_k - \frac{H_k \gamma_k \gamma_k^T H_k }{\gamma_k^T H_k \gamma y_k} + \frac{s_k s_k^T}{y_k^T s_k} &&
+\end{flalign}
+\begin{equation*}
+\rho_k=\frac{1}{\gamma_k^T s_k}
+\end{equation*}
+where $H_k = B_k^{-1}$, $s_k = x_{k+1}-x_k$, and $y_k = \nabla f_{k+1} - \nabla f_k$.
+
+DDogleg does not explictly provide support for using an exact Hessian. If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, copy that class, and substitute the exact Hessian for the approximate Hessian. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
+
+\subsection{Trust Region}
+
+\begin{itemize}
+	\item The Hessian is approximated using DFP and initialized with an identity matrix. 
+	\item DDogleg avoids $O(N^3)$ matrix inverse by computing the inverse hessian with $O(N^2)$ BFGS
+\end{itemize}
 
 \section{Unconstrained Least-Squares}
 \begin{table*}[h]
@@ -281,7 +307,7 @@ and the Gradient as
 &=& \bm{J}(\bm{x})^T \bm{F}(\bm{x})
 \end{eqnarray}
 
-\subsection{Convergence}
+\subsection{Convergence Test}
 \begin{center}
 \begin{tabular}{lc}
 F-test & $ftol \leq \norm{\bm{F}_k-\bm{F}_{k-1}}_\infty$ \\
