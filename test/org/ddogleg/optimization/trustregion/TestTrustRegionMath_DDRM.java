@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -75,5 +74,30 @@ public class TestTrustRegionMath_DDRM {
 		double found = alg.innerProduct(A,B);
 
 		assertEquals(expected, found, UtilEjml.TEST_F64);
+	}
+
+	@Test
+	public void extractDiag() {
+		fail("implement");
+	}
+
+	@Test
+	public void divideRows() {
+		fail("implement");
+	}
+
+	@Test
+	public void divideColumns() {
+		fail("implement");
+	}
+
+	@Test
+	public void scaleRows() {
+		fail("implement");
+	}
+
+	@Test
+	public void scaleColumns() {
+		fail("implement");
 	}
 }

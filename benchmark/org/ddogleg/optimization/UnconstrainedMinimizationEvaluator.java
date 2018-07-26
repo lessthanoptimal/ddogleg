@@ -150,11 +150,11 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	}
 
 	public NonlinearResults variably() {
-		return performTest(new EvalFuncVariablyDimensioned_DDRM(10));
+		return performTest(new EvalFuncVariablyDimensioned(10));
 	}
 
 	public NonlinearResults trigonometric() {
-		return performTest(new EvalFuncTrigonometric_DDRM(10));
+		return performTest(new EvalFuncTrigonometric(10));
 	}
 
 	public NonlinearResults badlyScaledBrown() {

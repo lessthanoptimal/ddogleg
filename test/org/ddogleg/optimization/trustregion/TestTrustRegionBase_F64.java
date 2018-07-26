@@ -187,6 +187,26 @@ public class TestTrustRegionBase_F64 {
 		assertTrue(alg.checkConvergence());
 	}
 
+	@Test
+	public void computeScaling() {
+		fail("Implement");
+	}
+
+	@Test
+	public void applyScaling() {
+		fail("Implement");
+	}
+
+	@Test
+	public void undoScalingOnParameters() {
+		fail("Implement");
+	}
+
+	@Test
+	public void isScaling() {
+		fail("Implement");
+	}
+
 	private static class MockParameterUpdate implements TrustRegionBase_F64.ParameterUpdate<DMatrixRMaj> {
 
 		@Override

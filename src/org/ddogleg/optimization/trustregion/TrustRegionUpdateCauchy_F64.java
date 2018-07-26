@@ -59,8 +59,8 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 
 	@Override
 	public void initializeUpdate() {
-		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
 		// use the direction instead of gradient for reduced overflow/underflow issues
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
 		gBg = owner.math.innerProduct(direction,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))

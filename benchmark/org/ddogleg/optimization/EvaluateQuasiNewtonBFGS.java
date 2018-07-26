@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,6 +41,8 @@ public class EvaluateQuasiNewtonBFGS extends UnconstrainedMinimizationEvaluator{
 		eval.helicalValley();
 		System.out.println("Rosenbrock          ----------------");
 		eval.rosenbrock();
+		System.out.println("Rosenbrock Mod      ----------------");
+		eval.rosenbrockMod(Math.sqrt(2*1e6));
 //		System.out.println("dodcfg              ----------------");
 //		eval.dodcfg();
 		System.out.println("variably            ----------------");

@@ -32,7 +32,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 	}
 
 	public NonlinearResults helicalValley() {
-		return performTest(new EvalFuncHelicalValley());
+		return performTest(new EvalFuncHelicalValley<>());
 	}
 
 	public NonlinearResults rosenbrock() {
@@ -44,11 +44,11 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 	}
 
 	public NonlinearResults variably() {
-		return performTest(new EvalFuncVariablyDimensioned_DDRM(10));
+		return performTest(new EvalFuncVariablyDimensioned<>(10));
 	}
 
 	public NonlinearResults trigonometric() {
-		return performTest(new EvalFuncTrigonometric_DDRM(10));
+		return performTest(new EvalFuncTrigonometric<>(10));
 	}
 	public NonlinearResults badlyScaledBrown() {
 		return performTest(new EvalFuncBadlyScaledBrown_DDRM());

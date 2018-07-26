@@ -30,8 +30,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends UnconstrainedLeastSquaresEvaluator_DSCC {
 
+	protected boolean checkFastConvergence = true;
+
 	protected CommonChecksUnconstrainedLeastSquares_DSCC() {
 		super(false, false);
+	}
+
+	@Test
+	public void checkPowell() {
+		NonlinearResults results = powell();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		// The function is degenerate, this test sees if it converges to a solution and improves
+		// the parameter values.  It isn't very precise
+//		assertEquals(0,results.x[0],1e-4);
+//		assertEquals(0,results.x[1],1e-4);
+		assertEquals(0, results.f, 1e-4);
 	}
 
 	@Test
@@ -39,8 +58,10 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = helicalValley();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 100);
+			assertTrue(results.numGradient < 100);
+		}
 		assertEquals(1, results.x[0], 1e-4);
 		assertEquals(0, results.x[1], 1e-4);
 		assertEquals(0, results.x[2], 1e-4);
@@ -52,10 +73,38 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = rosenbrock();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		assertTrue(results.numFunction < 100);
-		assertTrue(results.numGradient < 100);
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 100);
+			assertTrue(results.numGradient < 100);
+		}
 		assertEquals(1, results.x[0], 1e-4);
 		assertEquals(1, results.x[1], 1e-4);
+		assertEquals(0, results.f, 1e-4);
+	}
+
+	@Test
+	public void checkBadlyScaledBrown() {
+		NonlinearResults results = badlyScaledBrown();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 100);
+			assertTrue(results.numGradient < 100);
+		}
+		assertEquals(1e6, results.x[0], 1e-4);
+		assertEquals(2e-6, results.x[1], 1e-4);
+		assertEquals(0, results.f, 1e-4);
+	}
+
+	@Test
+	public void checkTrigonometric() {
+		NonlinearResults results = trigonometric();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 100);
+			assertTrue(results.numGradient < 100);
+		}
 		assertEquals(0, results.f, 1e-4);
 	}
 

@@ -53,6 +53,8 @@ import java.util.Arrays;
  */
 public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
+	// TODO consider moving prediction to update so that it can avoid duplicate calculations
+
 	// Technique used to compute the change in parameters
 	private ParameterUpdate<S> parameterUpdate;
 
@@ -69,7 +71,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected double gradientNorm;
 
 	/**
-	 * Storage for the Hessian
+	 * Storage for the Hessian. Update algorithms should not modify the Hessian
 	 */
 	protected S hessian;
 
@@ -154,11 +156,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged or false if not
 	 */
 	public boolean iterate() {
-		System.out.println("Mode = "+mode);
 		switch( mode ) {
 			case FULL_STEP:
 				totalFullSteps++;
-				updateState();
+				if(updateState() ) {
+					mode = Mode.CONVERGED;
+					return true;
+				}
 				return computeAndConsiderNew();
 
 			case RETRY:
@@ -177,7 +181,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Computes all the derived data structures and attempts to update the parameters
 	 * @return true if it has converged.
 	 */
-	protected void updateState() {
+	protected boolean updateState() {
 		updateDerivedState(x);
 		if( isScaling() ) {
 			computeScaling();
@@ -186,8 +190,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		gradientNorm = NormOps_DDRM.normF(gradient);
 		if(UtilEjml.isUncountable(gradientNorm))
 			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
+		// Check to avoid divide by zero errors. If this is true something probably
+		// went wrong earlier as it should have detected it had converged already
+		if( gradientNorm == 0 )
+			return true;
 		fx_prev = fx;
 		parameterUpdate.initializeUpdate();
+		return false;
 	}
 
 	/**
@@ -203,6 +212,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		}
 	}
 
+	/**
+	 * Apply scaling to gradient and Hessian
+	 */
 	protected void applyScaling() {
 		for (int i = 0; i < scaling.length; i++) {
 			gradient.data[i] /= scaling.data[i];
@@ -211,6 +223,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		math.divideColumns(scaling.data,hessian);
 	}
 
+	/**
+	 * Undo scaling on estimated parameters
+	 */
 	protected void undoScalingOnParameters() {
 		for (int i = 0; i < scaling.length; i++) {
 			p.data[i] /= scaling.data[i];
@@ -258,7 +273,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected abstract void updateDerivedState(DMatrixRMaj x );
 
-	int foo = 0;
 	/**
 	 * Consider updating the system with the change in state p. The update will never
 	 * be accepted if the cost function increases.
@@ -268,8 +282,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it should update the state or false if it should try agian
 	 */
 	protected boolean considerUpdate( DMatrixRMaj p , boolean hitBoundary ) {
-		if( foo++ == 100 )
-			System.out.println("AdsaD");
 		// Compute the next possible parameter and the cost function's value
 		CommonOps_DDRM.add(x,p,x_next);
 		fx = costFunction(x_next);
@@ -279,15 +291,18 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		// if the improvement is too small (or not an improvement) reduce the region size
 		if( fx > fx_prev || predictionAccuracy < 0.25 ) {
+			// TODO 0.25 or 0.5 ?
 			regionRadius = Math.max(config.regionMinimum,0.25*regionRadius);
 		} else {
 			if( predictionAccuracy > 0.75 && hitBoundary ) {
-				regionRadius = Math.min(2.0*regionRadius,config.regionMaximum);
+//			if( predictionAccuracy > 0.75 ) {
+				double r = NormOps_DDRM.normF(p);
+				regionRadius = Math.max(3*r,regionRadius);
+//				regionRadius = Math.min(2.0*regionRadius,config.regionMaximum);
 			}
 		}
-		System.out.println("region radius="+regionRadius);
 
-		return fx < fx_prev && predictionAccuracy > config.candidateAcceptThreshold;
+		return fx < fx_prev && predictionAccuracy > 0;//config.candidateAcceptThreshold;
 	}
 
 	/**
@@ -297,14 +312,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected double computePredictionAccuracy(DMatrixRMaj p) {
 
 		// use quadratic model to predict new cost
-		double m_k1 = fx_prev + CommonOps_DDRM.dot(gradient,p) + 0.5*math.innerProduct(p,hessian);
-		// m_k0 = fx_prev
+		// m(0) - m(p) = fx_prev - m(p)
+		double predictedReduction = -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
 
 		// the model predicts no change. Something bad is going on
-		if( m_k1 == fx_prev ) {
+		if( predictedReduction == 0 ) {
 			return 0;
 		} else {
-			return (fx - fx_prev) / (m_k1 - fx_prev);
+			return (fx_prev - fx) / predictedReduction;
 		}
 	}
 
@@ -324,24 +339,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		if( fx > fx_prev )
 			throw new RuntimeException("BUG! Shouldn't have gotten this far");
 
-		// f-test
-		double fscore = 1.0 - fx/fx_prev;
-		if( config.ftol >= fscore )
+		// f-test. avoid potential divide by zero errors
+		if( config.ftol*fx_prev >= fx_prev - fx )
 			return true;
 
-		// g-test
-		// compute the infinity norm of g
-		double max = 0;
-		final int N = numberOfParameters;
-		for (int i = 0; i < N; i++) {
-			double v = gradient.data[i];
-			if( v < 0 ) v = -v;
-			if( v > max )
-				max = v;
-		}
-		System.out.println("fscore = "+fscore+"  gscore="+max);
-
-		return config.gtol >= max;
+		// g-test:  compute the infinity norm of the gradient
+		return config.gtol >= CommonOps_DDRM.elementMaxAbs(gradient);
 	}
 
 	/**

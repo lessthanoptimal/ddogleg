@@ -19,34 +19,41 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
+import org.ddogleg.optimization.trustregion.TrustRegionMath_DDRM;
 import org.ddogleg.optimization.trustregion.TrustRegionUpdateDogleg_F64;
-import org.ddogleg.optimization.trustregion.UnconMinTrustRegionBFGS_F64;
+import org.ddogleg.optimization.trustregion.UnconLeastSqTrustRegion_F64;
+import org.ejml.LinearSolverSafe;
+import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * @author Peter Abeles
  */
-public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
+public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
-	public EvaluateTrustRegionBFGS(boolean verbose, boolean printScore ) {
-		super(verbose,printScore);
+	public EvaluateTrustRegionLeastSquaresNew(boolean verbose) {
+		super(verbose, true);
 	}
 
 	@Override
-	protected UnconstrainedMinimization createSearch() {
+	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 		ConfigTrustRegion config = new ConfigTrustRegion();
 //		config.scalingMinimum = 1e-4;
 //		config.scalingMaximum = 1e4;
 //			config.regionMinimum = 0.0001;
-//		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
-		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
-				new TrustRegionUpdateDogleg_F64(LinearSolverFactory_DDRM.chol(1)));
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
+		solver = new LinearSolverSafe<>(solver);
+		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
+
+		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
+				alg, new TrustRegionMath_DDRM());
 		tr.configure(config);
 		return tr;
 	}
-	
-	public static void main( String args[] ) {
-		EvaluateTrustRegionBFGS eval = new EvaluateTrustRegionBFGS(false,true);
+
+	public static void main(String args[]) {
+		EvaluateTrustRegionLeastSquaresNew eval = new EvaluateTrustRegionLeastSquaresNew(false);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();
@@ -55,9 +62,7 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 		System.out.println("Rosenbrock          ----------------");
 		eval.rosenbrock();
 		System.out.println("Rosenbrock Mod      ----------------");
-		eval.rosenbrockMod(Math.sqrt(2*1e6));
-//		System.out.println("dodcfg              ----------------");
-//		eval.dodcfg();
+		eval.rosenbrockMod(Math.sqrt(2 * 1e6));
 		System.out.println("variably            ----------------");
 		eval.variably();
 		System.out.println("trigonometric       ----------------");

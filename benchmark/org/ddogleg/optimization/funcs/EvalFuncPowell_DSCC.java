@@ -20,71 +20,84 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrix;
+import org.ejml.data.DMatrixSparseCSC;
 
 /**
  *
- *
  * <p>
- * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
- * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
+ * Powel 1970
  * </p>
  *
  * @author Peter Abeles
  */
-public class EvalFuncHelicalValley<S extends DMatrix> implements EvalFuncLeastSquares<S> {
+public class EvalFuncPowell_DSCC implements EvalFuncLeastSquares<DMatrixSparseCSC> {
 	@Override
 	public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-
 	@Override
-	public FunctionNtoMxN<S> getJacobian() {
-		return null;
+	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
+		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		return new double[]{-1,0,0};
-	}
-	
-	@Override
-	public double[] getOptimal() {
-		return new double[]{1,0,0};
+		return new double[]{3,1};
 	}
 
+	@Override
+	public double[] getOptimal() {
+		return new double[]{0,0};
+	}
+	
 	public static class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {
-			return 3;
+			return 2;
 		}
 
 		@Override
 		public int getNumOfOutputsM() {
-			return 3;
+			return 2;
 		}
 
 		@Override
 		public void process(double[] input, double[] output) {
 			double x1 = input[0];
 			double x2 = input[1];
-			double x3 = input[2];
 			
-			output[0] = 10*(x3 - 10*phi(x1,x2));
-			output[1] = 10*(Math.sqrt(x1*x1 + x2*x2)-1);
-			output[2] = x3;
+			output[0] = x1;
+			output[1] = 10*x1/(x1+0.1) + 2*x2*x2;
 		}
-		
-		private double phi( double a , double b ) {
-			double left = 1.0/(2*Math.PI);
+	}
+
+	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
+	{
+		@Override
+		public int getNumOfInputsN() {
+			return 2;
+		}
+
+		@Override
+		public int getNumOfOutputsM() {
+			return 2;
+		}
+
+		@Override
+		public void process( double[] input, DMatrixSparseCSC J ) {
+			double x1 = input[0];
+			double x2 = input[1];
 			
-			if( a > 0 ) {
-				return left*Math.atan(b/a);
-			} else {
-				return left*Math.atan(b/a) + 0.5;
-			}
+			J.set(0,0,1);
+			J.set(1,0,1.0/Math.pow(x1 + 0.1, 2));
+			J.set(1,1,4*x2);
+		}
+
+		@Override
+		public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
 }

@@ -119,10 +119,12 @@ public class UnconMinTrustRegionBFGS_F64
 		functionGradient.process(x.data, gradient.data);
 
 		if( !firstIteration ) {
-			// undo the scaling which was previous applied to the hessian
-			// The gradient was just computed so it's not scaled yet
-			math.scaleColumns(scaling.data,hessian);
-			math.scaleRows(scaling.data,hessian);
+			if( isScaling() ) {
+				// undo the scaling which was previous applied to the hessian
+				// The gradient was just computed so it's not scaled yet
+				math.scaleColumns(scaling.data, hessian);
+				math.scaleRows(scaling.data, hessian);
+			}
 
 			// compute the change in Gradient
 			CommonOps_DDRM.subtract(gradient, gradientPrevious, tmpN0);

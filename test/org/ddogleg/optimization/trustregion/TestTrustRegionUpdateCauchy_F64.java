@@ -19,7 +19,9 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.OptimizationException;
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DDRM;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
@@ -148,8 +150,22 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			config.scalingMinimum = 1e-4;
 			config.scalingMaximum = 1e4;
-//			config.regionMinimum = 0.0001;
 			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
+			tr.configure(config);
+			return tr;
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
+
+		@Override
+		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.scalingMinimum = 1e-4;
+			config.scalingMaximum = 1e4;
+			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
+					new TrustRegionUpdateCauchy_F64(), new TrustRegionMath_DDRM());
 			tr.configure(config);
 			return tr;
 		}

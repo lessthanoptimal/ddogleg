@@ -18,8 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.funcs.EvalFuncHelicalValley;
-import org.ddogleg.optimization.funcs.EvalFuncRosenbrock_DSCC;
+import org.ddogleg.optimization.funcs.*;
 import org.ejml.data.DMatrixSparseCSC;
 
 /**
@@ -33,29 +32,29 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 	}
 
 	public NonlinearResults helicalValley() {
-		return performTest(new EvalFuncHelicalValley());
+		return performTest(new EvalFuncHelicalValley<>());
 	}
 
 	public NonlinearResults rosenbrock() {
 		return performTest(new EvalFuncRosenbrock_DSCC());
 	}
 
-//	public NonlinearResults rosenbrockMod( double lambda ) {
-//		return performTest(new EvalFuncRosenbrockMod_DDRM(lambda));
-//	}
-//
-//	public NonlinearResults variably() {
-//		return performTest(new EvalFuncVariablyDimensioned_DDRM(10));
-//	}
-//
-//	public NonlinearResults trigonometric() {
-//		return performTest(new EvalFuncTrigonometric_DDRM(10));
-//	}
-//	public NonlinearResults badlyScaledBrown() {
-//		return performTest(new EvalFuncBadlyScaledBrown_DDRM());
-//	}
-//
-//	public NonlinearResults powell() {
-//		return performTest(new EvalFuncPowell_DDRM());
-//	}
+	public NonlinearResults rosenbrockMod( double lambda ) {
+		return performTest(new EvalFuncRosenbrockMod_DSCC(lambda));
+	}
+
+	public NonlinearResults variably() {
+		return performTest(new EvalFuncVariablyDimensioned<>(10));
+	}
+
+	public NonlinearResults trigonometric() {
+		return performTest(new EvalFuncTrigonometric<>(10));
+	}
+	public NonlinearResults badlyScaledBrown() {
+		return performTest(new EvalFuncBadlyScaledBrown_DSCC());
+	}
+
+	public NonlinearResults powell() {
+		return performTest(new EvalFuncPowell_DSCC());
+	}
 }

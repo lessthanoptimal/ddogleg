@@ -44,27 +44,32 @@ import org.ejml.interfaces.linsol.LinearSolver;
  * @author Peter Abeles
  */
 public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S> {
+	// TODO consider more accurate intersection method in paper
+
 
 	// the trust region instance which is using the update function
-	private TrustRegionBase_F64<S> owner;
+	protected TrustRegionBase_F64<S> owner;
 
 	// minimum possible value from function being optimized
-	private double minimumFunctionValue;
+	protected double minimumFunctionValue;
 
 	// used to solve positive definite systems
-	LinearSolver<S,DMatrixRMaj> solver;
+	protected LinearSolver<S,DMatrixRMaj> solver;
 
 	// Gradient's direction
-	private DMatrixRMaj direction = new DMatrixRMaj(1,1);
+	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
-	private double gBg;
+	protected double gBg;
 
 	// Solution to Gauss-Newton problem
-	DMatrixRMaj pointGN = new DMatrixRMaj(1,1);
-	double gn_length; // length of GN solution
+	protected DMatrixRMaj pointGN = new DMatrixRMaj(1,1);
+	protected double gn_length; // length of GN solution
 
 	// is the hessian positive definite?
-	boolean positiveDefinite;
+	protected boolean positiveDefinite;
+
+	// work space
+	protected S tmp;
 
 	/**
 	 * Specifies internal algorithms
@@ -75,12 +80,15 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		this.solver = solver;
 	}
 
+	protected TrustRegionUpdateDogleg_F64(){}
+
 	@Override
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
 		direction.reshape(numberOfParameters,1);
 		pointGN.reshape(numberOfParameters,1);
+		tmp = owner.math.createMatrix();
 	}
 
 	@Override
@@ -92,22 +100,36 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
 
-		positiveDefinite = gBg > 0;
-
-		if( positiveDefinite ) {
-			// Compute Gauss-Newton step
-			solveGaussNewtonPoint(pointGN);
-			CommonOps_DDRM.scale(-1, pointGN);
+		// see if it's positive definite and Gauss-Newton can be solved
+		if( gBg > 0 && solveGaussNewtonPoint(pointGN) ) {
+			positiveDefinite = true;
+			// p_gn = -||g||*inv(B)*direction
+			CommonOps_DDRM.scale(-owner.gradientNorm, pointGN);
 			gn_length = NormOps_DDRM.normF(pointGN);
+		} else {
+			positiveDefinite = false;
 		}
 	}
 
-	protected void solveGaussNewtonPoint(DMatrixRMaj pointGN ) {
-		// Compute Gauss-Newton step
-		if( !solver.setA(owner.hessian) ) {
-			throw new OptimizationException("Solver failed!");
+	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN ) {
+		// Compute Gauss-Newton step and make sure the input hessian isn't modified
+		S H;
+		if( solver.modifiesA() ) {
+			tmp.set(owner.hessian);
+			H = tmp;
+		} else {
+			H = owner.hessian;
 		}
-		solver.solve(owner.gradient, pointGN);
+		if( !solver.setA(H) ) {
+			return false;
+		}
+		solver.solve(direction, pointGN);
+
+		// less memory than making a copy
+		if( solver.modifiesB() ) {
+			CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
+		}
+		return true;
 	}
 
 	@Override
@@ -126,8 +148,8 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 				// pu = -((g'*g)/(g'*B*g))*g
 				// Since g has been normalized g'*g = 1
 				// this undoes the change in scale
-				CommonOps_DDRM.scale(-owner.gradientNorm/gBg, direction,p);
-				// vector from p to GN in p
+				CommonOps_DDRM.scale(-pu_length, direction,p);
+				// vector from p to GN
 				CommonOps_DDRM.subtract(pointGN,p,p);
 				double length_p_to_gn = NormOps_DDRM.normF(p);
 
@@ -135,11 +157,11 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 				double f = fractionToGN(pu_length, gn_length,length_p_to_gn,regionRadius);
 
 				// starting from GN instead of P because P has been over written
-				CommonOps_DDRM.add(pointGN,1.0-f,p,p);
+				CommonOps_DDRM.add(pointGN,f-1.0,p,p);
 			} else {
 				// find location that the first segment hits the region's boundary
 				// this is easy since direction is a unit vector
-				CommonOps_DDRM.scale(regionRadius, direction,p);
+				CommonOps_DDRM.scale(-regionRadius, direction,p);
 			}
 
 			// since the GN solution is outside the region boundary all other solutions must be inside
@@ -147,8 +169,8 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		} else {
 			// Cauchy step for negative semi-definite systems
 			double tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
-			CommonOps_DDRM.scale(tau*regionRadius, direction,p);
-			return true;
+			CommonOps_DDRM.scale(-tau*regionRadius, direction,p);
+			return tau == 1.0;
 		}
 	}
 
@@ -161,13 +183,16 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		double a=lengthGN,b=lengthP,c=lengthPtoGN;
 
 		// Law of cosine to find angle for side GN (a.k.a 'a')
-		double cosineA = (a*a + b*b + c*c)/(2.0*a*b);
+		double cosineA = (a*a - b*b - c*c)/(-2.0*b*c);
+		double angleA = Math.acos(cosineA);
 
 		// In the second triangle, that is now being considered, lengthP is known and the side which intersects
 		// the region boundary is known, but we need to solve for the length from P to the intersection
 		// with the boundary
 		a=region;
-		c=Math.sqrt(a*a + b*b -2.0*a*b*cosineA);
+		double angleB = Math.asin((b/a)*Math.sin(angleA));
+		double angleC = Math.PI-angleA-angleB;
+		c = Math.sqrt(a*a + b*b - 2.0*a*b*Math.cos(angleC));
 
 		return c/lengthPtoGN;
 	}

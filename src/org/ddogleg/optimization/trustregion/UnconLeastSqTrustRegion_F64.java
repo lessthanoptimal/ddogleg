@@ -31,7 +31,7 @@ import org.ejml.dense.row.NormOps_DDRM;
  *
  * @author Peter Abeles
  */
-public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
+public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		extends TrustRegionBase_F64<S>
 		implements UnconstrainedLeastSquares<S>
 {
@@ -43,7 +43,7 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
-	public UnconLeastSqTrustRegion_F64(ParameterUpdate parameterUpdate, MatrixMath<S> math) {
+	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math) {
 		super(parameterUpdate, math);
 		jacobian = math.createMatrix();
 	}
@@ -81,7 +81,6 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		((ReshapeMatrix)jacobian).reshape(M,N);
 	}
 
-
 	@Override
 	public double[] getParameters() {
 		return x.data;
@@ -116,6 +115,7 @@ public abstract class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 
 	@Override
 	protected double costFunction(DMatrixRMaj x) {
+		tmpM0.reshape(x.numRows,functionResiduals.getNumOfOutputsM());
 		functionResiduals.process(x.data,tmpM0.data);
 		return NormOps_DDRM.normF(tmpM0);
 	}

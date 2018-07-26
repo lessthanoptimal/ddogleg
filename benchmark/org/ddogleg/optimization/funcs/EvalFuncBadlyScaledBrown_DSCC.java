@@ -20,7 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrixSparseCSC;
 
 /**
  *
@@ -31,13 +31,7 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class EvalFuncTrigonometric_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
-	
-	int N;
-
-	public EvalFuncTrigonometric_DDRM(int n) {
-		N = n;
-	}
+public class EvalFuncBadlyScaledBrown_DSCC implements EvalFuncLeastSquares<DMatrixSparseCSC> {
 
 	@Override
 	public FunctionNtoM getFunction() {
@@ -45,48 +39,61 @@ public class EvalFuncTrigonometric_DDRM implements EvalFuncLeastSquares<DMatrixR
 	}
 
 	@Override
-	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
-		return null;
+	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
+		return new Deriv();
 	}
 
 	@Override
 	public double[] getInitial() {
-		double[] x = new double[N];
-		for( int i = 0; i < N; i++ ) {
-			x[i] = 1/(double)N;
-		}
-		return x;
+		return new double[]{1,1};
 	}
 
 	@Override
 	public double[] getOptimal() {
-		return null;
+		return new double[]{1e6,2e-6};
 	}
 
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getNumOfInputsN() {return N;}
+		public int getNumOfInputsN() {return 2;}
 
 		@Override
-		public int getNumOfOutputsM() {return N;}
+		public int getNumOfOutputsM() {return 3;}
 
 		@Override
 		public void process(double[] input, double[] output) {
-			for( int i = 0; i < input.length; i++ ) {
-				output[i] = F(input,i);
-			}
+			double x1 = input[0];
+			double x2 = input[1];
+
+			output[0] = x1-1e6;
+			output[1] = x2-2e-6;
+			output[2] = x1*x2-2;
+		}
+	}
+
+	public class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
+	{
+		@Override
+		public int getNumOfInputsN() {return 2;}
+
+		@Override
+		public int getNumOfOutputsM() {return 3;}
+
+		@Override
+		public void process(double[] input, DMatrixSparseCSC output) {
+			double x1 = input[0];
+			double x2 = input[1];
+
+			output.set(0,0,1);
+			output.set(1,1,1);
+			output.set(2,0,x2);
+			output.set(2,1,x1);
 		}
 
-		public double F( double[]x , int degree ) {
-			double total = N;
-			for( int i = 0; i < N; i++ ) {
-				total -= Math.cos(x[i]);
-			}
-
-			total += (degree+1)*(1-Math.cos(x[degree])) - Math.sin(x[degree]);
-
-			return total;
+		@Override
+		public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
 		}
 	}
 }

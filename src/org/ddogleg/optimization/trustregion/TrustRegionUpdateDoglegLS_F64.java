@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ddogleg.optimization.OptimizationException;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.interfaces.linsol.LinearSolver;
@@ -52,11 +51,12 @@ public class TrustRegionUpdateDoglegLS_F64<S extends DMatrix> extends TrustRegio
 	}
 
 	@Override
-	protected void solveGaussNewtonPoint(DMatrixRMaj pointGN) {
+	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN) {
 		// Compute Gauss-Newton step
 		if( !solver.setA(owner.getJacobian()) ) {
-			throw new OptimizationException("Solver failed!");
+			return false;
 		}
 		solver.solve(owner.gradient, pointGN);
+		return true;
 	}
 }

@@ -20,7 +20,7 @@ package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrix;
 
 /**
  *
@@ -31,11 +31,11 @@ import org.ejml.data.DMatrixRMaj;
  *
  * @author Peter Abeles
  */
-public class EvalFuncVariablyDimensioned_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
+public class EvalFuncTrigonometric<S extends DMatrix> implements EvalFuncLeastSquares<S> {
 	
 	int N;
 
-	public EvalFuncVariablyDimensioned_DDRM(int n) {
+	public EvalFuncTrigonometric(int n) {
 		N = n;
 	}
 
@@ -45,54 +45,48 @@ public class EvalFuncVariablyDimensioned_DDRM implements EvalFuncLeastSquares<DM
 	}
 
 	@Override
-	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+	public FunctionNtoMxN<S> getJacobian() {
 		return null;
 	}
 
 	@Override
 	public double[] getInitial() {
-		double x[] = new double[N];
-		
+		double[] x = new double[N];
 		for( int i = 0; i < N; i++ ) {
-			x[i] = 1-((double)i/(double)N);
+			x[i] = 1/(double)N;
 		}
-		
 		return x;
 	}
 
 	@Override
 	public double[] getOptimal() {
-		double x[] = new double[N];
-		for( int i = 0; i < N; i++ )
-			x[i] = 1;
-		return x;
+		return null;
 	}
 
 	public class Func implements FunctionNtoM
 	{
 		@Override
-		public int getNumOfInputsN() {
-			return N;
-		}
+		public int getNumOfInputsN() {return N;}
 
 		@Override
-		public int getNumOfOutputsM() {
-			return N+2;
-		}
+		public int getNumOfOutputsM() {return N;}
 
 		@Override
 		public void process(double[] input, double[] output) {
-			for( int i = 0; i < N; i++ ) {
-				output[i] = input[i]-1;
+			for( int i = 0; i < input.length; i++ ) {
+				output[i] = F(input,i);
 			}
-			double sum = 0;
+		}
+
+		public double F( double[]x , int degree ) {
+			double total = N;
 			for( int i = 0; i < N; i++ ) {
-				sum += (i+1)*(input[i]-1);
+				total -= Math.cos(x[i]);
 			}
-			
-			output[N] = sum;
-			output[N+1] = sum*sum;
+
+			total += (degree+1)*(1-Math.cos(x[degree])) - Math.sin(x[degree]);
+
+			return total;
 		}
 	}
-
 }
