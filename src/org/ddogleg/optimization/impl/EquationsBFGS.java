@@ -55,8 +55,8 @@ public class EquationsBFGS {
 	 * DFP Hessian update equation. See class description for equations
 	 *
 	 * @param H symmetric inverse matrix being updated
-	 * @param s change in state
-	 * @param y change in gradient
+	 * @param s change in state (new - old)
+	 * @param y change in gradient (new - old)
 	 * @param tempV0 Storage vector
 	 */
 	public static void update(DMatrixRMaj H ,

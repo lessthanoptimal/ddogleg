@@ -24,7 +24,8 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
-import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
  * Implementations of {@link TrustRegionUpdateCauchy_F64} for {@link UnconstrainedLeastSquares}.
@@ -63,22 +64,20 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 
 	@Override
 	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
-		super.initialize(initial, numberOfParameters, minimumFunctionValue);
+		int M = functionResiduals.getNumOfOutputsM();
+		int N = functionResiduals.getNumOfInputsN();
+		tmpM0.reshape(M,1);
+		residuals.reshape(M,1);
 
 		// Set the hessian to identity. There are other potentially better methods
 		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
 		math.setIdentity(hessian);
-
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
 		gradientPrevious.zero();
-
-		int M = functionResiduals.getNumOfOutputsM();
-		int N = functionResiduals.getNumOfInputsN();
-
-		tmpM0.reshape(M,1);
-		residuals.reshape(M,1);
 		((ReshapeMatrix)jacobian).reshape(M,N);
+
+		super.initialize(initial, numberOfParameters, minimumFunctionValue);
 	}
 
 	@Override
@@ -106,18 +105,20 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		return null;
 	}
 
+	// TODO change to set state and compute derived and funcitons
 	@Override
 	protected void updateDerivedState(DMatrixRMaj x) {
-		functionResiduals.process(x.data,residuals.data);
+//		functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacobian);
 		math.innerMatrixProduct(jacobian,hessian);
+		CommonOps_DDRM.multTransA((DMatrixRMaj)jacobian, residuals, gradient);
 	}
 
 	@Override
 	protected double costFunction(DMatrixRMaj x) {
-		tmpM0.reshape(x.numRows,functionResiduals.getNumOfOutputsM());
-		functionResiduals.process(x.data,tmpM0.data);
-		return NormOps_DDRM.normF(tmpM0);
+//		tmpM0.reshape(x.numRows,functionResiduals.getNumOfOutputsM());
+		functionResiduals.process(x.data,residuals.data);
+		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	public DMatrixRMaj getResiduals() {

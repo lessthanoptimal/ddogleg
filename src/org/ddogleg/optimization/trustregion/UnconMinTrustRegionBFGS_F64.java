@@ -38,10 +38,14 @@ public class UnconMinTrustRegionBFGS_F64
 		implements UnconstrainedMinimization
 {
 	// temp variable of length N
-	private DMatrixRMaj tmpN0 = new DMatrixRMaj(1,1);
+	private DMatrixRMaj y = new DMatrixRMaj(1,1);
 	private DMatrixRMaj tmpN1 = new DMatrixRMaj(1,1);
 	private DMatrixRMaj tmpN2 = new DMatrixRMaj(1,1);
 	private DMatrixRMaj gradientPrevious = new DMatrixRMaj(1,1);
+	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
+	private DMatrixRMaj s = new DMatrixRMaj(1,1);
+
+	double f_prev;
 
 	private FunctionNtoS functionCost;
 	private FunctionNtoN functionGradient;
@@ -51,8 +55,11 @@ public class UnconMinTrustRegionBFGS_F64
 	// true if it's the first iteration
 	private boolean firstIteration;
 
+	double c1=0.05,c2=0.9;
+
 	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
 		super(parameterUpdate, new TrustRegionMath_DDRM());
+
 	}
 
 	@Override
@@ -75,9 +82,12 @@ public class UnconMinTrustRegionBFGS_F64
 	@Override
 	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
 		super.initialize(initial, numberOfParameters,minimumFunctionValue);
-		tmpN0.reshape(numberOfParameters,1);
+		y.reshape(numberOfParameters,1);
 		tmpN1.reshape(numberOfParameters,1);
 		tmpN2.reshape(numberOfParameters,1);
+
+		xPrevious.reshape(numberOfParameters,1);
+		x.reshape(numberOfParameters,1);
 
 		// Set the hessian to identity. There are other potentially better methods
 		math.setIdentity(hessian);
@@ -119,24 +129,42 @@ public class UnconMinTrustRegionBFGS_F64
 		functionGradient.process(x.data, gradient.data);
 
 		if( !firstIteration ) {
-			if( isScaling() ) {
-				// undo the scaling which was previous applied to the hessian
-				// The gradient was just computed so it's not scaled yet
-				math.scaleColumns(scaling.data, hessian);
-				math.scaleRows(scaling.data, hessian);
-			}
+			//			if( isScaling() ) {
+//				// undo the scaling which was previous applied to the hessian
+//				// The gradient was just computed so it's not scaled yet
+//				math.scaleColumns(scaling.data, hessian);
+//				math.scaleRows(scaling.data, hessian);
+//			}
+
 
 			// compute the change in Gradient
-			CommonOps_DDRM.subtract(gradient, gradientPrevious, tmpN0);
+			CommonOps_DDRM.subtract(gradient, gradientPrevious, y);
+			CommonOps_DDRM.subtract(x, xPrevious, s);
 
-			// Apply DFP equation and update H
-			EquationsBFGS.update(hessian, p, tmpN0, tmpN1, tmpN2);
+			if( wolfeCondition(s,y,gradientPrevious)) {
+				// Apply DFP equation and update H
+				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
+				gradientPrevious.set(gradient);
+				xPrevious.set(x);
+				f_prev = fx;
+			}
 		} else {
 			firstIteration = false;
+			gradientPrevious.set(gradient);
+			xPrevious.set(x);
+			f_prev = fx;
 		}
+	}
 
-		// save the new gradient
-		gradientPrevious.set(gradient);
+	private boolean wolfeCondition( DMatrixRMaj s , DMatrixRMaj y , DMatrixRMaj g_k) {
+//		return true;
+		double left = CommonOps_DDRM.dot(y,s);
+		double g_s = CommonOps_DDRM.dot(g_k,s);
+		double right = (c2-1)*g_s;
+		if( left >= right ) {
+			return (fx-f_prev) <= c1*g_s;
+		}
+		return false;
 	}
 
 	@Override

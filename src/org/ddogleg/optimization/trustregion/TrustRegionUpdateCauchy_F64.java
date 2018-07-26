@@ -45,7 +45,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	private double minimumFunctionValue;
 
 	// direction of the gradient
-	DMatrixRMaj direction = new DMatrixRMaj(1,1);
+//	DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
 	double gBg;
 
@@ -54,36 +54,59 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
 
-		direction.reshape(numberOfParameters,1);
+//		direction.reshape(numberOfParameters,1);
 	}
 
 	@Override
 	public void initializeUpdate() {
 		// use the direction instead of gradient for reduced overflow/underflow issues
-		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
-		gBg = owner.math.innerProduct(direction,owner.hessian);
+//		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
+		gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
 	}
 
 	@Override
-	public boolean computeUpdate(DMatrixRMaj p, double regionRadius) {
-		// Tau is it's scale relative to the region radius
-		double tau;
-		if( gBg <= 0 ) {
-			// always decreasing so take the largest possible step to the region's boundary
-			// At the same time don't try to jump past the smallest possible value for the function
-			tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
-		} else {
-			// min( ||g||^3 /(Delta*g'*B*g) , 1)
-			// g'*B*g == ||g||^2 * d'*B*d
-			tau = Math.min(owner.gradientNorm/(regionRadius*gBg),1);
-		}
-		// direction = g/||g||
-		// step = tau*regionRadius*direction
-		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
+	public boolean computeUpdate(DMatrixRMaj step, double regionRadius) {
+//		// Tau is it's scale relative to the region radius
+//		double tau;
+//		if( gBg <= 0 ) {
+//			// always decreasing so take the largest possible step to the region's boundary
+//			// At the same time don't try to jump past the smallest possible value for the function
+//			tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
+//		} else {
+//			// min( ||g||^3 /(Delta*g'*B*g) , 1)
+//			// g'*B*g == ||g||^2 * d'*B*d
+//			tau = Math.min(owner.gradientNorm/(regionRadius*gBg),1);
+//		}
+//		// direction = g/||g||
+//		// step = tau*regionRadius*direction
+//		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
 
-		return tau == 1;
+		boolean maxStep;
+		double dist;
+
+		double gnorm = owner.gradientNorm;
+		double normRadius = regionRadius/gnorm;
+
+		if( gBg == 0 ) {
+			dist = normRadius;
+			maxStep = true;
+		} else {
+			// find the distance of the minimum point
+			dist = gnorm*gnorm/gBg;
+			// use the border or dist, which ever is closer
+			if( dist >= normRadius ) {
+				maxStep = true;
+				dist = normRadius;
+			} else {
+				maxStep = false;
+			}
+		}
+
+		CommonOps_DDRM.scale(-dist,owner.gradient,step);
+
+		return maxStep;
 	}
 }

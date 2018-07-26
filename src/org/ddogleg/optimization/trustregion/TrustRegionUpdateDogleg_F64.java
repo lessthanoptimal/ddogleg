@@ -57,16 +57,20 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	protected LinearSolver<S,DMatrixRMaj> solver;
 
 	// Gradient's direction
-	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
+//	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
 	protected double gBg;
 
 	// Solution to Gauss-Newton problem
-	protected DMatrixRMaj pointGN = new DMatrixRMaj(1,1);
-	protected double gn_length; // length of GN solution
+	protected DMatrixRMaj stepGN = new DMatrixRMaj(1,1);
+	protected double distanceGN; // length of GN solution
+
+	protected DMatrixRMaj stepCauchy = new DMatrixRMaj(1,1);
 
 	// is the hessian positive definite?
 	protected boolean positiveDefinite;
+
+	double distanceCauchy;
 
 	// work space
 	protected S tmp;
@@ -86,26 +90,28 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
-		direction.reshape(numberOfParameters,1);
-		pointGN.reshape(numberOfParameters,1);
+//		direction.reshape(numberOfParameters,1);
+		stepGN.reshape(numberOfParameters,1);
+		stepCauchy.reshape(numberOfParameters,1);
 		tmp = owner.math.createMatrix();
 	}
 
 	@Override
 	public void initializeUpdate() {
 		// Scale the gradient vector to make it less likely to overflow/underflow
-		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
-		gBg = owner.math.innerProduct(direction,owner.hessian);
+//		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
+		gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
 
 		// see if it's positive definite and Gauss-Newton can be solved
-		if( gBg > 0 && solveGaussNewtonPoint(pointGN) ) {
+		if( gBg > 0 && solveGaussNewtonPoint(stepGN) ) {
+			distanceCauchy = owner.gradientNorm*owner.gradientNorm/gBg;
 			positiveDefinite = true;
 			// p_gn = -||g||*inv(B)*direction
-			CommonOps_DDRM.scale(-owner.gradientNorm, pointGN);
-			gn_length = NormOps_DDRM.normF(pointGN);
+			CommonOps_DDRM.scale(-1, stepGN);
+			distanceGN = NormOps_DDRM.normF(stepGN);
 		} else {
 			positiveDefinite = false;
 		}
@@ -123,55 +129,118 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( !solver.setA(H) ) {
 			return false;
 		}
-		solver.solve(direction, pointGN);
+		solver.solve(owner.gradient.copy(), pointGN); // todo remove copy
 
-		// less memory than making a copy
-		if( solver.modifiesB() ) {
-			CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
-		}
 		return true;
 	}
 
 	@Override
-	public boolean computeUpdate(DMatrixRMaj p, double regionRadius) {
+	public boolean computeUpdate(DMatrixRMaj step, double regionRadius) {
 		if( positiveDefinite ) {
 			// If the GN solution is inside the trust region it should use that solution
-			if( gn_length <= regionRadius ) {
-				p.set(pointGN);
-				return gn_length == regionRadius;
+			if( distanceGN <= regionRadius ) {
+				step.set(stepGN);
+				return distanceGN == regionRadius;
 			}
 
-			// Does the pu point lie inside the trust region?
-			double pu_length = owner.gradientNorm/gBg;
-			if( pu_length < regionRadius ) {
-				// Compute point 'pn'
-				// pu = -((g'*g)/(g'*B*g))*g
-				// Since g has been normalized g'*g = 1
-				// this undoes the change in scale
-				CommonOps_DDRM.scale(-pu_length, direction,p);
-				// vector from p to GN
-				CommonOps_DDRM.subtract(pointGN,p,p);
-				double length_p_to_gn = NormOps_DDRM.normF(p);
+			boolean maxStep;
 
-				// it does, so find the intersection of the second segment with the region's boundary
-				double f = fractionToGN(pu_length, gn_length,length_p_to_gn,regionRadius);
-
-				// starting from GN instead of P because P has been over written
-				CommonOps_DDRM.add(pointGN,f-1.0,p,p);
+			// of the Gauss-Newton solution is inside the trust region use that
+			if( distanceGN <= regionRadius ) {
+				step.set(stepGN);
+				maxStep = distanceGN == regionRadius;
+			} else if( distanceCauchy*owner.gradientNorm >= regionRadius ) {
+				// if the trust region comes before the Cauchy point then perform the cauchy step
+				maxStep = cauchyStep(regionRadius, step);
 			} else {
-				// find location that the first segment hits the region's boundary
-				// this is easy since direction is a unit vector
-				CommonOps_DDRM.scale(-regionRadius, direction,p);
+				combinedStep(regionRadius, step);
+				maxStep = true;
 			}
 
 			// since the GN solution is outside the region boundary all other solutions must be inside
-			return true;
+			return maxStep;
 		} else {
 			// Cauchy step for negative semi-definite systems
 			double tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
-			CommonOps_DDRM.scale(-tau*regionRadius, direction,p);
+			CommonOps_DDRM.scale(-tau*regionRadius/owner.gradientNorm, owner.gradient,step);
 			return tau == 1.0;
 		}
+	}
+
+	/**
+	 * Computes the Cauchy step, truncates it if the regionRadius is less than the optimal step
+	 * @param regionRadius
+	 * @param step
+	 */
+	protected boolean cauchyStep(double regionRadius, DMatrixRMaj step) {
+		double normRadius = regionRadius/owner.gradientNorm;
+
+		boolean maxStep;
+		double dist = distanceCauchy;
+		if( dist >= normRadius ) {
+			maxStep = true;
+			dist = normRadius;
+		} else {
+			maxStep = false;
+		}
+		CommonOps_DDRM.scale(-dist, owner.gradient, step);
+
+		return maxStep;
+	}
+
+	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
+		// find the Cauchy point
+		CommonOps_DDRM.scale(-distanceCauchy, owner.gradient, stepCauchy);
+
+		// compute the combined step
+		double beta = combinedStep(stepCauchy,stepGN,regionRadius,step);
+	}
+
+	/**
+	 * Combined step that is a linear interpolation between the cauchy and Gauss-Newton steps.
+	 * Returns the 'beta' variable.
+	 *
+	 * phi(beta) = ||a + beta*(b-1)||^2 - radius^2
+	 *
+	 * where a = Cauchy and b = Gauss-Newton steps
+	 *
+	 * @return 'beta' from equation above
+	 */
+	protected static double combinedStep( DMatrixRMaj stepCauchy , DMatrixRMaj stepGN ,
+										  double regionRadius , DMatrixRMaj step ) {
+		// c = a'*(b-a)
+		double c = 0;
+		for( int i = 0; i < stepCauchy.numRows; i++ )
+			c += stepCauchy.data[i]*(stepGN.data[i]-stepCauchy.data[i]);
+
+		// solve phi(beta) = ||a + beta*(b-1)||^2 - radius^2
+
+		// bma2 = ||b-a||^2
+		// a2 = ||a||^2
+		double bma2 = 0;
+		double a2 = 0;
+		for( int i = 0; i < stepCauchy.numRows; i++ ) {
+			double a = stepCauchy.data[i];
+			double d = stepGN.data[i]-a;
+			bma2 += d*d;
+			a2 += a*a;
+		}
+
+		double r2 = regionRadius*regionRadius;
+
+		double beta;
+
+		if( c <= 0 )
+			beta = (-c+Math.sqrt(c*c + bma2*(r2-a2)))/bma2;
+		else
+			beta = (r2-a2)/(c+Math.sqrt(c*c + bma2*(r2-a2)));
+
+		// step = a + beta*(b-a)
+		step.zero();
+		for( int i = 0; i < stepCauchy.numRows; i++ )
+			step.data[i] = stepCauchy.data[i] + beta*(stepGN.data[i]-stepCauchy.data[i]);
+
+		return beta;
 	}
 
 	/**

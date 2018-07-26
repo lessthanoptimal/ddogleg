@@ -20,6 +20,7 @@ package org.ddogleg.optimization.trustregion;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 /**
  * Implementation of {@link TrustRegionBase_F64.ParameterUpdate} for {@link DMatrixRMaj}
@@ -96,8 +97,6 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public double innerProduct(DMatrixRMaj v, DMatrixRMaj M) {
-		tmpM0.reshape(v.numCols,v.numRows);
-		CommonOps_DDRM.multTransA(v,M,tmpM0);
-		return CommonOps_DDRM.dot(tmpM0,v);
+		return VectorVectorMult_DDRM.innerProdA(v, M, v);
 	}
 }

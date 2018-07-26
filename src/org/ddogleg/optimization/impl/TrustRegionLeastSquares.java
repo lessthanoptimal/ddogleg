@@ -159,7 +159,8 @@ public class TrustRegionLeastSquares {
 			mode = 1;
 			fx_prev = fx;
 
-		} else if( mode == 1 ) {
+		}
+		if( mode == 1 ) {
 			if( findStep() ) {
 				mode = 0;
 			}

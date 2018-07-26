@@ -27,8 +27,6 @@ import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
-import java.util.Arrays;
-
 /**
  * <p>Base class for all trust region implementations. The Trust Region approach assumes that a quadratic model is valid
  * within the trust region. At each iteration the Trust Region's subproblem is solved for and a new state is selected.
@@ -92,8 +90,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	// error function at x
 	protected double fx;
-	// the previous error
-	protected double fx_prev;
 
 	// size of the current trust region
 	double regionRadius;
@@ -129,8 +125,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		gradient.reshape(numberOfParameters,1);
 
 		// initialize scaling to 1, which is no scaling
-		scaling.reshape(numberOfParameters);
-		Arrays.fill(scaling.data,0,numberOfParameters,1);
+//		scaling.reshape(numberOfParameters);
+//		Arrays.fill(scaling.data,0,numberOfParameters,1);
 
 		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		fx = costFunction(x);
@@ -156,24 +152,32 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged or false if not
 	 */
 	public boolean iterate() {
+		boolean converged;
 		switch( mode ) {
 			case FULL_STEP:
 				totalFullSteps++;
-				if(updateState() ) {
-					mode = Mode.CONVERGED;
-					return true;
-				}
-				return computeAndConsiderNew();
+				converged = updateState();
+				if( !converged )
+					converged = computeAndConsiderNew();
+				break;
 
 			case RETRY:
 				totalRetries++;
-				return computeAndConsiderNew();
+				converged = computeAndConsiderNew();
+				break;
 
 			case CONVERGED:
 				return true;
 
 			default:
 				throw new RuntimeException("BUG! mode="+mode);
+		}
+
+		if( converged ) {
+			mode = Mode.CONVERGED;
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -183,18 +187,18 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected boolean updateState() {
 		updateDerivedState(x);
-		if( isScaling() ) {
-			computeScaling();
-			applyScaling();
-		}
+//		if( isScaling() ) {
+//			computeScaling();
+//			applyScaling();
+//		}
+
 		gradientNorm = NormOps_DDRM.normF(gradient);
 		if(UtilEjml.isUncountable(gradientNorm))
 			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
-		// Check to avoid divide by zero errors. If this is true something probably
-		// went wrong earlier as it should have detected it had converged already
-		if( gradientNorm == 0 )
+
+		if( CommonOps_DDRM.elementMaxAbs(gradient) <= config.gtol*1000000)
 			return true;
-		fx_prev = fx;
+
 		parameterUpdate.initializeUpdate();
 		return false;
 	}
@@ -239,14 +243,26 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected boolean computeAndConsiderNew() {
 		boolean hitBoundary = parameterUpdate.computeUpdate(p, regionRadius);
 
-		if( isScaling() )
-			undoScalingOnParameters();
-		if (considerUpdate(p, hitBoundary)) {
-			swapOldAndNewParameters();
-			mode = Mode.FULL_STEP;
-			if( checkConvergence() ) {
+//		if( isScaling() )
+//			undoScalingOnParameters();
+		CommonOps_DDRM.add(x,p,x_next);
+		double fx_candidate = costFunction(x_next);
+
+		if (considerCandidate(fx_candidate,fx, p, hitBoundary)) {
+			boolean converged = checkConvergence(fx_candidate,fx);
+			// Assign values from candidate to current state
+			fx = fx_candidate;
+
+			DMatrixRMaj tmp = x;
+			x = x_next;
+			x_next = tmp;
+
+			// Update the state
+			if( converged ) {
 				mode = Mode.CONVERGED;
 				return true;
+			} else {
+				mode = Mode.FULL_STEP;
 			}
 		} else {
 			mode = Mode.RETRY;
@@ -254,14 +270,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		return false;
 	}
 
-	/**
-	 * Instead of doing a memory copy just swap the references
-	 */
-	void swapOldAndNewParameters() {
-		DMatrixRMaj tmp = x;
-		x = x_next;
-		x_next = tmp;
-	}
 
 	/**
 	 * Computes derived data from the new current state x. At a minimum the following needs to be found:
@@ -277,51 +285,37 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Consider updating the system with the change in state p. The update will never
 	 * be accepted if the cost function increases.
 	 *
-	 * @param p (Input) change in state vector
+	 * @param x_delta (Input) change in state vector
 	 * @param hitBoundary (Input) true if it hits the region boundary
 	 * @return true if it should update the state or false if it should try agian
 	 */
-	protected boolean considerUpdate( DMatrixRMaj p , boolean hitBoundary ) {
-		// Compute the next possible parameter and the cost function's value
-		CommonOps_DDRM.add(x,p,x_next);
-		fx = costFunction(x_next);
+	protected boolean considerCandidate(double fx_candidate, double fx_prev, DMatrixRMaj x_delta , boolean hitBoundary ) {
 
 		// compute model prediction accuracy
-		double predictionAccuracy = computePredictionAccuracy(p);
-
-		// if the improvement is too small (or not an improvement) reduce the region size
-		if( fx > fx_prev || predictionAccuracy < 0.25 ) {
-			// TODO 0.25 or 0.5 ?
-			regionRadius = Math.max(config.regionMinimum,0.25*regionRadius);
-		} else {
-			if( predictionAccuracy > 0.75 && hitBoundary ) {
-//			if( predictionAccuracy > 0.75 ) {
-				double r = NormOps_DDRM.normF(p);
-				regionRadius = Math.max(3*r,regionRadius);
-//				regionRadius = Math.min(2.0*regionRadius,config.regionMaximum);
-			}
-		}
-
-		return fx < fx_prev && predictionAccuracy > 0;//config.candidateAcceptThreshold;
-	}
-
-	/**
-	 * Computes the prediction's accuracy
-	 * @return prediction ratio
-	 */
-	protected double computePredictionAccuracy(DMatrixRMaj p) {
-
-		// use quadratic model to predict new cost
-		// m(0) - m(p) = fx_prev - m(p)
+		double actualReduction = fx_prev-fx_candidate;
 		double predictedReduction = -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
 
-		// the model predicts no change. Something bad is going on
-		if( predictedReduction == 0 ) {
-			return 0;
-		} else {
-			return (fx_prev - fx) / predictedReduction;
+		if( actualReduction == 0 || predictedReduction == 0 ) {
+			return true;
 		}
+
+		double ratio = actualReduction/predictedReduction;
+
+		if( fx_candidate > fx_prev || ratio < 0.25 ) {
+			// if the improvement is too small (or not an improvement) reduce the region size
+			// TODO 0.25 or 0.5 ?
+			regionRadius = Math.max(config.regionMinimum,0.5*regionRadius);
+		} else {
+//			if( ratio > 0.75 && hitBoundary ) {
+			if( ratio > 0.75 ) {
+				double r = NormOps_DDRM.normF(x_delta);
+				regionRadius = Math.min(Math.max(3*r,regionRadius),config.regionMaximum);
+			}
+
+		}
+		return fx_candidate < fx_prev && ratio > 0;// config.candidateAcceptThreshold;
 	}
+
 
 	/**
 	 * <p>Checks for convergence using unconstrained minization f-test and g-test</p>
@@ -331,7 +325,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected boolean checkConvergence( ) {
+	protected boolean checkConvergence( double fx, double fx_prev ) {
 		// something really bad has happened if this gets triggered before it thinks it converged
 		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
 			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
@@ -342,9 +336,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		// f-test. avoid potential divide by zero errors
 		if( config.ftol*fx_prev >= fx_prev - fx )
 			return true;
+//		if( Math.abs(fx-fx_prev) <= config.ftol*Math.max(fx,fx_prev) )
+//			return true;
+
 
 		// g-test:  compute the infinity norm of the gradient
-		return config.gtol >= CommonOps_DDRM.elementMaxAbs(gradient);
+		return false;//CommonOps_DDRM.elementMaxAbs(gradient) <= config.gtol;
 	}
 
 	/**
