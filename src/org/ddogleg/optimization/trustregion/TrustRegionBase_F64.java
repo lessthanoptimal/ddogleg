@@ -53,8 +53,6 @@ import java.util.Random;
  */
 public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
-	// TODO consider moving prediction to update so that it can avoid duplicate calculations
-
 	// Technique used to compute the change in parameters
 	private ParameterUpdate<S> parameterUpdate;
 
@@ -262,7 +260,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		double fx_candidate = cost(x_next);
 		sameStateAsCost = true;
 
-		Convergence result = considerCandidate(fx_candidate,fx, p);
+		Convergence result = considerCandidate(fx_candidate,fx,
+				parameterUpdate.getPredictedReduction(),
+				parameterUpdate.getStepLength());
 
 		// If noise is turned on then a request as been made to add noise to the state because it's likely
 		// to be stuck and slowly converging and/or the model is bad
@@ -326,14 +326,17 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Consider updating the system with the change in state p. The update will never
 	 * be accepted if the cost function increases.
 	 *
-	 * @param x_delta (Input) change in state vector
+	 * @param fx_candidate Actual score at the candidate 'x'
+	 * @param fx_prev  Score at the current 'x'
+	 * @param predictedReduction Reduction in score predicted by quadratic model
+	 * @param stepLength The length of the step, i.e. |p|
 	 * @return true if it should update the state or false if it should try agian
 	 */
-	protected Convergence considerCandidate(double fx_candidate, double fx_prev, DMatrixRMaj x_delta ) {
+	protected Convergence considerCandidate(double fx_candidate, double fx_prev,
+											double predictedReduction, double stepLength ) {
 
 		// compute model prediction accuracy
 		double actualReduction = fx_prev-fx_candidate;
-		double predictedReduction = -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
 			return Convergence.ACCEPT;
@@ -346,15 +349,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			regionRadius = Math.max(config.regionMinimum,0.5*regionRadius);
 		} else {
 			if( ratio > 0.75 ) {
-				double r = NormOps_DDRM.normF(x_delta);
-				regionRadius = Math.min(Math.max(3*r,regionRadius),config.regionMaximum);
+				regionRadius = Math.min(Math.max(3*stepLength,regionRadius),config.regionMaximum);
 			}
 		}
 
 		if( fx_candidate < fx_prev && ratio > 0 ) {
 			if( config.noise != null ) {
 				// Rate at which the score has decreased per distance
-				double rate = (fx_prev-fx_candidate)/NormOps_DDRM.normF(p);
+				double rate = (fx_prev-fx_candidate)/stepLength;
 
 				// If the ratio is high then the score improved but the model significantly under predicted how much
 				// The hessian is probably bad at this point
@@ -413,6 +415,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected abstract void functionGradientHessian(DMatrixRMaj x , boolean sameStateAsCost , DMatrixRMaj gradient , S hessian);
 
+	/**
+	 * Computes predicted reduction for step 'p'
+	 * @param p Change in state or the step
+	 * @return predicted reduction in quadratic model
+	 */
+	public double computePredictedReduction( DMatrixRMaj p ) {
+		return -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
+	}
 
 	public interface MatrixMath<S extends DMatrix> {
 		/**
@@ -478,6 +488,27 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 * @param regionRadius (Input) Radius of the region
 		 */
 		void computeUpdate(DMatrixRMaj p , double regionRadius );
+
+		/**
+		 * <p>
+		 *     Returns the predicted reduction from the quadratic model.<br><br>
+		 * 	   reduction = m(0) - m(p) = -g(0)*p - 0.5*p<sup>T</sup>*H(0)*p
+		 * </p>
+		 *
+		 * <p>This computation is done inside the update because it can often be done more
+		 * efficiently without repeating previous computations</p>
+		 *
+		 */
+		double getPredictedReduction();
+
+		/**
+		 * This function returns ||p||.
+		 *
+		 * <p>This computation is done inside the update because it can often be done more
+		 * efficiently without repeating previous computations</p>
+		 * @return step length
+		 */
+		double getStepLength();
 	}
 
 	protected enum Mode {

@@ -24,6 +24,7 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
+import org.ejml.dense.row.SpecializedOps_DDRM;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
@@ -75,6 +76,12 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	// work space
 	protected S tmp;
 
+	// The predicted amount that the quadratic model will be reduced by this step
+	double predictedReduction;
+
+	// This is the length of the step f-norm of p
+	double stepLength;
+
 	/**
 	 * Specifies internal algorithms
 	 *
@@ -107,9 +114,10 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 
 		// see if it's positive definite and Gauss-Newton can be solved
 		if( gBg > 0 && solveGaussNewtonPoint(stepGN) ) {
-			distanceCauchy = owner.gradientNorm*owner.gradientNorm/gBg;
 			positiveDefinite = true;
-			// p_gn = -||g||*inv(B)*direction
+			// length of the Cauchy step when computed without constraints
+			distanceCauchy = owner.gradientNorm*owner.gradientNorm/gBg;
+			// p_gn = -inv(B)*g
 			CommonOps_DDRM.scale(-1, stepGN);
 			distanceGN = NormOps_DDRM.normF(stepGN);
 		} else {
@@ -137,17 +145,16 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	@Override
 	public void computeUpdate(DMatrixRMaj step, double regionRadius) {
 		if( positiveDefinite ) {
-			// If the GN solution is inside the trust region it should use that solution
+			//  If the GN solution is inside the trust region it should use that solution
 			if( distanceGN <= regionRadius ) {
 				step.set(stepGN);
-			}
-			// of the Gauss-Newton solution is inside the trust region use that
-			if( distanceGN <= regionRadius ) {
-				step.set(stepGN);
+				predictedReduction = owner.computePredictedReduction(stepGN);
+				stepLength = distanceGN;
 			} else if( distanceCauchy*owner.gradientNorm >= regionRadius ) {
 				// if the trust region comes before the Cauchy point then perform the cauchy step
 				cauchyStep(regionRadius, step);
 			} else {
+				// the solution lies on the line connecting Cauchy and GN
 				combinedStep(regionRadius, step);
 			}
 
@@ -158,89 +165,51 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		}
 	}
 
+	@Override
+	public double getPredictedReduction() {
+		return predictedReduction;
+	}
+
+	@Override
+	public double getStepLength() {
+		return stepLength;
+	}
+
 	/**
-	 * Computes the Cauchy step, truncates it if the regionRadius is less than the optimal step
-	 * @param regionRadius
-	 * @param step
+	 * Computes the Cauchy step, This is only called if the Cauchy point lies after or on the trust region
+	 * @param regionRadius (Input) Trust region size
+	 * @param step (Output) The step
 	 */
-	protected boolean cauchyStep(double regionRadius, DMatrixRMaj step) {
-		double normRadius = regionRadius/owner.gradientNorm;
+	protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 
-		boolean maxStep;
-		double dist = distanceCauchy;
-		if( dist >= normRadius ) {
-			maxStep = true;
-			dist = normRadius;
-		} else {
-			maxStep = false;
-		}
+		double dist = regionRadius/owner.gradientNorm;
+		double gn = owner.gradientNorm;
 		CommonOps_DDRM.scale(-dist, owner.gradient, step);
-
-		return maxStep;
+		stepLength = regionRadius; // it touches the trust region
+		predictedReduction = dist*gn*gn - 0.5*dist*dist*gBg;
 	}
 
 	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 		// find the Cauchy point
 		CommonOps_DDRM.scale(-distanceCauchy, owner.gradient, stepCauchy);
+		stepLength = regionRadius; // touches the trust region
 
-		// compute the combined step
-		double beta = combinedStep(stepCauchy,stepGN,regionRadius,step);
+		double distancePtoGN = SpecializedOps_DDRM.diffNormF(stepCauchy,stepGN);
+
+		double f = fractionCauchyToGN(
+				distanceCauchy*owner.gradientNorm,distanceGN,distancePtoGN,regionRadius);
+
+		CommonOps_DDRM.add(1-f,stepCauchy,f,stepGN,step);
+		predictedReduction = owner.computePredictedReduction(step);
 	}
 
 	/**
-	 * Combined step that is a linear interpolation between the cauchy and Gauss-Newton steps.
-	 * Returns the 'beta' variable.
-	 *
-	 * phi(beta) = ||a + beta*(b-1)||^2 - radius^2
-	 *
-	 * where a = Cauchy and b = Gauss-Newton steps
-	 *
-	 * @return 'beta' from equation above
+	 * Compute the fractional distance from P to GN where the point intersects the region's boundary
 	 */
-	protected static double combinedStep( DMatrixRMaj stepCauchy , DMatrixRMaj stepGN ,
-										  double regionRadius , DMatrixRMaj step ) {
-		// c = a'*(b-a)
-		double c = 0;
-		for( int i = 0; i < stepCauchy.numRows; i++ )
-			c += stepCauchy.data[i]*(stepGN.data[i]-stepCauchy.data[i]);
-
-		// solve phi(beta) = ||a + beta*(b-1)||^2 - radius^2
-
-		// bma2 = ||b-a||^2
-		// a2 = ||a||^2
-		double bma2 = 0;
-		double a2 = 0;
-		for( int i = 0; i < stepCauchy.numRows; i++ ) {
-			double a = stepCauchy.data[i];
-			double d = stepGN.data[i]-a;
-			bma2 += d*d;
-			a2 += a*a;
-		}
-
-		double r2 = regionRadius*regionRadius;
-
-		double beta;
-
-		if( c <= 0 )
-			beta = (-c+Math.sqrt(c*c + bma2*(r2-a2)))/bma2;
-		else
-			beta = (r2-a2)/(c+Math.sqrt(c*c + bma2*(r2-a2)));
-
-		// step = a + beta*(b-a)
-		step.zero();
-		for( int i = 0; i < stepCauchy.numRows; i++ )
-			step.data[i] = stepCauchy.data[i] + beta*(stepGN.data[i]-stepCauchy.data[i]);
-
-		return beta;
-	}
-
-	/**
-	 * Compute the fractional distance from P to GN that it intersects the region's boundary
-	 */
-	static double fractionToGN( double lengthP , double lengthGN , double lengthPtoGN, double region ) {
+	static double fractionCauchyToGN(double lengthCauchy , double lengthGN , double lengthPtoGN, double region ) {
 
 		// First triangle has 3 known sides
-		double a=lengthGN,b=lengthP,c=lengthPtoGN;
+		double a=lengthGN,b=lengthCauchy,c=lengthPtoGN;
 
 		// Law of cosine to find angle for side GN (a.k.a 'a')
 		double cosineA = (a*a - b*b - c*c)/(-2.0*b*c);

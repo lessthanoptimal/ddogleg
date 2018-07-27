@@ -49,6 +49,12 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	// g'*B*g
 	double gBg;
 
+	// The predicted amount that the quadratic model will be reduced by this step
+	double predictedReduction;
+
+	// This is the length of the step f-norm of p
+	double stepLength;
+
 	@Override
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
@@ -101,5 +107,20 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 		}
 
 		CommonOps_DDRM.scale(-dist,owner.gradient,step);
+
+		// compute predicted reduction
+		stepLength = dist*gnorm;
+		predictedReduction = stepLength*gnorm - 0.5*dist*dist*gBg;
+
+	}
+
+	@Override
+	public double getPredictedReduction() {
+		return predictedReduction;
+	}
+
+	@Override
+	public double getStepLength() {
+		return stepLength;
 	}
 }
