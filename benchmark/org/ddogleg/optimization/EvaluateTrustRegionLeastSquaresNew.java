@@ -42,8 +42,8 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 //		config.scalingMinimum = 1e-4;
 //		config.scalingMaximum = 1e4;
 //			config.regionMinimum = 0.0001;
-//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
-		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
+//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
 		solver = new LinearSolverSafe<>(solver);
 		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
 //		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();

@@ -27,6 +27,8 @@ import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
+import java.util.Random;
+
 /**
  * <p>Base class for all trust region implementations. The Trust Region approach assumes that a quadratic model is valid
  * within the trust region. At each iteration the Trust Region's subproblem is solved for and a new state is selected.
@@ -72,6 +74,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Storage for the Hessian. Update algorithms should not modify the Hessian
 	 */
 	protected S hessian;
+	// NOTE: This could be stored as a cholesky decomposition
 
 	// Number of parameters being optimized
 	int numberOfParameters;
@@ -82,6 +85,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
 	// proposed relative change in parameter's state
 	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
+	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
+	protected boolean sameStateAsCost;
 
 	// Scaling used to compensate for poorly scaled variables
 	protected DGrowArray scaling = new DGrowArray();
@@ -100,10 +105,16 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
 
+	// Random number generate for when noise is added to the state estimate
+	Random rand;
+
 	public TrustRegionBase_F64(ParameterUpdate parameterUpdate, MatrixMath<S> math ) {
 		this.parameterUpdate = parameterUpdate;
 		this.math = math;
 		this.hessian = math.createMatrix();
+
+		// so that the RNG gets set up correctly
+		configure(config);
 	}
 
 	/**
@@ -129,7 +140,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 //		Arrays.fill(scaling.data,0,numberOfParameters,1);
 
 		System.arraycopy(initial,0,x.data,0,numberOfParameters);
-		fx = costFunction(x);
+		fx = cost(x);
+		sameStateAsCost = true;
 
 		totalFullSteps = 0;
 		totalRetries = 0;
@@ -186,7 +198,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged.
 	 */
 	protected boolean updateState() {
-		updateDerivedState(x);
+		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
+
 //		if( isScaling() ) {
 //			computeScaling();
 //			applyScaling();
@@ -241,79 +254,118 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged.
 	 */
 	protected boolean computeAndConsiderNew() {
-		boolean hitBoundary = parameterUpdate.computeUpdate(p, regionRadius);
+		parameterUpdate.computeUpdate(p, regionRadius);
 
 //		if( isScaling() )
 //			undoScalingOnParameters();
 		CommonOps_DDRM.add(x,p,x_next);
-		double fx_candidate = costFunction(x_next);
+		double fx_candidate = cost(x_next);
+		sameStateAsCost = true;
 
-		if (considerCandidate(fx_candidate,fx, p, hitBoundary)) {
+		Convergence result = considerCandidate(fx_candidate,fx, p);
+
+		// If noise is turned on then a request as been made to add noise to the state because it's likely
+		// to be stuck and slowly converging and/or the model is bad
+		if( result == Convergence.NOISE) {
+			fx_candidate = applyNoiseToState(fx_candidate);
+		}
+
+		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
+		if ( result != Convergence.REJECT ) {
 			boolean converged = checkConvergence(fx_candidate,fx);
-			// Assign values from candidate to current state
-			fx = fx_candidate;
-
-			DMatrixRMaj tmp = x;
-			x = x_next;
-			x_next = tmp;
-
-			// Update the state
-			if( converged ) {
-				mode = Mode.CONVERGED;
-				return true;
-			} else {
-				mode = Mode.FULL_STEP;
-			}
+			return acceptNewState(converged,fx_candidate);
 		} else {
 			mode = Mode.RETRY;
+			return false;
 		}
-		return false;
 	}
 
+	protected boolean acceptNewState(boolean converged , double fx_candidate) {
+		// Assign values from candidate to current state
+		fx = fx_candidate;
+
+		DMatrixRMaj tmp = x;
+		x = x_next;
+		x_next = tmp;
+
+		// Update the state
+		if( converged ) {
+			mode = Mode.CONVERGED;
+			return true;
+		} else {
+			mode = Mode.FULL_STEP;
+			return false;
+		}
+	}
 
 	/**
-	 * Computes derived data from the new current state x. At a minimum the following needs to be found:
-	 *
-	 * <ul>
-	 *     <li>{@link #gradient}</li>
-	 *     <li>{@link #hessian}</li>
-	 * </ul>
+	 * Applies noise to the state using this equation x[i] = x
+	 * @param fx_candidate
+	 * @return
 	 */
-	protected abstract void updateDerivedState(DMatrixRMaj x );
+	protected double applyNoiseToState(double fx_candidate) {
+		// use x as work space here since it's about to be over written anyways
+		x.reshape(x.numRows,1);
+		for (int i = 0; i < x.numRows; i++) {
+			x.data[i] += x_next.data[i]*rand.nextGaussian()*config.noise.noiseSigma;
+		}
+
+		// see if the score got better by adding noise
+		double score = cost(x);
+
+		if (score < fx_candidate) {
+			x_next.set(x);
+			fx_candidate = score;
+		} else {
+			sameStateAsCost = false;
+		}
+		return fx_candidate;
+	}
 
 	/**
 	 * Consider updating the system with the change in state p. The update will never
 	 * be accepted if the cost function increases.
 	 *
 	 * @param x_delta (Input) change in state vector
-	 * @param hitBoundary (Input) true if it hits the region boundary
 	 * @return true if it should update the state or false if it should try agian
 	 */
-	protected boolean considerCandidate(double fx_candidate, double fx_prev, DMatrixRMaj x_delta , boolean hitBoundary ) {
+	protected Convergence considerCandidate(double fx_candidate, double fx_prev, DMatrixRMaj x_delta ) {
 
 		// compute model prediction accuracy
 		double actualReduction = fx_prev-fx_candidate;
 		double predictedReduction = -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
-			return true;
+			return Convergence.ACCEPT;
 		}
 
 		double ratio = actualReduction/predictedReduction;
 
 		if( fx_candidate > fx_prev || ratio < 0.25 ) {
 			// if the improvement is too small (or not an improvement) reduce the region size
-			// TODO 0.25 or 0.5 ?
 			regionRadius = Math.max(config.regionMinimum,0.5*regionRadius);
 		} else {
-//			if( ratio > 0.75 && hitBoundary ) {
 			if( ratio > 0.75 ) {
 				double r = NormOps_DDRM.normF(x_delta);
 				regionRadius = Math.min(Math.max(3*r,regionRadius),config.regionMaximum);
 			}
-
 		}
-		return fx_candidate < fx_prev && ratio > 0;// config.candidateAcceptThreshold;
+
+		if( fx_candidate < fx_prev && ratio > 0 ) {
+			if( config.noise != null ) {
+				// Rate at which the score has decreased per distance
+				double rate = (fx_prev-fx_candidate)/NormOps_DDRM.normF(p);
+
+				// If the ratio is high then the score improved but the model significantly under predicted how much
+				// The hessian is probably bad at this point
+				// If the rate is slow then the score is getting better, but it might be stuck in a narrow path
+				if( ratio >= config.noise.thresholdRatio || rate < config.noise.thresholdReduction ) {
+					return Convergence.NOISE;
+				}
+			}
+			return Convergence.ACCEPT;
+		} else
+			return Convergence.REJECT;
 	}
 
 
@@ -349,7 +401,17 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @param x parameters
 	 * @return function value
 	 */
-	protected abstract double costFunction( DMatrixRMaj x );
+	protected abstract double cost( DMatrixRMaj x );
+
+	/**
+	 * Computes the gradient and Hessian at 'x'. If sameStateAsCost is true then it can be assumed that 'x' has
+	 * not changed since the cost was last computed.
+	 * @param gradient (Input) x
+	 * @param gradient (Output) gradient
+	 * @param gradient (Output) gradient
+	 * @param hessian (Output) hessian
+	 */
+	protected abstract void functionGradientHessian(DMatrixRMaj x , boolean sameStateAsCost , DMatrixRMaj gradient , S hessian);
 
 
 	public interface MatrixMath<S extends DMatrix> {
@@ -414,15 +476,20 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 *
 		 * @param p (Output) change in state
 		 * @param regionRadius (Input) Radius of the region
-		 * @return true if it hits the region boundary
 		 */
-		boolean computeUpdate(DMatrixRMaj p , double regionRadius );
+		void computeUpdate(DMatrixRMaj p , double regionRadius );
 	}
 
 	protected enum Mode {
 		FULL_STEP,
 		RETRY,
 		CONVERGED
+	}
+
+	protected enum Convergence {
+		REJECT,
+		ACCEPT,
+		NOISE
 	}
 
 	/**
@@ -435,6 +502,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	public void configure(ConfigTrustRegion config) {
 		this.config = config.copy();
+
+		if( config.noise != null ) {
+			rand = new Random(config.noise.seed);
+		} else {
+			rand = null;
+		}
 	}
 
 	public ConfigTrustRegion getConfig() {

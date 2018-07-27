@@ -68,7 +68,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	}
 
 	@Override
-	public boolean computeUpdate(DMatrixRMaj step, double regionRadius) {
+	public void computeUpdate(DMatrixRMaj step, double regionRadius) {
 //		// Tau is it's scale relative to the region radius
 //		double tau;
 //		if( gBg <= 0 ) {
@@ -84,7 +84,6 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 //		// step = tau*regionRadius*direction
 //		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
 
-		boolean maxStep;
 		double dist;
 
 		double gnorm = owner.gradientNorm;
@@ -92,21 +91,15 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 
 		if( gBg == 0 ) {
 			dist = normRadius;
-			maxStep = true;
 		} else {
 			// find the distance of the minimum point
 			dist = gnorm*gnorm/gBg;
 			// use the border or dist, which ever is closer
 			if( dist >= normRadius ) {
-				maxStep = true;
 				dist = normRadius;
-			} else {
-				maxStep = false;
 			}
 		}
 
 		CommonOps_DDRM.scale(-dist,owner.gradient,step);
-
-		return maxStep;
 	}
 }

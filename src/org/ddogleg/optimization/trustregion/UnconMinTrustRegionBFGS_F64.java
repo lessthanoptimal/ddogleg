@@ -55,7 +55,7 @@ public class UnconMinTrustRegionBFGS_F64
 	// true if it's the first iteration
 	private boolean firstIteration;
 
-	double c1=0.05,c2=0.9;
+	double c1=1e-4,c2=0.9;
 
 	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
 		super(parameterUpdate, new TrustRegionMath_DDRM());
@@ -100,6 +100,57 @@ public class UnconMinTrustRegionBFGS_F64
 	}
 
 	@Override
+	protected double cost(DMatrixRMaj x) {
+		return functionCost.process(x.data);
+	}
+
+	@Override
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, DMatrixRMaj hessian) {
+		functionGradient.process(x.data, gradient.data);
+
+		if( !firstIteration ) {
+			//			if( isScaling() ) {
+//				// undo the scaling which was previous applied to the hessian
+//				// The gradient was just computed so it's not scaled yet
+//				math.scaleColumns(scaling.data, hessian);
+//				math.scaleRows(scaling.data, hessian);
+//			}
+
+
+			// TODO reduce the amount of math here
+			// compute the change in Gradient
+			CommonOps_DDRM.subtract(gradient, gradientPrevious, y);
+			CommonOps_DDRM.subtract(x, xPrevious, s);
+
+			if( wolfeCondition(s,y,gradientPrevious)) {
+//				System.out.println("Updated Hessian");
+				// Apply DFP equation and update H
+				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
+				gradientPrevious.set(gradient);
+				xPrevious.set(x);
+				f_prev = fx;
+			}
+		} else {
+			firstIteration = false;
+			gradientPrevious.set(gradient);
+			xPrevious.set(x);
+			f_prev = fx;
+		}
+	}
+
+	protected boolean wolfeCondition( DMatrixRMaj s , DMatrixRMaj y , DMatrixRMaj g_k) {
+//		return true;
+		double left = CommonOps_DDRM.dot(y,s);
+		double g_s = CommonOps_DDRM.dot(g_k,s);
+		double right = (c2-1)*g_s;
+		if( left >= right ) {
+			return (fx-f_prev) <= c1*g_s;
+		}
+		return false;
+	}
+
+
+	@Override
 	public double[] getParameters() {
 		return x.data;
 	}
@@ -123,53 +174,4 @@ public class UnconMinTrustRegionBFGS_F64
 	public String getWarning() {
 		return null;
 	}
-
-	@Override
-	protected void updateDerivedState(DMatrixRMaj x) {
-		functionGradient.process(x.data, gradient.data);
-
-		if( !firstIteration ) {
-			//			if( isScaling() ) {
-//				// undo the scaling which was previous applied to the hessian
-//				// The gradient was just computed so it's not scaled yet
-//				math.scaleColumns(scaling.data, hessian);
-//				math.scaleRows(scaling.data, hessian);
-//			}
-
-
-			// compute the change in Gradient
-			CommonOps_DDRM.subtract(gradient, gradientPrevious, y);
-			CommonOps_DDRM.subtract(x, xPrevious, s);
-
-			if( wolfeCondition(s,y,gradientPrevious)) {
-				// Apply DFP equation and update H
-				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
-				gradientPrevious.set(gradient);
-				xPrevious.set(x);
-				f_prev = fx;
-			}
-		} else {
-			firstIteration = false;
-			gradientPrevious.set(gradient);
-			xPrevious.set(x);
-			f_prev = fx;
-		}
-	}
-
-	private boolean wolfeCondition( DMatrixRMaj s , DMatrixRMaj y , DMatrixRMaj g_k) {
-//		return true;
-		double left = CommonOps_DDRM.dot(y,s);
-		double g_s = CommonOps_DDRM.dot(g_k,s);
-		double right = (c2-1)*g_s;
-		if( left >= right ) {
-			return (fx-f_prev) <= c1*g_s;
-		}
-		return false;
-	}
-
-	@Override
-	protected double costFunction(DMatrixRMaj x) {
-		return functionCost.process(x.data);
-	}
-
 }

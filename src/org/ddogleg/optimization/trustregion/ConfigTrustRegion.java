@@ -58,6 +58,52 @@ public class ConfigTrustRegion {
 	 */
 	public double scalingMinimum =1, scalingMaximum =-1;
 
+	/**
+	 * Random noise which is added to the state when certain conditions are meet.
+	 * Set to a non-null value to turn on. If turned on then this will at worse double the number of
+	 * score computations calls. For some problems it drastically reduce the number of iterations and
+	 * enable the finding of a solution.
+	 */
+	public Noise noise = null;
+
+	/**
+	 * Describes when and how noise is added to the state estimate.
+	 */
+	public static class Noise {
+		public long seed = 0xDEADBEEF;
+		/**
+		 * <p>Noise is added when the actual / predicted score is more
+		 * than this threshold. When the prediction is perfect the ratio
+		 * will be 1.0</p>
+		 */
+		public double thresholdRatio = 1.5;
+		/**
+		 * <p>Noise is added when "reduction < threshold"</p>
+		 * <p>The score reduction is computed as follows:<br>
+		 * reduction = (f_k-f_kp)/||p||<br>
+		 * where f_k is the previous function value, f_kp is the current, and p is
+		 * the change in state.
+		 * </p>
+		 * The default value 1e-10 is a conservative number. For some
+		 * trust region variants 1e-4 seems to work better.
+		 */
+		public double thresholdReduction = 1e-10;
+
+		/**
+		 * Ammount of noise added. x[i] = x[i] + x[i]*normal(sigma)
+		 */
+		public double noiseSigma = 0.01;
+
+		public Noise copy() {
+			Noise n = new Noise();
+			n.seed = seed;
+			n.thresholdRatio = thresholdRatio;
+			n.thresholdReduction = thresholdReduction;
+			n.noiseSigma = noiseSigma;
+			return n;
+		}
+	}
+
 	public ConfigTrustRegion copy() {
 		ConfigTrustRegion out = new ConfigTrustRegion();
 		out.regionMaximum = regionMaximum;
@@ -68,6 +114,10 @@ public class ConfigTrustRegion {
 		out.regionInitial = regionInitial;
 		out.scalingMinimum = scalingMinimum;
 		out.scalingMaximum = scalingMaximum;
+
+		if( noise != null ) {
+			out.noise = noise.copy();
+		}
 
 		return out;
 	}

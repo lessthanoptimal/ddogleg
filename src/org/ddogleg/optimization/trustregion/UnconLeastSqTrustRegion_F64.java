@@ -81,6 +81,21 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	}
 
 	@Override
+	protected double cost(DMatrixRMaj x) {
+		functionResiduals.process(x.data,residuals.data);
+		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
+	}
+
+	@Override
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, S hessian) {
+		if( !sameStateAsCost )
+			functionResiduals.process(x.data,residuals.data);
+		functionJacobian.process(x.data,jacobian);
+		math.innerMatrixProduct(jacobian,hessian);
+		CommonOps_DDRM.multTransA((DMatrixRMaj)jacobian, residuals, gradient);
+	}
+
+	@Override
 	public double[] getParameters() {
 		return x.data;
 	}
@@ -105,21 +120,6 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		return null;
 	}
 
-	// TODO change to set state and compute derived and funcitons
-	@Override
-	protected void updateDerivedState(DMatrixRMaj x) {
-//		functionResiduals.process(x.data,residuals.data);
-		functionJacobian.process(x.data,jacobian);
-		math.innerMatrixProduct(jacobian,hessian);
-		CommonOps_DDRM.multTransA((DMatrixRMaj)jacobian, residuals, gradient);
-	}
-
-	@Override
-	protected double costFunction(DMatrixRMaj x) {
-//		tmpM0.reshape(x.numRows,functionResiduals.getNumOfOutputsM());
-		functionResiduals.process(x.data,residuals.data);
-		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
-	}
 
 	public DMatrixRMaj getResiduals() {
 		return residuals;

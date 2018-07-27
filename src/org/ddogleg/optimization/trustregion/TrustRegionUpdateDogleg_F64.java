@@ -135,35 +135,26 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	}
 
 	@Override
-	public boolean computeUpdate(DMatrixRMaj step, double regionRadius) {
+	public void computeUpdate(DMatrixRMaj step, double regionRadius) {
 		if( positiveDefinite ) {
 			// If the GN solution is inside the trust region it should use that solution
 			if( distanceGN <= regionRadius ) {
 				step.set(stepGN);
-				return distanceGN == regionRadius;
 			}
-
-			boolean maxStep;
-
 			// of the Gauss-Newton solution is inside the trust region use that
 			if( distanceGN <= regionRadius ) {
 				step.set(stepGN);
-				maxStep = distanceGN == regionRadius;
 			} else if( distanceCauchy*owner.gradientNorm >= regionRadius ) {
 				// if the trust region comes before the Cauchy point then perform the cauchy step
-				maxStep = cauchyStep(regionRadius, step);
+				cauchyStep(regionRadius, step);
 			} else {
 				combinedStep(regionRadius, step);
-				maxStep = true;
 			}
 
-			// since the GN solution is outside the region boundary all other solutions must be inside
-			return maxStep;
 		} else {
 			// Cauchy step for negative semi-definite systems
 			double tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
 			CommonOps_DDRM.scale(-tau*regionRadius/owner.gradientNorm, owner.gradient,step);
-			return tau == 1.0;
 		}
 	}
 

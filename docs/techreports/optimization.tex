@@ -206,12 +206,12 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 \begin{tabular}{lcccccc}
 Method & Iteration & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
 \hline
-Quasi-Newton BFGS & $O(N^2)$ & Quadratic & ? & ? & Yes &  \rule{0pt}{2.6ex} \\
+Quasi-Newton BFGS & $O(N^2)$ & Super Linear & ? & ? & Yes &  \rule{0pt}{2.6ex} \\
 Trust Region BFGS Cauchy & $O(N^2)$ & Linear & Yes & Yes & Yes &  \\
-Trust Region BFGS Dogleg & $O(N^2)$ & Quadratic & [1] & [1] & Yes &  \\
-Quasi-Newton L-BFGS & ? & Quadratic & ? & ? &   & Yes \\
+Trust Region BFGS Dogleg & $O(N^2)$ & Super Linear & [1] & [1] & Yes &  \\
+Quasi-Newton L-BFGS & ? & Super Linear & ? & ? &   & Yes \\
 Trust Region L-BFGS Cauchy & ? &  Linear & Yes & Yes &  & Yes \\
-Trust Region L-BFGS Dogleg & ? &  Quadratic & [1] & [1] &  & Yes \\[1ex]
+Trust Region L-BFGS Dogleg & ? &  Super Linear & [1] & [1] &  & Yes \\[1ex]
 \hline
 \multicolumn{6}{l}{
 \begin{minipage}{0.6\textwidth}
@@ -230,7 +230,7 @@ Trust Region L-BFGS Dogleg & ? &  Quadratic & [1] & [1] &  & Yes \\[1ex]
 \end{tabular}
 \end{table}
 
-Describe unconstrained minimization at a high level
+Describe unconstrained minimzation at a high level
 
 
 \subsection{Convergence Test}
