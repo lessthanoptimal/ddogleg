@@ -19,9 +19,8 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
-import org.ddogleg.optimization.trustregion.TrustRegionUpdateDogleg_F64;
+import org.ddogleg.optimization.trustregion.TrustRegionUpdateDoglegBFGS_F64;
 import org.ddogleg.optimization.trustregion.UnconMinTrustRegionBFGS_F64;
-import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 
 /**
  * @author Peter Abeles
@@ -39,9 +38,10 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 //		config.scalingMaximum = 1e4;
 //			config.regionMinimum = 0.0001;
 //		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
+//		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
+//				new TrustRegionUpdateDogleg_F64(LinearSolverFactory_DDRM.chol(1)));
 		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
-//				new TrustRegionUpdateDogleg_F64(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false)));
-				new TrustRegionUpdateDogleg_F64(LinearSolverFactory_DDRM.chol(1)));
+				new TrustRegionUpdateDoglegBFGS_F64());
 		tr.configure(config);
 		return tr;
 	}

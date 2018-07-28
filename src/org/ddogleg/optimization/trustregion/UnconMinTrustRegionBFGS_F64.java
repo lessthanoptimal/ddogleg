@@ -45,6 +45,9 @@ public class UnconMinTrustRegionBFGS_F64
 	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
 	private DMatrixRMaj s = new DMatrixRMaj(1,1);
 
+	protected DMatrixRMaj hessianInverse = new DMatrixRMaj(1,1);
+	protected boolean computeInverse=false;
+
 	double f_prev;
 
 	private FunctionNtoS functionCost;
@@ -92,6 +95,11 @@ public class UnconMinTrustRegionBFGS_F64
 		// Set the hessian to identity. There are other potentially better methods
 		math.setIdentity(hessian);
 
+		if( computeInverse ) {
+			hessianInverse.reshape(numberOfParameters,numberOfParameters);
+			math.setIdentity(hessianInverse);
+		}
+
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
 		gradientPrevious.zero();
@@ -126,6 +134,10 @@ public class UnconMinTrustRegionBFGS_F64
 //				System.out.println("Updated Hessian");
 				// Apply DFP equation and update H
 				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
+				if( computeInverse ) {
+					EquationsBFGS.inverseUpdate(hessianInverse,s,y,tmpN1,tmpN2);
+				}
+
 				gradientPrevious.set(gradient);
 				xPrevious.set(x);
 				f_prev = fx;
@@ -149,6 +161,13 @@ public class UnconMinTrustRegionBFGS_F64
 		return false;
 	}
 
+	public void setComputeInverse(boolean computeInverse) {
+		this.computeInverse = computeInverse;
+	}
+
+	public DMatrixRMaj getHessianInverse() {
+		return hessianInverse;
+	}
 
 	@Override
 	public double[] getParameters() {
