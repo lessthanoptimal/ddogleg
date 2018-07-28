@@ -46,6 +46,7 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 //		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
 		solver = new LinearSolverSafe<>(solver);
 		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
+//		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegLS_F64(solver);
 //		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
 
 		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(

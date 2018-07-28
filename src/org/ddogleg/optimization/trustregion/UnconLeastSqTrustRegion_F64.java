@@ -85,6 +85,12 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
+	// TODO least-squares specific test here
+	@Override
+	protected boolean checkConvergenceFTest(double fx, double fx_prev) {
+		return super.checkConvergenceFTest(fx, fx_prev);
+	}
+
 	@Override
 	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, S hessian) {
 		if( !sameStateAsCost )
