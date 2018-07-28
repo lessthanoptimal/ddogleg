@@ -75,7 +75,8 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	double distanceCauchy;
 
 	// work space
-	protected S tmp;
+	protected S tmp0;
+	protected DMatrixRMaj tmp1 = new DMatrixRMaj(1,1);
 
 	// The predicted amount that the quadratic model will be reduced by this step
 	double predictedReduction;
@@ -101,7 +102,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 //		direction.reshape(numberOfParameters,1);
 		stepGN.reshape(numberOfParameters,1);
 		stepCauchy.reshape(numberOfParameters,1);
-		tmp = owner.math.createMatrix();
+		tmp0 = owner.math.createMatrix();
 	}
 
 	@Override
@@ -130,15 +131,22 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		// Compute Gauss-Newton step and make sure the input hessian isn't modified
 		S H;
 		if( solver.modifiesA() ) {
-			tmp.set(owner.hessian);
-			H = tmp;
+			tmp0.set(owner.hessian);
+			H = tmp0;
 		} else {
 			H = owner.hessian;
 		}
 		if( !solver.setA(H) ) {
 			return false;
 		}
-		solver.solve(owner.gradient.copy(), pointGN); // todo remove copy
+		DMatrixRMaj B;
+		if( solver.modifiesB() ) {
+			tmp1.set(owner.gradient);
+			B = tmp1;
+		} else {
+			B = owner.gradient;
+		}
+		solver.solve(B, pointGN);
 
 		return true;
 	}
@@ -165,7 +173,6 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 			CommonOps_DDRM.scale(-stepLength/owner.gradientNorm, owner.gradient,step);
 			double f = stepLength/owner.gradientNorm;
 			predictedReduction = stepLength*owner.gradientNorm - 0.5*f*f*gBg;
-
 		}
 	}
 

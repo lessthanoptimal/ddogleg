@@ -101,6 +101,13 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	}
 
 	@Override
+	protected void applyScaling() {
+		super.applyScaling();
+		// Apply scaling to the Jacobian matrix
+		math.divideColumns(scaling.data,jacobian);
+	}
+
+	@Override
 	public double[] getParameters() {
 		return x.data;
 	}

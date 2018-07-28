@@ -25,9 +25,11 @@ package org.ddogleg.optimization.trustregion;
  */
 public class ConfigTrustRegion {
 	/**
-	 * initial size of the trust region
+	 * Initial size of the trust region. If a negative value is set attempt is made to automatically determine
+	 * a good initial size. If a positive number then that's the initial region size. 1 is often a reasonable initial
+	 * value for the region size.
 	 */
-	public double regionInitial = 1;
+	public double regionInitial = -1;
 
 	/**
 	 * Trust Region's maximum size
@@ -50,10 +52,20 @@ public class ConfigTrustRegion {
 	public double candidateAcceptThreshold = 0.05;
 
 	/**
-	 * Minimum and maximum scaling possible. If max < min then scaling is turned off. Off by default.
+	 * <p>
+	 *     Optional dynamic scaling of variables is possible at each iteration. The scale factor is set using the
+	 *     Hessian's diagonal elements. The square root of the diagonal elements absolute value.
+	 * </p>
+	 *
+	 * <p>
+	 *     These variables are used to clamp scaling individual scaling values. To turn on this automatic scaling
+	 *     simply set the minimum value such that it is less than the maximum value.
+	 *     The minimum value seems to be of particular importance and don't forget try larger values, such as one.
+	 * </p>
+	 *
+	 * <p>Recommended initial tuning values are min=1e-5 and max=1e5</p>
 	 */
 	public double scalingMinimum =1, scalingMaximum =-1;
-
 
 	public ConfigTrustRegion copy() {
 		ConfigTrustRegion out = new ConfigTrustRegion();

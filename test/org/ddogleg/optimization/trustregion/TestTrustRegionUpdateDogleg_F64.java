@@ -278,18 +278,32 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
-
-			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-			solver = new LinearSolverSafe<>(solver);
-			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
-
-			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-					alg, new TrustRegionMath_DDRM());
+			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
 			tr.configure(config);
 			return tr;
 		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+
+		@Override
+		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.scalingMinimum = 1e-4;
+			config.scalingMaximum = 1e5;
+			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
+			tr.configure(config);
+			return tr;
+		}
+	}
+
+	private static UnconLeastSqTrustRegion_F64<DMatrixRMaj> createSolver() {
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
+		solver = new LinearSolverSafe<>(solver);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(solver);
+
+		return new UnconLeastSqTrustRegion_F64<>(alg, new TrustRegionMath_DDRM());
 	}
 
 	@Nested
@@ -298,11 +312,9 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 
 			LinearSolver<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
-			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
+			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> alg = new TrustRegionUpdateDogleg_F64<>(solver);
 
 			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
 					alg, new TrustRegionMath_DSCC());

@@ -170,8 +170,6 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		@Override
 		protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
 			tr.configure(config);
 			return tr;
@@ -194,10 +192,28 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-					new TrustRegionUpdateCauchy_F64(), new TrustRegionMath_DDRM());
+					new TrustRegionUpdateCauchy_F64<>(), new TrustRegionMath_DDRM());
+			tr.configure(config);
+			return tr;
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+
+		public LeastSquaresDDRM_Scaling() {
+			this.checkFastConvergence = false;
+			this.maxIteration = 10000;
+		}
+
+		@Override
+		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.scalingMinimum = 0.1; // sensitive to this parameter
+			config.scalingMaximum = 1e6;
+			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
+					new TrustRegionUpdateCauchy_F64<>(), new TrustRegionMath_DDRM());
 			tr.configure(config);
 			return tr;
 		}
@@ -214,11 +230,9 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 
 			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
-					new TrustRegionUpdateCauchy_F64(), new TrustRegionMath_DSCC());
+					new TrustRegionUpdateCauchy_F64<>(), new TrustRegionMath_DSCC());
 			tr.configure(config);
 			return tr;
 		}

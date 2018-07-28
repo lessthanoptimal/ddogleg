@@ -29,10 +29,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
  */
 public class TrustRegionUpdateDoglegBFGS_F64 extends TrustRegionUpdateDogleg_F64<DMatrixRMaj> {
 
-	// TODO do least-squares ftol test
-
 	private UnconMinTrustRegionBFGS_F64 owner;
-
 
 	@Override
 	public void initialize(TrustRegionBase_F64<DMatrixRMaj> owner, int numberOfParameters, double minimumFunctionValue) {

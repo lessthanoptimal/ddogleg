@@ -51,10 +51,14 @@ public class TrustRegionUpdateDoglegLS_F64<S extends DMatrix> extends TrustRegio
 
 	@Override
 	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN) {
-		// Compute Gauss-Newton step
+		// J'*J*x         = J'*R   =>  J*x = R          Without scaling
+		// E*J'*J*E*(D*x) = J'*E*R =>  J*E*(D*x) = R    With scaling
+		// E = inv(D) D = scaling matrix
+		// Basically we don't need to handle scaling here since it's been handled elsewhere
 		if( !solver.setA(owner.getJacobian()) ) {
 			return false;
 		}
+
 		solver.solve(owner.residuals, pointGN);
 		return true;
 	}

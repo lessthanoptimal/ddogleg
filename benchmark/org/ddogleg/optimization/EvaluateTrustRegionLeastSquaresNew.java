@@ -18,10 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
-import org.ddogleg.optimization.trustregion.TrustRegionMath_DDRM;
-import org.ddogleg.optimization.trustregion.TrustRegionUpdateDogleg_F64;
-import org.ddogleg.optimization.trustregion.UnconLeastSqTrustRegion_F64;
+import org.ddogleg.optimization.trustregion.*;
 import org.ejml.LinearSolverSafe;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -39,15 +36,16 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 		ConfigTrustRegion config = new ConfigTrustRegion();
-//		config.scalingMinimum = 1e-4;
-//		config.scalingMaximum = 1e4;
-//			config.regionMinimum = 0.0001;
-		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
-//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
+//		config.regionInitial = 1;
+//		config.scalingMinimum = .1;
+//		config.scalingMaximum = 1e6;
+
+//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
 		solver = new LinearSolverSafe<>(solver);
-		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
-//		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegLS_F64(solver);
-//		TrustRegionUpdateCauchy_F64 alg = new TrustRegionUpdateCauchy_F64();
+//		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(solver);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDoglegLS_F64<>(solver);
+//		TrustRegionUpdateCauchy_F64<DMatrixRMaj alg = new TrustRegionUpdateCauchy_F64<>();
 
 		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
 				alg, new TrustRegionMath_DDRM());

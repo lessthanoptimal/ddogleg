@@ -20,14 +20,16 @@ package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.OptimizationException;
 import org.ejml.UtilEjml;
-import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
+import java.util.Arrays;
 import java.util.Random;
+
+import static java.lang.Math.*;
 
 /**
  * <p>Base class for all trust region implementations. The Trust Region approach assumes that a quadratic model is valid
@@ -82,12 +84,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// proposed next state of parameters
 	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
 	// proposed relative change in parameter's state
+	protected DMatrixRMaj scaled_p = new DMatrixRMaj(1,1); // after scaling matrix has been applied to it
 	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
 	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
 	protected boolean sameStateAsCost;
 
 	// Scaling used to compensate for poorly scaled variables
-	protected DGrowArray scaling = new DGrowArray();
+	protected DMatrixRMaj scaling = new DMatrixRMaj(1,1);
 
 	protected ConfigTrustRegion config = new ConfigTrustRegion();
 
@@ -131,11 +134,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
 		p.reshape(numberOfParameters,1);
+		scaled_p.reshape(numberOfParameters,1);
 		gradient.reshape(numberOfParameters,1);
 
 		// initialize scaling to 1, which is no scaling
-//		scaling.reshape(numberOfParameters);
-//		Arrays.fill(scaling.data,0,numberOfParameters,1);
+		scaling.reshape(numberOfParameters,1);
+		Arrays.fill(scaling.data,0,numberOfParameters,1);
 
 		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		fx = cost(x);
@@ -198,32 +202,35 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected boolean updateState() {
 		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
 
-//		if( isScaling() ) {
-//			computeScaling();
-//			applyScaling();
-//		}
+		if( isScaling() ) {
+			computeScaling();
+			applyScaling();
+		}
+
+		// Convergence should be tested on scaled variables to remove their arbitrary natural scale
+		// from influencing convergence
+		if( checkConvergenceGTest(gradient))
+			return true;
 
 		gradientNorm = NormOps_DDRM.normF(gradient);
 		if(UtilEjml.isUncountable(gradientNorm))
 			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
-
-		if( checkConvergenceGTest(gradient))
-			return true;
 
 		parameterUpdate.initializeUpdate();
 		return false;
 	}
 
 	/**
-	 * Grabs scaling from diagonal elements of the Hessian
+	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
 	 */
 	protected void computeScaling() {
 		math.extractDiag(hessian,scaling.data);
 
-		// massage the data just in case there's weird stuff going on in the Hessian that shouldn't be happening
-		for (int i = 0; i < scaling.length; i++) {
-			scaling.data[i] = Math.min(config.scalingMaximum,
-					Math.max(config.scalingMinimum,Math.abs(scaling.data[i])));
+		for (int i = 0; i < scaling.numRows; i++) {
+			// mathematically it should never be negative but...
+			double scale = sqrt(abs(scaling.data[i]));
+			// clamp the scale factor
+			scaling.data[i] = min(config.scalingMaximum, max(config.scalingMinimum, scale));
 		}
 	}
 
@@ -231,9 +238,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Apply scaling to gradient and Hessian
 	 */
 	protected void applyScaling() {
-		for (int i = 0; i < scaling.length; i++) {
-			gradient.data[i] /= scaling.data[i];
-		}
+		CommonOps_DDRM.elementDiv(gradient,scaling);
+
 		math.divideRows(scaling.data,hessian);
 		math.divideColumns(scaling.data,hessian);
 	}
@@ -241,10 +247,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	/**
 	 * Undo scaling on estimated parameters
 	 */
-	protected void undoScalingOnParameters() {
-		for (int i = 0; i < scaling.length; i++) {
-			p.data[i] /= scaling.data[i];
-		}
+	protected void undoScalingOnParameters( DMatrixRMaj p ) {
+		CommonOps_DDRM.elementDiv(p,scaling);
 	}
 
 	/**
@@ -252,14 +256,26 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged.
 	 */
 	protected boolean computeAndConsiderNew() {
-		parameterUpdate.computeUpdate(p, regionRadius);
-
-//		if( isScaling() )
-//			undoScalingOnParameters();
+		if( regionRadius < 0 ) {
+			// attempt to dynamically determine the region radius by setting an extremely large trust region
+			// in the first iteration, taking its solution, and setting the radius using that.
+			// If too small or too large the initial radius and kill performance and is very opaque
+			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
+			regionRadius = parameterUpdate.getStepLength()*1.1;
+		} else {
+			parameterUpdate.computeUpdate(p, regionRadius);
+		}
+		if( isScaling() )
+			undoScalingOnParameters(p);
 		CommonOps_DDRM.add(x,p,x_next);
 		double fx_candidate = cost(x_next);
+
+		// this notes that the cost was computed at x_next for the Hessian calculation.
+		// This is a relic from a variant on this implementation where another candidate might be considered. I'm
+		// leaving this code where since it might be useful in the future and doesn't add much complexity
 		sameStateAsCost = true;
 
+		// NOTE: step length was computed using the weighted/scaled version of 'p', which is correct
 		Convergence result = considerCandidate(fx_candidate,fx,
 				parameterUpdate.getPredictedReduction(),
 				parameterUpdate.getStepLength());
@@ -319,7 +335,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			regionRadius = 0.5*regionRadius;
 		} else {
 			if( ratio > 0.75 ) {
-				regionRadius = Math.min(Math.max(3*stepLength,regionRadius),config.regionMaximum);
+				regionRadius = min(max(3*stepLength,regionRadius),config.regionMaximum);
 			}
 		}
 
@@ -334,7 +350,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	/**
 	 * <p>Checks for convergence using f-test:</p>
 	 *
-	 * f-test : ftol <= 1.0-f(x+p)/f(x)
+	 * f-test : ftol &le; 1.0-f(x+p)/f(x)
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
@@ -353,8 +369,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	/**
 	 * <p>Checks for convergence using f-test:</p>
 	 *
-	 * g-test : gtol <= ||g(x)||_inf
-	 *
+	 * g-test : gtol &le; ||g(x)||_inf
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
@@ -442,8 +457,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 * </ul>
 		 *
 		 * Inputs are not passed in explicitly since it varies by implementation which ones are needed.
-		 *
-		 * @return true if it hits the region boundary
 		 */
 		void initializeUpdate();
 

@@ -87,7 +87,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
-		assertEquals(1e6, results.x[0], 1e-4);
+		assertEquals(1e6, results.x[0], results.x[0]*1e-4);
 		assertEquals(2e-6, results.x[1], 1e-4);
 		assertEquals(0, results.f, 1e-4);
 	}

@@ -75,39 +75,21 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 
 	@Override
 	public void computeUpdate(DMatrixRMaj step, double regionRadius) {
-//		// Tau is it's scale relative to the region radius
-//		double tau;
-//		if( gBg <= 0 ) {
-//			// always decreasing so take the largest possible step to the region's boundary
-//			// At the same time don't try to jump past the smallest possible value for the function
-//			tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
-//		} else {
-//			// min( ||g||^3 /(Delta*g'*B*g) , 1)
-//			// g'*B*g == ||g||^2 * d'*B*d
-//			tau = Math.min(owner.gradientNorm/(regionRadius*gBg),1);
-//		}
-//		// direction = g/||g||
-//		// step = tau*regionRadius*direction
-//		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
-
-		double tau;
-
 		double gnorm = owner.gradientNorm;
 
 		if( gBg <= 0 ) {
 			// always decreasing so take the largest possible step to the region's boundary
 			// At the same time don't try to jump past the smallest possible value for the function
-			tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius));
+			stepLength = Math.min(regionRadius, Math.max(0,(owner.fx-minimumFunctionValue)));
 		} else {
 			// find the distance of the minimum point
-			tau = Math.min(1,gnorm*(gnorm*gnorm/(regionRadius*gBg)));
+			stepLength = Math.min(regionRadius,gnorm*(gnorm*gnorm/gBg));
 		}
 
-		double gscale = tau*regionRadius/owner.gradientNorm;
+		double gscale = stepLength/owner.gradientNorm;
 		CommonOps_DDRM.scale(-gscale,owner.gradient,step);
 
 		// compute predicted reduction
-		stepLength = tau*regionRadius;
 		predictedReduction = stepLength*owner.gradientNorm - 0.5*gscale*gscale*gBg;
 
 	}

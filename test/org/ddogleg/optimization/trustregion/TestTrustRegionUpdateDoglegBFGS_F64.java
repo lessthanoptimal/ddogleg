@@ -37,8 +37,28 @@ public class TestTrustRegionUpdateDoglegBFGS_F64 {
 		@Override
 		protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
+
+			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegBFGS_F64();
+			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(alg);
+			tr.configure(config);
+			return tr;
+		}
+	}
+
+	@Nested
+	class UnconstrainedBFGS_Scaling extends CommonChecksUnconstrainedOptimization {
+		public UnconstrainedBFGS_Scaling() {
+			this.checkFastConvergence = false; // TODO remove?
+			this.maxIteration = 100000;
+		}
+
+		@Override
+		protected UnconstrainedMinimization createSearch() {
+			ConfigTrustRegion config = new ConfigTrustRegion();
 			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
+			config.scalingMaximum = 1e5;
+			// oddly sensitive to this parameter. This is just a test to see if scaling is handled correctly not a
+			// robustness test so I'm fine with that.
 
 			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegBFGS_F64();
 			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(alg);

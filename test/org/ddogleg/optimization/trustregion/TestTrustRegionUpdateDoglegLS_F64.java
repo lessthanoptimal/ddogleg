@@ -41,17 +41,8 @@ public class TestTrustRegionUpdateDoglegLS_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 
-			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.qr(4,2);
-			solver = new LinearSolverSafe<>(solver);
-			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegLS_F64(solver);
-
-			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-					alg, new TrustRegionMath_DDRM());
-			tr.configure(config);
-			return tr;
+			return declare(config);
 		}
 	}
 
@@ -61,16 +52,41 @@ public class TestTrustRegionUpdateDoglegLS_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
 
 			LinearSolver<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.qr(FillReducing.NONE);
-			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDoglegLS_F64(solver);
+			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> alg = new TrustRegionUpdateDoglegLS_F64<>(solver);
 
-			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
-					alg, new TrustRegionMath_DSCC());
+			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr =
+					new UnconLeastSqTrustRegion_F64<>(alg, new TrustRegionMath_DSCC());
 			tr.configure(config);
 			return tr;
 		}
+	}
+
+	/**
+	 * Test to see if scaling is handled correctly
+	 */
+	@Nested
+	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+
+		@Override
+		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.scalingMinimum = 1e-4;
+			config.scalingMaximum = 1e4;
+
+			return declare(config);
+		}
+	}
+
+	private static UnconstrainedLeastSquares<DMatrixRMaj> declare(ConfigTrustRegion config) {
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.qr(4, 2);
+		solver = new LinearSolverSafe<>(solver);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDoglegLS_F64<>(solver);
+
+		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr =
+				new UnconLeastSqTrustRegion_F64<>(alg, new TrustRegionMath_DDRM());
+		tr.configure(config);
+		return tr;
 	}
 }
