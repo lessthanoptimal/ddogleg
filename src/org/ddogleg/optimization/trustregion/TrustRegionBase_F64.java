@@ -457,6 +457,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		void scaleColumns(double scaling[] , S A );
 
+		void multTransA(S A , DMatrixRMaj B , DMatrixRMaj output );
+
 		S createMatrix();
 	}
 

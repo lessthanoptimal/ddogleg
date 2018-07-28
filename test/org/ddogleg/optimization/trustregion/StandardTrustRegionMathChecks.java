@@ -164,4 +164,18 @@ public abstract class StandardTrustRegionMathChecks<T extends DMatrix> {
 			}
 		}
 	}
+
+	@Test
+	public void multTransA() {
+		DMatrixRMaj A = RandomMatrices_DDRM.rectangle(6,2,-1,1,rand);
+		DMatrixRMaj B = RandomMatrices_DDRM.rectangle(6,4,-1,1,rand);
+		DMatrixRMaj expected = new DMatrixRMaj(1,1);
+		DMatrixRMaj found = new DMatrixRMaj(1,1);
+
+		CommonOps_DDRM.multTransA(A,B,expected);
+
+		alg.multTransA(convertA(A),B,found);
+
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+	}
 }

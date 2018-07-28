@@ -24,7 +24,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
-import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
@@ -92,7 +91,7 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacobian);
 		math.innerMatrixProduct(jacobian,hessian);
-		CommonOps_DDRM.multTransA((DMatrixRMaj)jacobian, residuals, gradient);
+		math.multTransA(jacobian, residuals, gradient);
 	}
 
 	@Override

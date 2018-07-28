@@ -49,27 +49,34 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public void extractDiag(DMatrixSparseCSC A, double[] diag) {
-
+		for (int i = 0; i < A.numCols; i++) {
+			diag[i] = A.unsafe_get(i, i);
+		}
 	}
 
 	@Override
 	public void divideRows(double[] scaling, DMatrixSparseCSC A) {
-
+		CommonOps_DSCC.rowDiv(A,scaling);
 	}
 
 	@Override
 	public void divideColumns(double[] scaling, DMatrixSparseCSC A) {
-
+		CommonOps_DSCC.columnDiv(A,scaling);
 	}
 
 	@Override
 	public void scaleRows(double[] scaling, DMatrixSparseCSC A) {
-
+		CommonOps_DSCC.rowMult(A,scaling);
 	}
 
 	@Override
 	public void scaleColumns(double[] scaling, DMatrixSparseCSC A) {
+		CommonOps_DSCC.columnMult(A,scaling);
+	}
 
+	@Override
+	public void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output) {
+		CommonOps_DSCC.multTransA(A,B,output);
 	}
 
 	@Override

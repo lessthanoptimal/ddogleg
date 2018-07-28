@@ -91,6 +91,11 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 	}
 
 	@Override
+	public void multTransA(DMatrixRMaj A, DMatrixRMaj B, DMatrixRMaj output) {
+		CommonOps_DDRM.multTransA(A,B,output);
+	}
+
+	@Override
 	public DMatrixRMaj createMatrix() {
 		return new DMatrixRMaj(1,1);
 	}
