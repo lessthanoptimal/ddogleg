@@ -70,7 +70,7 @@ public abstract class UnconstrainedMinimizationEvaluator {
 
 		double initialValue = func.process(initial);
 
-		alg.initialize(initial,1e-12,1e-12);
+		alg.initialize(initial,1e-12, 1e-6);
 		int iter;
 		for( iter = 0; iter < maxIteration && !alg.iterate() ; iter++ ){
 			printError(optimal, alg);

@@ -207,7 +207,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		if(UtilEjml.isUncountable(gradientNorm))
 			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
 
-		if( CommonOps_DDRM.elementMaxAbs(gradient) <= config.gtol*1000000)
+		if( checkConvergenceGTest(gradient))
 			return true;
 
 		parameterUpdate.initializeUpdate();
@@ -272,7 +272,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
 		if ( result != Convergence.REJECT ) {
-			boolean converged = checkConvergence(fx_candidate,fx);
+			boolean converged = checkConvergenceFTest(fx_candidate,fx);
 			return acceptNewState(converged,fx_candidate);
 		} else {
 			mode = Mode.RETRY;
@@ -346,22 +346,23 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		if( fx_candidate > fx_prev || ratio < 0.25 ) {
 			// if the improvement is too small (or not an improvement) reduce the region size
-			regionRadius = Math.max(config.regionMinimum,0.5*regionRadius);
+			regionRadius = 0.5*regionRadius;
 		} else {
 			if( ratio > 0.75 ) {
 				regionRadius = Math.min(Math.max(3*stepLength,regionRadius),config.regionMaximum);
 			}
 		}
 
+//		System.out.println(totalRetries+" ratio="+ratio+"   rate="+((fx_prev-fx_candidate)/stepLength));
+		// If the score got better then consider adding noise to the state
 		if( fx_candidate < fx_prev && ratio > 0 ) {
 			if( config.noise != null ) {
 				// Rate at which the score has decreased per distance
 				double rate = (fx_prev-fx_candidate)/stepLength;
 
-				// If the ratio is high then the score improved but the model significantly under predicted how much
 				// The hessian is probably bad at this point
 				// If the rate is slow then the score is getting better, but it might be stuck in a narrow path
-				if( ratio >= config.noise.thresholdRatio || rate < config.noise.thresholdReduction ) {
+				if( rate < config.noise.thresholdReduction ) {
 					return Convergence.NOISE;
 				}
 			}
@@ -372,14 +373,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 
 	/**
-	 * <p>Checks for convergence using unconstrained minization f-test and g-test</p>
+	 * <p>Checks for convergence using f-test:</p>
 	 *
-	 * f-test : ftol <= 1.0-f(x+p)/f(x)<br>
-	 * g-test : gtol <= ||g(x)||_inf
+	 * f-test : ftol <= 1.0-f(x+p)/f(x)
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected boolean checkConvergence( double fx, double fx_prev ) {
+	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
 		// something really bad has happened if this gets triggered before it thinks it converged
 		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
 			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
@@ -388,14 +388,19 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			throw new RuntimeException("BUG! Shouldn't have gotten this far");
 
 		// f-test. avoid potential divide by zero errors
-		if( config.ftol*fx_prev >= fx_prev - fx )
-			return true;
-//		if( Math.abs(fx-fx_prev) <= config.ftol*Math.max(fx,fx_prev) )
-//			return true;
+		return config.ftol * fx_prev >= fx_prev - fx;
+	}
 
-
-		// g-test:  compute the infinity norm of the gradient
-		return false;//CommonOps_DDRM.elementMaxAbs(gradient) <= config.gtol;
+	/**
+	 * <p>Checks for convergence using f-test:</p>
+	 *
+	 * g-test : gtol <= ||g(x)||_inf
+	 *
+	 *
+	 * @return true if converged or false if it hasn't converged
+	 */
+	protected boolean checkConvergenceGTest( DMatrixRMaj g ) {
+		return CommonOps_DDRM.elementMaxAbs(g) <= config.gtol;
 	}
 
 	/**

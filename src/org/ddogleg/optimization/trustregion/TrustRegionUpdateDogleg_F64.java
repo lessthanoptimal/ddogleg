@@ -71,6 +71,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	// is the hessian positive definite?
 	protected boolean positiveDefinite;
 
+	// distance to the unconstrained Cauchy point
 	double distanceCauchy;
 
 	// work space
@@ -116,7 +117,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( gBg > 0 && solveGaussNewtonPoint(stepGN) ) {
 			positiveDefinite = true;
 			// length of the Cauchy step when computed without constraints
-			distanceCauchy = owner.gradientNorm*owner.gradientNorm/gBg;
+			distanceCauchy = owner.gradientNorm*(owner.gradientNorm*owner.gradientNorm/gBg);
 			// p_gn = -inv(B)*g
 			CommonOps_DDRM.scale(-1, stepGN);
 			distanceGN = NormOps_DDRM.normF(stepGN);
@@ -150,7 +151,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 				step.set(stepGN);
 				predictedReduction = owner.computePredictedReduction(stepGN);
 				stepLength = distanceGN;
-			} else if( distanceCauchy*owner.gradientNorm >= regionRadius ) {
+			} else if( distanceCauchy >= regionRadius ) {
 				// if the trust region comes before the Cauchy point then perform the cauchy step
 				cauchyStep(regionRadius, step);
 			} else {
@@ -160,8 +161,11 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 
 		} else {
 			// Cauchy step for negative semi-definite systems
-			double tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius) );
-			CommonOps_DDRM.scale(-tau*regionRadius/owner.gradientNorm, owner.gradient,step);
+			stepLength = Math.min(regionRadius, Math.max(0,(owner.fx-minimumFunctionValue)) );
+			CommonOps_DDRM.scale(-stepLength/owner.gradientNorm, owner.gradient,step);
+			double f = stepLength/owner.gradientNorm;
+			predictedReduction = stepLength*owner.gradientNorm - 0.5*f*f*gBg;
+
 		}
 	}
 
@@ -182,8 +186,8 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	 */
 	protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 
-		double dist = regionRadius/owner.gradientNorm;
 		double gn = owner.gradientNorm;
+		double dist = regionRadius/gn;
 		CommonOps_DDRM.scale(-dist, owner.gradient, step);
 		stepLength = regionRadius; // it touches the trust region
 		predictedReduction = dist*gn*gn - 0.5*dist*dist*gBg;
@@ -191,13 +195,12 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 
 	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 		// find the Cauchy point
-		CommonOps_DDRM.scale(-distanceCauchy, owner.gradient, stepCauchy);
+		CommonOps_DDRM.scale(-distanceCauchy/owner.gradientNorm, owner.gradient, stepCauchy);
 		stepLength = regionRadius; // touches the trust region
 
 		double distancePtoGN = SpecializedOps_DDRM.diffNormF(stepCauchy,stepGN);
 
-		double f = fractionCauchyToGN(
-				distanceCauchy*owner.gradientNorm,distanceGN,distancePtoGN,regionRadius);
+		double f = fractionCauchyToGN(distanceCauchy,distanceGN,distancePtoGN,regionRadius);
 
 		CommonOps_DDRM.add(1-f,stepCauchy,f,stepGN,step);
 		predictedReduction = owner.computePredictedReduction(step);

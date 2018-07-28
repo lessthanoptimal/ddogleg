@@ -18,62 +18,34 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.dense.row.RandomMatrices_DDRM;
-import org.ejml.equation.Equation;
-import org.ejml.sparse.csc.CommonOps_DSCC;
-import org.ejml.sparse.csc.MatrixFeatures_DSCC;
-import org.ejml.sparse.csc.RandomMatrices_DSCC;
-import org.junit.jupiter.api.Test;
-
-import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.ejml.ops.ConvertDMatrixStruct;
 
 /**
  * @author Peter Abeles
  */
-public class TestTrustRegionMath_DSCC {
-	Random rand = new Random(234);
-	TrustRegionMath_DSCC alg = new TrustRegionMath_DSCC();
-
-	@Test
-	public void setIdentity() {
-		DMatrixSparseCSC A = new DMatrixSparseCSC(3,3);
-		alg.setIdentity(A);
-		assertTrue(MatrixFeatures_DSCC.isIdentity(A,UtilEjml.TEST_F64));
+public class TestTrustRegionMath_DSCC extends StandardTrustRegionMathChecks<DMatrixSparseCSC> {
+	public TestTrustRegionMath_DSCC() {
+		super(new TrustRegionMath_DSCC());
 	}
 
-	@Test
-	public void innerMatrixProduct() {
-		DMatrixSparseCSC A = RandomMatrices_DSCC.rectangle(4,2,6,-1,1,rand);
-		DMatrixSparseCSC expected = new DMatrixSparseCSC(2,2);
-
-		CommonOps_DSCC.multTransA(A,A,expected,null,null);
-
-		DMatrixSparseCSC found = new DMatrixSparseCSC(2,2);
-		alg.innerMatrixProduct(A,found);
-
-		assertTrue(MatrixFeatures_DSCC.isIdenticalSort(expected,found, UtilEjml.TEST_F64));
+	@Override
+	public DMatrixSparseCSC convertA(DMatrixRMaj A) {
+		DMatrixSparseCSC out = new DMatrixSparseCSC(A.numRows,A.numCols,1);
+		ConvertDMatrixStruct.convert(A,out);
+		return out;
 	}
 
-	@Test
-	public void innerProduct() {
-		DMatrixRMaj A = RandomMatrices_DDRM.rectangle(4,1,-1,1,rand);
-		DMatrixSparseCSC B = RandomMatrices_DSCC.rectangle(4,4,9,-1,1,rand);
+	@Override
+	public DMatrixRMaj convertB(DMatrixSparseCSC A) {
+		DMatrixRMaj out = new DMatrixRMaj(A.numRows,A.numCols);
+		ConvertDMatrixStruct.convert(A,out);
+		return out;
+	}
 
-
-		Equation eq = new Equation();
-		eq.alias(A,"A",B,"B");
-		eq.process("n=A'*B*A");
-
-		double expected = eq.lookupDDRM("n").get(0,0);
-
-		double found = alg.innerProduct(A,B);
-
-		assertEquals(expected, found, UtilEjml.TEST_F64);
+	@Override
+	public DMatrixSparseCSC create(int numRows, int numCols) {
+		return new DMatrixSparseCSC(numRows,numCols,1);
 	}
 }

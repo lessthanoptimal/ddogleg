@@ -33,10 +33,6 @@ public class ConfigTrustRegion {
 	 * Trust Region's maximum size
 	 */
 	public double regionMaximum = Double.MAX_VALUE;
-	/**
-	 * Trust Region's minimum size
-	 */
-	public double regionMinimum = 0;
 
 	/**
 	 * tolerance for termination. magnitude of gradient. absolute
@@ -71,12 +67,7 @@ public class ConfigTrustRegion {
 	 */
 	public static class Noise {
 		public long seed = 0xDEADBEEF;
-		/**
-		 * <p>Noise is added when the actual / predicted score is more
-		 * than this threshold. When the prediction is perfect the ratio
-		 * will be 1.0</p>
-		 */
-		public double thresholdRatio = 1.5;
+
 		/**
 		 * <p>Noise is added when "reduction < threshold"</p>
 		 * <p>The score reduction is computed as follows:<br>
@@ -87,7 +78,7 @@ public class ConfigTrustRegion {
 		 * The default value 1e-10 is a conservative number. For some
 		 * trust region variants 1e-4 seems to work better.
 		 */
-		public double thresholdReduction = 1e-10;
+		public double thresholdReduction = 1e-5;
 
 		/**
 		 * Ammount of noise added. x[i] = x[i] + x[i]*normal(sigma)
@@ -97,7 +88,6 @@ public class ConfigTrustRegion {
 		public Noise copy() {
 			Noise n = new Noise();
 			n.seed = seed;
-			n.thresholdRatio = thresholdRatio;
 			n.thresholdReduction = thresholdReduction;
 			n.noiseSigma = noiseSigma;
 			return n;
@@ -107,7 +97,6 @@ public class ConfigTrustRegion {
 	public ConfigTrustRegion copy() {
 		ConfigTrustRegion out = new ConfigTrustRegion();
 		out.regionMaximum = regionMaximum;
-		out.regionMinimum = regionMinimum;
 		out.gtol = gtol;
 		out.ftol = ftol;
 		out.candidateAcceptThreshold = candidateAcceptThreshold;

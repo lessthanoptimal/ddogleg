@@ -30,10 +30,10 @@ import org.ejml.data.DMatrix;
  */
 public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 
-	boolean verbose = true;
-	boolean printSummary;
-	int maxIteration = 500;
-	boolean dense;
+	protected boolean verbose = true;
+	protected boolean printSummary;
+	protected int maxIteration = 500;
+	protected boolean dense;
 
 	protected UnconstrainedLeastSquaresEvaluator(boolean verbose, boolean printSummary,
 												 boolean dense ) {
@@ -73,7 +73,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 		UnconstrainedLeastSquares<M> alg = createSearch(minimValue);
 		alg.setFunction(f,d);
 
-		alg.initialize(initial,1e-10,1e-20);
+		alg.initialize(initial,1e-10,1e-6);
 		double initialError = alg.getFunctionValue();
 		int iter;
 		for( iter = 0; iter < maxIteration && !alg.iterate() ; iter++ ) {

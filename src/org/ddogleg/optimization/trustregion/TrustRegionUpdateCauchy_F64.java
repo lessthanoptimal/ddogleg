@@ -90,27 +90,25 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 //		// step = tau*regionRadius*direction
 //		CommonOps_DDRM.scale(-tau*regionRadius,direction,p);
 
-		double dist;
+		double tau;
 
 		double gnorm = owner.gradientNorm;
-		double normRadius = regionRadius/gnorm;
 
-		if( gBg == 0 ) {
-			dist = normRadius;
+		if( gBg <= 0 ) {
+			// always decreasing so take the largest possible step to the region's boundary
+			// At the same time don't try to jump past the smallest possible value for the function
+			tau = Math.min(1, Math.max(0,(owner.fx-minimumFunctionValue)/regionRadius));
 		} else {
 			// find the distance of the minimum point
-			dist = gnorm*gnorm/gBg;
-			// use the border or dist, which ever is closer
-			if( dist >= normRadius ) {
-				dist = normRadius;
-			}
+			tau = Math.min(1,gnorm*(gnorm*gnorm/(regionRadius*gBg)));
 		}
 
-		CommonOps_DDRM.scale(-dist,owner.gradient,step);
+		double gscale = tau*regionRadius/owner.gradientNorm;
+		CommonOps_DDRM.scale(-gscale,owner.gradient,step);
 
 		// compute predicted reduction
-		stepLength = dist*gnorm;
-		predictedReduction = stepLength*gnorm - 0.5*dist*dist*gBg;
+		stepLength = tau*regionRadius;
+		predictedReduction = stepLength*owner.gradientNorm - 0.5*gscale*gscale*gBg;
 
 	}
 
