@@ -69,9 +69,9 @@ public class TestTrustRegionBase_F64 {
 		considerUpdate(1,1.1,0.1,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
 
 		// Score improved by a very small amount relative to distance traveled
-		considerUpdate(1,1.1,0.1,1e10, TrustRegionBase_F64.Convergence.NOISE);
+		considerUpdate(1,1.1,0.1,1e10, TrustRegionBase_F64.Convergence.ACCEPT);
 		// poor prediction causes noise
-		considerUpdate(1,1.1,0.001,0.1, TrustRegionBase_F64.Convergence.NOISE);
+		considerUpdate(1,1.1,0.001,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
 
 		// the model predicted a much larger gain than there was
 		considerUpdate(1,1.1,2.1,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
@@ -84,8 +84,6 @@ public class TestTrustRegionBase_F64 {
 								  TrustRegionBase_F64.Convergence expected )
 	{
 		ConfigTrustRegion config = new ConfigTrustRegion();
-		if( expected == TrustRegionBase_F64.Convergence.NOISE )
-			config.noise = new ConfigTrustRegion.Noise();
 
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
 		alg.configure(config);
@@ -130,12 +128,6 @@ public class TestTrustRegionBase_F64 {
 
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
-
-	@Test
-	public void applyNoiseToState() { // TODO don't write until it has been confirmed to be helpful
-		fail("implement");
-	}
-
 
 	/**
 	 * If noise is applied sameStateAsCost should be false

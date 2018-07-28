@@ -27,9 +27,8 @@ import org.ejml.dense.row.CommonOps_DDRM;
 
 /**
  * Implementations of {@link TrustRegionUpdateCauchy_F64} for {@link UnconstrainedMinimization}. The hessian is approximated
- * using the {@link EquationsBFGS BFGS} method.
- *
- * TODO Update so that it can handle sparse system. BFGS
+ * using the {@link EquationsBFGS BFGS} method. This method exhibits poor convergence, probably due to the Hessian
+ * being estimated poorly at times.
  *
  * @author Peter Abeles
  */
@@ -124,15 +123,14 @@ public class UnconMinTrustRegionBFGS_F64
 //				math.scaleRows(scaling.data, hessian);
 //			}
 
-
-			// TODO reduce the amount of math here
 			// compute the change in Gradient
 			CommonOps_DDRM.subtract(gradient, gradientPrevious, y);
 			CommonOps_DDRM.subtract(x, xPrevious, s);
 
+			// Only update when the Wolfe condition is true of the Hessian gets corrected very quickly
 			if( wolfeCondition(s,y,gradientPrevious)) {
-//				System.out.println("Updated Hessian");
 				// Apply DFP equation and update H
+				// Note: there is some duplication in math between Wolfe, update(), and inverseUpdate()
 				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
 				if( computeInverse ) {
 					EquationsBFGS.inverseUpdate(hessianInverse,s,y,tmpN1,tmpN2);

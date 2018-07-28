@@ -264,12 +264,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 				parameterUpdate.getPredictedReduction(),
 				parameterUpdate.getStepLength());
 
-		// If noise is turned on then a request as been made to add noise to the state because it's likely
-		// to be stuck and slowly converging and/or the model is bad
-		if( result == Convergence.NOISE) {
-			fx_candidate = applyNoiseToState(fx_candidate);
-		}
-
 		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
 		if ( result != Convergence.REJECT ) {
 			boolean converged = checkConvergenceFTest(fx_candidate,fx);
@@ -296,30 +290,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			mode = Mode.FULL_STEP;
 			return false;
 		}
-	}
-
-	/**
-	 * Applies noise to the state using this equation x[i] = x
-	 * @param fx_candidate
-	 * @return
-	 */
-	protected double applyNoiseToState(double fx_candidate) {
-		// use x as work space here since it's about to be over written anyways
-		x.reshape(x.numRows,1);
-		for (int i = 0; i < x.numRows; i++) {
-			x.data[i] += x_next.data[i]*rand.nextGaussian()*config.noise.noiseSigma;
-		}
-
-		// see if the score got better by adding noise
-		double score = cost(x);
-
-		if (score < fx_candidate) {
-			x_next.set(x);
-			fx_candidate = score;
-		} else {
-			sameStateAsCost = false;
-		}
-		return fx_candidate;
 	}
 
 	/**
@@ -354,18 +324,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		}
 
 //		System.out.println(totalRetries+" ratio="+ratio+"   rate="+((fx_prev-fx_candidate)/stepLength));
-		// If the score got better then consider adding noise to the state
 		if( fx_candidate < fx_prev && ratio > 0 ) {
-			if( config.noise != null ) {
-				// Rate at which the score has decreased per distance
-				double rate = (fx_prev-fx_candidate)/stepLength;
-
-				// The hessian is probably bad at this point
-				// If the rate is slow then the score is getting better, but it might be stuck in a narrow path
-				if( rate < config.noise.thresholdReduction ) {
-					return Convergence.NOISE;
-				}
-			}
 			return Convergence.ACCEPT;
 		} else
 			return Convergence.REJECT;
@@ -526,8 +485,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	protected enum Convergence {
 		REJECT,
-		ACCEPT,
-		NOISE
+		ACCEPT
 	}
 
 	/**
@@ -540,12 +498,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	public void configure(ConfigTrustRegion config) {
 		this.config = config.copy();
-
-		if( config.noise != null ) {
-			rand = new Random(config.noise.seed);
-		} else {
-			rand = null;
-		}
 	}
 
 	public ConfigTrustRegion getConfig() {
