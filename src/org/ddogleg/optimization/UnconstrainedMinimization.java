@@ -68,6 +68,7 @@ public interface UnconstrainedMinimization extends IterativeOptimization {
 	 * @param gtol Absolute convergence test based on gradient. 0 disables test.  0 &le; gtol. Try 1e-12
 	 */
 	void initialize( double initial[] , double ftol , double gtol );
+	// TODO consider adding scaling vector
 
 	/**
 	 * After each iteration this function can be called to get the current best

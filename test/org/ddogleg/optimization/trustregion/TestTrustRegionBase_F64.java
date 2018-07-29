@@ -240,6 +240,11 @@ public class TestTrustRegionBase_F64 {
 		}
 
 		@Override
+		protected boolean checkConvergenceFTest(double fx, double fx_prev) {
+			return false;
+		}
+
+		@Override
 		protected double cost(DMatrixRMaj x) {
 			return 0;
 		}

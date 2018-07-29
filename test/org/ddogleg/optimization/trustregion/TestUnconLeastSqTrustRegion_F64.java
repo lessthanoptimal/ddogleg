@@ -42,4 +42,9 @@ public class TestUnconLeastSqTrustRegion_F64 {
 	public void costFunction() {
 		fail("Implement");
 	}
+
+	@Test
+	public void checkConvergenceFTest() {
+		fail("Implement");
+	}
 }

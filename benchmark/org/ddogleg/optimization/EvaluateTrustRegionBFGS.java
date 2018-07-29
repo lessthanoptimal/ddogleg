@@ -52,6 +52,8 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 
 		System.out.println("Powell              ----------------");
 		eval.powell();
+		System.out.println("Powell Singular     ----------------");
+		eval.powellSingular();
 		System.out.println("Helical Valley      ----------------");
 		eval.helicalValley();
 		System.out.println("Rosenbrock          ----------------");
@@ -64,7 +66,9 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 		eval.variably();
 		System.out.println("trigonometric       ----------------");
 		eval.trigonometric();
-		System.out.println("Bady Scaled Brown   ----------------");
+		System.out.println("Badly Scaled Brown  ----------------");
 		eval.badlyScaledBrown();
+		System.out.println("Badly Scaled Powell ----------------");
+		eval.badlyScalledPowell();
 	}
 }

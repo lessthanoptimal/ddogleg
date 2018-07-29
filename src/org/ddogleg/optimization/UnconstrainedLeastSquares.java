@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -82,6 +82,7 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 *             Try 1e-12
 	 */
 	void initialize( double initial[] , double ftol , double gtol );
+	// TODO consider adding scaling vector
 
 	/**
 	 * After each iteration this function can be called to get the current best

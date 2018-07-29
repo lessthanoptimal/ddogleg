@@ -261,7 +261,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			// in the first iteration, taking its solution, and setting the radius using that.
 			// If too small or too large the initial radius and kill performance and is very opaque
 			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
-			regionRadius = parameterUpdate.getStepLength()*1.1;
+			regionRadius = parameterUpdate.getStepLength();
 		} else {
 			parameterUpdate.computeUpdate(p, regionRadius);
 		}
@@ -348,23 +348,11 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 
 	/**
-	 * <p>Checks for convergence using f-test:</p>
-	 *
-	 * f-test : ftol &le; 1.0-f(x+p)/f(x)
+	 * <p>Checks for convergence using f-test. f-test is defined differently for different problems</p>
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
-		// something really bad has happened if this gets triggered before it thinks it converged
-		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
-			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
-
-		if( fx > fx_prev )
-			throw new RuntimeException("BUG! Shouldn't have gotten this far");
-
-		// f-test. avoid potential divide by zero errors
-		return config.ftol * fx_prev >= fx_prev - fx;
-	}
+	protected abstract boolean checkConvergenceFTest(double fx, double fx_prev );
 
 	/**
 	 * <p>Checks for convergence using f-test:</p>

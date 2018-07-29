@@ -18,9 +18,11 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
@@ -54,6 +56,26 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		this.functionJacobian = jacobian;
 	}
 
+	/**
+	 * <p>Checks for convergence using f-test:</p>
+	 *
+	 * f-test : ftol &le; || r(x+p) || infinity
+	 *
+	 * @return true if converged or false if it hasn't converged
+	 */
+	@Override
+	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
+		// something really bad has happened if this gets triggered before it thinks it converged
+		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
+			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
+
+		for (int i = 0; i < residuals.numRows; i++) {
+			if( Math.abs(residuals.data[i]) > config.ftol )
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
 		this.initialize(initial,functionResiduals.getNumOfInputsN(),0);
@@ -83,12 +105,6 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	protected double cost(DMatrixRMaj x) {
 		functionResiduals.process(x.data,residuals.data);
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
-	}
-
-	// TODO least-squares specific test here
-	@Override
-	protected boolean checkConvergenceFTest(double fx, double fx_prev) {
-		return super.checkConvergenceFTest(fx, fx_prev);
 	}
 
 	@Override

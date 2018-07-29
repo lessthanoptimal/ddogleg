@@ -164,4 +164,12 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	public NonlinearResults powell() {
 		return performTest(new EvalFuncPowell_DDRM());
 	}
+
+	public NonlinearResults powellSingular() {
+		return performTest(new EvalFuncPowellSingular_DDRM());
+	}
+
+	public NonlinearResults badlyScalledPowell() {
+		return performTest(new EvalFuncBadlyScaledPowell_DDRM());
+	}
 }

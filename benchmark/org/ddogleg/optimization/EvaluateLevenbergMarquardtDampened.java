@@ -33,7 +33,7 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 	double dampInit = 1e-3;
 
 	public EvaluateLevenbergMarquardtDampened(boolean verbose) {
-		super(verbose, false);
+		super(verbose, true);
 	}
 
 	@Override
@@ -55,6 +55,8 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 
 		System.out.println("Powell              ----------------");
 		eval.powell();
+		System.out.println("Powell Singular     ----------------");
+		eval.powellSingular();
 		System.out.println("Helical Valley      ----------------");
 		eval.helicalValley();
 		System.out.println("Rosenbrock          ----------------");
@@ -65,7 +67,9 @@ public class EvaluateLevenbergMarquardtDampened extends UnconstrainedLeastSquare
 		eval.variably();
 		System.out.println("trigonometric       ----------------");
 		eval.trigonometric();
-		System.out.println("Bady Scaled Brown   ----------------");
+		System.out.println("Badly Scaled Brown  ----------------");
 		eval.badlyScaledBrown();
+		System.out.println("Badly Scaled Powell ----------------");
+		eval.badlyScalledPowell();
 	}
 }

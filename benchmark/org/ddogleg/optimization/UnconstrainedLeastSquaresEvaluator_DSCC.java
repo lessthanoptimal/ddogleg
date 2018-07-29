@@ -25,10 +25,9 @@ import org.ejml.data.DMatrixSparseCSC;
  * @author Peter Abeles
  */
 public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
-		extends UnconstrainedLeastSquaresEvaluator<DMatrixSparseCSC>
-{
+		extends UnconstrainedLeastSquaresEvaluator<DMatrixSparseCSC> {
 	protected UnconstrainedLeastSquaresEvaluator_DSCC(boolean verbose, boolean printSummary) {
-		super(verbose,printSummary,false);
+		super(verbose, printSummary, false);
 	}
 
 	public NonlinearResults helicalValley() {
@@ -39,7 +38,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 		return performTest(new EvalFuncRosenbrock_DSCC());
 	}
 
-	public NonlinearResults rosenbrockMod( double lambda ) {
+	public NonlinearResults rosenbrockMod(double lambda) {
 		return performTest(new EvalFuncRosenbrockMod_DSCC(lambda));
 	}
 
@@ -50,11 +49,16 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 	public NonlinearResults trigonometric() {
 		return performTest(new EvalFuncTrigonometric<>(10));
 	}
+
 	public NonlinearResults badlyScaledBrown() {
 		return performTest(new EvalFuncBadlyScaledBrown_DSCC());
 	}
 
 	public NonlinearResults powell() {
 		return performTest(new EvalFuncPowell_DSCC());
+	}
+
+	public NonlinearResults badlyScalledPowell() {
+		return performTest(new EvalFuncBadlyScaledPowell_DSCC());
 	}
 }
