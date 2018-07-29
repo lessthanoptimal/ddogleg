@@ -8,7 +8,7 @@
 % draft mode.
 
 \documentclass[peerreview,onecolumn]{IEEEtran}
-\usepackage{cite} % Tidies up citation numbers.
+\usepackage[noadjust]{cite} % Tidies up citation numbers.
 \usepackage{url} % Provides better formatting of URLs.
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables for horizontal lines
 \usepackage{graphicx}
@@ -66,10 +66,11 @@ $g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
 $g_k$ & Short hand for $g(\bm{x}_k)$ \\
 $B(\bm{x})$ & Hessian matrix or an approximation \\ 
 $B_k$ & Short hand for $B(\bm{x}_k)$ \\
-$H(\bm{x})$ & Inverse Hessian matrix or an approximation \\ 
+$H(\bm{x})$ & Inverse\footnote{Using $B$ for the Hessian and $H$ for the inverse Hessian is odd, but has been standard practice since at least the 1980s.} Hessian matrix or an approximation \\ 
 $H_k$ & Short hand for $H(\bm{x}_k)$ \\
 positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all non-zero vectors $y$  \\
-$s.t.$ & subject to 
+$s.t.$ & subject to  \\
+MAX\_VALUE & The largest possible floating point value
 \end{tabular}
 \end{table}
 
@@ -77,31 +78,31 @@ This section provides overview of different numerical techniques provided in DDo
 \subsection{Linear Search}
 
 \subsection{Trust Region}
-Trust Region refers to a family of methods that operate by assuming a quadratic model can accurately represent the true function within a local "trust region". The size of the trust region is adjusted based on the performance of the quadratic model. A summary of the trust region can be found in Algorithm \ref{alg:trust_region}.
+Trust Region refers to a family of methods that operate by assuming a quadratic model can accurately represent the true function within a local "trust region". The size of the trust region is adjusted based on the performance of the quadratic model. A summary of the trust region can be found in Algorithm \ref{alg:trust_region}. The implementation found in DDogleg\footnote{The variant described in \cite{numopt2006,fletcher1987} was also considered but took significantly longer to converge in test problems.} is primarily based on the description found in \cite{IMM2004}.
 
 \begin{algorithm}{}
 \caption{\label{alg:trust_region}Trust Region}
 \begin{algorithmic}[1]
-	\State $k \gets 0$, $\Delta_0 \in (0,\Delta_{max})$, $\eta \in [0,\frac{1}{4})$
+	\State $k \gets 0$, $\Delta_0 \in (0,\Delta_{max})$
 	\State \quad $\Delta_{max}$ is the maximum trust region size
-	\State \quad $\Delta_{0}$ is the initial trust region size
-	\State \quad $\eta$ model acceptance threshold
+	\State \quad $\Delta_{0}$ is the initial trust region size. \Comment{Section \ref{section:init_region_size}}
 	\While{$k < k_{\mbox{max}}$ and not $done$}
-	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem}
-	\State $\nu \gets (f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k))/(m_k(\bm{0})-m_k(\bm{p}_k))$
-	\Comment{Model prediction accuracy ratio} 
-	\If{$\nu <\frac{1}{4}$} \Comment{Is the model poor?}
-		\State $\Delta_{k+1} \gets \frac{1}{4}\Delta_k$
+	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem} \Comment{Sections \ref{section:cauchy} and \ref{section:dogleg} }
+	\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
+	\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p}$ \Comment{Predicted reduction in score}
+	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score Ratio} 
+	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Fit score got worse or the model poor?}
+		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
 	\Else
-		\If{$\nu>\frac{3}{4}$ and $\norm{p_k}=\Delta_k$}
-			\Comment{Is the model good and did it hit the edge of the trust region?}
-			\State $\Delta_{k+1} \gets \mbox{min}(2\Delta_k,\Delta_{\mbox{max}})$
+		\If{$\nu>\frac{3}{4}$}
+			\Comment{See if it should increase the region size}
+			\State $\Delta_{k+1} \gets \mbox{min}(\mbox{max}(3\norm{p_k},\Delta_k),\Delta_{\mbox{max}})$
 		\Else
 			\State $\Delta_{k+1} \gets \Delta_k$
 		\EndIf
 	\EndIf
-	\If{$\nu > \eta$} \Comment{Trust the solution?}
-		\State $x_{k+1} \gets x_k + p_k$
+	\If{$\delta_f > 0$ and $\nu > 0$} \Comment{Is the solution acceptable?}
+		\State $x_{k+1} \gets x_k + p_k$ \Comment{Update the state}
 		\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
 	\Else
 		\State $x_{k+1} \gets x_k$
@@ -125,11 +126,68 @@ where $B$ is a symmetric matrix and is the Hessian or an approximation of the He
 \label{eq:TR_unconstrained_solution}
 \end{equation}
 
-Another important issue is scaling. BLAH BLAH BLAH BLAH
-
 There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
 
-\subsection{Trust Region: Cauchy Point} 
+\subsection{Trust Region: Scaling and Elliptical Trust Regions} 
+
+Correctly scaled variables is critical to high performance, especially for large scale problems. When variable are correctly scaled their values will on average have the same order of magnitude. Mixing very large (e.g. 1e8) with very small (e.g. 1e-12) numbers causes significant round off errors.
+
+Scale adjustment is typically implemented using a diagonal matrix $\bm{D}$ with positive elements. This matrix is then applied to $p$ to created its scaled version $\tilde{p} = \bm{D}p$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
+\begin{equation}
+\begin{array}{lr}
+\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{\bm{D}p} \le \Delta_k
+\end{array}
+\end{equation}
+As suggested in \cite{numopt2006} this is implemented internally by substituting $\tilde{p}$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$. 
+
+When considering scaling you should also be aware that scaling will change the steepest descent direction but not the solution to the Newton problem \cite{dennis1996}. In effect it changes the emphansis that it places on variables when trying to minimize them.
+
+DDogleg offers the following options:
+\begin{enumerate}
+\item Apply no scaling
+\item Automatically select a scaling from the Hessian at every iteration
+\item User specifies a fixed scaling
+\end{enumerate}
+
+Automatic scaling is typically found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$ found in the Hessian's diagonal elements. The specific formula used in DDogleg is as follows
+\begin{equation}
+D_k^{ii} = \max( d_{\bigtriangledown},\min( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} ))
+\end{equation}
+where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtriangleup}$ is the maximum. This approach can handle negative definite $B_k$ and has the desirable property \cite{dennis1996} that the diagonal elements in $\tilde{B}_k = D^{-1}B_k D^{-1}$ will typically be $\tilde{B}_k^{ii} \approx 1$, unless clamped or $B_k^{ii}$ is zero. Matrices with this property are properly scaled can be decomposed with minimal numerical issues. When configured to automatically scale DDogleg will update its scaling at every iteration. This is mostly unnecissary but it's also not very expensive.
+
+There are two primary ways for the user to specify their own scaling. 1) They can pre-scale the data and adjust their forumlas. 2) They can provide a scaling vector which contains the diagonal elements in $D$. The former is arguably the best way while the later is easier. If the former is done then automatic scaling can still be applied, ensuring that the Hessian matrix is well suited for decomposition. A third option, for advanced users, is to override a class in DDogleg and change the scaling to any arbitrary function you wish.
+
+Recommended Strategy for Scaling:
+\begin{enumerate}
+\item Try without scaling. If this works stop.
+\item Double check your math. If an error is found start again.
+\item Try with automatic scaling. If this works stop.
+\item Try try tuning $d_{\bigtriangledown}$ and $d_{\bigtriangleup}$ more. If this works stop.
+\item Scale the problem prior to passing it to DDogleg. If this works stop.
+\item Double check your math. If an error is found start again.
+\item Turn on automatic scaling and see if things improve. If this works stop.
+\item Accept your fate, read the literature, checkout DDogleg's source code, and start trying to understand why it's failing by stepping through the code line by line when your program runs.
+\end{enumerate}
+
+\subsection{Trust Region: Initial Region Size} 
+\label{section:init_region_size}
+
+Selection of the initial trust region size is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004}. In those references it's simply a tuning parameter that the user is supposed to select. In practice people arbitrarily select values such as one.
+
+Since the trust region size is dynamically adjusted, Trust Region algorithms are somewhat invariant to poor selection of the initial size. However, there are stituations where a poorly chosen initial value can cause poor performance. One observed failure mode is with the Dogleg method. If the initial value is too small it will default to using the Cauchy Point. The Cauchy Point can lead it down a poor path and cause it to get stuck in a local minimum. Setting to a large of an initial value is also problematic. First it's not clear what would a large value is for all problems and setting it to a value which is too large can take numerious iterations to fix.
+
+To overcome this difficulty, by default, DDogleg will use an automatic algorithm for selecting the initial region size, summarized below:
+\begin{algorithm}{}
+\caption{\label{alg:initial_region}Automatic Initial Region Size}
+\begin{algorithmic}[1]
+	\State Select $p_0$ with a region size of \textit{MAX\_VALUE}
+	\State $\Delta_0 \gets \norm{p_0}$ 
+\end{algorithmic}
+\end{algorithm}
+Based on test problems included with DDogleg this simple automatic approach results in fewer convergence issues than selecting the initial region value to fixed sizes such as 1 or 100. In DDogleg initial region sizes can also be manually specified.
+
+\subsection{Trust Region: Cauchy Point}
+\label{section:cauchy} 
 
 The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, points in the direction of vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms
 \begin{equation}
@@ -173,7 +231,8 @@ p^s_k &=& -\tau_k \Delta_k \bar{g}_k
 where $f_{min}$ is the minimum possible value of $f_k$. Set $f_{min}$ to -MAX\_VALUE if not known.
 
 
-\subsection{Trust Region: Dogleg} 
+\subsection{Trust Region: Dogleg}
+\label{section:dogleg}  
 
 Dogleg improves upon the Cauchy Point by finding a more accurate approximate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). Care has been taken to avoid numerical overflow in the equations below, which is why they are not identical to \cite{numopt2006,IMM2004}.
 \begin{eqnarray}
@@ -244,7 +303,7 @@ G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
 \end{tabular}
 \end{center}
  
-\subsection{Hessian} 
+\subsection{Hessian Approximation} 
 
 Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP to estimate the Hessian and BFGS to estimate the inverse hessian. See \cite{fletcher1987,numopt2006} for a discussion of these methods.
 
@@ -262,8 +321,10 @@ DDogleg does not explictly provide support for using an exact Hessian. If you wi
 \subsection{Trust Region}
 
 \begin{itemize}
-	\item The Hessian is approximated using DFP and initialized with an identity matrix. 
-	\item DDogleg avoids $O(N^3)$ matrix inverse by computing the inverse hessian with $O(N^2)$ BFGS
+	\item The Hessian is approximated using DFP amd BFGS and initialized with an identity matrix. 
+	\item The Hessian is only updated when the Wolfe condition is meet
+	\item Dogleg-BFGS avoids $O(N^3)$ matrix inverse by computing the inverse hessian directly with BFGS in $O(N^2)$
+	\item The Hessian is only updated
 \end{itemize}
 
 \section{Unconstrained Least-Squares}
@@ -336,7 +397,7 @@ J_k &=& J(\bm{x}+\bm{p}) \\
 
 \subsection{Shur Complement}
 
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{mybib}
 
 
