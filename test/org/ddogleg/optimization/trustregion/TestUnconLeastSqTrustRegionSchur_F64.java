@@ -23,22 +23,31 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Specific configurations on this class are tested inside of the TrustRegionUpdate implementations
- *
  * @author Peter Abeles
  */
-public class TestUnconMinTrustRegionBFGS_F64  {
+public class TestUnconLeastSqTrustRegionSchur_F64 {
+	@Test
+	public void cost() {
+		fail("Implement");
+	}
+
+	@Test
+	public void functionGradientHessian() {
+		fail("Implement");
+	}
 
 	@Test
 	public void checkConvergenceFTest() {
 		fail("Implement");
 	}
 
-	/**
-	 * Makes sure BFGS is called correctly
-	 */
 	@Test
-	public void invokedBFGS() {
+	public void scaling() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computePredictedReduction() {
 		fail("Implement");
 	}
 }

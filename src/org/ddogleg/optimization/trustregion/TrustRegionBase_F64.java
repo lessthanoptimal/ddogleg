@@ -22,7 +22,6 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
@@ -56,7 +55,7 @@ import static java.lang.Math.*;
 public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	// Technique used to compute the change in parameters
-	private ParameterUpdate<S> parameterUpdate;
+	protected ParameterUpdate<S> parameterUpdate;
 
 	// Math for some matrix operations
 	protected MatrixMath<S> math;
@@ -109,11 +108,14 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// Random number generate for when noise is added to the state estimate
 	Random rand;
 
-	public TrustRegionBase_F64(ParameterUpdate parameterUpdate, MatrixMath<S> math ) {
+	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math ) {
+		this();
 		this.parameterUpdate = parameterUpdate;
 		this.math = math;
 		this.hessian = math.createMatrix();
+	}
 
+	protected TrustRegionBase_F64() {
 		// so that the RNG gets set up correctly
 		configure(config);
 	}
@@ -127,9 +129,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	public void initialize(double initial[] , int numberOfParameters , double minimumFunctionValue ) {
 		this.numberOfParameters = numberOfParameters;
-
-		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
-		math.setIdentity(hessian);
 
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
@@ -225,12 +224,19 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected void computeScaling() {
 		math.extractDiag(hessian,scaling.data);
+		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
+	}
 
+	/**
+	 * Applies the standard formula for computing scaling. This is broken off into its own
+	 * function so that it easily invoked if the function above is overriden
+	 */
+	public void computeScaling( DMatrixRMaj scaling , double minimum , double maximum ) {
 		for (int i = 0; i < scaling.numRows; i++) {
 			// mathematically it should never be negative but...
 			double scale = sqrt(abs(scaling.data[i]));
 			// clamp the scale factor
-			scaling.data[i] = min(config.scalingMaximum, max(config.scalingMinimum, scale));
+			scaling.data[i] = min(maximum, max(minimum, scale));
 		}
 	}
 
@@ -384,6 +390,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	/**
 	 * Computes predicted reduction for step 'p'
+	 *
 	 * @param p Change in state or the step
 	 * @return predicted reduction in quadratic model
 	 */

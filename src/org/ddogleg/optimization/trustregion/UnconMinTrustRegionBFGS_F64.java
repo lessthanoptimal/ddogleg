@@ -63,7 +63,6 @@ public class UnconMinTrustRegionBFGS_F64
 
 	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
 		super(parameterUpdate, new TrustRegionMath_DDRM());
-
 	}
 
 	@Override
@@ -114,6 +113,7 @@ public class UnconMinTrustRegionBFGS_F64
 		x.reshape(numberOfParameters,1);
 
 		// Set the hessian to identity. There are other potentially better methods
+		hessian.reshape(numberOfParameters,numberOfParameters);
 		math.setIdentity(hessian);
 
 		if( computeInverse ) {

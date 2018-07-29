@@ -16,29 +16,38 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.trustregion;
+package org.ddogleg.optimization.impl;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Specific configurations on this class are tested inside of the TrustRegionUpdate implementations
- *
  * @author Peter Abeles
  */
-public class TestUnconMinTrustRegionBFGS_F64  {
-
+public class TestSchurComplementMath {
 	@Test
-	public void checkConvergenceFTest() {
+	public void computeGradient() {
 		fail("Implement");
 	}
 
-	/**
-	 * Makes sure BFGS is called correctly
-	 */
 	@Test
-	public void invokedBFGS() {
+	public void extractHessianDiagonal() {
+		fail("Implement");
+	}
+
+	@Test
+	public void applyInvScalingToBlocks() {
+		fail("Implement");
+	}
+
+	@Test
+	public void innerProductHessian() {
+		fail("Implement");
+	}
+
+	@Test
+	public void computeStep() {
 		fail("Implement");
 	}
 }
