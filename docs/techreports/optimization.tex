@@ -25,7 +25,7 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \hyphenation{op-tical net-works} % Corrects some bad hyphenation 
 
-
+\newenvironment{enumargin}[1]{\begin{enumerate}[leftmargin=#1\textwidth , rightmargin=#1\textwidth]}{\end{enumerate}}
 
 \begin{document}
 %\begin{titlepage}
@@ -142,16 +142,14 @@ There are a few different ways in which the scale of variables can be adjusted. 
 \end{equation}
 As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $\tilde{p}$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
 
+
+
 DDogleg offers the following options:
-\begin{center}
-\begin{minipage}[c]{0.7\textwidth}
-\begin{enumerate}
+\begin{enumargin}{0.2}
 \item Apply no scaling
 \item Automatically select $\bm{D}$ from the Hessian at every iteration
 \item User specifies a fixed $\bm{D}$ 
-\end{enumerate}
-\end{minipage}
-\end{center}
+\end{enumargin}
 Automatic scaling parameters are typically found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
 \begin{equation}
 D_k^{ii} = \max\left( d_{\bigtriangledown},\min\left( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} \right)\right)
@@ -161,9 +159,7 @@ where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtr
 There are two primary ways for the user to specify their own scaling in DDogleg. 1) They can pre-scale the data and adjust their forumlas. 2) They can provide a scaling vector which contains the diagonal elements in $D$. The former is arguably the best way while the later is easier. If the former is done then automatic scaling can still be applied, ensuring that the Hessian matrix is well suited for decomposition. A third option, for advanced users, is to override a class in DDogleg and change the scaling to any arbitrary function you wish.
 
 Most of the literature recommends always properly scaling. In practice people only do so after not converging to a correct solution. Applying automatic scaling does not always improve performance. It can even cause the search to get stuck in a local minimum by changing the trajectory. We suggest the following steps when trying to determine if scaling issues are causing the search to fail:
-\begin{center}
-\begin{minipage}[c]{0.7\textwidth}
-\begin{enumerate}
+\begin{enumargin}{0.2}
 \item Try without scaling. If this works stop.
 \item Double check your math. If an error is found start again.
 \item Try with automatic scaling. If this works stop.
@@ -174,9 +170,7 @@ Most of the literature recommends always properly scaling. In practice people on
 \item Accept your fate, read the literature, step through the code line by line in a debugger.
 \item Submit a scathing bug report
 \item Find the type-o in your math
-\end{enumerate}
-\end{minipage}
-\end{center}
+\end{enumargin}
 
 \subsection{Trust Region: Initial Region Size} 
 \label{section:init_region_size}
@@ -260,6 +254,17 @@ p^{dog}_k &=&
 \end{eqnarray}
 where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the Cauchy Point algorithm is used instead.
 
+\begin{algorithm}{}
+\caption{\label{alg:dogleg_step}Selection of Dogleg Step}
+\begin{algorithmic}[1]
+	\State Write this algorithm out
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Schur Complement}
+
+Put something here.
+
 \section{Unconstrained Minimization}
 
 \begin{table}[h]
@@ -318,7 +323,7 @@ G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
  
 \subsection{Hessian Approximation} 
 
-Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP to estimate the Hessian and BFGS to estimate the inverse hessian. See \cite{fletcher1987,numopt2006} for a discussion of these methods.
+Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP \cite{davidonDFP} to estimate the Hessian and BFGS (Broyden-Fletcher-Goldfarb-Shanno) \cite{fletcher1987,numopt2006}\footnote{A quick search failed to assertain the first paper that fully described BFGS. What appears to be a precursor is discussed in \cite{fletcher1987} and \cite{numopt2006} fully describes the method but provides no citations.} to estimate the inverse hessian.
 
 \begin{flalign}
 \text{DFP} && \bm{B}_{k+1} &= (I- \rho_k \gamma_k s_k^T) \bm{B}_k (I - \rho_k s_k \gamma_k^T) + \rho_k \gamma_k \gamma_k^T && \\
@@ -329,16 +334,23 @@ Unconstrianed minimization techniques need a way to estimate the Hessian. Exact 
 \end{equation*}
 where $H_k = B_k^{-1}$, $s_k = x_{k+1}-x_k$, and $y_k = \nabla f_{k+1} - \nabla f_k$.
 
-DDogleg does not explictly provide support for using an exact Hessian. If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, copy that class, and substitute the exact Hessian for the approximate Hessian. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
+DDogleg does not explictly provide support for using an exact Hessian. If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, extend that class, and override the function where the Hessian is estimated. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
 
 \subsection{Trust Region}
 
-\begin{itemize}
-	\item The Hessian is approximated using DFP amd BFGS and initialized with an identity matrix. 
+Implementation Details:
+\begin{enumargin}{0.2}
+    \item The Hessian is initialized with an identity matrix. 
+	\item The Hessian and inverse is iteratively approximated using DFP and BFGS.
 	\item The Hessian is only updated when the Wolfe condition is meet
-	\item Dogleg-BFGS avoids $O(N^3)$ matrix inverse by computing the inverse hessian directly with BFGS in $O(N^2)$
-	\item The Hessian is only updated
-\end{itemize}
+	\item Dogleg-BFGS avoids $O(N^3)$ matrix decomposition by computing the inverse Hessian directly with BFGS in $O(N^2)$ time.
+\end{enumargin}
+
+Future Work:
+\begin{enumargin}{0.2}
+	\item Remove the need to compute $B_k$ and $H_k$ by directly computing the Cholesky factors of $B_k$. 
+	\item \cite{numopt2006} recommends against skipping updates to the Hessian when Wolfe is not meet and suggests using a damped BFGS instead.
+\end{enumargin}
 
 \section{Unconstrained Least-Squares}
 \begin{table*}[h]
