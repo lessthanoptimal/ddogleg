@@ -41,8 +41,7 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 //		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64());
 //		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
 //				new TrustRegionUpdateDogleg_F64(LinearSolverFactory_DDRM.chol(1)));
-		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
-				new TrustRegionUpdateDoglegBFGS_F64());
+		UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64( new TrustRegionUpdateDoglegBFGS_F64());
 		tr.configure(config);
 		return tr;
 	}

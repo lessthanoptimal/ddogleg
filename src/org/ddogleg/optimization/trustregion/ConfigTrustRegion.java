@@ -26,7 +26,7 @@ package org.ddogleg.optimization.trustregion;
 public class ConfigTrustRegion {
 	/**
 	 * Initial size of the trust region. If a negative value is set attempt is made to automatically determine
-	 * a good initial size. If a positive number then that's the initial region size. 1 is often a reasonable initial
+	 * a good initial size. If a positive number then that's the initial region size. 100 is often a reasonable initial
 	 * value for the region size.
 	 */
 	public double regionInitial = -1;

@@ -27,6 +27,7 @@ import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.junit.jupiter.api.Nested;
@@ -89,7 +90,8 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
 		owner.gradientNorm = 1000;
 		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
+		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
 		alg.computeUpdate(p,radius);
 		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
 		assertEquals(radius, alg.getStepLength(), UtilEjml.TEST_F64);
@@ -98,12 +100,11 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		// should be inside the bounds
 		owner.gradientNorm = 0.1;
 		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
 		alg.computeUpdate(p,radius);
 		double n = NormOps_DDRM.normF(p);
 		assertTrue(n > 0 && n < radius);
 
-		double expectedRadius = Math.pow(owner.gradientNorm,3)/alg.gBg;
+		double expectedRadius = owner.gradientNorm/alg.gBg;
 		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
 		assertEquals(expectedRadius, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(expectedRadius, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
@@ -122,10 +123,10 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		alg.initialize(owner,2,-1);
 		owner.gradientNorm = 0.1;
 		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
 		owner.hessian.set(new double[][]{{-2,0.1},{0.1,-1.5}});
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
-
 
 		// should hit the boundary
 		owner.fx = 1000;

@@ -58,7 +58,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	protected LinearSolver<S,DMatrixRMaj> solver;
 
 	// Gradient's direction
-//	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
+	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
 	protected double gBg;
 
@@ -99,7 +99,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
-//		direction.reshape(numberOfParameters,1);
+		direction.reshape(numberOfParameters,1);
 		stepGN.reshape(numberOfParameters,1);
 		stepCauchy.reshape(numberOfParameters,1);
 		tmp0 = owner.math.createMatrix();
@@ -108,8 +108,8 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	@Override
 	public void initializeUpdate() {
 		// Scale the gradient vector to make it less likely to overflow/underflow
-//		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
-		gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
+		gBg = owner.math.innerProduct(direction,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
@@ -118,7 +118,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( gBg > 0 && solveGaussNewtonPoint(stepGN) ) {
 			positiveDefinite = true;
 			// length of the Cauchy step when computed without constraints
-			distanceCauchy = owner.gradientNorm*(owner.gradientNorm*owner.gradientNorm/gBg);
+			distanceCauchy = owner.gradientNorm/gBg;
 			// p_gn = -inv(B)*g
 			CommonOps_DDRM.scale(-1, stepGN);
 			distanceGN = NormOps_DDRM.normF(stepGN);
@@ -156,9 +156,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( positiveDefinite ) {
 			//  If the GN solution is inside the trust region it should use that solution
 			if( distanceGN <= regionRadius ) {
-				step.set(stepGN);
-				predictedReduction = owner.computePredictedReduction(stepGN);
-				stepLength = distanceGN;
+				gaussNewtonStep(step);
 			} else if( distanceCauchy >= regionRadius ) {
 				// if the trust region comes before the Cauchy point then perform the cauchy step
 				cauchyStep(regionRadius, step);
@@ -170,10 +168,15 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		} else {
 			// Cauchy step for negative semi-definite systems
 			stepLength = Math.min(regionRadius, Math.max(0,(owner.fx-minimumFunctionValue)) );
-			CommonOps_DDRM.scale(-stepLength/owner.gradientNorm, owner.gradient,step);
-			double f = stepLength/owner.gradientNorm;
-			predictedReduction = stepLength*owner.gradientNorm - 0.5*f*f*gBg;
+			CommonOps_DDRM.scale(-stepLength, direction,step);
+			predictedReduction = stepLength*owner.gradientNorm - 0.5*stepLength*stepLength*gBg;
 		}
+	}
+
+	protected void gaussNewtonStep(DMatrixRMaj step) {
+		step.set(stepGN);
+		predictedReduction = owner.computePredictedReduction(stepGN);
+		stepLength = distanceGN;
 	}
 
 	@Override
@@ -193,16 +196,14 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	 */
 	protected void cauchyStep(double regionRadius, DMatrixRMaj step) {
 
-		double gn = owner.gradientNorm;
-		double dist = regionRadius/gn;
-		CommonOps_DDRM.scale(-dist, owner.gradient, step);
+		CommonOps_DDRM.scale(-regionRadius, direction, step);
 		stepLength = regionRadius; // it touches the trust region
-		predictedReduction = dist*gn*gn - 0.5*dist*dist*gBg;
+		predictedReduction = regionRadius*(owner.gradientNorm - 0.5*regionRadius*gBg);
 	}
 
 	protected void combinedStep(double regionRadius, DMatrixRMaj step) {
 		// find the Cauchy point
-		CommonOps_DDRM.scale(-distanceCauchy/owner.gradientNorm, owner.gradient, stepCauchy);
+		CommonOps_DDRM.scale(-distanceCauchy, direction, stepCauchy);
 		stepLength = regionRadius; // touches the trust region
 
 		double distancePtoGN = SpecializedOps_DDRM.diffNormF(stepCauchy,stepGN);

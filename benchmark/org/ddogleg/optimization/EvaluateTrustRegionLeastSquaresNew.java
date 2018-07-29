@@ -45,7 +45,7 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 		solver = new LinearSolverSafe<>(solver);
 //		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(solver);
 		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDoglegLS_F64<>(solver);
-//		TrustRegionUpdateCauchy_F64<DMatrixRMaj alg = new TrustRegionUpdateCauchy_F64<>();
+//		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
 
 		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
 				alg, new TrustRegionMath_DDRM());

@@ -45,7 +45,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	private double minimumFunctionValue;
 
 	// direction of the gradient
-//	DMatrixRMaj direction = new DMatrixRMaj(1,1);
+	DMatrixRMaj direction = new DMatrixRMaj(1,1);
 	// g'*B*g
 	double gBg;
 
@@ -59,15 +59,14 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
-
-//		direction.reshape(numberOfParameters,1);
+		direction.reshape(numberOfParameters,1);
 	}
 
 	@Override
 	public void initializeUpdate() {
 		// use the direction instead of gradient for reduced overflow/underflow issues
-//		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
-		gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
+		gBg = owner.math.innerProduct(direction,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
@@ -80,17 +79,16 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 		if( gBg <= 0 ) {
 			// always decreasing so take the largest possible step to the region's boundary
 			// At the same time don't try to jump past the smallest possible value for the function
-			stepLength = Math.min(regionRadius, Math.max(0,(owner.fx-minimumFunctionValue)));
+			stepLength = Math.min(regionRadius, Math.max(0,owner.fx-minimumFunctionValue));
 		} else {
 			// find the distance of the minimum point
-			stepLength = Math.min(regionRadius,gnorm*(gnorm*gnorm/gBg));
+			stepLength = Math.min(regionRadius,gnorm/gBg);
 		}
 
-		double gscale = stepLength/owner.gradientNorm;
-		CommonOps_DDRM.scale(-gscale,owner.gradient,step);
+		CommonOps_DDRM.scale(-stepLength,direction,step);
 
 		// compute predicted reduction
-		predictedReduction = stepLength*owner.gradientNorm - 0.5*gscale*gscale*gBg;
+		predictedReduction = stepLength*(owner.gradientNorm - 0.5*stepLength*gBg);
 
 	}
 

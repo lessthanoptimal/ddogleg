@@ -27,6 +27,7 @@ import org.ejml.LinearSolverSafe;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -79,8 +80,9 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		double radius = 2;
 		setGradient(alg.owner.gradient,-1,0,1000);
 		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
 		owner.hessian.set(new double[][]{{-2,0.1},{0.1,-1.5}});
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
 		alg.positiveDefinite = false;
 		alg.owner.fx = 1000;
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
@@ -112,7 +114,8 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		// have Gn and cauchy lie along a line so the math is easy
 		owner.gradientNorm = 2.1;
 		setGradient(alg.owner.gradient,-1,0,owner.gradientNorm);
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
+		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
 		alg.positiveDefinite = true;
 		alg.distanceGN = 5;
 		alg.distanceCauchy = 3;
@@ -137,9 +140,10 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		// have Gn and cauchy lie along a line so the math is easy
 		double radius = 2;
 		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
-		setGradient(alg.owner.gradient,-1,0,1.5);
-		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		alg.owner.gradientNorm = 1.5;
+		setGradient(alg.owner.gradient,-1,0,alg.owner.gradientNorm);
+		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
+		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
 		alg.positiveDefinite = true;
 		alg.stepGN.set(new double[][]{{5},{0}});
 		alg.distanceGN = 5;
@@ -264,9 +268,6 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
-//			config.regionMinimum = 0.0001;
 			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
 			solver = new LinearSolverSafe<>(solver);
 			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
