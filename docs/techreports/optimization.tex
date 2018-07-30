@@ -7,7 +7,8 @@
 % should be used if it is desired that the figures are to be displayed in
 % draft mode.
 
-\documentclass[peerreview,onecolumn]{IEEEtran}
+% \documentclass[peerreview,onecolumn]{IEEEtran}
+\documentclass[peerreview,compsoc,onecolumn]{IEEEtran} 
 \usepackage[noadjust]{cite} % Tidies up citation numbers.
 \usepackage{url} % Provides better formatting of URLs.
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables for horizontal lines
@@ -20,19 +21,21 @@
 \usepackage{algorithm}
 \usepackage{enumitem}
 \usepackage{tabularx}
+\usepackage{fancyhdr}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-\hyphenation{op-tical net-works} % Corrects some bad hyphenation 
 
 \newenvironment{enumargin}[1]{\begin{enumerate}[leftmargin=#1\textwidth , rightmargin=#1\textwidth]}{\end{enumerate}}
+
+\pagestyle{fancy}
+\fancyhead[LE,RO]{\small DDogleg Technical Report: Nonlinear Optimization}
 
 \begin{document}
 %\begin{titlepage}
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{DDogleg Technical Report: Nonlinear Optimization\\{\Large Version 1}}
-
+\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Version 2018-1}}
 
 % author names and affiliations
 
@@ -66,7 +69,7 @@ $g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
 $g_k$ & Short hand for $g(\bm{x}_k)$ \\
 $B(\bm{x})$ & Hessian matrix or an approximation \\ 
 $B_k$ & Short hand for $B(\bm{x}_k)$ \\
-$H(\bm{x})$ & Inverse\footnote{Using $B$ for the Hessian and $H$ for the inverse Hessian is odd, but has been standard practice since at least the 1980s.} Hessian matrix or an approximation \\ 
+$H(\bm{x})$ & Inverse Hessian matrix or an approximation \\ 
 $H_k$ & Short hand for $H(\bm{x}_k)$ \\
 positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all non-zero vectors $y$  \\
 $s.t.$ & subject to  \\
@@ -90,12 +93,12 @@ Trust Region refers to a family of methods that operate by assuming a quadratic 
 	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem} \Comment{Sections \ref{section:cauchy} and \ref{section:dogleg} }
 	\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
 	\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p}$ \Comment{Predicted reduction in score}
-	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score Ratio} 
-	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Fit score got worse or the model poor?}
+	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
+	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Score got worse or the model poor?}
 		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
 	\Else
 		\If{$\nu>\frac{3}{4}$}
-			\Comment{See if it should increase the region size}
+			\Comment{The model is good. Increase the region size?}
 			\State $\Delta_{k+1} \gets \mbox{min}(\mbox{max}(3\norm{p_k},\Delta_k),\Delta_{\mbox{max}})$
 		\Else
 			\State $\Delta_{k+1} \gets \Delta_k$
@@ -128,7 +131,7 @@ where $B$ is a symmetric matrix and is the Hessian or an approximation of the He
 
 There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
 
-\subsection{Trust Region: Scaling and Elliptical Trust Regions} 
+\subsubsection{Scaling and Elliptical Trust Regions} 
 
 Correct scaling of variables in $x$ is critical for achieving high accuracy, especially for problem with a large number of parameters. When variable are correctly scaled their values will on average have the same order of magnitude. Mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers causes significant round off errors. 
 
@@ -142,9 +145,7 @@ There are a few different ways in which the scale of variables can be adjusted. 
 \end{equation}
 As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $\tilde{p}$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
 
-
-
-DDogleg offers the following options:
+DDogleg offers the following options for scaling:
 \begin{enumargin}{0.2}
 \item Apply no scaling
 \item Automatically select $\bm{D}$ from the Hessian at every iteration
@@ -172,7 +173,7 @@ Most of the literature recommends always properly scaling. In practice people on
 \item Find the type-o in your math
 \end{enumargin}
 
-\subsection{Trust Region: Initial Region Size} 
+\subsubsection{Initial Region Size} 
 \label{section:init_region_size}
 
 Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. Trust region size is dynamically adjusted at each iteration making the initial size selection less critical. 
@@ -191,7 +192,7 @@ To overcome these difficulties, by default, DDogleg will use an automatic algori
 \end{algorithm}
 Based on test problems included with DDogleg, this simple automatic approach results in fewer convergence issues than using a default value such as 1 or 100. In DDogleg initial region sizes can also be manually specified.
 
-\subsection{Trust Region: Cauchy Point}
+\subsubsection{Cauchy Point}
 \label{section:cauchy} 
 
 The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, pointing in along the direction of unit vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms:
@@ -238,7 +239,7 @@ m_k(\bm{0})-m_k(\bm{p}_k) = \tau_k\left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_
 \end{equation}
 
 
-\subsection{Trust Region: Dogleg}
+\subsubsection{Dogleg}
 \label{section:dogleg}  
 
 Dogleg improves upon the Cauchy Point by considering second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). As with equations from Cauchy Point, these equations have been reforumated to avoid powers of three and are not identical to \cite{numopt2006,IMM2004}.
