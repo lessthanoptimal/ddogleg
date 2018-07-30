@@ -50,44 +50,22 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public void divideRows(double[] scaling, DMatrixRMaj A) {
-		int index = 0;
-		for (int row = 0; row < A.numRows; row++) {
-			double v = scaling[row];
-			for (int col = 0; col < A.numCols; col++) {
-				A.data[index++] /= v;
-			}
-		}
+		CommonOps_DDRM.divideRows(scaling,A);
 	}
 
 	@Override
 	public void divideColumns(double[] scaling, DMatrixRMaj A) {
-		int index = 0;
-		for (int row = 0; row < A.numRows; row++) {
-			for (int col = 0; col < A.numCols; col++) {
-				A.data[index++] /= scaling[col];
-			}
-		}
+		CommonOps_DDRM.divideCols(A,scaling);
 	}
 
 	@Override
 	public void scaleRows(double[] scaling, DMatrixRMaj A) {
-		int index = 0;
-		for (int row = 0; row < A.numRows; row++) {
-			double v = scaling[row];
-			for (int col = 0; col < A.numCols; col++) {
-				A.data[index++] *= v;
-			}
-		}
+		CommonOps_DDRM.multRows(scaling,A);
 	}
 
 	@Override
 	public void scaleColumns(double[] scaling, DMatrixRMaj A) {
-		int index = 0;
-		for (int row = 0; row < A.numRows; row++) {
-			for (int col = 0; col < A.numCols; col++) {
-				A.data[index++] *= scaling[col];
-			}
-		}
+		CommonOps_DDRM.multCols(A,scaling);
 	}
 
 	@Override

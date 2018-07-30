@@ -56,22 +56,22 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public void divideRows(double[] scaling, DMatrixSparseCSC A) {
-		CommonOps_DSCC.rowDiv(A,scaling);
+		CommonOps_DSCC.divideRows(scaling,0,A);
 	}
 
 	@Override
 	public void divideColumns(double[] scaling, DMatrixSparseCSC A) {
-		CommonOps_DSCC.columnDiv(A,scaling);
+		CommonOps_DSCC.divideColumns(A,scaling,0);
 	}
 
 	@Override
 	public void scaleRows(double[] scaling, DMatrixSparseCSC A) {
-		CommonOps_DSCC.rowMult(A,scaling);
+		CommonOps_DSCC.multRows(scaling,0,A);
 	}
 
 	@Override
 	public void scaleColumns(double[] scaling, DMatrixSparseCSC A) {
-		CommonOps_DSCC.columnMult(A,scaling);
+		CommonOps_DSCC.multColumns(A,scaling,0);
 	}
 
 	@Override

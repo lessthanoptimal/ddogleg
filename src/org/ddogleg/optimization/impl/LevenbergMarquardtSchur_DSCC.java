@@ -126,8 +126,8 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		if( scaleColumns ) {
 			CommonOps_DSCC.columnMaxAbs(jacLeft, scaleLeft.data);
 			CommonOps_DSCC.columnMaxAbs(jacRight, scaleRight.data);
-			CommonOps_DSCC.columnDiv(jacLeft, scaleLeft.data);
-			CommonOps_DSCC.columnDiv(jacRight, scaleRight.data);
+			CommonOps_DSCC.divideColumns(jacLeft, scaleLeft.data,0);
+			CommonOps_DSCC.divideColumns(jacRight, scaleRight.data,0);
 		}
 		// Compute the Hessian in blocks
 		A.reshape(jacLeft.numCols,jacLeft.numCols,1);
@@ -151,8 +151,8 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 		if( scaleColumns ) {
 			// NOTE: This should really be done to residuals before multiplication
-			CommonOps_DDRM.rowMult(x1, scaleLeft.data);
-			CommonOps_DDRM.rowMult(x2, scaleRight.data);
+			CommonOps_DDRM.multRows( scaleLeft.data, x1);
+			CommonOps_DDRM.multRows( scaleRight.data, x2);
 		}
 		CommonOps_DDRM.insert(x1,gradient,0,0);
 		CommonOps_DDRM.insert(x2,gradient,x1.numRows,0);
@@ -191,8 +191,8 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 		CommonOps_DDRM.extract(Y,A.numCols,Y.numRows,0,Y.numCols, b2);
 
 		if( scaleColumns ) {
-			CommonOps_DDRM.rowDiv(b1, scaleLeft.data);
-			CommonOps_DDRM.rowDiv(b2, scaleRight.data);
+			CommonOps_DDRM.divideRows(scaleLeft.data,b1);
+			CommonOps_DDRM.divideRows(scaleRight.data,b2);
 		}
 
 		// x=inv(A)*b1
@@ -226,8 +226,8 @@ public class LevenbergMarquardtSchur_DSCC extends LevenbergBase<DMatrixSparseCSC
 
 		// copy into the output
 		if( scaleColumns ) {
-			CommonOps_DDRM.rowDiv(x1, scaleLeft.data);
-			CommonOps_DDRM.rowDiv(x2, scaleRight.data);
+			CommonOps_DDRM.divideRows(scaleLeft.data,x1);
+			CommonOps_DDRM.divideRows(scaleRight.data,x2);
 		}
 //		x1.print();
 		CommonOps_DDRM.insert(x1,step,0,0);
