@@ -102,14 +102,14 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		direction.reshape(numberOfParameters,1);
 		stepGN.reshape(numberOfParameters,1);
 		stepCauchy.reshape(numberOfParameters,1);
-		tmp0 = owner.math.createMatrix();
+		tmp0 = owner.math != null ? owner.math.createMatrix() : null;
 	}
 
 	@Override
 	public void initializeUpdate() {
 		// Scale the gradient vector to make it less likely to overflow/underflow
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
-		gBg = owner.math.innerProduct(direction,owner.hessian);
+		gBg = innerProductHessian(direction);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
@@ -125,6 +125,14 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		} else {
 			positiveDefinite = false;
 		}
+	}
+
+	/**
+	 * Inner product of this matrix and the hessian. In it's own function so that it can be overloaded
+	 * easily.
+	 */
+	protected double innerProductHessian( DMatrixRMaj v ) {
+		return owner.math.innerProduct(v,owner.hessian);
 	}
 
 	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN ) {
