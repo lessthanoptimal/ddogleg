@@ -58,7 +58,7 @@ public class UnconLeastSqTrustRegionSchur_F64
 
 	public UnconLeastSqTrustRegionSchur_F64(){
 		this.parameterUpdate = new SchurDogleg();
-		this.math = new TrustRegionMath_DSCC();
+		this.math = new DummyMath();
 		this.schur = new SchurComplementMath();
 
 		// Mark the hessian as null to ensure the code will blow up if a function is missed
@@ -181,9 +181,68 @@ public class UnconLeastSqTrustRegionSchur_F64
 		return null;
 	}
 
-
 	public DMatrixRMaj getResiduals() {
 		return residuals;
+	}
+
+	/**
+	 * Math is hacked to integrate the schur complement
+	 */
+	private class DummyMath implements TrustRegionBase_F64.MatrixMath<DMatrixSparseCSC> {
+
+		@Override
+		public double innerProduct(DMatrixRMaj v, DMatrixSparseCSC M) {
+			if( M != null )
+				throw new RuntimeException("Expected the hessian");
+			return schur.innerProductHessian(v);
+		}
+
+		@Override
+		public void setIdentity(DMatrixSparseCSC matrix) {
+			if( matrix != null )
+				throw new RuntimeException("Expected the hessian");
+			// this can be ignored. Only used to initialize the hessian which is overwritten
+		}
+
+		@Override
+		public void innerMatrixProduct(DMatrixSparseCSC A, DMatrixSparseCSC output) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void extractDiag(DMatrixSparseCSC A, double[] diag) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void divideRows(double[] scaling, DMatrixSparseCSC A) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void divideColumns(double[] scaling, DMatrixSparseCSC A) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void scaleRows(double[] scaling, DMatrixSparseCSC A) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void scaleColumns(double[] scaling, DMatrixSparseCSC A) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output) {
+			throw new RuntimeException("What's calling this?");
+		}
+
+		@Override
+		public DMatrixSparseCSC createMatrix() {
+			return new DMatrixSparseCSC(1,1);
+		}
 	}
 
 }

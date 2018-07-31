@@ -20,12 +20,16 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergDampened_DSCC;
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened_DSCC;
+import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
+import org.ddogleg.optimization.trustregion.UnconLeastSqTrustRegionSchur_F64;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
+
+import javax.annotation.Nullable;
 
 /**
  * Factory for sparse optimization algorithms.  These implementations/interfaces
@@ -74,5 +78,22 @@ public class FactoryOptimizationSparse {
 	{
 		LevenbergDampened_DSCC alg = new LevenbergDampened_DSCC(dampInit);
 		return new LevenbergDampened_to_UnconstrainedLeastSquares<>(alg);
+	}
+
+	/**
+	 * Creates a sparse Schur Complement trust region optimization using dogleg steps.
+	 *
+	 * @see UnconLeastSqTrustRegionSchur_F64
+	 *
+	 * @param config Trust region configuration
+	 * @return The new optimization routine
+	 */
+	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> dogleg( @Nullable ConfigTrustRegion config ) {
+		if( config == null )
+			config = new ConfigTrustRegion();
+
+		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
+		alg.configure(config);
+		return alg;
 	}
 }

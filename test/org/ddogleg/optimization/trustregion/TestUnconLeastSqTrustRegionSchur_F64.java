@@ -184,4 +184,9 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 			return M;
 		}
 	}
+
+	@Test
+	public void runFullAlg() {
+		fail("implement");
+	}
 }

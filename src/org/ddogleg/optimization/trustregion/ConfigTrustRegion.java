@@ -47,11 +47,6 @@ public class ConfigTrustRegion {
 	public double ftol=1e-12;
 
 	/**
-	 * if the prediction ratio his higher than this threshold it is accepted
-	 */
-	public double candidateAcceptThreshold = 0.05;
-
-	/**
 	 * <p>
 	 *     Optional dynamic scaling of variables is possible at each iteration. The scale factor is set using the
 	 *     Hessian's diagonal elements. The square root of the diagonal elements absolute value.
@@ -72,7 +67,6 @@ public class ConfigTrustRegion {
 		out.regionMaximum = regionMaximum;
 		out.gtol = gtol;
 		out.ftol = ftol;
-		out.candidateAcceptThreshold = candidateAcceptThreshold;
 		out.regionInitial = regionInitial;
 		out.scalingMinimum = scalingMinimum;
 		out.scalingMaximum = scalingMaximum;
