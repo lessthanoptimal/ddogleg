@@ -22,8 +22,8 @@ import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.IGrowArray;
-import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
 
 /**
  * Implementation of {@link TrustRegionBase_F64.ParameterUpdate} for {@link DMatrixSparseCSC}
@@ -31,8 +31,6 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  * @author Peter Abeles
  */
 public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMatrixSparseCSC> {
-
-	protected DMatrixRMaj tmpM0 = new DMatrixRMaj(1,1);
 
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
@@ -86,8 +84,6 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public double innerProduct(DMatrixRMaj v, DMatrixSparseCSC M) {
-		tmpM0.reshape(v.numRows,v.numCols);
-		CommonOps_DSCC.mult(M,v,tmpM0);
-		return CommonOps_DDRM.dot(v,tmpM0);
+		return MatrixVectorMult_DSCC.innerProduct(v.data,0,M,v.data,0);
 	}
 }

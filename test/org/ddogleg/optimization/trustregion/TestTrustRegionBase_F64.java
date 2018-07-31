@@ -112,6 +112,7 @@ public class TestTrustRegionBase_F64 {
 	public void computePredictedReduction() {
 		MockParameterUpdate update = new MockParameterUpdate();
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
+		alg.hessian.reshape(2,2);
 
 		double x[] = new double[]{1,2};
 		alg.initialize(x,2,0);

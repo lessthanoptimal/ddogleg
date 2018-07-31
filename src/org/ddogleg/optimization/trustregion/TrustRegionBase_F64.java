@@ -26,7 +26,6 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
 import java.util.Arrays;
-import java.util.Random;
 
 import static java.lang.Math.*;
 
@@ -104,9 +103,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
-
-	// Random number generate for when noise is added to the state estimate
-	Random rand;
 
 	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math ) {
 		this();

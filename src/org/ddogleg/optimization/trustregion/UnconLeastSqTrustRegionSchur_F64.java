@@ -79,6 +79,9 @@ public class UnconLeastSqTrustRegionSchur_F64
 	 *
 	 * f-test : ftol &le; || r(x+p) || infinity
 	 *
+	 * @param fx Ignored. Residual used instead
+	 * @param fx_prev Ignored. Residual used instead
+	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
 	@Override
@@ -122,6 +125,7 @@ public class UnconLeastSqTrustRegionSchur_F64
 		if( !sameStateAsCost )
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacLeft,jacRight);
+		schur.computeHessian(jacLeft,jacRight);
 		schur.computeGradient(jacLeft,jacRight,residuals,gradient);
 	}
 
@@ -134,7 +138,7 @@ public class UnconLeastSqTrustRegionSchur_F64
 	@Override
 	protected void applyScaling() {
 		CommonOps_DDRM.elementDiv(gradient,scaling);
-		schur.applyInvScalingToBlocks(scaling);
+		schur.elementDivHessian(scaling);
 	}
 
 	@Override

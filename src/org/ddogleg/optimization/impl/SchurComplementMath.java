@@ -27,6 +27,7 @@ import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
+import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
 
 /**
  * The approximate Hessian matrix (J'*J) is assumed to have the
@@ -46,10 +47,6 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
  * @author Peter Abeles
  */
 public class SchurComplementMath {
-	// Left and right side of the jacobian matrix
-	DMatrixSparseCSC jacLeft = new DMatrixSparseCSC(1,1,1);
-	DMatrixSparseCSC jacRight = new DMatrixSparseCSC(1,1,1);
-
 	// Blocks inside the Hessian matrix
 	DMatrixSparseCSC A = new DMatrixSparseCSC(1,1);
 	DMatrixSparseCSC B = new DMatrixSparseCSC(1,1);
@@ -94,17 +91,11 @@ public class SchurComplementMath {
 	}
 
 	/**
-	 * Computes the gradient using Schur complement
-	 *
+	 * Compuets the Hessian in block form
 	 * @param jacLeft (Input) Left side of Jacobian
 	 * @param jacRight (Input) Right side of Jacobian
-	 * @param residuals (Input) Residuals
-	 * @param gradient (Output) Gradient
 	 */
-	public void computeGradient(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight ,
-								DMatrixRMaj residuals, DMatrixRMaj gradient) {
-
-		// Compute the Hessian in blocks
+	public void computeHessian(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight) {
 		A.reshape(jacLeft.numCols,jacLeft.numCols,1);
 		B.reshape(jacLeft.numCols,jacRight.numCols,1);
 		D.reshape(jacRight.numCols,jacRight.numCols,1);
@@ -116,6 +107,18 @@ public class SchurComplementMath {
 		CommonOps_DSCC.multTransA(jacLeft,jacRight,B,gw,gx);
 		CommonOps_DSCC.innerProductLower(jacRight,tmp0,gw,gx);
 		CommonOps_DSCC.symmLowerToFull(tmp0,D,gw);
+	}
+
+	/**
+	 * Computes the gradient using Schur complement
+	 *
+	 * @param jacLeft (Input) Left side of Jacobian
+	 * @param jacRight (Input) Right side of Jacobian
+	 * @param residuals (Input) Residuals
+	 * @param gradient (Output) Gradient
+	 */
+	public void computeGradient(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight ,
+								DMatrixRMaj residuals, DMatrixRMaj gradient) {
 
 		// Find the gradient using the two matrices for Jacobian
 		// g = J'*r = [L,R]'*r
@@ -137,7 +140,7 @@ public class SchurComplementMath {
 		CommonOps_DSCC.extractDiag(A, x1);
 		CommonOps_DSCC.extractDiag(D, x2);
 
-		diag.reshape(jacLeft.numCols+jacRight.numCols,1);
+		diag.reshape(A.numCols+D.numCols,1);
 		CommonOps_DDRM.insert(x1,diag,0,0);
 		CommonOps_DDRM.insert(x2,diag,x1.numRows,0);
 	}
@@ -147,18 +150,34 @@ public class SchurComplementMath {
 	 * [A B;C D] = inv(S)*J'*J*inv(S).
 	 * @param scale
 	 */
-	public void applyInvScalingToBlocks( DMatrixRMaj scale ) {
-
+	public void elementDivHessian(DMatrixRMaj scale ) {
+		double []d = scale.data;
+		CommonOps_DSCC.divideRowsCols(d,0,A,d,0);
+		CommonOps_DSCC.divideRowsCols(d,0,B,d,A.numCols);
+		CommonOps_DSCC.divideRowsCols(d,A.numRows,D,d,A.numCols);
 	}
 
 	/**
-	 * Vector matrix inner product of Hessian in block format
+	 * Vector matrix inner product of Hessian in block format.
 	 *
+	 * <p>
+	 * [A B;C D]*[x;y] = [c;d]<br>
+	 *  A*x + B*y = c<br>
+	 *  C*x + D*y = d<br>
+	 *  [x;y]<sup>T</sup>[A B;C D]*[x;y] = [x;y]<sup>T</sup>*[c;d]<br>
+	 * </p>
 	 * @param v row vector
 	 * @return v'*H*v = v'*[A B;C D]*v
 	 */
 	public double innerProductHessian( DMatrixRMaj v ) {
-		return 0;
+		int M = A.numRows;
+
+		double sum = 0;
+		sum += MatrixVectorMult_DSCC.innerProduct(v.data, 0, A, v.data, 0);
+		sum += 2*MatrixVectorMult_DSCC.innerProduct(v.data, 0, B, v.data, M);
+		sum += MatrixVectorMult_DSCC.innerProduct(v.data, M, D, v.data, M);
+
+		return sum;
 	}
 
 	/**
