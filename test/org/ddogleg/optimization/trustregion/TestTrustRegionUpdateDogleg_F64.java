@@ -82,7 +82,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
 		owner.hessian.set(new double[][]{{-2,0.1},{0.1,-1.5}});
-		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
 		alg.positiveDefinite = false;
 		alg.owner.fx = 1000;
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
@@ -93,15 +93,6 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
 		assertEquals(radius, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(radius, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
-
-		alg.owner.fx = 0.5;
-		alg.computeUpdate(p,radius);
-
-		assertEquals(0.5,p.get(0,0), UtilEjml.TEST_F64);
-		assertEquals(0,p.get(1,0), UtilEjml.TEST_F64);
-		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
-		assertEquals(0.5, alg.getStepLength(), UtilEjml.TEST_F64);
-		assertEquals(0.5, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
 	}
 
 	@Test
@@ -115,7 +106,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		owner.gradientNorm = 2.1;
 		setGradient(alg.owner.gradient,-1,0,owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
 		alg.positiveDefinite = true;
 		alg.distanceGN = 5;
 		alg.distanceCauchy = 3;
@@ -143,7 +134,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		alg.owner.gradientNorm = 1.5;
 		setGradient(alg.owner.gradient,-1,0,alg.owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
 		alg.positiveDefinite = true;
 		alg.stepGN.set(new double[][]{{5},{0}});
 		alg.distanceGN = 5;
@@ -175,7 +166,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
 		setGradient(alg.owner.gradient,-1,0,1.5);
 		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
-		alg.gBg = owner.math.innerProduct(owner.gradient,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(owner.gradient,owner.hessian);
 		alg.stepGN.set(new double[][]{{1},{2}});
 		alg.distanceGN = NormOps_DDRM.normF(alg.stepGN);
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
@@ -322,6 +313,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.regionInitial = 1;
 
 			LinearSolver<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> alg = new TrustRegionUpdateDogleg_F64<>(solver);

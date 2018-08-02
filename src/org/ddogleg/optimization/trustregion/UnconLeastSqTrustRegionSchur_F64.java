@@ -113,6 +113,13 @@ public class UnconLeastSqTrustRegionSchur_F64
 	}
 
 	@Override
+	protected double solveCauchyStepLength() {
+		double gBg = schur.innerProductHessian(gradient);
+
+		return gradientNorm*gradientNorm/gBg;
+	}
+
+	@Override
 	protected double cost(DMatrixRMaj x) {
 		functionResiduals.process(x.data,residuals.data);
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);

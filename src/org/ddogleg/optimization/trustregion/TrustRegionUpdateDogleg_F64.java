@@ -74,23 +74,20 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	// distance to the unconstrained Cauchy point
 	double distanceCauchy;
 
-	// work space
-	protected S tmp0;
-	protected DMatrixRMaj tmp1 = new DMatrixRMaj(1,1);
-
 	// The predicted amount that the quadratic model will be reduced by this step
 	double predictedReduction;
 
 	// This is the length of the step f-norm of p
 	double stepLength;
 
+	boolean verbose = false;
 	/**
 	 * Specifies internal algorithms
 	 *
 	 * @param solver Solver for positive definite systems
 	 */
 	public TrustRegionUpdateDogleg_F64(LinearSolver<S, DMatrixRMaj> solver) {
-		this.solver = solver;
+		this.solver = UtilEjml.safe(solver); // ensure that the inputs to the solver are not modified
 	}
 
 	protected TrustRegionUpdateDogleg_F64(){}
@@ -102,7 +99,6 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		direction.reshape(numberOfParameters,1);
 		stepGN.reshape(numberOfParameters,1);
 		stepCauchy.reshape(numberOfParameters,1);
-		tmp0 = owner.math != null ? owner.math.createMatrix() : null;
 	}
 
 	@Override
@@ -132,29 +128,14 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	 * easily.
 	 */
 	protected double innerProductHessian( DMatrixRMaj v ) {
-		return owner.math.innerProduct(v,owner.hessian);
+		return owner.math.innerProductVectorMatrix(v,owner.hessian);
 	}
 
 	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN ) {
-		// Compute Gauss-Newton step and make sure the input hessian isn't modified
-		S H;
-		if( solver.modifiesA() ) {
-			tmp0.set(owner.hessian);
-			H = tmp0;
-		} else {
-			H = owner.hessian;
-		}
-		if( !solver.setA(H) ) {
+		if( !solver.setA(owner.hessian) ) {
 			return false;
 		}
-		DMatrixRMaj B;
-		if( solver.modifiesB() ) {
-			tmp1.set(owner.gradient);
-			B = tmp1;
-		} else {
-			B = owner.gradient;
-		}
-		solver.solve(B, pointGN);
+		solver.solve(owner.gradient, pointGN);
 
 		return true;
 	}
@@ -164,18 +145,26 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( positiveDefinite ) {
 			//  If the GN solution is inside the trust region it should use that solution
 			if( distanceGN <= regionRadius ) {
+				if( verbose )
+					System.out.println("   newton");
 				gaussNewtonStep(step);
 			} else if( distanceCauchy >= regionRadius ) {
+				if( verbose )
+					System.out.println("   cauchy");
 				// if the trust region comes before the Cauchy point then perform the cauchy step
 				cauchyStep(regionRadius, step);
 			} else {
+				if( verbose )
+					System.out.println("   combined");
 				// the solution lies on the line connecting Cauchy and GN
 				combinedStep(regionRadius, step);
 			}
 
 		} else {
+			if( verbose )
+				System.out.println("   not positive-definite.");
 			// Cauchy step for negative semi-definite systems
-			stepLength = Math.min(regionRadius, Math.max(0,(owner.fx-minimumFunctionValue)) );
+			stepLength = regionRadius;
 			CommonOps_DDRM.scale(-stepLength, direction,step);
 			predictedReduction = stepLength*owner.gradientNorm - 0.5*stepLength*stepLength*gBg;
 		}
@@ -195,6 +184,11 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	@Override
 	public double getStepLength() {
 		return stepLength;
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	/**

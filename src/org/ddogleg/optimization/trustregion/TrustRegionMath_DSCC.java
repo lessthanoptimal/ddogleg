@@ -32,6 +32,7 @@ import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
  */
 public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMatrixSparseCSC> {
 
+	DMatrixSparseCSC tmp = new DMatrixSparseCSC(1,1);
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
 
@@ -42,7 +43,8 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public void innerMatrixProduct(DMatrixSparseCSC A, DMatrixSparseCSC output) {
-		CommonOps_DSCC.multTransA(A,A,output,gw,gx);
+		CommonOps_DSCC.innerProductLower(A,tmp,gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp,output,gw);
 	}
 
 	@Override
@@ -83,7 +85,7 @@ public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMat
 	}
 
 	@Override
-	public double innerProduct(DMatrixRMaj v, DMatrixSparseCSC M) {
+	public double innerProductVectorMatrix(DMatrixRMaj v, DMatrixSparseCSC M) {
 		return MatrixVectorMult_DSCC.innerProduct(v.data,0,M,v.data,0);
 	}
 }

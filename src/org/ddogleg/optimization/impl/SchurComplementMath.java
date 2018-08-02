@@ -213,8 +213,12 @@ public class SchurComplementMath {
 
 		// Reduced System
 		// D_m*x_2 = b_2
-		if( !solverD.setA(D_m) )
+//		for (int i = 0; i < D_m.numRows; i++) {
+//			D_m.set(i,i, D_m.get(i,i) + 1e-15 );
+//		}
+		if( !solverD.setA(D_m) ) {
 			return false;
+		}
 
 		solverD.setStructureLocked(true);
 		x2.reshape(D_m.numRows,b2_m.numCols);

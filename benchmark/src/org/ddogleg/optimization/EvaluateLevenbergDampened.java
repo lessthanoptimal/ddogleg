@@ -29,7 +29,7 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 	double dampInit = 1e-3;
 
 	public EvaluateLevenbergDampened(boolean verbose) {
-		super(verbose, false);
+		super(verbose, true);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 		eval.variably();
 		System.out.println("trigonometric       ----------------");
 		eval.trigonometric();
-		System.out.println("Badly Scaled Brown   ----------------");
+		System.out.println("Badly Scaled Brown  ----------------");
 		eval.badlyScaledBrown();
 		System.out.println("Bundle 2D           ----------------");
 		eval.bundle2D();

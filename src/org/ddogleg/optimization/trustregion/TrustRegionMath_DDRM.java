@@ -38,7 +38,7 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 
 	@Override
 	public void innerMatrixProduct(DMatrixRMaj A, DMatrixRMaj output) {
-		CommonOps_DDRM.multTransA(A,A,output);
+		CommonOps_DDRM.multInner(A,output);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMat
 	}
 
 	@Override
-	public double innerProduct(DMatrixRMaj v, DMatrixRMaj M) {
+	public double innerProductVectorMatrix(DMatrixRMaj v, DMatrixRMaj M) {
 		return VectorVectorMult_DDRM.innerProdA(v, M, v);
 	}
 }

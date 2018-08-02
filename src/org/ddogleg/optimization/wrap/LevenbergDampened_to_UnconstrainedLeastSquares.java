@@ -76,6 +76,11 @@ public class LevenbergDampened_to_UnconstrainedLeastSquares<S extends DMatrix>
 	}
 
 	@Override
+	public void setVerbose(boolean verbose) {
+
+	}
+
+	@Override
 	public double getFunctionValue() {
 		return alg.getFnorm();
 	}

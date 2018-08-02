@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -82,6 +82,11 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	@Override
 	public String getWarning() {
 		return alg.getWarning();
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		lineSearch.setVerbose(verbose);
 	}
 
 	@Override

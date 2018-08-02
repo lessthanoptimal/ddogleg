@@ -108,6 +108,11 @@ public class LevenbergSchur_to_UnconstrainedLeastSquares
 	}
 
 	@Override
+	public void setVerbose(boolean verbose) {
+
+	}
+
+	@Override
 	public double getFunctionValue() {
 		return alg.getFnorm();
 	}

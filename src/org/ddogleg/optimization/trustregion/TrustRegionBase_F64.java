@@ -105,6 +105,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
 
+	// print additional debugging messages to standard out
+	protected boolean verbose;
+
 	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math ) {
 		this();
 		this.parameterUpdate = parameterUpdate;
@@ -311,7 +314,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	}
 
 	protected double solveCauchyStepLength() {
-		double gBg = math.innerProduct(gradient,hessian);
+		double gBg = math.innerProductVectorMatrix(gradient,hessian);
 
 		return gradientNorm*gradientNorm/gBg;
 	}
@@ -333,10 +336,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		double actualReduction = fx_prev-fx_candidate;
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
+			if( verbose )
+				System.out.println(totalFullSteps+" reduction of zero");
 			return Convergence.ACCEPT;
 		}
 
 		double ratio = actualReduction/predictedReduction;
+
 
 		if( fx_candidate > fx_prev || ratio < 0.25 ) {
 			// if the improvement is too small (or not an improvement) reduce the region size
@@ -346,6 +352,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 				regionRadius = min(max(3*stepLength,regionRadius),config.regionMaximum);
 			}
 		}
+
+		if( verbose )
+			System.out.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" region="+regionRadius);
 
 //		System.out.println(totalRetries+" ratio="+ratio+"   rate="+((fx_prev-fx_candidate)/stepLength));
 		if( fx_candidate < fx_prev && ratio > 0 ) {
@@ -397,7 +406,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return predicted reduction in quadratic model
 	 */
 	public double computePredictedReduction( DMatrixRMaj p ) {
-		return -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProduct(p,hessian);
+		return -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProductVectorMatrix(p,hessian);
 	}
 
 	public interface MatrixMath<S extends DMatrix> {
@@ -406,7 +415,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 * @param v vector
 		 * @param M square matrix
 		 */
-		double innerProduct( DMatrixRMaj v , S M );
+		double innerProductVectorMatrix(DMatrixRMaj v , S M );
 
 		/**
 		 * Sets the provided matrix to identity
@@ -485,6 +494,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 * @return step length
 		 */
 		double getStepLength();
+
+		void setVerbose( boolean verbose );
 	}
 
 	protected enum Mode {
@@ -505,6 +516,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		return config.scalingMaximum > config.scalingMinimum;
 	}
 
+	public void setVerbose( boolean verbose ) {
+		this.verbose = verbose;
+		this.parameterUpdate.setVerbose(verbose);
+	}
 
 	public void configure(ConfigTrustRegion config) {
 		this.config = config.copy();

@@ -85,7 +85,7 @@ public abstract class StandardTrustRegionMathChecks<T extends DMatrix> {
 		CommonOps_DDRM.multTransA(A,B,tmp);
 		double expected = CommonOps_DDRM.dot(A,tmp);
 
-		double found = alg.innerProduct(A, convertA(B));
+		double found = alg.innerProductVectorMatrix(A, convertA(B));
 
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}

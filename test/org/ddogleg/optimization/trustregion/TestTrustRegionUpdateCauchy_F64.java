@@ -91,7 +91,7 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		owner.gradientNorm = 1000;
 		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
 		alg.computeUpdate(p,radius);
 		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
 		assertEquals(radius, alg.getStepLength(), UtilEjml.TEST_F64);
@@ -125,7 +125,7 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
 		owner.hessian.set(new double[][]{{-2,0.1},{0.1,-1.5}});
-		alg.gBg = owner.math.innerProduct(alg.direction,owner.hessian);
+		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
 
 		// should hit the boundary
@@ -134,14 +134,6 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
 		assertEquals(2, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(2, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
-
-		// shouldn't hit the boundary because -1 is the minimum function value
-		owner.fx = 0;
-		alg.computeUpdate(p,2);
-		double n = NormOps_DDRM.normF(p);
-		assertTrue(n > 0 && n < 2);
-		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
-		assertEquals(NormOps_DDRM.normF(p), alg.getStepLength(), UtilEjml.TEST_F64);
 	}
 
 	private static class MockOwner extends TrustRegionBase_F64<DMatrixRMaj> {

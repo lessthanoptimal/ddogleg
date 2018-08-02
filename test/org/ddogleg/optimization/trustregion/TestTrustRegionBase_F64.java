@@ -232,6 +232,11 @@ public class TestTrustRegionBase_F64 {
 		public double getStepLength() {
 			return 0;
 		}
+
+		@Override
+		public void setVerbose(boolean verbose) {
+
+		}
 	}
 
 	private static class MockTrustRegionBase_F64 extends TrustRegionBase_F64<DMatrixRMaj> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -92,6 +92,7 @@ public class DoglegStepFtF implements TrustRegionStep {
 	public DoglegStepFtF() {
 		this(LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false));
 //		this(LinearSolverFactory_DDRM.pseudoInverse(true));
+//		this(LinearSolverFactory_DDRM.chol(10));
 	}
 
 	@Override

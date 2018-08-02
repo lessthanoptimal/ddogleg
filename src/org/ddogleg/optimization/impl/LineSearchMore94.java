@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -428,6 +428,11 @@ public class LineSearchMore94 implements LineSearch {
 	@Override
 	public String getWarning() {
 		return message;
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+
 	}
 
 	@Override

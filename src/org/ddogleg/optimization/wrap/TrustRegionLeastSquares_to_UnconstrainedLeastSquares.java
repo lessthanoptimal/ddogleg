@@ -81,4 +81,9 @@ public class TrustRegionLeastSquares_to_UnconstrainedLeastSquares implements Unc
 	public String getWarning() {
 		return null;
 	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+
+	}
 }

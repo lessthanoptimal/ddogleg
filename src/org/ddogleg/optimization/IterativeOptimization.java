@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -77,4 +77,10 @@ public interface IterativeOptimization extends Serializable {
 	 * @return Additional info on the computed solution.
 	 */
 	String getWarning();
+
+	/**
+	 * If true then verbose debugging information is printed to standard out
+	 * @param verbose true to print debugging information to standard out
+	 */
+	void setVerbose( boolean verbose );
 }

@@ -55,6 +55,8 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	// This is the length of the step f-norm of p
 	double stepLength;
 
+	boolean verbose=false;
+
 	@Override
 	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
@@ -66,7 +68,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	public void initializeUpdate() {
 		// use the direction instead of gradient for reduced overflow/underflow issues
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
-		gBg = owner.math.innerProduct(direction,owner.hessian);
+		gBg = owner.math.innerProductVectorMatrix(direction,owner.hessian);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
@@ -77,10 +79,14 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 		double gnorm = owner.gradientNorm;
 
 		if( gBg <= 0 ) {
+			if( verbose )
+				System.out.println("  not-positive definite. dBd <= 0");
 			// always decreasing so take the largest possible step to the region's boundary
 			// At the same time don't try to jump past the smallest possible value for the function
-			stepLength = Math.min(regionRadius, Math.max(0,owner.fx-minimumFunctionValue));
+			stepLength = regionRadius;
 		} else {
+			if( verbose )
+				System.out.println("  normal step");
 			// find the distance of the minimum point
 			stepLength = Math.min(regionRadius,gnorm/gBg);
 		}
@@ -100,5 +106,10 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	@Override
 	public double getStepLength() {
 		return stepLength;
+	}
+
+	@Override
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 }
