@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization.impl;
 
+import org.ejml.LinearSolverSparseSafe;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
-import org.ejml.sparse.LinearSolverSparseSafe;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
@@ -60,7 +60,6 @@ public class LevenbergMarquardtDampened_DSCC extends LevenbergBase_DSCC {
 	public LevenbergMarquardtDampened_DSCC(LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver,
 										   double initialDampParam) {
 		super(initialDampParam);
-		this.solver = solver;
 		this.solver = new LinearSolverSparseSafe<>(solver);
 	}
 
