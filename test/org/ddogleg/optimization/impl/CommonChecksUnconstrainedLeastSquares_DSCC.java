@@ -108,4 +108,17 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		assertEquals(0, results.f, 1e-4);
 	}
 
+	@Test
+	public void checkBundle2D() {
+		NonlinearResults results = bundle2D();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		assertEquals(0, results.f, 1e-4);
+	}
+
 }

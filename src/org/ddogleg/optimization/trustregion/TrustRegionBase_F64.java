@@ -82,8 +82,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// proposed next state of parameters
 	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
 	// proposed relative change in parameter's state
-	protected DMatrixRMaj scaled_p = new DMatrixRMaj(1,1); // after scaling matrix has been applied to it
 	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
+	protected DMatrixRMaj tmp_p = new DMatrixRMaj(1,1);
+
 	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
 	protected boolean sameStateAsCost;
 
@@ -129,7 +130,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
 		p.reshape(numberOfParameters,1);
-		scaled_p.reshape(numberOfParameters,1);
+		tmp_p.reshape(numberOfParameters,1);
 		gradient.reshape(numberOfParameters,1);
 
 		// initialize scaling to 1, which is no scaling
@@ -259,14 +260,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected boolean computeAndConsiderNew() {
 		if( regionRadius < 0 ) {
-			// attempt to dynamically determine the region radius by setting an extremely large trust region
-			// in the first iteration, taking its solution, and setting the radius using that.
-			// If too small or too large the initial radius and kill performance and is very opaque
-			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
-			regionRadius = parameterUpdate.getStepLength();
-		} else {
-			parameterUpdate.computeUpdate(p, regionRadius);
+			// If no selection has been made it will use the Cauchy step as a guide
+			// The Cauchy step tends to be very conservative and hand tuning a step size
+			// will tend to work better
+			regionRadius = solveCauchyStepLength()*10;
 		}
+
+		parameterUpdate.computeUpdate(p, regionRadius);
 		if( isScaling() )
 			undoScalingOnParameters(p);
 		CommonOps_DDRM.add(x,p,x_next);
@@ -308,6 +308,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 			mode = Mode.FULL_STEP;
 			return false;
 		}
+	}
+
+	protected double solveCauchyStepLength() {
+		double gBg = math.innerProduct(gradient,hessian);
+
+		return gradientNorm*gradientNorm/gBg;
 	}
 
 	/**

@@ -18,8 +18,10 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
+import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
 import org.ejml.UtilEjml;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
@@ -31,6 +33,7 @@ import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.RandomMatrices_DSCC;
 import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -185,8 +188,20 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 		}
 	}
 
-	@Test
-	public void runFullAlg() {
-		fail("implement");
+	@Nested
+	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
+
+		@Override
+		protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+
+			config.regionInitial = 1;
+//			config.scalingMinimum = 1e-4;
+//			config.scalingMaximum = 1e4;
+
+			UnconLeastSqTrustRegionSchur_F64 tr = new UnconLeastSqTrustRegionSchur_F64();
+			tr.configure(config);
+			return tr;
+		}
 	}
 }

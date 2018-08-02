@@ -33,6 +33,16 @@ repositories {
 }
 
 sourceSets {
+
+    benchmark {
+        java {
+            srcDir 'benchmark/src'
+        }
+        resources {
+            srcDir 'benchmark/resources'
+        }
+    }
+
     main {
         java {
             srcDir 'src'
@@ -47,12 +57,13 @@ sourceSets {
             srcDir 'examples/src'
             srcDir 'test'
             srcDir 'generate'
-            srcDir 'benchmark'
+            srcDir 'benchmark/test'
         }
         resources {
             srcDir 'resources/test'
         }
     }
+
 }
 
 dependencies {
@@ -67,6 +78,12 @@ dependencies {
     testRuntimeOnly(
             'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     )
+
+    testCompile project.sourceSets.benchmark.output
+
+    benchmarkCompile project.sourceSets.main.output
+    benchmarkCompile project.sourceSets.main.runtimeClasspath
+    benchmarkCompile project.sourceSets.main.compileClasspath
 }
 
 javadoc {

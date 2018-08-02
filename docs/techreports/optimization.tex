@@ -263,8 +263,75 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 \end{algorithm}
 
 \subsection{Schur Complement}
+It is possible to take advantage of the sparse structure in certain problems to greatly reduce computational cost. The Schur Complement provides a mechanism where the computational cost of inverting matrices with certain structures can be greatly reduced. Bundle Adjustment is one such problem \cite{triggs1999bundle}. 
 
-Put something here.
+Bundle adjustment naturely has a sparse structure \cite{triggs1999bundle} but even if optimized by a sparse matrix library solving can be quite slow due to fill in during matrix decomposition, making the sparse matrix much less sparse. Use of the Schur Complement enables the system's structure to be taken advantage of greatly increasing the speed of computations.
+
+Let $M$ be a square matrix which has been broken up into four submatrices. It will have the following factorization:
+\begin{equation}
+M = \begin{bmatrix}
+A & B \\
+C & D
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 \\
+C A^{-1} 1
+\end{bmatrix}
+\begin{bmatrix}
+A & 0 \\
+0 & \bar{D}
+\end{bmatrix}
+\begin{bmatrix}
+1 & A^{-1}B \\
+0 & 1
+\end{bmatrix}
+\end{equation}
+It can then be shown that
+\begin{equation}
+\bar{D} = D - C A^{-1}B
+\end{equation}
+This is known as the Schur complement of the block A of matrix M. The Schur comlpement of block D of matrix M can also be found:
+\begin{equation}
+\bar{A} = A - B D^{-1}C
+\end{equation}
+We will discuss the former but the later can be useful too depending on the matrix structure. You will want to use the formulation which reduces the size of the matrix which needs to be inverted.
+
+These relationships can then be used to solve the following system:
+\begin{equation}
+\begin{bmatrix}
+A & B \\
+C & D
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+b_1 \\ b_2
+\end{bmatrix}
+\end{equation}
+
+\begin{algorithm}{}
+\caption{\label{alg:schur_complement}Schur Complement to solve a reduced system}
+\begin{algorithmic}[1]
+	\State $\bar{D} = D - C A^{-1} B$
+	\State $\bar{b}_2 = b_2 - C A^{-1} b_1$  
+	\State $\bar{D} x_2 = \bar{b}_2$         \Comment{Reduced System}
+	\State $A x_1 = b_1 - B x_2$
+\end{algorithmic}
+\end{algorithm}
+
+For the least squares problem the Schur Complement is applied to the Jacobian based estimation of the Hessian:
+\begin{equation}
+J^T J =
+\begin{bmatrix}
+A & B \\
+B^T & D
+\end{bmatrix}
+\end{equation}
+This symmetry can be taken advantage of in matrix multiplication and when solving the system, which DDogleg does. DDogleg provides a specialized function for computing the Jacobian that splits it into a left and right side. This makes computation of the inner matrices more efficient and easier to apply.
+
 
 \section{Unconstrained Minimization}
 
