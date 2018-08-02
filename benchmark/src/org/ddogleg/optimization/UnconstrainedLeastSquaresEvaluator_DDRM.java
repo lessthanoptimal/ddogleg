@@ -65,4 +65,8 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 	public NonlinearResults badlyScalledPowell() {
 		return performTest(new EvalFuncBadlyScaledPowell_DDRM());
 	}
+
+	public NonlinearResults bundle2D() {
+		return performTest(new EvalFunctionBundle2D_DDRM());
+	}
 }

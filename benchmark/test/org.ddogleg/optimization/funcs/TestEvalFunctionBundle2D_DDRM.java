@@ -22,7 +22,7 @@ import org.ddogleg.optimization.DerivativeChecker;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.SchurJacobian_to_NtoMxN;
-import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestEvalFunctionBundle2D_DSCC {
+public class TestEvalFunctionBundle2D_DDRM {
 	@Test
 	public void compareToNumerical() {
-		EvalFunctionBundle2D_DSCC eval = new EvalFunctionBundle2D_DSCC(234,20,10,2,3);
+		EvalFunctionBundle2D_DDRM eval = new EvalFunctionBundle2D_DDRM(234,20,10,2,3);
 
-		FunctionNtoMxN<DMatrixSparseCSC> jac = new SchurJacobian_to_NtoMxN.DSCC(eval.getJacobianSchur());
+		FunctionNtoMxN<DMatrixRMaj> jac = new SchurJacobian_to_NtoMxN.DDRM(eval.getJacobianSchur());
 		FunctionNtoM func = eval.getFunction();
 		double[] params = eval.initial;
 

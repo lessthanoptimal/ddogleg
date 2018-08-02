@@ -21,9 +21,7 @@ package org.ddogleg.optimization.funcs;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.wrap.SchurJacobian_to_NtoMxN;
-import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.data.DMatrixSparseTriplet;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.data.DMatrixRMaj;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,36 +31,36 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSparseCSC>
+public class EvalFunctionBundle2D_DDRM extends EvalFunctionBundle2D<DMatrixRMaj>
 {
-	public EvalFunctionBundle2D_DSCC() {
+	public EvalFunctionBundle2D_DDRM() {
 	}
 
-	public EvalFunctionBundle2D_DSCC(long seed, double length, double depth, int numCamera, int numLandmarks) {
+	public EvalFunctionBundle2D_DDRM(long seed, double length, double depth, int numCamera, int numLandmarks) {
 		super(seed, length, depth, numCamera, numLandmarks);
 	}
 
 	@Override
-	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
-		return new SchurJacobian_to_NtoMxN.DSCC(getJacobianSchur());
+	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+		return new SchurJacobian_to_NtoMxN.DDRM(getJacobianSchur());
 	}
 
 	@Override
-	public SchurJacobian<DMatrixSparseCSC> getJacobianSchur() {
+	public SchurJacobian<DMatrixRMaj> getJacobianSchur() {
 		return new Jacobian();
 	}
 
-	public class Jacobian implements SchurJacobian<DMatrixSparseCSC> {
+	public class Jacobian implements SchurJacobian<DMatrixRMaj> {
 		List<Point2D> cameras = new ArrayList<>();
 		List<Point2D> landmarks = new ArrayList<>();
 
 		@Override
-		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
+		public void process(double[] input, DMatrixRMaj left, DMatrixRMaj right) {
 			decode(input,cameras, landmarks);
 
 			int N = numCamera*numLandmarks;
-			DMatrixSparseTriplet tripletLeft = new DMatrixSparseTriplet(N,2*numCamera,1);
-			DMatrixSparseTriplet tripletRight = new DMatrixSparseTriplet(N,2*numLandmarks,1);
+			left.reshape(N,2*numCamera);
+			right.reshape(N,2*numLandmarks);
 
 			int output = 0;
 			for (int i = 0; i < numCamera; i++) {
@@ -78,8 +76,8 @@ public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSpars
 					double dx = top/(bottom*bottom);
 					double dy = -1.0/bottom;
 
-					tripletLeft.addItemCheck(output,i*2+0,a*dx);
-					tripletLeft.addItemCheck(output,i*2+1,a*dy);
+					left.set(output,i*2+0,a*dx);
+					left.set(output,i*2+1,a*dy);
 				}
 			}
 
@@ -97,13 +95,10 @@ public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSpars
 					double dy = 1.0/bottom;
 
 					output = j*numLandmarks + i;
-					tripletRight.addItemCheck(output,i*2+0,a*dx);
-					tripletRight.addItemCheck(output,i*2+1,a*dy);
+					right.set(output,i*2+0,a*dx);
+					right.set(output,i*2+1,a*dy);
 				}
 			}
-
-			ConvertDMatrixStruct.convert(tripletLeft,left);
-			ConvertDMatrixStruct.convert(tripletRight,right);
 		}
 
 		@Override

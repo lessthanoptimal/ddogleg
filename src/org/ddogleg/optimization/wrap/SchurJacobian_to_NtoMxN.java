@@ -20,7 +20,10 @@ package org.ddogleg.optimization.wrap;
 
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.SchurJacobian;
+import org.ejml.data.DMatrix;
+import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 
 /**
@@ -28,14 +31,13 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  *
  * @author Peter Abeles
  */
-public class SchurJacobian_to_NtoMxN implements FunctionNtoMxN<DMatrixSparseCSC> {
+public abstract class SchurJacobian_to_NtoMxN<T extends DMatrix> implements FunctionNtoMxN<T> {
 
-	SchurJacobian<DMatrixSparseCSC> function;
+	SchurJacobian<T> function;
 
-	DMatrixSparseCSC left = new DMatrixSparseCSC(1,1);
-	DMatrixSparseCSC right = new DMatrixSparseCSC(1,1);
+	T left,right;
 
-	public SchurJacobian_to_NtoMxN(SchurJacobian<DMatrixSparseCSC> function) {
+	public SchurJacobian_to_NtoMxN(SchurJacobian<T> function) {
 		this.function = function;
 	}
 
@@ -49,15 +51,45 @@ public class SchurJacobian_to_NtoMxN implements FunctionNtoMxN<DMatrixSparseCSC>
 		return function.getNumOfOutputsM();
 	}
 
-	@Override
-	public void process(double[] input, DMatrixSparseCSC output) {
-		function.process(input,left,right);
+	public static class DDRM extends SchurJacobian_to_NtoMxN<DMatrixRMaj> {
 
-		CommonOps_DSCC.concatColumns(left,right,output);
+		public DDRM(SchurJacobian<DMatrixRMaj> function) {
+			super(function);
+			left = new DMatrixRMaj(1,1);
+			right = new DMatrixRMaj(1,1);
+		}
+
+		@Override
+		public void process(double[] input, DMatrixRMaj output) {
+			function.process(input,left,right);
+
+			CommonOps_DDRM.concatColumns(left,right,output);
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
+		}
 	}
 
-	@Override
-	public DMatrixSparseCSC declareMatrixMxN() {
-		return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
+	public static class DSCC extends SchurJacobian_to_NtoMxN<DMatrixSparseCSC> {
+
+		public DSCC(SchurJacobian<DMatrixSparseCSC> function) {
+			super(function);
+			left = new DMatrixSparseCSC(1,1);
+			right = new DMatrixSparseCSC(1,1);
+		}
+
+		@Override
+		public void process(double[] input, DMatrixSparseCSC output) {
+			function.process(input,left,right);
+
+			CommonOps_DSCC.concatColumns(left,right,output);
+		}
+
+		@Override
+		public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
+		}
 	}
 }

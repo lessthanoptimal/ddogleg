@@ -36,7 +36,7 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 		ConfigTrustRegion config = new ConfigTrustRegion();
-//		config.regionInitial = 1;
+		config.regionInitial = 1;
 //		config.scalingMinimum = .1;
 //		config.scalingMaximum = 1e6;
 
@@ -74,5 +74,7 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 		eval.badlyScaledBrown();
 		System.out.println("Badly Scaled Powell ----------------");
 		eval.badlyScalledPowell();
+		System.out.println("Bundle 2D           ----------------");
+		eval.bundle2D();
 	}
 }

@@ -54,7 +54,9 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 		eval.variably();
 		System.out.println("trigonometric       ----------------");
 		eval.trigonometric();
-		System.out.println("Bady Scaled Brown   ----------------");
+		System.out.println("Badly Scaled Brown   ----------------");
 		eval.badlyScaledBrown();
+		System.out.println("Bundle 2D           ----------------");
+		eval.bundle2D();
 	}
 }

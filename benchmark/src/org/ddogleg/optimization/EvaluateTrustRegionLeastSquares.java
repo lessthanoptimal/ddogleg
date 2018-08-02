@@ -60,5 +60,7 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		eval.badlyScaledBrown();
 		System.out.println("Badly Scaled Powell ----------------");
 		eval.badlyScalledPowell();
+		System.out.println("Bundle 2D           ----------------");
+		eval.bundle2D();
 	}
 }
