@@ -44,7 +44,9 @@ import static java.lang.Math.*;
  *
  * <ul>
  * <li>[1] Jorge Nocedal,and Stephen J. Wright "Numerical Optimization" 2nd Ed. Springer 2006</li>
- * <li>[2] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization R1", July 2018</li>
+ * <li>[2] JK. Madsen and H. B. Nielsen and O. Tingleff, "Methods for Non-Linear Least Squares Problems (2nd ed.)"
+ * Informatics and Mathematical Modelling, Technical University of Denmark</li>
+ * <li>[3] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization R1", August 2018</li>
  * </ul>
  *
  * @see ConfigTrustRegion
@@ -57,7 +59,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected ParameterUpdate<S> parameterUpdate;
 
 	// Math for some matrix operations
-	protected MatrixMath<S> math;
+	protected OptimizationMath<S> math;
 
 	/**
 	 * Storage for the gradient
@@ -108,7 +110,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// print additional debugging messages to standard out
 	protected boolean verbose;
 
-	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math ) {
+	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, OptimizationMath<S> math ) {
 		this();
 		this.parameterUpdate = parameterUpdate;
 		this.math = math;
@@ -361,7 +363,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 
 		double ratio = actualReduction/predictedReduction;
 
-
 		if( fx_candidate > fx_prev || ratio < 0.25 ) {
 			// if the improvement is too small (or not an improvement) reduce the region size
 			regionRadius = 0.5*regionRadius;
@@ -425,39 +426,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	public double computePredictedReduction( DMatrixRMaj p ) {
 		return -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProductVectorMatrix(p,hessian);
-	}
-
-	public interface MatrixMath<S extends DMatrix> {
-		/**
-		 * Returns v^T*M*v
-		 * @param v vector
-		 * @param M square matrix
-		 */
-		double innerProductVectorMatrix(DMatrixRMaj v , S M );
-
-		/**
-		 * Sets the provided matrix to identity
-		 */
-		void setIdentity( S matrix );
-
-		/**
-		 * output = A'*A
-		 */
-		void innerMatrixProduct( S A , S output );
-
-		void extractDiag( S A , double diag[] );
-
-		void divideRows(double scaling[] , S A );
-
-		void divideColumns(double scaling[] , S A );
-
-		void scaleRows(double scaling[] , S A );
-
-		void scaleColumns(double scaling[] , S A );
-
-		void multTransA(S A , DMatrixRMaj B , DMatrixRMaj output );
-
-		S createMatrix();
 	}
 
 	public interface ParameterUpdate<S extends DMatrix> {

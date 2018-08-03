@@ -45,7 +45,7 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
-	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate, MatrixMath<S> math) {
+	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate, OptimizationMath<S> math) {
 		super(parameterUpdate, math);
 		jacobian = math.createMatrix();
 	}

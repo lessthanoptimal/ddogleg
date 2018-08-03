@@ -27,7 +27,7 @@ import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
  *
  * @author Peter Abeles
  */
-public class TrustRegionMath_DDRM implements TrustRegionBase_F64.MatrixMath<DMatrixRMaj> {
+public class TrustRegionMath_DDRM implements OptimizationMath<DMatrixRMaj> {
 
 	protected DMatrixRMaj tmpM0 = new DMatrixRMaj(1,1);
 

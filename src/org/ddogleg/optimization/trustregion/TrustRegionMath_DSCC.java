@@ -30,7 +30,7 @@ import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
  *
  * @author Peter Abeles
  */
-public class TrustRegionMath_DSCC implements TrustRegionBase_F64.MatrixMath<DMatrixSparseCSC> {
+public class TrustRegionMath_DSCC implements OptimizationMath<DMatrixSparseCSC> {
 
 	DMatrixSparseCSC tmp = new DMatrixSparseCSC(1,1);
 	IGrowArray gw = new IGrowArray();

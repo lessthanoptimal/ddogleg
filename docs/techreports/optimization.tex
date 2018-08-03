@@ -22,6 +22,7 @@
 \usepackage{enumitem}
 \usepackage{tabularx}
 \usepackage{fancyhdr}
+\usepackage[flushleft]{threeparttable}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
@@ -173,27 +174,6 @@ Most of the literature recommends always properly scaling. In practice people on
 \item Find the type-o in your math
 \end{enumargin}
 
-\subsubsection{Initial Region Size} 
-\label{section:init_region_size}
-
-Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
-
-Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected for several iterations. The Cauchy Point is often highly suboptimal and can lead the search down a poor path and incerases the odds of it getting stuck in local minimum. 
-
-DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive in a few causing the optimization to get stuck. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
-
-If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one. Setting $\Delta_0$ to excessively large numbers is also problematic because when a step fails it can take numerious iterations to recover, slowing down convergence. Also increasing the possibility of the search jumping into a flat plateau far away and getting stuck. 
-
-Recommended Procedure for Selection of Initial Trust Region Size:
-\begin{enumargin}{0.2}
-\item Turn on verbose output so that progress and step size are visible
-\item Start with automatic selection using \emph{unconstrained initial step}
-\item If unconstrained method selected a very large step size and got stuck try \emph{Cauchy initial step}
-\item If performance is still poor follow manual tuning procedure
-\end{enumargin}
-
-For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
-
 \subsubsection{Cauchy Point}
 \label{section:cauchy} 
 
@@ -263,6 +243,56 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 	\State Write this algorithm out
 \end{algorithmic}
 \end{algorithm}
+
+\subsubsection{Initial Region Size} 
+\label{section:init_region_size}
+
+Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
+
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected for several iterations. The Cauchy Point is often highly suboptimal and can lead the search down a poor path and incerases the odds of it getting stuck in local minimum. 
+
+DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive in a few causing the optimization to get stuck. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
+
+If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one. Setting $\Delta_0$ to excessively large numbers is also problematic because when a step fails it can take numerious iterations to recover, slowing down convergence. Also increasing the possibility of the search jumping into a flat plateau far away and getting stuck. 
+
+Recommended Procedure for Selection of Initial Trust Region Size:
+\begin{enumargin}{0.2}
+\item Turn on verbose output and examine the progress
+\item Start with automatic selection using \emph{unconstrained initial step}
+\item If unconstrained method selected a very large step size and got stuck try \emph{Cauchy initial step}
+\item If performance is still poor follow manual tuning procedure
+\end{enumargin}
+For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
+
+A comparison of different initial conditions for different 'toy' problems is shown in Table \ref{results:initial_region}. In these scenarios, the Automatic Unconstrained method correctly selected the best initial conditions while all the other methods either tied unconstrained's performance or clearly made a poor choice. Unfortunately, these results don't extrapolate to all problems and there are situations where the unconstrained method results in failure. For that reason, the default method is in DDogleg is the more conservative Automatic Cauchy.
+
+\begin{table}[h]
+\centering
+\begin{threeparttable}
+\caption{\label{results:initial_region}Comparison of Initial Region Size}
+\begin{tabular}{|l||c|c|c||c|c|c||c|c|c||c|c|c|}
+\hline
+Problem        & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Manual} & \multicolumn{3}{c|}{Manual}\\
+               & \multicolumn{3}{c||}{Unconstrained} & \multicolumn{3}{c||}{Cauchy} & \multicolumn{3}{c||}{1} & \multicolumn{3}{c|}{100} \\
+\hline
+               & Fit     & G  & B  & Fit     & G  & B   & Fit     & G  & B  & Fit     & G  & B\\
+\hline
+Powel          & 2.0e-17 & 17 & 17 & 2.9e-17 & 30 & 26  & 4.9e-18 & 23 & 19 & 2.0e-17 & 17 & 17 \\
+Powel Singular & 7.3e-11 & 11 & 11 & 2.3e-10 & 13 & 13  & 6.7e-11 & 11 & 11 & 7.3e-11 & 11 & 11 \\
+Helical Valley & 2.5e-26 & 11 & 8  & 5.1e-18 & 11 & 11  & 4.1e-33 & 9  & 8  & 2.7e-26 & 16 & 8\\
+B.S. Powell    & 4.2e-31 & 25 & 18 & 3.7e-23 & 73 & 58  & 2.2e-31 & 25 & 18 & 0       & 62 & 43 \\
+Bundle 2D      & 3.7e-10 & 111& 36 & 7.0e-18 & 111& 36  & 9.0e-10 & 251& 93 & 3.3e-10 & 112 & 37 \\
+Bundle 2D [1]  & 7.0e-19 & 4  & 4  & 7.0e-18 & 4  & 4   & 1.5e-15 & 5  & 5  & 7.0e-18 & 4 & 4 \\ \hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \emph{Fit} is the final fit score where zero is a perfect fit. \emph{G} is the number of times the gradient was computed. \emph{B} is the number of times the Hessian was computed. B is by far the most expensive step.
+\item Dogleg with a Cholesky solver applied to $B=F'F$. 
+\item [1] Uses QR with column pivots instead of Cholesky and can handle the nearly singular initial state.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 
 \subsection{Schur Complement}
 It is possible to take advantage of the sparse structure in certain problems to greatly reduce computational cost. The Schur Complement provides a mechanism where the computational cost of inverting matrices with certain structures can be greatly reduced. Bundle Adjustment is one such problem \cite{triggs1999bundle}. 

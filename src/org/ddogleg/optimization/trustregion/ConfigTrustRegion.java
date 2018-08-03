@@ -26,7 +26,7 @@ package org.ddogleg.optimization.trustregion;
 public class ConfigTrustRegion {
 	/**
 	 * Initial size of the trust region. Automatic and manual methods are available. There is no universally
-	 * best way to select the region size.
+	 * best way to select the region size and the default method is the more conservative automatic Cauchy.
 	 *
 	 * <ul>
 	 *     <li>
@@ -45,7 +45,7 @@ public class ConfigTrustRegion {
 	 * </ul>
 	 *
 	 */
-	public double regionInitial = -1;
+	public double regionInitial = -2;
 
 	/**
 	 * Trust Region's maximum size

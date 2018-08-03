@@ -42,10 +42,10 @@ public abstract class StandardTrustRegionMathChecks<T extends DMatrix> {
 	public abstract T create(int numRows , int numCols );
 
 	Random rand = new Random(234);
-	TrustRegionBase_F64.MatrixMath<T> alg;
+	OptimizationMath<T> alg;
 
 
-	public StandardTrustRegionMathChecks( TrustRegionBase_F64.MatrixMath<T> alg ) {
+	public StandardTrustRegionMathChecks( OptimizationMath<T> alg ) {
 		this.alg = alg;
 	}
 
