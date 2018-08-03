@@ -48,8 +48,10 @@ public class TestTrustRegionBase_F64 {
 		assertEquals(2,alg.x.numRows);
 		assertEquals(2,alg.x_next.numRows);
 		assertEquals(2,alg.gradient.numRows);
-		assertEquals(2,alg.hessian.numRows);
-		assertEquals(2,alg.hessian.numCols);
+
+		// commented out because Hessian is initialized by a derived class
+//		assertEquals(2,alg.hessian.numRows);
+//		assertEquals(2,alg.hessian.numCols);
 
 		assertEquals(alg.regionRadius,alg.config.regionInitial, UtilEjml.TEST_F64);
 		assertEquals(0,alg.totalFullSteps);
@@ -130,26 +132,6 @@ public class TestTrustRegionBase_F64 {
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
-	/**
-	 * If noise is applied sameStateAsCost should be false
-	 */
-	@Test
-	public void computeAndConsiderNew_sameStateAsCost() {
-		fail("implement");
-	}
-
-	@Test
-	public void checkConvergenceFTest() {
-		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
-
-		alg.getConfig().ftol = 1e-4;
-		alg.getConfig().gtol = -1;
-		alg.regionRadius = 1; // can't be zero
-		alg.numberOfParameters = 0; // turns off gtol test
-		assertFalse(alg.checkConvergenceFTest(2,2.5));
-		assertTrue(alg.checkConvergenceFTest(2,2*1.00000001));
-	}
-
 	@Test
 	public void checkConvergenceGTest() {
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
@@ -171,22 +153,86 @@ public class TestTrustRegionBase_F64 {
 
 	@Test
 	public void computeScaling() {
-		fail("Implement");
+		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
+
+		DMatrixRMaj orig = new DMatrixRMaj(new double[][]{{1},{0.1},{-4}});
+
+		// no clamping
+		DMatrixRMaj scaling = orig.copy();
+		alg.computeScaling(scaling,-1000,1000);
+		assertEquals(1,scaling.get(0));
+		assertEquals(Math.sqrt(0.1),scaling.get(1));
+		assertEquals(2,scaling.get(2));
+
+
+		// Minimum
+		scaling = orig.copy();
+		alg.computeScaling(scaling,1.1,1000);
+		assertEquals(1.1,scaling.get(0));
+		assertEquals(1.1,scaling.get(1));
+		assertEquals(2,scaling.get(2));
+
+		// Maximum
+		scaling = orig.copy();
+		alg.computeScaling(scaling,-1000,1.5);
+		assertEquals(1,scaling.get(0));
+		assertEquals(Math.sqrt(0.1),scaling.get(1));
+		assertEquals(1.5,scaling.get(2));
 	}
 
 	@Test
 	public void applyScaling() {
-		fail("Implement");
+		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
+
+		alg.gradient = RandomMatrices_DDRM.rectangle(4,1,-1,2,rand);
+		alg.hessian = RandomMatrices_DDRM.rectangle(4,4,-1,2,rand);
+
+		DMatrixRMaj g = alg.gradient.copy();
+		DMatrixRMaj H = alg.hessian.copy();
+
+		alg.scaling = new DMatrixRMaj(new double[][]{{1},{0.1},{2},{0.6}});
+
+		alg.applyScaling();
+
+		for (int row = 0; row < 4; row++) {
+			double expected = g.get(row,0)/alg.scaling.get(row);
+			assertEquals(expected, alg.gradient.get(row), UtilEjml.TEST_F64);
+
+			for (int col = 0; col < 4; col++) {
+				expected = H.get(row,col)/(alg.scaling.get(row)*alg.scaling.get(col));
+				assertEquals(expected, alg.hessian.get(row,col), UtilEjml.TEST_F64);
+			}
+		}
 	}
 
 	@Test
 	public void undoScalingOnParameters() {
-		fail("Implement");
+		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
+		alg.scaling = new DMatrixRMaj(new double[][]{{1},{0.1},{2},{0.6}});
+
+		DMatrixRMaj p = RandomMatrices_DDRM.rectangle(4,1,-1,2,rand);
+		DMatrixRMaj o = p.copy();
+
+		alg.undoScalingOnParameters(p);
+
+		for (int row = 0; row < 4; row++) {
+			double expected = o.get(row, 0) / alg.scaling.get(row);
+			assertEquals(expected, p.get(row), UtilEjml.TEST_F64);
+		}
 	}
 
 	@Test
 	public void isScaling() {
-		fail("Implement");
+		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
+		alg.config.scalingMaximum = -1;
+		alg.config.scalingMinimum = 1;
+		assertFalse(alg.isScaling());
+		alg.config.scalingMaximum = 2;
+		alg.config.scalingMinimum = 2;
+		assertFalse(alg.isScaling());
+		alg.config.scalingMaximum = 1;
+		alg.config.scalingMinimum = -1;
+		assertTrue(alg.isScaling());
 	}
 
 	private MockTrustRegionBase_F64 createFixedCost( double cost , double predictedReduction ) {

@@ -262,6 +262,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged.
 	 */
 	protected boolean computeAndConsiderNew() {
+		// If first iteration and automatic
 		if( regionRadius == -1 ) {
 			// user has selected unconstrained method for initial step size
 			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
@@ -539,6 +540,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	}
 
 	public void configure(ConfigTrustRegion config) {
+		if( config.regionInitial <= 0 && (config.regionInitial != -1 && config.regionInitial != -2 ))
+			throw new IllegalArgumentException("Invalid regionInitial. Read javadoc and try again.");
 		this.config = config.copy();
 	}
 
