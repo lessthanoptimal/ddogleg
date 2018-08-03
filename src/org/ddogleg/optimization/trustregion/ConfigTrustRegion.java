@@ -25,9 +25,25 @@ package org.ddogleg.optimization.trustregion;
  */
 public class ConfigTrustRegion {
 	/**
-	 * Initial size of the trust region. If a negative value is set attempt is made to automatically determine
-	 * a good initial size. If a positive number then that's the initial region size. 100 is often a reasonable initial
-	 * value for the region size.
+	 * Initial size of the trust region. Automatic and manual methods are available. There is no universally
+	 * best way to select the region size.
+	 *
+	 * <ul>
+	 *     <li>
+	 *         If a positive number then that's the initial region size. 0.11 to 1000 is often a reasonable initial
+	 *         value for the region size. Starting at 1 is recommended.
+	 *     </li>
+	 *     <li>
+	 *         If set to -1 then it will perform a step with a trust region of MAX_VALUE and then set the trust
+	 *         region to that result. This works very well for may problems but some times it will jump too far and
+	 *         get stuck. If that happens auto-initialization with -2 will probably work.
+	 *     </li>
+	 *     <li>
+	 *        If set to -2 then it will compute the length of a Cauchy step and use that as the initial value. This
+	 *        tends to be a conservative method.
+	 *     </li>
+	 * </ul>
+	 *
 	 */
 	public double regionInitial = -1;
 

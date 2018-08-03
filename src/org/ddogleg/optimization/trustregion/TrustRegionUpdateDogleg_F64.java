@@ -135,8 +135,9 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		if( !solver.setA(owner.hessian) ) {
 			return false;
 		}
-		solver.solve(owner.gradient, pointGN);
-
+		// using direction instead of gradient "should" have better scaling
+		solver.solve(direction, pointGN);
+		CommonOps_DDRM.scale(owner.gradientNorm,pointGN);
 		return true;
 	}
 

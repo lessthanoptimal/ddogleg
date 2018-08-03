@@ -176,21 +176,23 @@ Most of the literature recommends always properly scaling. In practice people on
 \subsubsection{Initial Region Size} 
 \label{section:init_region_size}
 
-Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. Trust region size is dynamically adjusted at each iteration making the initial size selection less critical. 
+Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
 
-If trust region size is dynamically adjusted why does the initial selection matter? One observed failure mode with the Dogleg method will now be discussed. If $\Delta_0$ is too small the Dogleg method will default to using the Cauchy Point. The Cauchy Point is suboptimal and can lead the search down a poor path and get stuck in local minimum. 
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected for several iterations. The Cauchy Point is often highly suboptimal and can lead the search down a poor path and incerases the odds of it getting stuck in local minimum. 
 
-One possible tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10,000$. Setting $\Delta_0$ to excessively large numbers is also problematic because when a step fails it can take numerious iterations to recover, slowing down convergence. Also increasing the possibility of the search jumping into a flat plateau far away and getting stuck. 
+DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive in a few causing the optimization to get stuck. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
 
-To overcome these difficulties, by default, DDogleg will use an automatic algorithm for selecting the initial region size, summarized below:
-\begin{algorithm}{}
-\caption{\label{alg:initial_region}Automatic Initial Region Size}
-\begin{algorithmic}[1]
-	\State Select $p_0$ with a region size of \textit{MAX\_VALUE}
-	\State $\Delta_0 \gets \norm{p_0}$ 
-\end{algorithmic}
-\end{algorithm}
-Based on test problems included with DDogleg, this simple automatic approach results in fewer convergence issues than using a default value such as 1 or 100. In DDogleg initial region sizes can also be manually specified.
+If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one. Setting $\Delta_0$ to excessively large numbers is also problematic because when a step fails it can take numerious iterations to recover, slowing down convergence. Also increasing the possibility of the search jumping into a flat plateau far away and getting stuck. 
+
+Recommended Procedure for Selection of Initial Trust Region Size:
+\begin{enumargin}{0.2}
+\item Turn on verbose output so that progress and step size are visible
+\item Start with automatic selection using \emph{unconstrained initial step}
+\item If unconstrained method selected a very large step size and got stuck try \emph{Cauchy initial step}
+\item If performance is still poor follow manual tuning procedure
+\end{enumargin}
+
+For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
 
 \subsubsection{Cauchy Point}
 \label{section:cauchy} 
@@ -222,18 +224,18 @@ p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
 	\label{eq:cauchy_tau}
 \end{equation}
 
-The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers. The negative definite case is handled better by only stepping as far as needed to reach the minimum possible value according to a linear model:
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by the step size:
 \begin{eqnarray}
 \hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
-p^s_k &=& -\tau_k \hat{g}_k
+p^s_k &=& -\bar{\tau}_k \hat{g}_k
 \end{eqnarray}
 \begin{equation}
-\tau_k = \begin{cases}
-		\quad \min\left(\Delta_k, \max(0,f_k-f_{\bigtriangledown}) \right) & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
+\bar{\tau}_k = \begin{cases}
+		\quad \Delta_k & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
 		\quad \min\left(\Delta_k,\norm{g_k}/(\hat{g}_k^T B_k \hat{g}_k)\right) & \hat{g}_k^T B_k \bar{g}_k > 0
 	\end{cases}
 \end{equation}
-where $f_{\bigtriangledown}$ is the minimum possible value of $f_k$. Set $f_{\bigtriangledown}$ to -MAX\_VALUE if not known. The predicted reduction in score is found using:
+The predicted reduction in score is found using:
 \begin{equation}
 m_k(\bm{0})-m_k(\bm{p}_k) = \tau_k\left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
 \end{equation}

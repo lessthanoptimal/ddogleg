@@ -262,14 +262,31 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return true if it has converged.
 	 */
 	protected boolean computeAndConsiderNew() {
-		if( regionRadius < 0 ) {
-			// If no selection has been made it will use the Cauchy step as a guide
-			// The Cauchy step tends to be very conservative and hand tuning a step size
-			// will tend to work better
+		if( regionRadius == -1 ) {
+			// user has selected unconstrained method for initial step size
+			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
+			regionRadius = parameterUpdate.getStepLength();
+
+			if( regionRadius == Double.MAX_VALUE || UtilEjml.isUncountable(regionRadius)) {
+				if( verbose )
+					System.out.println("unconstrained initialization failed. Using Cauchy initialization instead.");
+				regionRadius = -2;
+			} else {
+				if( verbose )
+					System.out.println("unconstrained initialization radius="+regionRadius);
+			}
+		}
+		if( regionRadius == -2 ) {
+			// User has selected Cauchy method for initial step size
 			regionRadius = solveCauchyStepLength()*10;
+			parameterUpdate.computeUpdate(p, regionRadius);
+			if( verbose )
+				System.out.println("cauchy initialization radius="+regionRadius);
+
+		} else {
+			parameterUpdate.computeUpdate(p, regionRadius);
 		}
 
-		parameterUpdate.computeUpdate(p, regionRadius);
 		if( isScaling() )
 			undoScalingOnParameters(p);
 		CommonOps_DDRM.add(x,p,x_next);

@@ -65,9 +65,8 @@ public class TestTrustRegionUpdateDoglegBFGS_F64 {
 		@Override
 		protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.regionInitial = 1;
 			config.scalingMinimum = 1;
-			config.scalingMaximum = 1e6;
+			config.scalingMaximum = 1e4;
 			// oddly sensitive to this parameter. This is just a test to see if scaling is handled correctly not a
 			// robustness test so I'm fine with that.
 

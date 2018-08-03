@@ -72,7 +72,6 @@ public class TestTrustRegionUpdateDoglegLS_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.regionInitial = 100;
 			config.scalingMinimum = 1e-4;
 			config.scalingMaximum = 1e4;
 

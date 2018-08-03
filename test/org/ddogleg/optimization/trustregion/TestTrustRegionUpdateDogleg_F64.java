@@ -278,6 +278,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.regionInitial = -1;
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
 			tr.configure(config);
 			return tr;
@@ -290,7 +291,6 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.regionInitial = 100;
 			config.scalingMinimum = 1e-4;
 			config.scalingMaximum = 1e5;
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
