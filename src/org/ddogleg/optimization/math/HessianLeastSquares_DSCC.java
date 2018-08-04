@@ -16,30 +16,33 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.trustregion;
+package org.ddogleg.optimization.math;
 
+import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.data.IGrowArray;
+import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.csc.CommonOps_DSCC;
 
 /**
  * @author Peter Abeles
  */
-public class TestTrustRegionMath_DDRM extends StandardTrustRegionMathChecks<DMatrixRMaj> {
-	public TestTrustRegionMath_DDRM() {
-		super(new TrustRegionMath_DDRM());
+public class HessianLeastSquares_DSCC extends HessianMath_DSCC
+		implements HessianLeastSquares<DMatrixSparseCSC>
+{
+	IGrowArray gw = new IGrowArray();
+	DGrowArray gx = new DGrowArray();
+
+	public HessianLeastSquares_DSCC() {
+	}
+
+	public HessianLeastSquares_DSCC(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver) {
+		super(solver);
 	}
 
 	@Override
-	public DMatrixRMaj convertA(DMatrixRMaj A) {
-		return A.copy();
-	}
-
-	@Override
-	public DMatrixRMaj convertB(DMatrixRMaj A) {
-		return A.copy();
-	}
-
-	@Override
-	public DMatrixRMaj create(int numRows, int numCols) {
-		return new DMatrixRMaj(numRows,numCols);
+	public void updateHessian(DMatrixSparseCSC jacobian) {
+		CommonOps_DSCC.multTransA(jacobian,jacobian, hessian,gw,gx);
 	}
 }

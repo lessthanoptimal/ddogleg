@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.math.HessianMath;
+import org.ddogleg.optimization.math.HessianMath_DDRM;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.RandomMatrices_DDRM;
@@ -114,16 +116,17 @@ public class TestTrustRegionBase_F64 {
 	public void computePredictedReduction() {
 		MockParameterUpdate update = new MockParameterUpdate();
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(update);
-		alg.hessian.reshape(2,2);
+		DMatrixRMaj H = ((HessianMath_DDRM)alg.hessian).getHessian();
+		H.reshape(2,2);
 
 		double x[] = new double[]{1,2};
 		alg.initialize(x,2,0);
 
 		RandomMatrices_DDRM.fillUniform(alg.gradient,-1,1,rand);
-		RandomMatrices_DDRM.fillUniform(alg.hessian,-1,1,rand);
+		RandomMatrices_DDRM.fillUniform(H,-1,1,rand);
 
 		Equation eq = new Equation();
-		eq.alias(alg.p,"p",alg.gradient,"g",alg.hessian,"H");
+		eq.alias(alg.p,"p",alg.gradient,"g",H,"H");
 
 		eq.process("reduction = -g'*p - 0.5*p'*H*p");
 		double expected = eq.lookupDouble("reduction");
@@ -184,23 +187,25 @@ public class TestTrustRegionBase_F64 {
 	public void applyScaling() {
 		MockTrustRegionBase_F64 alg = new MockTrustRegionBase_F64(null);
 
+		DMatrixRMaj H = ((HessianMath_DDRM)alg.hessian).getHessian();
+		H.reshape(4,4);
 		alg.gradient = RandomMatrices_DDRM.rectangle(4,1,-1,2,rand);
-		alg.hessian = RandomMatrices_DDRM.rectangle(4,4,-1,2,rand);
+		RandomMatrices_DDRM.fillUniform(H,rand);
 
-		DMatrixRMaj g = alg.gradient.copy();
-		DMatrixRMaj H = alg.hessian.copy();
+		DMatrixRMaj _g = alg.gradient.copy();
+		DMatrixRMaj _H = H.copy();
 
 		alg.scaling = new DMatrixRMaj(new double[][]{{1},{0.1},{2},{0.6}});
 
 		alg.applyScaling();
 
 		for (int row = 0; row < 4; row++) {
-			double expected = g.get(row,0)/alg.scaling.get(row);
+			double expected = _g.get(row,0)/alg.scaling.get(row);
 			assertEquals(expected, alg.gradient.get(row), UtilEjml.TEST_F64);
 
 			for (int col = 0; col < 4; col++) {
-				expected = H.get(row,col)/(alg.scaling.get(row)*alg.scaling.get(col));
-				assertEquals(expected, alg.hessian.get(row,col), UtilEjml.TEST_F64);
+				expected = _H.get(row,col)/(alg.scaling.get(row)*alg.scaling.get(col));
+				assertEquals(expected, H.get(row,col), UtilEjml.TEST_F64);
 			}
 		}
 	}
@@ -252,10 +257,10 @@ public class TestTrustRegionBase_F64 {
 
 	private static class MockParameterUpdate implements TrustRegionBase_F64.ParameterUpdate<DMatrixRMaj> {
 
+
 		@Override
-		public void initialize(TrustRegionBase_F64<DMatrixRMaj> base,
-							   int numberOfParameters,
-							   double minimumFunctionValue) {
+		public void initialize(TrustRegionBase_F64<DMatrixRMaj,?> base,
+							   int numberOfParameters, double minimumFunctionValue) {
 
 		}
 
@@ -285,10 +290,10 @@ public class TestTrustRegionBase_F64 {
 		}
 	}
 
-	private static class MockTrustRegionBase_F64 extends TrustRegionBase_F64<DMatrixRMaj> {
+	private static class MockTrustRegionBase_F64 extends TrustRegionBase_F64<DMatrixRMaj,HessianMath> {
 
-		public MockTrustRegionBase_F64(ParameterUpdate parameterUpdate) {
-			super(parameterUpdate, new TrustRegionMath_DDRM());
+		public MockTrustRegionBase_F64(ParameterUpdate<DMatrixRMaj> parameterUpdate) {
+			super(parameterUpdate, new HessianMath_DDRM());
 		}
 
 		@Override
@@ -302,8 +307,10 @@ public class TestTrustRegionBase_F64 {
 		}
 
 		@Override
-		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, DMatrixRMaj hessian) {
+		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost,
+											   DMatrixRMaj gradient, HessianMath hessian) {
 
 		}
+
 	}
 }

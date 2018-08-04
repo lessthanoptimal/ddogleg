@@ -22,56 +22,43 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
-import org.ddogleg.optimization.impl.SchurComplementMath;
+import org.ddogleg.optimization.math.HessianSchurComplement;
+import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.UtilEjml;
+import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
-import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 
 import javax.annotation.Nonnull;
 
 /**
- * Implementations of {@link UnconstrainedLeastSquaresSchur}. Uses {@link SchurComplementMath}
+ * Implementations of {@link UnconstrainedLeastSquaresSchur}. Uses {@link HessianSchurComplement_DSCC}
  * to compute the Schur complement and perform all math related to the Hessian. The Hessian
  * is stored in a custom block format and the Hessian referenced in the parent class is ignored.
  * All functions which reference the original Hessian are overriden.
  *
  * @author Peter Abeles
  */
-public class UnconLeastSqTrustRegionSchur_F64
-		extends TrustRegionBase_F64<DMatrixSparseCSC>
-		implements UnconstrainedLeastSquaresSchur<DMatrixSparseCSC>
+public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
+		extends TrustRegionBase_F64<S,HessianSchurComplement<S>>
+		implements UnconstrainedLeastSquaresSchur<S>
 {
 	protected DMatrixRMaj residuals = new DMatrixRMaj(1,1);
 
 	protected FunctionNtoM functionResiduals;
-	protected SchurJacobian<DMatrixSparseCSC> functionJacobian;
+	protected SchurJacobian<S> functionJacobian;
 
 	// Left and right side of the jacobian matrix
-	protected DMatrixSparseCSC jacLeft = new DMatrixSparseCSC(1,1,1);
-	protected DMatrixSparseCSC jacRight = new DMatrixSparseCSC(1,1,1);
+	protected S jacLeft;
+	protected S jacRight;
 
-	// Contains math for Schur complement
-	protected SchurComplementMath schur;
+	public UnconLeastSqTrustRegionSchur_F64( ParameterUpdate<S> update ,
+											 HessianSchurComplement<S> hessian )
+	{
+		super(update,hessian);
 
-	public UnconLeastSqTrustRegionSchur_F64(){
-		this.parameterUpdate = new SchurDogleg();
-		this.math = null; // the math is represented completely differently here.
-		this.schur = new SchurComplementMath();
-
-		// Mark the hessian as null to ensure the code will blow up if a function is missed
-		// that attempts to access the hessian. Well it was already null, but this makes it clear
-		// that it was null intentionally.
-		hessian = null;
-	}
-
-	@Override
-	public void setFunction(FunctionNtoM function, @Nonnull SchurJacobian<DMatrixSparseCSC> jacobian) {
-		this.functionResiduals = function;
-		this.functionJacobian = jacobian;
-		schur.initialize();
+		jacLeft = hessian.createMatrix();
+		jacRight = hessian.createMatrix();
 	}
 
 	/**
@@ -98,25 +85,17 @@ public class UnconLeastSqTrustRegionSchur_F64
 	}
 
 	@Override
+	public void setFunction(FunctionNtoM function, @Nonnull SchurJacobian<S> jacobian) {
+		this.functionResiduals = function;
+		this.functionJacobian = jacobian;
+		residuals.reshape(jacobian.getNumOfOutputsM(),1);
+	}
+
+	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
 		this.initialize(initial,functionResiduals.getNumOfInputsN(),0);
 		config.ftol = ftol;
 		config.gtol = gtol;
-	}
-
-	@Override
-	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
-		int M = functionResiduals.getNumOfOutputsM();
-		residuals.reshape(M,1);
-
-		super.initialize(initial, numberOfParameters, minimumFunctionValue);
-	}
-
-	@Override
-	protected double solveCauchyStepLength() {
-		double gBg = schur.innerProductHessian(gradient);
-
-		return gradientNorm*gradientNorm/gBg;
 	}
 
 	@Override
@@ -127,44 +106,12 @@ public class UnconLeastSqTrustRegionSchur_F64
 
 	@Override
 	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost,
-										   DMatrixRMaj gradient, DMatrixSparseCSC hessian) {
+										   DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
 		if( !sameStateAsCost )
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacLeft,jacRight);
-		schur.computeHessian(jacLeft,jacRight);
-		schur.computeGradient(jacLeft,jacRight,residuals,gradient);
-	}
-
-	@Override
-	protected void computeScaling() {
-		schur.extractHessianDiagonal(scaling);
-		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
-	}
-
-	@Override
-	protected void applyScaling() {
-		CommonOps_DDRM.elementDiv(gradient,scaling);
-		schur.elementDivHessian(scaling);
-	}
-
-	@Override
-	public double computePredictedReduction(DMatrixRMaj p) {
-		double p_dot_g = VectorVectorMult_DDRM.innerProd(p,gradient);
-		double p_JJ_p = schur.innerProductHessian(p);
-
-		return -p_dot_g - 0.5*p_JJ_p;
-	}
-
-	private class SchurDogleg extends TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> {
-		@Override
-		protected double innerProductHessian(DMatrixRMaj v) {
-			return schur.innerProductHessian(v);
-		}
-
-		@Override
-		protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN) {
-			return schur.computeStep(gradient,pointGN);
-		}
+		hessian.computeHessian(jacLeft,jacRight);
+		hessian.computeGradient(jacLeft,jacRight,residuals,gradient);
 	}
 
 	@Override

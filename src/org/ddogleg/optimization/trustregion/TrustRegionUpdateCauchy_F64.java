@@ -36,13 +36,11 @@ import org.ejml.dense.row.CommonOps_DDRM;
  *
  * @author Peter Abeles
  */
-public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S>
+public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
+		implements TrustRegionBase_F64.ParameterUpdate<S>
 {
 	// the trust region instance which is using the update function
-	private TrustRegionBase_F64<S> owner;
-
-	// minimum possible value from function being optimized
-	private double minimumFunctionValue;
+	private TrustRegionBase_F64<S,?> owner;
 
 	// direction of the gradient
 	DMatrixRMaj direction = new DMatrixRMaj(1,1);
@@ -58,9 +56,10 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	boolean verbose=false;
 
 	@Override
-	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
+	public void initialize( TrustRegionBase_F64<S,?> owner ,
+							int numberOfParameters , double minimumFunctionValue)
+	{
 		this.owner = owner;
-		this.minimumFunctionValue = minimumFunctionValue;
 		direction.reshape(numberOfParameters,1);
 	}
 
@@ -68,7 +67,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix> implements TrustRegi
 	public void initializeUpdate() {
 		// use the direction instead of gradient for reduced overflow/underflow issues
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,direction);
-		gBg = owner.math.innerProductVectorMatrix(direction,owner.hessian);
+		gBg = owner.hessian.innerVectorHessian(direction);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);

@@ -23,7 +23,7 @@ import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DDRM;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DSCC;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization;
-import org.ejml.LinearSolverSafe;
+import org.ddogleg.optimization.math.*;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -31,8 +31,8 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.interfaces.linsol.LinearSolverDense;
+import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.junit.jupiter.api.Nested;
@@ -55,25 +55,25 @@ public class TestTrustRegionUpdateDogleg_F64 {
 	 */
 	@Test
 	public void initializeUpdate_spd() {
-		LinearSolverDense<DMatrixRMaj> chol = LinearSolverFactory_DDRM.chol(2);
-		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(chol);
-		alg.initialize(new MockTrustRegionBase(alg),2,0);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
+		MockTrustRegionBase owner = new MockTrustRegionBase(alg);
+		alg.initialize(owner,2,0);
 
-		alg.owner.hessian.set(new double[][]{{1,0},{0,1}});
-		alg.owner.gradientNorm = 1;
-		alg.owner.gradient.set(new double[][]{{1},{0}});
+		owner.hessian().set(new double[][]{{1,0},{0,1}});
+		owner.gradientNorm = 1;
+		owner.gradient.set(new double[][]{{1},{0}});
 
 		alg.initializeUpdate();
 		assertTrue(alg.positiveDefinite);
 
-		alg.owner.hessian.set(new double[][]{{0,1},{1,0}});
+		owner.hessian().set(new double[][]{{0,1},{1,0}});
 		alg.initializeUpdate();
 		assertFalse(alg.positiveDefinite);
 	}
 
 	@Test
 	public void computeUpdate_NegativeDefinite() {
-		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
 		MockTrustRegionBase owner = new MockTrustRegionBase(alg);
 		alg.initialize(owner,2,0);
 
@@ -81,8 +81,8 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		setGradient(alg.owner.gradient,-1,0,1000);
 		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		owner.hessian.set(new double[][]{{-2,0.1},{0.1,-1.5}});
-		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
+		owner.hessian().set(new double[][]{{-2,0.1},{0.1,-1.5}});
+		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
 		alg.positiveDefinite = false;
 		alg.owner.fx = 1000;
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
@@ -97,16 +97,16 @@ public class TestTrustRegionUpdateDogleg_F64 {
 
 	@Test
 	public void computeUpdate_cauchy_after() {
-		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
 		MockTrustRegionBase owner = new MockTrustRegionBase(alg);
 		alg.initialize(owner,2,0);
-		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
+		owner.hessian().set(new double[][]{{2,0.1},{0.1,1.5}});
 
 		// have Gn and cauchy lie along a line so the math is easy
 		owner.gradientNorm = 2.1;
 		setGradient(alg.owner.gradient,-1,0,owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
+		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
 		alg.positiveDefinite = true;
 		alg.distanceGN = 5;
 		alg.distanceCauchy = 3;
@@ -124,17 +124,17 @@ public class TestTrustRegionUpdateDogleg_F64 {
 
 	@Test
 	public void computeUpdate_cauchy_inside() {
-		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
 		MockTrustRegionBase owner = new MockTrustRegionBase(alg);
 		alg.initialize(owner,2,0);
 
 		// have Gn and cauchy lie along a line so the math is easy
 		double radius = 2;
-		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
+		owner.hessian().set(new double[][]{{2,0.1},{0.1,1.5}});
 		alg.owner.gradientNorm = 1.5;
 		setGradient(alg.owner.gradient,-1,0,alg.owner.gradientNorm);
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		alg.gBg = owner.math.innerProductVectorMatrix(alg.direction,owner.hessian);
+		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
 		alg.positiveDefinite = true;
 		alg.stepGN.set(new double[][]{{5},{0}});
 		alg.distanceGN = 5;
@@ -158,15 +158,15 @@ public class TestTrustRegionUpdateDogleg_F64 {
 	 */
 	@Test
 	public void computeUpdate_gn_inside() {
-		TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
 		MockTrustRegionBase owner = new MockTrustRegionBase(alg);
 		alg.initialize(owner,2,0);
 
 		alg.positiveDefinite = true;
-		owner.hessian.set(new double[][]{{2,0.1},{0.1,1.5}});
+		owner.hessian().set(new double[][]{{2,0.1},{0.1,1.5}});
 		setGradient(alg.owner.gradient,-1,0,1.5);
 		alg.owner.gradientNorm = NormOps_DDRM.normF(alg.owner.gradient);
-		alg.gBg = owner.math.innerProductVectorMatrix(owner.gradient,owner.hessian);
+		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
 		alg.stepGN.set(new double[][]{{1},{2}});
 		alg.distanceGN = NormOps_DDRM.normF(alg.stepGN);
 		DMatrixRMaj p = new DMatrixRMaj(2,1);
@@ -227,10 +227,14 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		}
 	}
 
-	private static class MockTrustRegionBase extends TrustRegionBase_F64<DMatrixRMaj> {
+	private static class MockTrustRegionBase extends TrustRegionBase_F64<DMatrixRMaj,HessianMath> {
 
-		public MockTrustRegionBase(ParameterUpdate parameterUpdate) {
-			super(parameterUpdate, new TrustRegionMath_DDRM());
+		public MockTrustRegionBase(ParameterUpdate<DMatrixRMaj> parameterUpdate) {
+			super(parameterUpdate, new HessianMath_DDRM(LinearSolverFactory_DDRM.chol(2)));
+		}
+
+		public DMatrixRMaj hessian() {
+			return ((HessianMath_DDRM)hessian).getHessian();
 		}
 
 		@Override
@@ -244,9 +248,11 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		}
 
 		@Override
-		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, DMatrixRMaj hessian) {
+		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient,
+											   HessianMath hessian) {
 
 		}
+
 	}
 
 	@Nested
@@ -259,14 +265,11 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.regionInitial = 1;
+			config.regionInitial = 100;
 
-
-			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-			solver = new LinearSolverSafe<>(solver);
-			TrustRegionUpdateDogleg_F64 alg = new TrustRegionUpdateDogleg_F64(solver);
-
-			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(alg);
+			TrustRegionUpdateDogleg_F64 dogleg = new TrustRegionUpdateDogleg_F64();
+			HessianBFGS_DDRM hessian = new HessianBFGS_DDRM(true);
+			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(dogleg,hessian);
 			tr.configure(config);
 			return tr;
 		}
@@ -291,6 +294,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
+			config.regionInitial = 100;
 			config.scalingMinimum = 1e-4;
 			config.scalingMaximum = 1e5;
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
@@ -301,10 +305,9 @@ public class TestTrustRegionUpdateDogleg_F64 {
 
 	private static UnconLeastSqTrustRegion_F64<DMatrixRMaj> createSolver() {
 		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-		solver = new LinearSolverSafe<>(solver);
-		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(solver);
-
-		return new UnconLeastSqTrustRegion_F64<>(alg, new TrustRegionMath_DDRM());
+		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>();
+		return new UnconLeastSqTrustRegion_F64<>(alg,hessian, new MatrixMath_DDRM());
 	}
 
 	@Nested
@@ -315,11 +318,12 @@ public class TestTrustRegionUpdateDogleg_F64 {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			config.regionInitial = 1;
 
-			LinearSolver<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
-			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> alg = new TrustRegionUpdateDogleg_F64<>(solver);
+			LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+			HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
+			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> alg = new TrustRegionUpdateDogleg_F64<>();
 
 			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
-					alg, new TrustRegionMath_DSCC());
+					alg,hessian, new MatrixMath_DSCC());
 			tr.configure(config);
 			return tr;
 		}

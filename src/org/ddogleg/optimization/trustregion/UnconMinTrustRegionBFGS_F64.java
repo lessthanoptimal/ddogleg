@@ -23,6 +23,7 @@ import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.EquationsBFGS;
+import org.ddogleg.optimization.math.HessianBFGS;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -35,19 +36,15 @@ import org.ejml.dense.row.CommonOps_DDRM;
  * @author Peter Abeles
  */
 public class UnconMinTrustRegionBFGS_F64
-		extends TrustRegionBase_F64<DMatrixRMaj>
+		extends TrustRegionBase_F64<DMatrixRMaj,HessianBFGS>
 		implements UnconstrainedMinimization
 {
 	// temp variable of length N
 	private DMatrixRMaj y = new DMatrixRMaj(1,1);
-	private DMatrixRMaj tmpN1 = new DMatrixRMaj(1,1);
-	private DMatrixRMaj tmpN2 = new DMatrixRMaj(1,1);
+
 	private DMatrixRMaj gradientPrevious = new DMatrixRMaj(1,1);
 	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
 	private DMatrixRMaj s = new DMatrixRMaj(1,1);
-
-	protected DMatrixRMaj hessianInverse = new DMatrixRMaj(1,1);
-	protected boolean computeInverse=false;
 
 	double f_prev;
 
@@ -61,8 +58,8 @@ public class UnconMinTrustRegionBFGS_F64
 
 	double c1=1e-4,c2=0.9;
 
-	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate) {
-		super(parameterUpdate, new TrustRegionMath_DDRM());
+	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate, HessianBFGS hessian ) {
+		super(parameterUpdate, hessian);
 	}
 
 	@Override
@@ -106,20 +103,9 @@ public class UnconMinTrustRegionBFGS_F64
 	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
 		super.initialize(initial, numberOfParameters,minimumFunctionValue);
 		y.reshape(numberOfParameters,1);
-		tmpN1.reshape(numberOfParameters,1);
-		tmpN2.reshape(numberOfParameters,1);
 
 		xPrevious.reshape(numberOfParameters,1);
 		x.reshape(numberOfParameters,1);
-
-		// Set the hessian to identity. There are other potentially better methods
-		hessian.reshape(numberOfParameters,numberOfParameters);
-		math.setIdentity(hessian);
-
-		if( computeInverse ) {
-			hessianInverse.reshape(numberOfParameters,numberOfParameters);
-			math.setIdentity(hessianInverse);
-		}
 
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
@@ -134,7 +120,7 @@ public class UnconMinTrustRegionBFGS_F64
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, DMatrixRMaj hessian) {
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, HessianBFGS hessian) {
 		functionGradient.process(x.data, gradient.data);
 
 		if( !firstIteration ) {
@@ -153,10 +139,7 @@ public class UnconMinTrustRegionBFGS_F64
 			if( wolfeCondition(s,y,gradientPrevious)) {
 				// Apply DFP equation and update H
 				// Note: there is some duplication in math between Wolfe, update(), and inverseUpdate()
-				EquationsBFGS.update(hessian, s, y, tmpN1, tmpN2);
-				if( computeInverse ) {
-					EquationsBFGS.inverseUpdate(hessianInverse,s,y,tmpN1,tmpN2);
-				}
+				hessian.update(s,y);
 
 				gradientPrevious.set(gradient);
 				xPrevious.set(x);
@@ -179,14 +162,6 @@ public class UnconMinTrustRegionBFGS_F64
 			return (fx-f_prev) <= c1*g_s;
 		}
 		return false;
-	}
-
-	public void setComputeInverse(boolean computeInverse) {
-		this.computeInverse = computeInverse;
-	}
-
-	public DMatrixRMaj getHessianInverse() {
-		return hessianInverse;
 	}
 
 	@Override

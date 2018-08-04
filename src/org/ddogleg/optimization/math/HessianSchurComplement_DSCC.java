@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.impl;
+package org.ddogleg.optimization.math;
 
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
@@ -46,7 +46,9 @@ import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
  *
  * @author Peter Abeles
  */
-public class SchurComplementMath {
+public class HessianSchurComplement_DSCC
+		implements HessianSchurComplement<DMatrixSparseCSC>
+{
 	// Blocks inside the Hessian matrix
 	DMatrixSparseCSC A = new DMatrixSparseCSC(1,1);
 	DMatrixSparseCSC B = new DMatrixSparseCSC(1,1);
@@ -68,93 +70,23 @@ public class SchurComplementMath {
 	// Two solvers are created so that the structure can be saved and not recomputed each iteration
 	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solverA, solverD;
 
-	public SchurComplementMath() {
+	public HessianSchurComplement_DSCC() {
 		this( LinearSolverFactory_DSCC.cholesky(FillReducing.NONE),
 				LinearSolverFactory_DSCC.cholesky(FillReducing.NONE));
 	}
 
-	public SchurComplementMath(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverA,
-							   LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverD) {
+	public HessianSchurComplement_DSCC(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverA,
+									   LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverD) {
 		this.solverA = solverA;
 		this.solverD = solverD;
 	}
 
-
-	/**
-	 * Call when a new function is used and/ore the non-zero structure changes
-	 */
-	public void initialize() {
+	@Override
+	public void init(int numParameters) {
 		// The structure will be computed in the first iteration then fixed from then on
 		// saves a tiny bit of memory and time
 		solverA.setStructureLocked(false);
 		solverD.setStructureLocked(false);
-	}
-
-	/**
-	 * Compuets the Hessian in block form
-	 * @param jacLeft (Input) Left side of Jacobian
-	 * @param jacRight (Input) Right side of Jacobian
-	 */
-	public void computeHessian(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight) {
-		A.reshape(jacLeft.numCols,jacLeft.numCols,1);
-		B.reshape(jacLeft.numCols,jacRight.numCols,1);
-		D.reshape(jacRight.numCols,jacRight.numCols,1);
-
-		// take advantage of the inner product's symmetry when possible to reduce
-		// the number of calculations
-		CommonOps_DSCC.innerProductLower(jacLeft,tmp0,gw,gx);
-		CommonOps_DSCC.symmLowerToFull(tmp0,A,gw);
-		CommonOps_DSCC.multTransA(jacLeft,jacRight,B,gw,gx);
-		CommonOps_DSCC.innerProductLower(jacRight,tmp0,gw,gx);
-		CommonOps_DSCC.symmLowerToFull(tmp0,D,gw);
-	}
-
-	/**
-	 * Computes the gradient using Schur complement
-	 *
-	 * @param jacLeft (Input) Left side of Jacobian
-	 * @param jacRight (Input) Right side of Jacobian
-	 * @param residuals (Input) Residuals
-	 * @param gradient (Output) Gradient
-	 */
-	public void computeGradient(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight ,
-								DMatrixRMaj residuals, DMatrixRMaj gradient) {
-
-		// Find the gradient using the two matrices for Jacobian
-		// g = J'*r = [L,R]'*r
-		x1.reshape(jacLeft.numCols,1);
-		x2.reshape(jacRight.numCols,1);
-		CommonOps_DSCC.multTransA(jacLeft,residuals,x1);
-		CommonOps_DSCC.multTransA(jacRight,residuals,x2);
-
-		CommonOps_DDRM.insert(x1,gradient,0,0);
-		CommonOps_DDRM.insert(x2,gradient,x1.numRows,0);
-	}
-
-	/**
-	 * Extracts the diagonal elements from the hessian
-	 * @param diag
-	 */
-	public void extractHessianDiagonal( DMatrixRMaj diag ) {
-		// extract diagonal elements from Hessian matrix
-		CommonOps_DSCC.extractDiag(A, x1);
-		CommonOps_DSCC.extractDiag(D, x2);
-
-		diag.reshape(A.numCols+D.numCols,1);
-		CommonOps_DDRM.insert(x1,diag,0,0);
-		CommonOps_DDRM.insert(x2,diag,x1.numRows,0);
-	}
-
-	/**
-	 * Applies the inverted scaling matrix S to the blocks of H=J'*J=[A B;C D] inplace.
-	 * [A B;C D] = inv(S)*J'*J*inv(S).
-	 * @param scale
-	 */
-	public void elementDivHessian(DMatrixRMaj scale ) {
-		double []d = scale.data;
-		CommonOps_DSCC.divideRowsCols(d,0,A,d,0);
-		CommonOps_DSCC.divideRowsCols(d,0,B,d,A.numCols);
-		CommonOps_DSCC.divideRowsCols(d,A.numRows,D,d,A.numCols);
 	}
 
 	/**
@@ -169,7 +101,8 @@ public class SchurComplementMath {
 	 * @param v row vector
 	 * @return v'*H*v = v'*[A B;C D]*v
 	 */
-	public double innerProductHessian( DMatrixRMaj v ) {
+	@Override
+	public double innerVectorHessian( DMatrixRMaj v ) {
 		int M = A.numRows;
 
 		double sum = 0;
@@ -180,18 +113,37 @@ public class SchurComplementMath {
 		return sum;
 	}
 
-	/**
-	 *
-	 * @param gradient (Input) The gradient. DO NOT MODIFY. (Nx1)
-	 * @param step (Output) Step for this iteration. (Nx1)
-	 */
-	public boolean computeStep( DMatrixRMaj gradient, DMatrixRMaj step) {
+	@Override
+	public void extractDiag(DMatrixRMaj diag) {
+		// extract diagonal elements from Hessian matrix
+		CommonOps_DSCC.extractDiag(A, x1);
+		CommonOps_DSCC.extractDiag(D, x2);
 
+		diag.reshape(A.numCols+D.numCols,1);
+		CommonOps_DDRM.insert(x1,diag,0,0);
+		CommonOps_DDRM.insert(x2,diag,x1.numRows,0);
+	}
+
+	@Override
+	public void divideRowsCols(DMatrixRMaj scaling) {
+		double []d = scaling.data;
+		CommonOps_DSCC.divideRowsCols(d,0,A,d,0);
+		CommonOps_DSCC.divideRowsCols(d,0,B,d,A.numCols);
+		CommonOps_DSCC.divideRowsCols(d,A.numRows,D,d,A.numCols);
+	}
+
+	@Override
+	public boolean initializeSolver() {
 		// Don't use quality to reject a solution since it's meaning is too dependent on implementation
 		if( !solverA.setA(A) )
 			return false;
 		solverA.setStructureLocked(true);
 
+		return true;
+	}
+
+	@Override
+	public boolean solve(DMatrixRMaj gradient, DMatrixRMaj step) {
 		// extract b1
 		CommonOps_DDRM.extract(gradient,0,A.numCols,0,gradient.numCols, b1);
 		CommonOps_DDRM.extract(gradient,A.numCols,gradient.numRows,0,gradient.numCols, b2);
@@ -219,7 +171,6 @@ public class SchurComplementMath {
 		if( !solverD.setA(D_m) ) {
 			return false;
 		}
-
 		solverD.setStructureLocked(true);
 		x2.reshape(D_m.numRows,b2_m.numCols);
 		solverD.solve(b2_m,x2);
@@ -237,4 +188,51 @@ public class SchurComplementMath {
 		return true;
 	}
 
+	/**
+	 * Compuets the Hessian in block form
+	 * @param jacLeft (Input) Left side of Jacobian
+	 * @param jacRight (Input) Right side of Jacobian
+	 */
+	@Override
+	public void computeHessian(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight) {
+		A.reshape(jacLeft.numCols,jacLeft.numCols,1);
+		B.reshape(jacLeft.numCols,jacRight.numCols,1);
+		D.reshape(jacRight.numCols,jacRight.numCols,1);
+
+		// take advantage of the inner product's symmetry when possible to reduce
+		// the number of calculations
+		CommonOps_DSCC.innerProductLower(jacLeft,tmp0,gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp0,A,gw);
+		CommonOps_DSCC.multTransA(jacLeft,jacRight,B,gw,gx);
+		CommonOps_DSCC.innerProductLower(jacRight,tmp0,gw,gx);
+		CommonOps_DSCC.symmLowerToFull(tmp0,D,gw);
+	}
+
+	/**
+	 * Computes the gradient using Schur complement
+	 *
+	 * @param jacLeft (Input) Left side of Jacobian
+	 * @param jacRight (Input) Right side of Jacobian
+	 * @param residuals (Input) Residuals
+	 * @param gradient (Output) Gradient
+	 */
+	@Override
+	public void computeGradient(DMatrixSparseCSC jacLeft , DMatrixSparseCSC jacRight ,
+								DMatrixRMaj residuals, DMatrixRMaj gradient) {
+
+		// Find the gradient using the two matrices for Jacobian
+		// g = J'*r = [L,R]'*r
+		x1.reshape(jacLeft.numCols,1);
+		x2.reshape(jacRight.numCols,1);
+		CommonOps_DSCC.multTransA(jacLeft,residuals,x1);
+		CommonOps_DSCC.multTransA(jacRight,residuals,x2);
+
+		CommonOps_DDRM.insert(x1,gradient,0,0);
+		CommonOps_DDRM.insert(x2,gradient,x1.numRows,0);
+	}
+
+	@Override
+	public DMatrixSparseCSC createMatrix() {
+		return new DMatrixSparseCSC(1,1);
+	}
 }

@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
-import org.ddogleg.optimization.trustregion.OptimizationMath;
+import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
@@ -57,7 +57,7 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 	protected ConfigLevenbergMarquardt config;
 
 	// Math for some matrix operations
-	protected OptimizationMath<S> math;
+	protected MatrixMath<S> math;
 
 	/**
 	 * Storage for Jacobian
@@ -91,7 +91,7 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
 
-	public LevenbergBase_F64( OptimizationMath<S> math ) {
+	public LevenbergBase_F64( MatrixMath<S> math ) {
 		setConfiguration(new ConfigLevenbergMarquardt());
 		this.math = math;
 

@@ -19,12 +19,19 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.*;
+import org.ddogleg.optimization.math.HessianBFGS;
+import org.ddogleg.optimization.math.HessianBFGS_DDRM;
+import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
+import org.ddogleg.optimization.math.MatrixMath_DDRM;
+import org.ddogleg.optimization.trustregion.*;
 import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverDense;
+
+import javax.annotation.Nullable;
 
 /**
  * Creates optimization algorithms using easy to use interfaces.  These implementations/interfaces
@@ -109,7 +116,7 @@ public class FactoryOptimization {
 	 *                     a much faster one if used.
 	 * @return UnconstrainedLeastSquares
 	 */
-	public static UnconstrainedLeastSquares leastSquaresTrustRegion( double regionSize ,
+	public static UnconstrainedLeastSquares<DMatrixRMaj> leastSquaresTrustRegion( double regionSize ,
 																	 RegionStepType type ,
 																	 boolean robustSolver )
 	{
@@ -141,5 +148,67 @@ public class FactoryOptimization {
 		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(regionSize,stepAlg);
 
 		return new TrustRegionLeastSquares_to_UnconstrainedLeastSquares(alg);
+	}
+
+	/**
+	 * Creates a dense trust region least-squares optimization using dogleg steps. Solver works on the B=J<sup<T></sup>J matrix.
+	 *
+	 * @see UnconLeastSqTrustRegion_F64
+	 *
+	 * @param config Trust region configuration
+	 * @return The new optimization routine
+	 */
+	public static UnconstrainedLeastSquares<DMatrixRMaj> dogleg( @Nullable ConfigTrustRegion config, boolean robust ) {
+		if( config == null )
+			config = new ConfigTrustRegion();
+
+		LinearSolverDense<DMatrixRMaj> solver;
+		if( robust )
+			solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true,false);
+		else
+			solver = LinearSolverFactory_DDRM.chol(100);
+
+		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
+		MatrixMath_DDRM math = new MatrixMath_DDRM();
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> update = new TrustRegionUpdateDogleg_F64<>();
+		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
+		alg.configure(config);
+		return alg;
+	}
+
+	/**
+	 * Creates a dense trust region least-squares optimization using cauchy steps.
+	 *
+	 * @see UnconLeastSqTrustRegion_F64
+	 *
+	 * @param config Trust region configuration
+	 * @return The new optimization routine
+	 */
+	public static UnconstrainedLeastSquares<DMatrixRMaj> cauchy( @Nullable ConfigTrustRegion config ) {
+		if( config == null )
+			config = new ConfigTrustRegion();
+
+		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM();
+		MatrixMath_DDRM math = new MatrixMath_DDRM();
+		TrustRegionUpdateCauchy_F64<DMatrixRMaj> update = new TrustRegionUpdateCauchy_F64<>();
+		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
+		alg.configure(config);
+		return alg;
+	}
+
+	/**
+	 * Dense trust-region unconstrained minimization using Dogleg steps and BFGS to estimate the Hessian.
+	 * @param config Trust region configuration
+	 * @return The new optimization routine
+	 */
+	public static UnconstrainedMinimization doglegBFGS( @Nullable ConfigTrustRegion config ) {
+		if( config == null )
+			config = new ConfigTrustRegion();
+
+		HessianBFGS hessian = new HessianBFGS_DDRM(true);
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> update = new TrustRegionUpdateDogleg_F64<>();
+		UnconMinTrustRegionBFGS_F64 alg = new UnconMinTrustRegionBFGS_F64(update,hessian);
+		alg.configure(config);
+		return alg;
 	}
 }

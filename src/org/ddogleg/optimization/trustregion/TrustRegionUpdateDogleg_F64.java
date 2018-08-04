@@ -25,7 +25,6 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
-import org.ejml.interfaces.linsol.LinearSolver;
 
 /**
  * <p>
@@ -44,18 +43,16 @@ import org.ejml.interfaces.linsol.LinearSolver;
  *
  * @author Peter Abeles
  */
-public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegionBase_F64.ParameterUpdate<S> {
+public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
+		implements TrustRegionBase_F64.ParameterUpdate<S> {
 	// TODO consider more accurate intersection method in paper
 
 
 	// the trust region instance which is using the update function
-	protected TrustRegionBase_F64<S> owner;
+	protected TrustRegionBase_F64<S,?> owner;
 
 	// minimum possible value from function being optimized
 	protected double minimumFunctionValue;
-
-	// used to solve positive definite systems
-	protected LinearSolver<S,DMatrixRMaj> solver;
 
 	// Gradient's direction
 	protected DMatrixRMaj direction = new DMatrixRMaj(1,1);
@@ -81,19 +78,9 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	double stepLength;
 
 	boolean verbose = false;
-	/**
-	 * Specifies internal algorithms
-	 *
-	 * @param solver Solver for positive definite systems
-	 */
-	public TrustRegionUpdateDogleg_F64(LinearSolver<S, DMatrixRMaj> solver) {
-		this.solver = UtilEjml.safe(solver); // ensure that the inputs to the solver are not modified
-	}
-
-	protected TrustRegionUpdateDogleg_F64(){}
 
 	@Override
-	public void initialize( TrustRegionBase_F64<S> owner , int numberOfParameters , double minimumFunctionValue) {
+	public void initialize( TrustRegionBase_F64<S,?> owner , int numberOfParameters , double minimumFunctionValue) {
 		this.owner = owner;
 		this.minimumFunctionValue = minimumFunctionValue;
 		direction.reshape(numberOfParameters,1);
@@ -105,7 +92,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 	public void initializeUpdate() {
 		// Scale the gradient vector to make it less likely to overflow/underflow
 		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm, direction);
-		gBg = innerProductHessian(direction);
+		gBg = owner.hessian.innerVectorHessian(direction);
 
 		if(UtilEjml.isUncountable(gBg))
 			throw new OptimizationException("Uncountable. gBg="+gBg);
@@ -123,20 +110,15 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix> implements TrustRegi
 		}
 	}
 
-	/**
-	 * Inner product of this matrix and the hessian. In it's own function so that it can be overloaded
-	 * easily.
-	 */
-	protected double innerProductHessian( DMatrixRMaj v ) {
-		return owner.math.innerProductVectorMatrix(v,owner.hessian);
-	}
 
 	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN ) {
-		if( !solver.setA(owner.hessian) ) {
+		if( !owner.hessian.initializeSolver() ) {
 			return false;
 		}
 		// using direction instead of gradient "should" have better scaling
-		solver.solve(direction, pointGN);
+		if( !owner.hessian.solve(direction, pointGN) ) {
+			return false;
+		}
 		CommonOps_DDRM.scale(owner.gradientNorm,pointGN);
 		return true;
 	}

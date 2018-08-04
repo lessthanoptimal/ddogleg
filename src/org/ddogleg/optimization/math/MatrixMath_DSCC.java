@@ -16,36 +16,28 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.trustregion;
+package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.sparse.csc.CommonOps_DSCC;
 
 /**
  * @author Peter Abeles
  */
-public class TestTrustRegionMath_DSCC extends StandardTrustRegionMathChecks<DMatrixSparseCSC> {
-	public TestTrustRegionMath_DSCC() {
-		super(new TrustRegionMath_DSCC());
+public class MatrixMath_DSCC implements MatrixMath<DMatrixSparseCSC> {
+	@Override
+	public void divideColumns(DMatrixRMaj divisor, DMatrixSparseCSC A) {
+		CommonOps_DSCC.divideColumns(A,divisor.data,0);
 	}
 
 	@Override
-	public DMatrixSparseCSC convertA(DMatrixRMaj A) {
-		DMatrixSparseCSC out = new DMatrixSparseCSC(A.numRows,A.numCols,1);
-		ConvertDMatrixStruct.convert(A,out);
-		return out;
+	public void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output) {
+		CommonOps_DSCC.multTransA(A,B,output);
 	}
 
 	@Override
-	public DMatrixRMaj convertB(DMatrixSparseCSC A) {
-		DMatrixRMaj out = new DMatrixRMaj(A.numRows,A.numCols);
-		ConvertDMatrixStruct.convert(A,out);
-		return out;
-	}
-
-	@Override
-	public DMatrixSparseCSC create(int numRows, int numCols) {
-		return new DMatrixSparseCSC(numRows,numCols,1);
+	public DMatrixSparseCSC createMatrix() {
+		return new DMatrixSparseCSC(1,1);
 	}
 }

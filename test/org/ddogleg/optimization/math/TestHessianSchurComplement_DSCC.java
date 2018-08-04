@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.impl;
+package org.ddogleg.optimization.math;
 
 import org.ejml.UtilEjml;
 import org.ejml.data.DGrowArray;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestSchurComplementMath {
+public class TestHessianSchurComplement_DSCC {
 
 	int M = 10;
 	int N = 6;
@@ -57,9 +57,9 @@ public class TestSchurComplementMath {
 
 	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M,1,-1,1,rand);
 
-	SchurComplementMath math = new SchurComplementMath();
+	HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
 
-	public TestSchurComplementMath() {
+	public TestHessianSchurComplement_DSCC() {
 		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
 		CommonOps_DSCC.multTransA(J,J,H,gw,gx);
 	}
@@ -77,11 +77,11 @@ public class TestSchurComplementMath {
 	}
 
 	@Test
-	public void extractHessianDiagonal() {
+	public void extractDiag() {
 		math.computeHessian(jacLeft,jacRight);
 
 		DMatrixRMaj found = new DMatrixRMaj(1,1);
-		math.extractHessianDiagonal(found);
+		math.extractDiag(found);
 
 		DMatrixRMaj expected = new DMatrixRMaj(1,1);
 		CommonOps_DSCC.extractDiag(H,expected);
@@ -90,16 +90,16 @@ public class TestSchurComplementMath {
 	}
 
 	@Test
-	public void elementDivHessian() {
+	public void divideRowsCols() {
 		DMatrixRMaj scale = RandomMatrices_DDRM.rectangle(M,1,0,1,rand);
 
 		DMatrixSparseCSC H = this.H.copy();
 		CommonOps_DSCC.divideRowsCols(scale.data,0,H,scale.data,0);
 
-		SchurComplementMath math = new SchurComplementMath();
+		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
 		math.computeHessian(jacLeft,jacRight);
 
-		math.elementDivHessian(scale);
+		math.divideRowsCols(scale);
 
 		// Reconstruct the original matrix
 		DMatrixSparseCSC top = CommonOps_DSCC.concatColumns(math.A,math.B,null);
@@ -114,13 +114,13 @@ public class TestSchurComplementMath {
 	}
 
 	@Test
-	public void innerProductHessian() {
-		SchurComplementMath math = new SchurComplementMath();
+	public void innerVectorHessian() {
+		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
 
 		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
 
 		math.computeHessian(jacLeft,jacRight);
-		double found = math.innerProductHessian(v);
+		double found = math.innerVectorHessian(v);
 		double expected = MatrixVectorMult_DSCC.innerProduct(v.data,0,H,v.data,0);
 
 		assertEquals(expected,found,UtilEjml.TEST_F64);

@@ -19,13 +19,7 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
-import org.ddogleg.optimization.trustregion.TrustRegionMath_DDRM;
-import org.ddogleg.optimization.trustregion.TrustRegionUpdateDogleg_F64;
-import org.ddogleg.optimization.trustregion.UnconLeastSqTrustRegion_F64;
-import org.ejml.LinearSolverSafe;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * @author Peter Abeles
@@ -43,16 +37,13 @@ public class EvaluateTrustRegionLeastSquaresNew extends UnconstrainedLeastSquare
 //		config.scalingMinimum = .1;
 //		config.scalingMaximum = 1e6;
 
-//		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(4);
-		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true, false);
-		solver = new LinearSolverSafe<>(solver);
-		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDogleg_F64<>(solver);
-//		TrustRegionUpdateDogleg_F64<DMatrixRMaj> alg = new TrustRegionUpdateDoglegLS_F64<>(solver);
-//		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
+		UnconstrainedLeastSquares<DMatrixRMaj> tr;
 
-		UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-				alg, new TrustRegionMath_DDRM());
-		tr.configure(config);
+//		tr = FactoryOptimization.cauchy(config);
+		tr = FactoryOptimization.dogleg(config,false);
+//		tr = FactoryOptimization.dogleg(config,true);
+
+//		tr.setVerbose(true);
 		return tr;
 	}
 

@@ -16,44 +16,31 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.trustregion;
+package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 
 /**
  * @author Peter Abeles
  */
-public interface OptimizationMath<S extends DMatrix> {
-	/**
-	 * Returns v^T*M*v
-	 *
-	 * @param v vector
-	 * @param M square matrix
-	 */
-	double innerProductVectorMatrix(DMatrixRMaj v, S M);
+public class TestHessianLeastSquares_DDRM extends StandardHessianLeastSquaresChecks {
+	public TestHessianLeastSquares_DDRM() {
+		super(new HessianLeastSquares_DDRM(
+				LinearSolverFactory_DDRM.qrp(true,false)
+		));
+	}
 
-	/**
-	 * Sets the provided matrix to identity
-	 */
-	void setIdentity(S matrix);
+	@Override
+	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
+		HessianLeastSquares_DDRM a = (HessianLeastSquares_DDRM)alg;
 
-	/**
-	 * output = A'*A
-	 */
-	void innerMatrixProduct(S A, S output);
+		a.hessian.set(H);
+	}
 
-	void extractDiag(S A, double diag[]);
-
-	void divideRows(double scaling[], S A);
-
-	void divideColumns(double scaling[], S A);
-
-	void scaleRows(double scaling[], S A);
-
-	void scaleColumns(double scaling[], S A);
-
-	void multTransA(S A, DMatrixRMaj B, DMatrixRMaj output);
-
-	S createMatrix();
+	@Override
+	protected DMatrix convert(DMatrixRMaj M) {
+		return M;
+	}
 }

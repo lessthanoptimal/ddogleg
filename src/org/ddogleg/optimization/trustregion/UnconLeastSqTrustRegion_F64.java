@@ -22,6 +22,8 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.math.HessianLeastSquares;
+import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
@@ -29,14 +31,16 @@ import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
- * Implementations of {@link TrustRegionUpdateCauchy_F64} for {@link UnconstrainedLeastSquares}.
+ * Implementations of {@link TrustRegionBase_F64 Trust Region} for {@link UnconstrainedLeastSquares}.
  *
  * @author Peter Abeles
  */
 public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S>
+		extends TrustRegionBase_F64<S,HessianLeastSquares<S>>
 		implements UnconstrainedLeastSquares<S>
 {
+	protected MatrixMath math;
+
 	protected DMatrixRMaj tmpM0 = new DMatrixRMaj(1,1);
 	protected DMatrixRMaj residuals = new DMatrixRMaj(1,1);
 	protected S jacobian;
@@ -45,8 +49,11 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
-	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate, OptimizationMath<S> math) {
-		super(parameterUpdate, math);
+	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate,
+									   HessianLeastSquares<S> hessian ,
+									   MatrixMath<S> math) {
+		super(parameterUpdate, hessian);
+		this.math = math;
 		jacobian = math.createMatrix();
 	}
 
@@ -91,8 +98,7 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		residuals.reshape(M,1);
 
 		// Set the hessian to identity. There are other potentially better methods
-		((ReshapeMatrix)hessian).reshape(numberOfParameters,numberOfParameters);
-		math.setIdentity(hessian);
+		hessian.init(numberOfParameters);
 		// set the previous gradient to zero
 		gradientPrevious.reshape(numberOfParameters,1);
 		gradientPrevious.zero();
@@ -108,11 +114,11 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, S hessian) {
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
 		if( !sameStateAsCost )
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacobian);
-		math.innerMatrixProduct(jacobian,hessian);
+		hessian.updateHessian(jacobian);
 		math.multTransA(jacobian, residuals, gradient);
 	}
 
@@ -120,7 +126,7 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	protected void applyScaling() {
 		super.applyScaling();
 		// Apply scaling to the Jacobian matrix
-		math.divideColumns(scaling.data,jacobian);
+		math.divideColumns(scaling,jacobian);
 	}
 
 	@Override

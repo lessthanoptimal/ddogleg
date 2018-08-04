@@ -19,6 +19,7 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.OptimizationException;
+import org.ddogleg.optimization.math.HessianMath;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
@@ -53,13 +54,13 @@ import static java.lang.Math.*;
  *
  * @author Peter Abeles
  */
-public abstract class TrustRegionBase_F64<S extends DMatrix> {
+public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianMath> {
 
 	// Technique used to compute the change in parameters
 	protected ParameterUpdate<S> parameterUpdate;
 
-	// Math for some matrix operations
-	protected OptimizationMath<S> math;
+	// Manipulating and extracting information from the Hessian
+	protected HM hessian;
 
 	/**
 	 * Storage for the gradient
@@ -70,10 +71,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 */
 	protected double gradientNorm;
 
-	/**
-	 * Storage for the Hessian. Update algorithms should not modify the Hessian
-	 */
-	protected S hessian;
 	// NOTE: This could be stored as a cholesky decomposition
 
 	// Number of parameters being optimized
@@ -110,11 +107,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	// print additional debugging messages to standard out
 	protected boolean verbose;
 
-	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, OptimizationMath<S> math ) {
+	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, HM hessian ) {
 		this();
 		this.parameterUpdate = parameterUpdate;
-		this.math = math;
-		this.hessian = math.createMatrix();
+		this.hessian = hessian;
 	}
 
 	protected TrustRegionBase_F64() {
@@ -141,6 +137,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		// initialize scaling to 1, which is no scaling
 		scaling.reshape(numberOfParameters,1);
 		Arrays.fill(scaling.data,0,numberOfParameters,1);
+
+		hessian.init(numberOfParameters);
 
 		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		fx = cost(x);
@@ -225,7 +223,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
 	 */
 	protected void computeScaling() {
-		math.extractDiag(hessian,scaling.data);
+		hessian.extractDiag(scaling);
 		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
 	}
 
@@ -248,8 +246,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	protected void applyScaling() {
 		CommonOps_DDRM.elementDiv(gradient,scaling);
 
-		math.divideRows(scaling.data,hessian);
-		math.divideColumns(scaling.data,hessian);
+		hessian.divideRowsCols(scaling);
 	}
 
 	/**
@@ -334,7 +331,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	}
 
 	protected double solveCauchyStepLength() {
-		double gBg = math.innerProductVectorMatrix(gradient,hessian);
+		double gBg = hessian.innerVectorHessian(gradient);
 
 		return gradientNorm*gradientNorm/gBg;
 	}
@@ -416,7 +413,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @param gradient (Output) gradient
 	 * @param hessian (Output) hessian
 	 */
-	protected abstract void functionGradientHessian(DMatrixRMaj x , boolean sameStateAsCost , DMatrixRMaj gradient , S hessian);
+	protected abstract void functionGradientHessian(DMatrixRMaj x , boolean sameStateAsCost , DMatrixRMaj gradient , HM hessian);
 
 	/**
 	 * Computes predicted reduction for step 'p'
@@ -425,7 +422,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 	 * @return predicted reduction in quadratic model
 	 */
 	public double computePredictedReduction( DMatrixRMaj p ) {
-		return -CommonOps_DDRM.dot(gradient,p) - 0.5*math.innerProductVectorMatrix(p,hessian);
+		return -CommonOps_DDRM.dot(gradient,p) - 0.5*hessian.innerVectorHessian(p);
 	}
 
 	public interface ParameterUpdate<S extends DMatrix> {
@@ -435,7 +432,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix> {
 		 *
 		 * @param minimumFunctionValue The minimum possible value that the function can output
 		 */
-		void initialize ( TrustRegionBase_F64<S> base , int numberOfParameters,
+		void initialize ( TrustRegionBase_F64<S,?> base , int numberOfParameters,
 						  double minimumFunctionValue );
 
 		/**

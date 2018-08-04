@@ -22,6 +22,7 @@ import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
+import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.UtilEjml;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
@@ -32,7 +33,6 @@ import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.RandomMatrices_DSCC;
-import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +72,9 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 	public void cost() {
 		double expected = 0.5*VectorVectorMult_DDRM.innerProd(residuals,residuals);
 
-		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
+		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
 		alg.setFunction(new MockFunction(),new MockJacobian());
 		alg.initialize(new double[N],1e-6,1e-8);
 
@@ -82,14 +84,16 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 
 	@Test
 	public void functionGradientHessian() {
-		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
+		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
 		alg.setFunction(new MockFunction(),new MockJacobian());
 		alg.initialize(new double[N],1e-6,1e-8);
 
 		DMatrixRMaj x = new DMatrixRMaj(1,1);
 
 		DMatrixRMaj g = new DMatrixRMaj(N,1);
-		alg.functionGradientHessian(x,false,g,null);
+		alg.functionGradientHessian(x,false,g,hessian);
 		// Only the gradient is computed and returned. The hessian is saved internally
 
 		DMatrixRMaj exp_g = new DMatrixRMaj(N,1);
@@ -101,7 +105,9 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 	@Test
 	public void checkConvergenceFTest() {
 		double tol = 1e-4;
-		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
+		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
+		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
 		alg.setFunction(new MockFunction(),new MockJacobian());
 		alg.initialize(new double[N],tol,0);
 		alg.regionRadius = 100; // so it doesn't complain
@@ -117,38 +123,6 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 		assertFalse(alg.checkConvergenceFTest(100,1000));
 		alg.residuals.data[3] = -tol*1.0001;
 		assertFalse(alg.checkConvergenceFTest(100,1000));
-	}
-
-	@Test
-	public void computeScaling() {
-		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
-		alg.config.scalingMinimum = -10000;
-		alg.config.scalingMaximum = 10000;
-
-		alg.schur.computeHessian(jacLeft,jacRight);
-		alg.computeScaling();
-
-		for (int i = 0; i < alg.scaling.numRows; i++) {
-			assertEquals( Math.sqrt(H.get(i,i)),alg.scaling.data[i], UtilEjml.TEST_F64);
-		}
-	}
-
-	@Test
-	public void computePredictedReduction() {
-		UnconLeastSqTrustRegionSchur_F64 alg = new UnconLeastSqTrustRegionSchur_F64();
-		alg.setFunction(new MockFunction(),new MockJacobian());
-		alg.initialize(new double[N],1e-8,1e-8);
-
-		RandomMatrices_DDRM.fillUniform(alg.gradient,-1,1,rand);
-		alg.schur.computeHessian(jacLeft,jacRight);
-
-		DMatrixRMaj p = RandomMatrices_DDRM.rectangle(N,1,rand);
-		double found = alg.computePredictedReduction(p);
-
-		double expected = -VectorVectorMult_DDRM.innerProd(alg.gradient,p);
-		expected -= 0.5*MatrixVectorMult_DSCC.innerProduct(p.data,0,H,p.data,0);
-
-		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
 	public class MockFunction implements FunctionNtoM {
@@ -205,7 +179,10 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 			config.scalingMinimum = 1e-4;
 			config.scalingMaximum = 1e4;
 
-			UnconLeastSqTrustRegionSchur_F64 tr = new UnconLeastSqTrustRegionSchur_F64();
+			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
+			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+			UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> tr =
+					new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
 			tr.configure(config);
 //			tr.setVerbose(true);
 			return tr;

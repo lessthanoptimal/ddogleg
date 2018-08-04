@@ -20,7 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
-import org.ddogleg.optimization.impl.SchurComplementMath;
+import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.data.DMatrix;
 
 import javax.annotation.Nonnull;
@@ -30,11 +30,11 @@ import javax.annotation.Nonnull;
  *   A variant on {@link UnconstrainedLeastSquares} for solving large scale systems which can be simplified using the
  *   Schur Complement. The approximate Hessian matrix (J'*J) is assumed to have the
  *   following block triangle form: [A B;C D]. The system being solved for
- *   is as follows: [A B;C D] [x_1;x_2] = [b_1;b_2]. See {@link SchurComplementMath} for more details.
+ *   is as follows: [A B;C D] [x_1;x_2] = [b_1;b_2]. See {@link HessianSchurComplement_DSCC} for more details.
 
  * </p>
  *
- * @see SchurComplementMath
+ * @see HessianSchurComplement_DSCC
  * @see SchurJacobian
  *
  * @author Peter Abeles

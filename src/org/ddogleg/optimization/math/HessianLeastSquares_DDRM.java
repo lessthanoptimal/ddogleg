@@ -16,31 +16,27 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.trustregion;
+package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
- * Modification of {@link TrustRegionUpdateDogleg_F64} which takes advantage of BFGS computing the inverse hessian
- * and avoids a matrix decomposition.
- *
  * @author Peter Abeles
  */
-public class TrustRegionUpdateDoglegBFGS_F64 extends TrustRegionUpdateDogleg_F64<DMatrixRMaj> {
+public class HessianLeastSquares_DDRM extends HessianMath_DDRM
+		implements HessianLeastSquares<DMatrixRMaj>
+{
+	public HessianLeastSquares_DDRM() {
+	}
 
-	private UnconMinTrustRegionBFGS_F64 owner;
-
-	@Override
-	public void initialize(TrustRegionBase_F64<DMatrixRMaj> owner, int numberOfParameters, double minimumFunctionValue) {
-		super.initialize(owner, numberOfParameters, minimumFunctionValue);
-		this.owner = (UnconMinTrustRegionBFGS_F64)owner;
-		this.owner .setComputeInverse(true);
+	public HessianLeastSquares_DDRM(LinearSolverDense<DMatrixRMaj> solver) {
+		super(solver);
 	}
 
 	@Override
-	protected boolean solveGaussNewtonPoint(DMatrixRMaj pointGN) {
-		CommonOps_DDRM.mult(owner.hessianInverse,owner.gradient,pointGN);
-		return true;
+	public void updateHessian(DMatrixRMaj jacobian) {
+		CommonOps_DDRM.multInner(jacobian, hessian);
 	}
 }
