@@ -65,7 +65,7 @@ public abstract class StandardHessianMathChecks {
 		setHessian(alg,M);
 
 		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6,1,rand);
-		alg.extractDiag(v);
+		alg.extractDiagonals(v);
 
 		for (int i = 0; i < M.numRows; i++) {
 			assertEquals(M.get(i,i),v.get(i,0), UtilEjml.TEST_F64);

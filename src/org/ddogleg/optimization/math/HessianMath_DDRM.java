@@ -52,7 +52,7 @@ public class HessianMath_DDRM implements HessianMath {
 	}
 
 	@Override
-	public void extractDiag(DMatrixRMaj diag) {
+	public void extractDiagonals(DMatrixRMaj diag) {
 		CommonOps_DDRM.extractDiag(hessian,diag);
 	}
 

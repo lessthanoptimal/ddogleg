@@ -45,7 +45,13 @@ public interface HessianMath {
 	 * Extracts diagonal elements from the hessian and stores them in the vector diag
 	 * @param diag vector
 	 */
-	void extractDiag( DMatrixRMaj diag);
+	void extractDiagonals(DMatrixRMaj diag);
+
+	/**
+	 * Sets the diagonal elements in the Hessian to the provided vector
+	 * @param diag vector
+	 */
+	void setDiagonals(DMatrixRMaj diag);
 
 	/**
 	 * Applies row and column division using the scaling vector.

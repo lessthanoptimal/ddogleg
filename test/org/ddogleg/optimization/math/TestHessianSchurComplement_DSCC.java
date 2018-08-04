@@ -81,7 +81,7 @@ public class TestHessianSchurComplement_DSCC {
 		math.computeHessian(jacLeft,jacRight);
 
 		DMatrixRMaj found = new DMatrixRMaj(1,1);
-		math.extractDiag(found);
+		math.extractDiagonals(found);
 
 		DMatrixRMaj expected = new DMatrixRMaj(1,1);
 		CommonOps_DSCC.extractDiag(H,expected);

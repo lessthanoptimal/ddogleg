@@ -18,28 +18,16 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Peter Abeles
  */
-public class ConfigLevenbergMarquardt {
-
-	public double lambdaInitial=1e-4;
-
-	public double mixture=1e-4;
-
-	/**
-	 * tolerance for termination. magnitude of gradient. absolute
-	 */
-	public double gtol=1e-8;
-
-	/**
-	 * tolerance for termination, change in function value.  relative
-	 */
-	public double ftol=1e-12;
-
-	public ConfigLevenbergMarquardt copy() {
-		ConfigLevenbergMarquardt c = new ConfigLevenbergMarquardt();
-
-		return c;
+public class TestUnconLeastSqLevenbergMarquardt_F64 {
+	@Test
+	public void foo() {
+		fail("Implement");
 	}
 }

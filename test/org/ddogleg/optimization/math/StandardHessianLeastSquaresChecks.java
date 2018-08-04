@@ -50,7 +50,7 @@ public abstract class StandardHessianLeastSquaresChecks extends StandardHessianM
 		DMatrixRMaj expected = new DMatrixRMaj(6,1);
 		DMatrixRMaj found = expected.createLike();
 
-		alg.extractDiag(found);
+		alg.extractDiagonals(found);
 		CommonOps_DDRM.extractDiag(H,expected);
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));

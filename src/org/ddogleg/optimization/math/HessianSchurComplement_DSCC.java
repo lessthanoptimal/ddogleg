@@ -114,7 +114,7 @@ public class HessianSchurComplement_DSCC
 	}
 
 	@Override
-	public void extractDiag(DMatrixRMaj diag) {
+	public void extractDiagonals(DMatrixRMaj diag) {
 		// extract diagonal elements from Hessian matrix
 		CommonOps_DSCC.extractDiag(A, x1);
 		CommonOps_DSCC.extractDiag(D, x2);

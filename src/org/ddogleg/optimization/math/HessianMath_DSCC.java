@@ -54,7 +54,7 @@ public class HessianMath_DSCC implements HessianMath {
 	}
 
 	@Override
-	public void extractDiag(DMatrixRMaj diag) {
+	public void extractDiagonals(DMatrixRMaj diag) {
 		CommonOps_DSCC.extractDiag(hessian,diag);
 	}
 

@@ -18,10 +18,11 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.OptimizationException;
+import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
@@ -41,16 +42,30 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  *     and has super linear convergence while for large values it becomes a gradient step
  * </p>
  *
+ * <p>
+ *     Levenberg's formulation is as follows:<br>
+ *     (J<sup>T</sup>J + &lambda I) = J<sup>T</sup>r<br>
+ *     where &lambda; is adjusted at each iteration.
+ * </p>
+ * <p>
+ *     Marquardt's formulation is as follows:<br>
+ *     (J<sup>T</sup>J + &lambda diag(J<sup>T</sup>J )) = J<sup>T</sup>r<br>
+ *     where &lambda; is adjusted at each iteration.
+ * </p>
+ *
  * <ul>
  * <li>[1] JK. Madsen and H. B. Nielsen and O. Tingleff, "Methods for Non-Linear Least Squares Problems (2nd ed.)"
  * Informatics and Mathematical Modelling, Technical University of Denmark</li>
  * <li>[2] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization", Revision 1, August 2018</li>
+ * <li>[3] Levenberg, Kenneth (1944). "A Method for the Solution of Certain Non-Linear Problems in Least Squares".
+ *         Quarterly of Applied Mathematics. 2: 164–168.<</li>
  * </ul>
  *
  * @author Peter Abeles
  */
-public abstract class LevenbergBase_F64<S extends DMatrix> {
-
+public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends HessianMath>
+{
+	// TODO Add scaling
 	/**
 	 * Configuration
 	 */
@@ -59,13 +74,13 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 	// Math for some matrix operations
 	protected MatrixMath<S> math;
 
-	/**
-	 * Storage for Jacobian
-	 */
-	S Jacobian;
+	protected HM hessian;
 
 	DMatrixRMaj gradient = new DMatrixRMaj(1,1);
 	DMatrixRMaj residuals = new DMatrixRMaj(1,1);
+
+	DMatrixRMaj diagOrig = new DMatrixRMaj(1,1);
+	DMatrixRMaj diagStep = new DMatrixRMaj(1,1);
 
 	// Current parameter state
 	protected DMatrixRMaj x = new DMatrixRMaj(1,1);
@@ -82,7 +97,9 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 	 * values for a gradient step
 	 */
 	protected double lambda;
+	// TODO comment
 	protected double nu;
+	private final static double NU_INITIAL = 2;
 
 	protected Mode mode = Mode.FULL_STEP;
 
@@ -91,24 +108,26 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
 
-	public LevenbergBase_F64( MatrixMath<S> math ) {
+	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian ) {
 		setConfiguration(new ConfigLevenbergMarquardt());
 		this.math = math;
-
-		Jacobian = math.createMatrix();
+		this.hessian = hessian;
 	}
+
 	public void initialize(double initial[] , int numberOfParameters , int numberOfFunctions ) {
 		lambda = config.lambdaInitial;
-		nu = 2;
+		nu = NU_INITIAL;
 
 		totalFullSteps = 0;
 		totalRetries = 0;
 
-		((ReshapeMatrix)Jacobian).reshape(numberOfFunctions,numberOfParameters);
 		gradient.reshape(numberOfParameters,1);
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
 		p.reshape(numberOfParameters,1);
+
+		diagOrig.reshape(numberOfParameters,1);
+		diagStep.reshape(numberOfParameters,1);
 
 		computeResiduals(x_next,residuals);
 		fx = cost(residuals);
@@ -150,10 +169,13 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 		}
 	}
 
+	/**
+	 * TODO comment
+	 * @return true if it has converged or false if it has not
+	 */
 	protected boolean updateState() {
-		computeJacobian(x,true,Jacobian);
-
-		math.multTransA(Jacobian,residuals,gradient);
+		computeHessian(x,true, hessian);
+		hessian.extractDiagonals(diagOrig);
 
 		if( checkConvergenceGTest(gradient) )
 			return true;
@@ -163,17 +185,31 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 		return false;
 	}
 
+	/**
+	 * TODO comment
+	 * @return true if it has converged or false if it has not
+	 */
 	protected boolean computeAndConsiderNew() {
-		double predictedReduction = predictedReduction(x,gradient,lambda);
 
 		// compute the new location and it's score
-		computeStep(lambda,Jacobian,residuals,p);
+		if( !computeStep(lambda,residuals,p) ) {
+			if( config.mixture == 0.0 ) {
+				throw new OptimizationException("Singular matrix encountered. Try setting mixture to a non-zero value");
+			}
+			lambda *= 4;
+			if( verbose )
+				System.out.println(totalFullSteps+" Step computation failed. Increasing lambda");
+			return false;
+		}
+
+		// compute the potential new state
 		CommonOps_DDRM.add(x,p,x_next);
 		computeResiduals(x_next,residuals);
 		double fx_candidate = cost(residuals);
 
 		// compute model prediction accuracy
 		double actualReduction = fx-fx_candidate;
+		double predictedReduction = computePredictedReduction(p);
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
 			if( verbose )
@@ -184,14 +220,12 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 		double ratio = actualReduction/predictedReduction;
 		boolean accepted;
 
-		if( fx_candidate < fx && ratio > 0 ) {
-			// Step has been accepted
-			// TODO swap states
-			mode = Mode.FULL_STEP;
+		// Accept the new state if the score improved
+		if( fx_candidate < fx ) {
 			// reduce the amount of dampening.  Magic equation from [1].  My attempts to improve
 			// upon it have failed.  It is truly magical.
 			lambda = lambda*Math.max(1.0/3.0, 1.0-Math.pow(2.0*ratio-1.0,3.0));
-			nu=2;
+			nu=NU_INITIAL;
 			accepted = true;
 		} else {
 			lambda *= nu;
@@ -202,10 +236,21 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 		if( verbose )
 			System.out.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" lambda="+lambda);
 
-		if( accepted )
+		if( accepted ) {
+			acceptNewState(fx_candidate);
 			return checkConvergenceFTest(residuals);
-		else
+		} else
 			return false;
+	}
+
+	private void acceptNewState( double fx_candidate ) {
+		DMatrixRMaj tmp = x;
+		x = x_next;
+		x_next = tmp;
+
+		fx = fx_candidate;
+
+		mode = Mode.FULL_STEP;
 	}
 
 	/**
@@ -236,13 +281,46 @@ public abstract class LevenbergBase_F64<S extends DMatrix> {
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
-	protected abstract void computeJacobian(DMatrixRMaj x , boolean sameStateAsResiduals , S jacobian );
+	protected boolean computeStep( double lambda, DMatrixRMaj residuals , DMatrixRMaj step ) {
 
+		final double mixture = config.mixture;
+		for (int i = 0; i < diagOrig.numRows; i++) {
+			double v = diagOrig.data[i];
+			diagStep.data[i] = lambda*(mixture + (1.0-mixture)*v);
+		}
+		hessian.setDiagonals( diagStep );
+
+		if( !hessian.initializeSolver()) {
+			return false;
+		}
+
+		return hessian.solve(residuals,step);
+	}
+
+	/**
+	 * Computes predicted reduction for step 'p'
+	 *
+	 * @param p Change in state or the step
+	 * @return predicted reduction in quadratic model
+	 */
+	public double computePredictedReduction( DMatrixRMaj p ) {
+		return -CommonOps_DDRM.dot(gradient,p) - 0.5*hessian.innerVectorHessian(p);
+	}
+
+	/**
+	 * TODO COmment
+	 * @param x
+	 * @param sameStateAsResiduals
+	 * @param hessian
+	 */
+	protected abstract void computeHessian(DMatrixRMaj x , boolean sameStateAsResiduals , HM hessian );
+
+	/**
+	 * TODO Comment
+	 * @param x
+	 * @param residuals
+	 */
 	protected abstract void computeResiduals( DMatrixRMaj x , DMatrixRMaj residuals );
-
-	protected abstract void computeStep( double lambda, S jacobian, DMatrixRMaj residuals , DMatrixRMaj p );
-
-	protected abstract double predictedReduction( DMatrixRMaj param, DMatrixRMaj gradient , double lambda );
 
 	public void setConfiguration( ConfigLevenbergMarquardt config ) {
 		this.config = config.copy();

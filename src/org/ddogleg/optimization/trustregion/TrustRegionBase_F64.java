@@ -223,7 +223,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
 	 */
 	protected void computeScaling() {
-		hessian.extractDiag(scaling);
+		hessian.extractDiagonals(scaling);
 		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
 	}
 
