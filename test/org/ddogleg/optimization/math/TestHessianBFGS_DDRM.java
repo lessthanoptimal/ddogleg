@@ -24,6 +24,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -51,5 +52,13 @@ public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
 		HessianBFGS_DDRM a = (HessianBFGS_DDRM)alg;
 		assertTrue(MatrixFeatures_DDRM.isIdentity(a.hessian,UtilEjml.TEST_F64));
 		assertTrue(MatrixFeatures_DDRM.isIdentity(a.hessianInverse,UtilEjml.TEST_F64));
+	}
+
+	/**
+	 * Not supported yet
+	 */
+	@Test
+	public void divideRowsCols() {
+		assertThrows(RuntimeException.class, super::divideRowsCols);
 	}
 }

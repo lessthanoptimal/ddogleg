@@ -39,12 +39,12 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		extends TrustRegionBase_F64<S,HessianLeastSquares<S>>
 		implements UnconstrainedLeastSquares<S>
 {
-	protected MatrixMath math;
+	protected MatrixMath<S> math;
 
-	protected DMatrixRMaj tmpM0 = new DMatrixRMaj(1,1);
+	// difference between observations and estimate value from model
 	protected DMatrixRMaj residuals = new DMatrixRMaj(1,1);
+	// storage for the Jacobian
 	protected S jacobian;
-	protected DMatrixRMaj gradientPrevious = new DMatrixRMaj(1,1);
 
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
@@ -94,14 +94,10 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
 		int M = functionResiduals.getNumOfOutputsM();
 		int N = functionResiduals.getNumOfInputsN();
-		tmpM0.reshape(M,1);
 		residuals.reshape(M,1);
 
 		// Set the hessian to identity. There are other potentially better methods
 		hessian.init(numberOfParameters);
-		// set the previous gradient to zero
-		gradientPrevious.reshape(numberOfParameters,1);
-		gradientPrevious.zero();
 		((ReshapeMatrix)jacobian).reshape(M,N);
 
 		super.initialize(initial, numberOfParameters, minimumFunctionValue);
@@ -120,13 +116,6 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		functionJacobian.process(x.data,jacobian);
 		hessian.updateHessian(jacobian);
 		math.multTransA(jacobian, residuals, gradient);
-	}
-
-	@Override
-	protected void applyScaling() {
-		super.applyScaling();
-		// Apply scaling to the Jacobian matrix
-		math.divideColumns(scaling,jacobian);
 	}
 
 	@Override

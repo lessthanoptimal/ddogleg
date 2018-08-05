@@ -167,6 +167,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		CommonOps_DDRM.add(x,p,x_next);
 		double fx_candidate = cost(x_next);
 
+		if( UtilEjml.isUncountable(fx_candidate)) {
+			throw new OptimizationException("Uncountable candidate cost. "+fx_candidate);
+		}
+
 		// this notes that the cost was computed at x_next for the Hessian calculation.
 		// This is a relic from a variant on this implementation where another candidate might be considered. I'm
 		// leaving this code where since it might be useful in the future and doesn't add much complexity

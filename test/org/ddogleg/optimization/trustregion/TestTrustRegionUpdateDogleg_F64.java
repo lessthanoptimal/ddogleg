@@ -255,6 +255,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 
 	}
 
+	// In the future add support for scaled BFGS
 	@Nested
 	class UnconstrainedBFGS extends CommonChecksUnconstrainedOptimization {
 		public UnconstrainedBFGS() {
@@ -325,6 +326,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
 					alg,hessian, new MatrixMath_DSCC());
 			tr.configure(config);
+//			tr.setVerbose(true);
 			return tr;
 		}
 	}

@@ -47,7 +47,6 @@ public class TestGaussNewtonBase_F64 {
 		double x[] = new double[]{1,2};
 		alg.initialize(x,2);
 
-		assertEquals(1,alg.fx, UtilEjml.TEST_F64);
 		assertEquals(2,alg.x.numRows);
 		assertEquals(2,alg.x_next.numRows);
 		assertEquals(2,alg.gradient.numRows);

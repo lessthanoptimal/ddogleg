@@ -46,7 +46,7 @@ public class UnconMinTrustRegionBFGS_F64
 	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
 	private DMatrixRMaj s = new DMatrixRMaj(1,1);
 
-	double f_prev;
+	private double f_prev;
 
 	private FunctionNtoS functionCost;
 	private FunctionNtoN functionGradient;
@@ -124,13 +124,6 @@ public class UnconMinTrustRegionBFGS_F64
 		functionGradient.process(x.data, gradient.data);
 
 		if( !firstIteration ) {
-			//			if( isScaling() ) {
-//				// undo the scaling which was previous applied to the hessian
-//				// The gradient was just computed so it's not scaled yet
-//				math.scaleColumns(scaling.data, hessian);
-//				math.scaleRows(scaling.data, hessian);
-//			}
-
 			// compute the change in Gradient
 			CommonOps_DDRM.subtract(gradient, gradientPrevious, y);
 			CommonOps_DDRM.subtract(x, xPrevious, s);

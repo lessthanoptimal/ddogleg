@@ -24,15 +24,12 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Peter Abeles
  */
 public class TestTrustRegionBase_F64 {
-	Random rand = new Random(234);
 
 	@Test
 	public void initialize() {
@@ -40,6 +37,7 @@ public class TestTrustRegionBase_F64 {
 
 		double x[] = new double[]{1,2};
 		alg.initialize(x,2,0);
+		assertEquals(1,alg.fx, UtilEjml.TEST_F64);
 
 		assertEquals(alg.regionRadius,alg.config.regionInitial, UtilEjml.TEST_F64);
 	}

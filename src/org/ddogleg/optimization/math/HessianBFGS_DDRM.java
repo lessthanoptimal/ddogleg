@@ -44,6 +44,11 @@ public class HessianBFGS_DDRM extends HessianMath_DDRM implements HessianBFGS {
 	}
 
 	@Override
+	public void divideRowsCols(DMatrixRMaj scaling) {
+		throw new IllegalArgumentException("Scaling with BFGS is currently not supported. A scaled and unscaled H and inv(H) need to be maintained");
+	}
+
+	@Override
 	public void init(int numParameters) {
 		super.init(numParameters);
 		hessianInverse.reshape(numParameters,numParameters);
