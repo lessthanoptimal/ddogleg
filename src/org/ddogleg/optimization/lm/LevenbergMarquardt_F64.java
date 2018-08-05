@@ -86,7 +86,6 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected double nu;
 	private final static double NU_INITIAL = 2;
 
-
 	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian )
 	{
 		super(hessian);
@@ -113,7 +112,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		diagStep.reshape(numberOfParameters,1);
 
 		computeResiduals(x,residuals);
-		fx = cost(x);
+		fx = costFromResiduals(residuals);
 
 		if( checkConvergenceFTest(residuals)) {
 			mode = Mode.CONVERGED;
@@ -126,7 +125,6 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * Computes derived
 	 * @return true if it has converged or false if it has not
 	 */
-	@Override
 	protected boolean updateState() {
 		functionGradientHessian(x,true, gradient, hessian);
 
@@ -169,7 +167,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		// compute the potential new state
 		CommonOps_DDRM.add(x,p,x_next);
 		computeResiduals(x_next,residuals);
-		double fx_candidate = cost(residuals);
+		double fx_candidate = costFromResiduals(residuals);
 
 		if(UtilEjml.isUncountable(fx_candidate) )
 			throw new OptimizationException("Uncountable candidate score: "+fx_candidate);
@@ -245,7 +243,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @param residuals (Input) residuals/errors
 	 * @return Least squares cost
 	 */
-	public double cost( DMatrixRMaj residuals ) {
+	public double costFromResiduals(DMatrixRMaj residuals ) {
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 

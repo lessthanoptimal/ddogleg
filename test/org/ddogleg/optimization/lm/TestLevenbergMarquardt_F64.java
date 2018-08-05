@@ -88,7 +88,7 @@ public class TestLevenbergMarquardt_F64 {
 		eq.process("cost = 0.5*r'*r");
 		DMatrixRMaj residuals = eq.lookupDDRM("r");
 		double expected = eq.lookupDouble("cost");
-		double found = alg.cost(residuals);
+		double found = alg.costFromResiduals(residuals);
 
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
