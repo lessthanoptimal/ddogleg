@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,7 +24,7 @@ import org.ddogleg.optimization.UnconstrainedMinimization;
 /**
  * @author Peter Abeles
  */
-public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends GenericUnconstrainedMinimizationTests{
+public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends GenericUnconstrainedMinimizationTests_F64{
 
 	@Override
 	public UnconstrainedMinimization createAlgorithm() {

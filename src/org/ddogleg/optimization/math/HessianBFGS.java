@@ -21,9 +21,18 @@ package org.ddogleg.optimization.math;
 import org.ejml.data.DMatrixRMaj;
 
 /**
+ * Hessian update using BFGS. The hessian is iteratively updated. Update should only be called when the Wolfe condition
+ * is meet.
+ *
  * @author Peter Abeles
  */
 public interface HessianBFGS extends HessianMath {
 
+	/**
+	 * Updates the Hessian using BFGS
+	 *
+	 * @param s change in state (new - old)
+	 * @param y change in gradient (new - old)
+	 */
 	void update(DMatrixRMaj s , DMatrixRMaj y);
 }

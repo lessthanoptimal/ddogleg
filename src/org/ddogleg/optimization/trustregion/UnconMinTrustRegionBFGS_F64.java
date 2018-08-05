@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.FactoryNumericalDerivative;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
@@ -46,7 +47,7 @@ public class UnconMinTrustRegionBFGS_F64
 	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
 	private DMatrixRMaj s = new DMatrixRMaj(1,1);
 
-	private double f_prev;
+	protected double f_prev;
 
 	private FunctionNtoS functionCost;
 	private FunctionNtoN functionGradient;
@@ -65,7 +66,10 @@ public class UnconMinTrustRegionBFGS_F64
 	@Override
 	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
 		this.functionCost = function;
-		this.functionGradient = gradient;
+		if( gradient == null )
+			this.functionGradient = FactoryNumericalDerivative.gradientForwards(function);
+		else
+			this.functionGradient = gradient;
 		this.minimumFunctionValue = minFunctionValue;
 	}
 
@@ -146,8 +150,15 @@ public class UnconMinTrustRegionBFGS_F64
 		}
 	}
 
+	/**
+	 * Indicates if there's sufficient decrease and curvature. If the Wolfe condition is meet then the Hessian
+	 * will be positive definite.
+	 * @param s change in state (new - old)
+	 * @param y change in gradient (new - old)
+	 * @param g_k Gradient at step k.
+	 * @return
+	 */
 	protected boolean wolfeCondition( DMatrixRMaj s , DMatrixRMaj y , DMatrixRMaj g_k) {
-//		return true;
 		double left = CommonOps_DDRM.dot(y,s);
 		double g_s = CommonOps_DDRM.dot(g_k,s);
 		double right = (c2-1)*g_s;

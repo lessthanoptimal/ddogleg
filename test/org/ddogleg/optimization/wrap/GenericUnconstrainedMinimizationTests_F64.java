@@ -18,43 +18,39 @@
 
 package org.ddogleg.optimization.wrap;
 
-import org.ddogleg.optimization.UnconstrainedLeastSquares;
-import org.ddogleg.optimization.functions.FunctionNtoM;
-import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
-import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
-import org.ejml.UtilEjml;
-import org.ejml.data.DMatrixRMaj;
+import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.functions.FunctionNtoN;
+import org.ddogleg.optimization.functions.FunctionNtoS;
+import org.ddogleg.optimization.impl.NumericalGradientForward;
+import org.ddogleg.optimization.impl.TrivialFunctionNtoS;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests which make sure the {@link UnconstrainedLeastSquares} contract is followed.
+ * Tests which make sure the {@link org.ddogleg.optimization.UnconstrainedMinimization} contract is followed.
  *
  * @author Peter Abeles
  */
-public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
+public abstract class GenericUnconstrainedMinimizationTests_F64 {
 
-	public abstract UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm();
+	public abstract UnconstrainedMinimization createAlgorithm();
 
 	/**
 	 * Simple optimization which checks several different aspects of its behavior
 	 */
 	@Test
 	public void basicTest() {
-		double a = 2;
-		double b = 0.1;
-		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
+		FunctionNtoS residual = new TrivialFunctionNtoS();
+		FunctionNtoN jacobian = new NumericalGradientForward(residual);
 
-		UnconstrainedLeastSquares alg = createAlgorithm();
+		UnconstrainedMinimization alg = createAlgorithm();
 
-		alg.setFunction(residual,jacobian);
-		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
+		alg.setFunction(residual,jacobian,0);
+		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
 
-		double[] prev = new double[]{1,0.5};
+		double[] prev = new double[]{1,1,1};
 		int i;
 		for( i = 0; i < 200 && !alg.iterate(); i++ ) {
 			double found[] = alg.getParameters();
@@ -82,8 +78,9 @@ public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 
 		double found[] = alg.getParameters();
 
-		assertEquals(a, found[0], UtilEjml.TEST_F64_SQ);
-		assertEquals(b, found[1], UtilEjml.TEST_F64_SQ);
+		assertEquals(0, found[0], 1e-4);
+		assertEquals(0, found[1], 1e-4);
+		assertEquals(1, found[2], 1e-4);  // no change expected in last parameter
 	}
 
 	/**
@@ -92,22 +89,20 @@ public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 	 */
 	@Test
 	public void checkNumerical() {
-		double a = 2;
-		double b = 0.1;
-		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
+		FunctionNtoS residual = new TrivialFunctionNtoS();
+		FunctionNtoN jacobian = new NumericalGradientForward(residual);
 
-		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
+		UnconstrainedMinimization alg = createAlgorithm();
 
-		alg.setFunction(residual,jacobian);
-		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
+		alg.setFunction(residual,jacobian,0);
+		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
 		double expected[] = alg.getParameters().clone();
 
-		alg.setFunction(residual,null);
-		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
+		alg.setFunction(residual,null,0);
+		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
@@ -125,9 +120,9 @@ public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 	public void checkAcceptModified() {
 		ModifyInputFunctions residuals = new ModifyInputFunctions();
 
-		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
+		UnconstrainedMinimization alg = createAlgorithm();
 
-		alg.setFunction(residuals,null);
+		alg.setFunction(residuals,null,0);
 		alg.initialize(new double[]{1,0.5,9.5},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
@@ -138,12 +133,9 @@ public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 		for( int i = 0; i < found.length; i++ ) {
 			assertTrue(found[i]==expected[i]);
 		}
-
-		// This will modify it on the first process().  Should make test more robust by having it modify it
-		// later on too
 	}
 
-	private class ModifyInputFunctions implements FunctionNtoM {
+	private class ModifyInputFunctions implements FunctionNtoS {
 
 		@Override
 		public int getNumOfInputsN() {
@@ -151,19 +143,11 @@ public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 		}
 
 		@Override
-		public int getNumOfOutputsM() {
-			return 2;
-		}
-
-		@Override
-		public void process(double[] input, double[] output) {
+		public double process(double[] input ) {
 			for( int i = 0; i < input.length; i++ ) {
 				input[i] = 1+i;
 			}
-			// no error
-			for( int i = 0; i < output.length; i++ ) {
-				output[i] = 0;
-			}
+			return 0;
 		}
 	}
 }

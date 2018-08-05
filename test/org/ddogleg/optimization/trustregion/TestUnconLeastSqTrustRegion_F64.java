@@ -23,7 +23,7 @@ import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
-import org.ddogleg.optimization.wrap.GenericUnconstrainedLeastSquaresTests_D64;
+import org.ddogleg.optimization.wrap.GenericUnconstrainedLeastSquaresTests_F64;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Peter Abeles
  */
-public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSquaresTests_D64 {
+public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
 	/**
 	 * Makes sure the specified tolerances are copied into the configuration
 	 */

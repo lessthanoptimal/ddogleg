@@ -18,39 +18,43 @@
 
 package org.ddogleg.optimization.wrap;
 
-import org.ddogleg.optimization.UnconstrainedMinimization;
-import org.ddogleg.optimization.functions.FunctionNtoN;
-import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
-import org.ddogleg.optimization.impl.TrivialFunctionNtoS;
+import org.ddogleg.optimization.UnconstrainedLeastSquares;
+import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
+import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
+import org.ejml.UtilEjml;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests which make sure the {@link org.ddogleg.optimization.UnconstrainedMinimization} contract is followed.
+ * Tests which make sure the {@link UnconstrainedLeastSquares} contract is followed.
  *
  * @author Peter Abeles
  */
-public abstract class GenericUnconstrainedMinimizationTests {
+public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 
-	public abstract UnconstrainedMinimization createAlgorithm();
+	public abstract UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm();
 
 	/**
 	 * Simple optimization which checks several different aspects of its behavior
 	 */
 	@Test
 	public void basicTest() {
-		FunctionNtoS residual = new TrivialFunctionNtoS();
-		FunctionNtoN jacobian = new NumericalGradientForward(residual);
+		double a = 2;
+		double b = 0.1;
+		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
-		UnconstrainedMinimization alg = createAlgorithm();
+		UnconstrainedLeastSquares alg = createAlgorithm();
 
-		alg.setFunction(residual,jacobian,0);
-		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
+		alg.setFunction(residual,jacobian);
+		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
 
-		double[] prev = new double[]{1,1,1};
+		double[] prev = new double[]{1,0.5};
 		int i;
 		for( i = 0; i < 200 && !alg.iterate(); i++ ) {
 			double found[] = alg.getParameters();
@@ -78,9 +82,8 @@ public abstract class GenericUnconstrainedMinimizationTests {
 
 		double found[] = alg.getParameters();
 
-		assertEquals(0, found[0], 1e-4);
-		assertEquals(0, found[1], 1e-4);
-		assertEquals(1, found[2], 1e-4);  // no change expected in last parameter
+		assertEquals(a, found[0], UtilEjml.TEST_F64_SQ);
+		assertEquals(b, found[1], UtilEjml.TEST_F64_SQ);
 	}
 
 	/**
@@ -89,20 +92,22 @@ public abstract class GenericUnconstrainedMinimizationTests {
 	 */
 	@Test
 	public void checkNumerical() {
-		FunctionNtoS residual = new TrivialFunctionNtoS();
-		FunctionNtoN jacobian = new NumericalGradientForward(residual);
+		double a = 2;
+		double b = 0.1;
+		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
-		UnconstrainedMinimization alg = createAlgorithm();
+		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
 
-		alg.setFunction(residual,jacobian,0);
-		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
+		alg.setFunction(residual,jacobian);
+		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
 		double expected[] = alg.getParameters().clone();
 
-		alg.setFunction(residual,null,0);
-		alg.initialize(new double[]{1,1,1},1e-10,1e-10);
+		alg.setFunction(residual,null);
+		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
@@ -120,9 +125,9 @@ public abstract class GenericUnconstrainedMinimizationTests {
 	public void checkAcceptModified() {
 		ModifyInputFunctions residuals = new ModifyInputFunctions();
 
-		UnconstrainedMinimization alg = createAlgorithm();
+		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
 
-		alg.setFunction(residuals,null,0);
+		alg.setFunction(residuals,null);
 		alg.initialize(new double[]{1,0.5,9.5},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
@@ -133,9 +138,12 @@ public abstract class GenericUnconstrainedMinimizationTests {
 		for( int i = 0; i < found.length; i++ ) {
 			assertTrue(found[i]==expected[i]);
 		}
+
+		// This will modify it on the first process().  Should make test more robust by having it modify it
+		// later on too
 	}
 
-	private class ModifyInputFunctions implements FunctionNtoS {
+	private class ModifyInputFunctions implements FunctionNtoM {
 
 		@Override
 		public int getNumOfInputsN() {
@@ -143,11 +151,19 @@ public abstract class GenericUnconstrainedMinimizationTests {
 		}
 
 		@Override
-		public double process(double[] input ) {
+		public int getNumOfOutputsM() {
+			return 2;
+		}
+
+		@Override
+		public void process(double[] input, double[] output) {
 			for( int i = 0; i < input.length; i++ ) {
 				input[i] = 1+i;
 			}
-			return 0;
+			// no error
+			for( int i = 0; i < output.length; i++ ) {
+				output[i] = 0;
+			}
 		}
 	}
 }

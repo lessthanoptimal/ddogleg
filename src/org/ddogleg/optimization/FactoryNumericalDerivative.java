@@ -20,6 +20,9 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.functions.FunctionNtoN;
+import org.ddogleg.optimization.functions.FunctionNtoS;
+import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DSCC;
 import org.ejml.data.DMatrix;
@@ -40,5 +43,9 @@ public class FactoryNumericalDerivative {
 		} else {
 			throw new RuntimeException("Matrix type unknown/not supported. "+type.getSimpleName());
 		}
+	}
+
+	public static FunctionNtoN gradientForwards(FunctionNtoS func ) {
+		return new NumericalGradientForward(func);
 	}
 }
