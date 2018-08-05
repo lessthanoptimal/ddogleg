@@ -153,7 +153,7 @@ public class FactoryOptimization {
 	}
 
 	/**
-	 * Creates a dense trust region least-squares optimization using dogleg steps. Solver works on the B=J<sup<T></sup>J matrix.
+	 * Creates a dense trust region least-squares optimization using dogleg steps. Solver works on the B=J<sup>T</sup>J matrix.
 	 *
 	 * @see UnconLeastSqTrustRegion_F64
 	 *

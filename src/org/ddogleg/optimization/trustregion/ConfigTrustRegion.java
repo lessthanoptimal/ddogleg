@@ -18,12 +18,14 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.ConfigGaussNewton;
+
 /**
  * Configuration parameters for {@link TrustRegionBase_F64 Trust Region}
  *
  * @author Peter Abeles
  */
-public class ConfigTrustRegion {
+public class ConfigTrustRegion extends ConfigGaussNewton {
 	/**
 	 * Initial size of the trust region. Automatic and manual methods are available. There is no universally
 	 * best way to select the region size and the default method is the more conservative automatic Cauchy.
@@ -52,40 +54,11 @@ public class ConfigTrustRegion {
 	 */
 	public double regionMaximum = Double.MAX_VALUE;
 
-	/**
-	 * tolerance for termination. magnitude of gradient. absolute
-	 */
-	public double gtol=1e-8;
-
-	/**
-	 * tolerance for termination, change in function value.  relative
-	 */
-	public double ftol=1e-12;
-
-	/**
-	 * <p>
-	 *     Optional dynamic scaling of variables is possible at each iteration. The scale factor is set using the
-	 *     Hessian's diagonal elements. The square root of the diagonal elements absolute value.
-	 * </p>
-	 *
-	 * <p>
-	 *     These variables are used to clamp scaling individual scaling values. To turn on this automatic scaling
-	 *     simply set the minimum value such that it is less than the maximum value.
-	 *     The minimum value seems to be of particular importance and don't forget try larger values, such as one.
-	 * </p>
-	 *
-	 * <p>Recommended initial tuning values are min=1e-5 and max=1e5</p>
-	 */
-	public double scalingMinimum =1, scalingMaximum =-1;
-
 	public ConfigTrustRegion copy() {
 		ConfigTrustRegion out = new ConfigTrustRegion();
-		out.regionMaximum = regionMaximum;
-		out.gtol = gtol;
-		out.ftol = ftol;
 		out.regionInitial = regionInitial;
-		out.scalingMinimum = scalingMinimum;
-		out.scalingMaximum = scalingMaximum;
+		out.regionMaximum = regionMaximum;
+		out.set(this);
 
 		return out;
 	}

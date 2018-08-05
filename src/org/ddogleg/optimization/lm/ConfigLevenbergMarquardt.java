@@ -18,10 +18,14 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.ConfigGaussNewton;
+
 /**
+ * Configuration for {@link LevenbergMarquardt_F64}
+ *
  * @author Peter Abeles
  */
-public class ConfigLevenbergMarquardt {
+public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 
 	/**
 	 * Initial value for the dampening parameter.
@@ -33,23 +37,12 @@ public class ConfigLevenbergMarquardt {
 	 */
 	public double mixture=1e-4;
 
-	/**
-	 * tolerance for termination. magnitude of gradient. absolute
-	 */
-	public double gtol=1e-8;
-
-	/**
-	 * tolerance for termination, change in function value.  relative
-	 */
-	public double ftol=1e-12;
-
 	public ConfigLevenbergMarquardt copy() {
 		ConfigLevenbergMarquardt c = new ConfigLevenbergMarquardt();
 
 		c.dampeningInitial = dampeningInitial;
 		c.mixture = mixture;
-		c.gtol = gtol;
-		c.ftol = ftol;
+		c.set(this);
 
 		return c;
 	}

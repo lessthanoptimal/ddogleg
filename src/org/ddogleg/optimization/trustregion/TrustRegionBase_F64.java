@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ejml.UtilEjml;
@@ -26,9 +27,8 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
-import java.util.Arrays;
-
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * <p>Base class for all trust region implementations. The Trust Region approach assumes that a quadratic model is valid
@@ -54,68 +54,28 @@ import static java.lang.Math.*;
  *
  * @author Peter Abeles
  */
-public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianMath> {
-
+public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianMath>
+		extends GaussNewtonBase_F64<ConfigTrustRegion,HM>
+{
 	// Technique used to compute the change in parameters
 	protected ParameterUpdate<S> parameterUpdate;
 
-	// Manipulating and extracting information from the Hessian
-	protected HM hessian;
-
-	/**
-	 * Storage for the gradient
-	 */
-	protected DMatrixRMaj gradient = new DMatrixRMaj(1,1);
-	/**
-	 * F-norm of the gradient
-	 */
-	protected double gradientNorm;
-
-	// NOTE: This could be stored as a cholesky decomposition
-
-	// Number of parameters being optimized
-	int numberOfParameters;
-
-	// Current parameter state
-	protected DMatrixRMaj x = new DMatrixRMaj(1,1);
-	// proposed next state of parameters
-	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
-	// proposed relative change in parameter's state
-	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
+	// Workspace for step
 	protected DMatrixRMaj tmp_p = new DMatrixRMaj(1,1);
-
-	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
-	protected boolean sameStateAsCost;
-
-	// Scaling used to compensate for poorly scaled variables
-	protected DMatrixRMaj scaling = new DMatrixRMaj(1,1);
-
-	protected ConfigTrustRegion config = new ConfigTrustRegion();
-
-	// error function at x
-	protected double fx;
 
 	// size of the current trust region
 	double regionRadius;
 
-	// which processing step it's on
-	protected Mode mode = Mode.FULL_STEP;
-
-	// number of each type of step it has taken
-	protected int totalFullSteps, totalRetries;
-
-	// print additional debugging messages to standard out
-	protected boolean verbose;
+	/**
+	 * F-norm of the gradient
+	 */
+	public double gradientNorm;
 
 	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, HM hessian ) {
-		this();
+		super(hessian);
+		configure(new ConfigTrustRegion());
 		this.parameterUpdate = parameterUpdate;
 		this.hessian = hessian;
-	}
-
-	protected TrustRegionBase_F64() {
-		// so that the RNG gets set up correctly
-		configure(config);
 	}
 
 	/**
@@ -126,71 +86,21 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @param minimumFunctionValue The minimum possible value that the function can output
 	 */
 	public void initialize(double initial[] , int numberOfParameters , double minimumFunctionValue ) {
-		this.numberOfParameters = numberOfParameters;
+		super.initialize(initial,numberOfParameters);
 
-		x.reshape(numberOfParameters,1);
-		x_next.reshape(numberOfParameters,1);
-		p.reshape(numberOfParameters,1);
 		tmp_p.reshape(numberOfParameters,1);
-		gradient.reshape(numberOfParameters,1);
-
-		// initialize scaling to 1, which is no scaling
-		scaling.reshape(numberOfParameters,1);
-		Arrays.fill(scaling.data,0,numberOfParameters,1);
-
-		hessian.init(numberOfParameters);
-
-		System.arraycopy(initial,0,x.data,0,numberOfParameters);
-		fx = cost(x);
-		sameStateAsCost = true;
-
-		totalFullSteps = 0;
-		totalRetries = 0;
 
 		regionRadius = config.regionInitial;
 
-		// a perfect initial guess is a pathological case. easiest to handle it here
-		if( fx <= minimumFunctionValue ) {
-			mode = Mode.CONVERGED;
-		} else {
-			mode = Mode.FULL_STEP;
-		}
+		fx = cost(x);
 
 		this.parameterUpdate.initialize(this,numberOfParameters, minimumFunctionValue);
-	}
 
-	/**
-	 * Performs one iteration
-	 *
-	 * @return true if it has converged or false if not
-	 */
-	public boolean iterate() {
-		boolean converged;
-		switch( mode ) {
-			case FULL_STEP:
-				totalFullSteps++;
-				converged = updateState();
-				if( !converged )
-					converged = computeAndConsiderNew();
-				break;
-
-			case RETRY:
-				totalRetries++;
-				converged = computeAndConsiderNew();
-				break;
-
-			case CONVERGED:
-				return true;
-
-			default:
-				throw new RuntimeException("BUG! mode="+mode);
-		}
-
-		if( converged ) {
-			mode = Mode.CONVERGED;
-			return true;
+		// a perfect initial guess is a pathological case. easiest to handle it here
+		if( fx <= minimumFunctionValue ) {
+			mode = TrustRegionBase_F64.Mode.CONVERGED;
 		} else {
-			return false;
+			mode = TrustRegionBase_F64.Mode.FULL_STEP;
 		}
 	}
 
@@ -198,6 +108,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * Computes all the derived data structures and attempts to update the parameters
 	 * @return true if it has converged.
 	 */
+	@Override
 	protected boolean updateState() {
 		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
 
@@ -220,46 +131,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	}
 
 	/**
-	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
-	 */
-	protected void computeScaling() {
-		hessian.extractDiagonals(scaling);
-		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
-	}
-
-	/**
-	 * Applies the standard formula for computing scaling. This is broken off into its own
-	 * function so that it easily invoked if the function above is overriden
-	 */
-	public void computeScaling( DMatrixRMaj scaling , double minimum , double maximum ) {
-		for (int i = 0; i < scaling.numRows; i++) {
-			// mathematically it should never be negative but...
-			double scale = sqrt(abs(scaling.data[i]));
-			// clamp the scale factor
-			scaling.data[i] = min(maximum, max(minimum, scale));
-		}
-	}
-
-	/**
-	 * Apply scaling to gradient and Hessian
-	 */
-	protected void applyScaling() {
-		CommonOps_DDRM.elementDiv(gradient,scaling);
-
-		hessian.divideRowsCols(scaling);
-	}
-
-	/**
-	 * Undo scaling on estimated parameters
-	 */
-	protected void undoScalingOnParameters( DMatrixRMaj p ) {
-		CommonOps_DDRM.elementDiv(p,scaling);
-	}
-
-	/**
 	 * Changes the trust region's size and attempts to do a step again
 	 * @return true if it has converged.
 	 */
+	@Override
 	protected boolean computeAndConsiderNew() {
 		// If first iteration and automatic
 		if( regionRadius == -1 ) {
@@ -379,25 +254,6 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			return Convergence.REJECT;
 	}
 
-
-	/**
-	 * <p>Checks for convergence using f-test. f-test is defined differently for different problems</p>
-	 *
-	 * @return true if converged or false if it hasn't converged
-	 */
-	protected abstract boolean checkConvergenceFTest(double fx, double fx_prev );
-
-	/**
-	 * <p>Checks for convergence using f-test:</p>
-	 *
-	 * g-test : gtol &le; ||g(x)||_inf
-	 *
-	 * @return true if converged or false if it hasn't converged
-	 */
-	protected boolean checkConvergenceGTest( DMatrixRMaj g ) {
-		return CommonOps_DDRM.elementMaxAbs(g) <= config.gtol;
-	}
-
 	/**
 	 * Computes the function's value at x
 	 * @param x parameters
@@ -406,24 +262,11 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	protected abstract double cost( DMatrixRMaj x );
 
 	/**
-	 * Computes the gradient and Hessian at 'x'. If sameStateAsCost is true then it can be assumed that 'x' has
-	 * not changed since the cost was last computed.
-	 * @param gradient (Input) x
-	 * @param gradient (Output) gradient
-	 * @param gradient (Output) gradient
-	 * @param hessian (Output) hessian
-	 */
-	protected abstract void functionGradientHessian(DMatrixRMaj x , boolean sameStateAsCost , DMatrixRMaj gradient , HM hessian);
-
-	/**
-	 * Computes predicted reduction for step 'p'
+	 * <p>Checks for convergence using f-test. f-test is defined differently for different problems</p>
 	 *
-	 * @param p Change in state or the step
-	 * @return predicted reduction in quadratic model
+	 * @return true if converged or false if it hasn't converged
 	 */
-	public double computePredictedReduction( DMatrixRMaj p ) {
-		return -CommonOps_DDRM.dot(gradient,p) - 0.5*hessian.innerVectorHessian(p);
-	}
+	protected abstract boolean checkConvergenceFTest(double fx, double fx_prev );
 
 	public interface ParameterUpdate<S extends DMatrix> {
 
@@ -481,27 +324,15 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		void setVerbose( boolean verbose );
 	}
 
-	protected enum Mode {
-		FULL_STEP,
-		RETRY,
-		CONVERGED
+	@Override
+	public void setVerbose( boolean verbose ) {
+		super.setVerbose(verbose);
+		this.parameterUpdate.setVerbose(verbose);
 	}
 
 	protected enum Convergence {
 		REJECT,
 		ACCEPT
-	}
-
-	/**
-	 * True if scaling is turned on
-	 */
-	public boolean isScaling() {
-		return config.scalingMaximum > config.scalingMinimum;
-	}
-
-	public void setVerbose( boolean verbose ) {
-		this.verbose = verbose;
-		this.parameterUpdate.setVerbose(verbose);
 	}
 
 	public void configure(ConfigTrustRegion config) {

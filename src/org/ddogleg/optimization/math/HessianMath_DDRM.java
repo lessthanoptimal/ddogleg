@@ -76,7 +76,6 @@ public class HessianMath_DDRM implements HessianMath {
 			throw new RuntimeException("Solver not set");
 
 		if( !solver.setA(hessian) ) {
-			hessian.print();
 			return false;
 		}
 		return true;

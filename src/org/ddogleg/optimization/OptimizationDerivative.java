@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -40,7 +40,7 @@ public interface OptimizationDerivative<State>
 	 * derivative is a 2D array.  The first axis is for each function and the second
 	 * for each model parameter:<br>
 	 * <br>
-	 * derivative[i][j] = &partial; f<sub>i</sub> / &partial; p<sub>j</sub>
+	 * derivative[i][j] = &part; f<sub>i</sub> / &part; p<sub>j</sub>
 	 * </p>
 	 *
 	 * @param state State of the system being examined.

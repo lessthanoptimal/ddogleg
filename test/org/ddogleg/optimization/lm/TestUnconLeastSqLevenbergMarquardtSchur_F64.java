@@ -56,4 +56,23 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 			return lm;
 		}
 	}
+
+	@Nested
+	class LeastSquaresDSCC_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
+		@Override
+		protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch(double minimumValue) {
+			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+
+			config.dampeningInitial = 1e-8;
+			config.scalingMinimum = 1e-5;
+			config.scalingMaximum = 1e5;
+
+			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
+					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+			lm.configure(config);
+//			lm.setVerbose(true);
+			return lm;
+		}
+	}
 }

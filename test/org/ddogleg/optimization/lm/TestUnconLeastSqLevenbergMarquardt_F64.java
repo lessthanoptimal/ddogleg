@@ -58,13 +58,11 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 {
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
-//			config.mixture = 0.0;
-
 			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
 			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
 			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
 			lm.configure(config);
-//			lm.setVerbose(true);
+			lm.setVerbose(true);
 			return lm;
 		}
 	}
@@ -76,11 +74,29 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 {
 		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
 			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
-//			config.mixture = 0.0;
-
 			LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 			HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
 			UnconLeastSqLevenbergMarquardt_F64<DMatrixSparseCSC> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(),hessian);
+			lm.configure(config);
+//			lm.setVerbose(true);
+			return lm;
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM_scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+
+		@Override
+		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+
+			config.dampeningInitial = 1e-8;
+			config.scalingMinimum = 1e-5;
+			config.scalingMaximum = 1e5;
+
+			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
+			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
+			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
 			lm.configure(config);
 //			lm.setVerbose(true);
 			return lm;

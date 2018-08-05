@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.MatrixMath;
@@ -45,12 +46,12 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  *
  * <p>
  *     Levenberg's formulation is as follows:<br>
- *     (J<sup>T</sup>J + &lambda I) = J<sup>T</sup>r<br>
+ *     (J<sup>T</sup>J + &lambda; I) = J<sup>T</sup>r<br>
  *     where &lambda; is adjusted at each iteration.
  * </p>
  * <p>
  *     Marquardt's formulation is as follows:<br>
- *     (J<sup>T</sup>J + &lambda diag(J<sup>T</sup>J )) = J<sup>T</sup>r<br>
+ *     (J<sup>T</sup>J + &lambda; diag(J<sup>T</sup>J )) = J<sup>T</sup>r<br>
  *     where &lambda; is adjusted at each iteration.
  * </p>
  *
@@ -59,39 +60,21 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  * Informatics and Mathematical Modelling, Technical University of Denmark</li>
  * <li>[2] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization", Revision 1, August 2018</li>
  * <li>[3] Levenberg, Kenneth (1944). "A Method for the Solution of Certain Non-Linear Problems in Least Squares".
- *         Quarterly of Applied Mathematics. 2: 164–168.<</li>
+ *         Quarterly of Applied Mathematics. 2: 164–168.</li>
  * </ul>
  *
  * @author Peter Abeles
  */
 public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends HessianMath>
+		extends GaussNewtonBase_F64<ConfigLevenbergMarquardt,HM>
 {
-	// TODO Add scaling
-	/**
-	 * Configuration
-	 */
-	protected ConfigLevenbergMarquardt config;
-
 	// Math for some matrix operations
 	protected MatrixMath<S> math;
 
-	protected HM hessian;
-
-	DMatrixRMaj gradient = new DMatrixRMaj(1,1);
 	DMatrixRMaj residuals = new DMatrixRMaj(1,1);
 
 	DMatrixRMaj diagOrig = new DMatrixRMaj(1,1);
 	DMatrixRMaj diagStep = new DMatrixRMaj(1,1);
-
-	// Current parameter state
-	protected DMatrixRMaj x = new DMatrixRMaj(1,1);
-	// proposed next state of parameters
-	protected DMatrixRMaj x_next = new DMatrixRMaj(1,1);
-	// proposed relative change in parameter's state
-	protected DMatrixRMaj p = new DMatrixRMaj(1,1);
-
-	// error function at x
-	protected double fx;
 
 	/**
 	 * Dampening parameter. Scalar that's adjusted at every step. smaller values for a Gauss-Newton step and larger
@@ -103,14 +86,10 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected double nu;
 	private final static double NU_INITIAL = 2;
 
-	protected Mode mode = Mode.FULL_STEP;
 
-	protected boolean verbose=false;
-
-	// number of each type of step it has taken
-	protected int totalFullSteps, totalRetries;
-
-	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian ) {
+	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian )
+	{
+		super(hessian);
 		configure(new ConfigLevenbergMarquardt());
 		this.math = math;
 		this.hessian = hessian;
@@ -124,28 +103,17 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @param numberOfFunctions number of functions
 	 */
 	public void initialize(double initial[] , int numberOfParameters , int numberOfFunctions ) {
+		super.initialize(initial,numberOfParameters);
 		lambda = config.dampeningInitial;
 		nu = NU_INITIAL;
 
-		totalFullSteps = 0;
-		totalRetries = 0;
-
-		// Declare storage
-		gradient.reshape(numberOfParameters,1);
-		x.reshape(numberOfParameters,1);
-		x_next.reshape(numberOfParameters,1);
-		p.reshape(numberOfParameters,1);
 		residuals.reshape(numberOfFunctions,1);
 
 		diagOrig.reshape(numberOfParameters,1);
 		diagStep.reshape(numberOfParameters,1);
 
-		hessian.init(numberOfParameters);
-
-		// Set the initial state
-		System.arraycopy(initial,0,x.data,0,numberOfParameters);
 		computeResiduals(x,residuals);
-		fx = cost(residuals);
+		fx = cost(x);
 
 		if( checkConvergenceFTest(residuals)) {
 			mode = Mode.CONVERGED;
@@ -155,46 +123,18 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * Performs a single step in the iteration
-	 *
-	 * @return returns true if it has converged and false otherwise
-	 */
-	public boolean iterate() {
-		boolean converged;
-		switch( mode ) {
-			case FULL_STEP:
-				totalFullSteps++;
-				converged = updateState();
-				if( !converged )
-					converged = computeAndConsiderNew();
-				break;
-
-			case RETRY:
-				totalRetries++;
-				converged = computeAndConsiderNew();
-				break;
-
-			case CONVERGED:
-				return true;
-
-			default:
-				throw new RuntimeException("BUG! mode="+mode);
-		}
-
-		if( converged ) {
-			mode = Mode.CONVERGED;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Computes derived
 	 * @return true if it has converged or false if it has not
 	 */
+	@Override
 	protected boolean updateState() {
-		computeGradientHessian(x,true, gradient, hessian);
+		functionGradientHessian(x,true, gradient, hessian);
+
+		if( isScaling() ) {
+			computeScaling();
+			applyScaling();
+		}
+
 		hessian.extractDiagonals(diagOrig);
 
 		if( checkConvergenceGTest(gradient) )
@@ -209,6 +149,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * Compute a new possible state and determine if it should be accepted or not. If accepted update the state
 	 * @return true if it has converged or false if it has not
 	 */
+	@Override
 	protected boolean computeAndConsiderNew() {
 
 		// compute the new location and it's score
@@ -221,6 +162,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 				System.out.println(totalFullSteps+" Step computation failed. Increasing lambda");
 			return false;
 		}
+
+		if( isScaling() )
+			undoScalingOnParameters(p);
 
 		// compute the potential new state
 		CommonOps_DDRM.add(x,p,x_next);
@@ -297,21 +241,6 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * <p>Checks for convergence using f-test:</p>
-	 *
-	 * g-test : gtol &le; ||g(x)||_inf
-	 *
-	 * @return true if converged or false if it hasn't converged
-	 */
-	protected boolean checkConvergenceGTest( DMatrixRMaj g ) {
-		for (int i = 0; i < g.numRows; i++) {
-			if( Math.abs(g.data[i]) > config.gtol )
-				return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Given the residuals compute the cost
 	 * @param residuals (Input) residuals/errors
 	 * @return Least squares cost
@@ -350,25 +279,6 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * Computes predicted reduction for step 'p'
-	 *
-	 * @param p Change in state or the step
-	 * @return predicted reduction in quadratic model
-	 */
-	public double computePredictedReduction( DMatrixRMaj p ) {
-		return -CommonOps_DDRM.dot(gradient,p) - 0.5*hessian.innerVectorHessian(p);
-	}
-
-	/**
-	 * Computes the gradient and updates Hessian given the current state
-	 * @param x (Input) Current state
-	 * @param sameStateAsResiduals If true then this is the same value of x when {@link #computeResiduals} was called last
-	 * @param gradient (Output) gradient at x
-	 * @param hessian (Output) hessian at x
-	 */
-	protected abstract void computeGradientHessian(DMatrixRMaj x , boolean sameStateAsResiduals , DMatrixRMaj gradient , HM hessian );
-
-	/**
 	 * Computes the residuals at state 'x'
 	 * @param x (Input) state
 	 * @param residuals (Output) residuals F(x) - Y
@@ -381,11 +291,5 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 */
 	public void configure(ConfigLevenbergMarquardt config ) {
 		this.config = config.copy();
-	}
-
-	enum Mode {
-		FULL_STEP,
-		RETRY,
-		CONVERGED
 	}
 }

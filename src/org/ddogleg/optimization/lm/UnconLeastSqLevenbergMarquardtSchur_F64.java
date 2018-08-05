@@ -100,8 +100,8 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	}
 
 	@Override
-	protected void computeGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
-										  DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
+										   DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
 		if( !sameStateAsResiduals )
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacLeft,jacRight);

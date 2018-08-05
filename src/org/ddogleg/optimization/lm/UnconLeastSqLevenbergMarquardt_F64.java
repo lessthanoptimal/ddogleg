@@ -96,13 +96,8 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-
-	@Override
-	protected void computeGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
-										  DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
+	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
+										   DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
 		if( !sameStateAsResiduals )
 			functionResiduals.process(x.data,residuals.data);
 		functionJacobian.process(x.data,jacobian);

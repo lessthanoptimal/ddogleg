@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,7 +36,7 @@ public interface LineSearch extends IterativeOptimization {
 	 *
 	 * @param function Line search function and derivative
 	 */
-	public void setFunction( CoupledDerivative function );
+	void setFunction( CoupledDerivative function );
 
 	/**
 	 * Initializes and resets the line search.  In some implementations a reasonable
@@ -48,9 +48,8 @@ public interface LineSearch extends IterativeOptimization {
 	 * @param stepInit Initial step size
 	 * @param stepMin Minimum allowed step.
 	 * @param stepMax Maximum allowed step.
-	 * @return Approximate value of alpha which minimizes the function
 	 */
-	public void init( final double funcAtZero, final double derivAtZero,
+	void init( final double funcAtZero, final double derivAtZero,
 					  final double funcAtInit, final double stepInit ,
 					  double stepMin, double stepMax );
 
@@ -59,10 +58,10 @@ public interface LineSearch extends IterativeOptimization {
 	 *
 	 * @return current solution
 	 */
-	public double getStep();
+	double getStep();
 
 	/**
 	 * Function value at the current step
 	 */
-	public double getFunction();
+	double getFunction();
 }
