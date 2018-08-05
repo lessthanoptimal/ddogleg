@@ -21,6 +21,7 @@ package org.ddogleg.optimization.lm;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.MatrixMath;
+import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -28,9 +29,9 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
  * <p>
- * Base class for Levenberg-Marquardt non-linear least squares optimization methods. At each iteration these techniques
- * solve a system of the form:<br>
- * (G[k] + v*I)x[k] = -g[k] with v &ge; 0 <br>
+ * Implementation of Levenberg-Marquardt non-linear least squares optimization. At each iteration the following
+ * is sovled for:<br>
+ * (G[k] + v*()x[k] = -g[k] with v &ge; 0 <br>
  * where G[k] = F[k]<sup>T</sup>F[k] is an approximation to the hessian and is positive semi-definite, F[k] is
  * the Jacobian, v is a tuning parameter that is either a scalar or a vector, x[k] is the step being estimated,
  * and g[k] is the gradient.
@@ -97,6 +98,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * values for a gradient step
 	 */
 	protected double lambda;
+
 	// TODO comment
 	protected double nu;
 	private final static double NU_INITIAL = 2;
@@ -109,27 +111,40 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected int totalFullSteps, totalRetries;
 
 	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian ) {
-		setConfiguration(new ConfigLevenbergMarquardt());
+		configure(new ConfigLevenbergMarquardt());
 		this.math = math;
 		this.hessian = hessian;
 	}
 
+	/**
+	 * Initializes the search.
+	 *
+	 * @param initial Initial state
+	 * @param numberOfParameters number of parameters
+	 * @param numberOfFunctions number of functions
+	 */
 	public void initialize(double initial[] , int numberOfParameters , int numberOfFunctions ) {
-		lambda = config.lambdaInitial;
+		lambda = config.dampeningInitial;
 		nu = NU_INITIAL;
 
 		totalFullSteps = 0;
 		totalRetries = 0;
 
+		// Declare storage
 		gradient.reshape(numberOfParameters,1);
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
 		p.reshape(numberOfParameters,1);
+		residuals.reshape(numberOfFunctions,1);
 
 		diagOrig.reshape(numberOfParameters,1);
 		diagStep.reshape(numberOfParameters,1);
 
-		computeResiduals(x_next,residuals);
+		hessian.init(numberOfParameters);
+
+		// Set the initial state
+		System.arraycopy(initial,0,x.data,0,numberOfParameters);
+		computeResiduals(x,residuals);
 		fx = cost(residuals);
 
 		if( checkConvergenceFTest(residuals)) {
@@ -139,6 +154,11 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		}
 	}
 
+	/**
+	 * Performs a single step in the iteration
+	 *
+	 * @return returns true if it has converged and false otherwise
+	 */
 	public boolean iterate() {
 		boolean converged;
 		switch( mode ) {
@@ -170,11 +190,11 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * TODO comment
+	 * Computes derived
 	 * @return true if it has converged or false if it has not
 	 */
 	protected boolean updateState() {
-		computeHessian(x,true, hessian);
+		computeGradientHessian(x,true, gradient, hessian);
 		hessian.extractDiagonals(diagOrig);
 
 		if( checkConvergenceGTest(gradient) )
@@ -186,13 +206,13 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * TODO comment
+	 * Compute a new possible state and determine if it should be accepted or not. If accepted update the state
 	 * @return true if it has converged or false if it has not
 	 */
 	protected boolean computeAndConsiderNew() {
 
 		// compute the new location and it's score
-		if( !computeStep(lambda,residuals,p) ) {
+		if( !computeStep(lambda,gradient,p) ) {
 			if( config.mixture == 0.0 ) {
 				throw new OptimizationException("Singular matrix encountered. Try setting mixture to a non-zero value");
 			}
@@ -206,6 +226,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		CommonOps_DDRM.add(x,p,x_next);
 		computeResiduals(x_next,residuals);
 		double fx_candidate = cost(residuals);
+
+		if(UtilEjml.isUncountable(fx_candidate) )
+			throw new OptimizationException("Uncountable candidate score: "+fx_candidate);
 
 		// compute model prediction accuracy
 		double actualReduction = fx-fx_candidate;
@@ -233,8 +256,11 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			accepted = false;
 		}
 
+		if( UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu) )
+			throw new OptimizationException("lambda="+lambda+"  nu="+nu);
+
 		if( verbose )
-			System.out.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" lambda="+lambda);
+			System.out.println(totalFullSteps+" fx_delta="+(fx_candidate-fx)+" ratio="+ratio+" lambda="+lambda);
 
 		if( accepted ) {
 			acceptNewState(fx_candidate);
@@ -243,6 +269,10 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return false;
 	}
 
+	/**
+	 * The new state has been accepted. Switch the internal state over to this
+	 * @param fx_candidate
+	 */
 	private void acceptNewState( double fx_candidate ) {
 		DMatrixRMaj tmp = x;
 		x = x_next;
@@ -274,19 +304,36 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @return true if converged or false if it hasn't converged
 	 */
 	protected boolean checkConvergenceGTest( DMatrixRMaj g ) {
-		return CommonOps_DDRM.elementMaxAbs(g) <= config.gtol;
+		for (int i = 0; i < g.numRows; i++) {
+			if( Math.abs(g.data[i]) > config.gtol )
+				return false;
+		}
+		return true;
 	}
 
+	/**
+	 * Given the residuals compute the cost
+	 * @param residuals (Input) residuals/errors
+	 * @return Least squares cost
+	 */
 	public double cost( DMatrixRMaj residuals ) {
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
-	protected boolean computeStep( double lambda, DMatrixRMaj residuals , DMatrixRMaj step ) {
+	/**
+	 * Adjusts the Hessian's diagonal elements value and computes the next step
+	 *
+	 * @param lambda (Input) tuning
+	 * @param gradient (Input) gradient
+	 * @param step (Output) step
+	 * @return true if solver could compute the next step
+	 */
+	protected boolean computeStep( double lambda, DMatrixRMaj gradient , DMatrixRMaj step ) {
 
 		final double mixture = config.mixture;
 		for (int i = 0; i < diagOrig.numRows; i++) {
-			double v = diagOrig.data[i];
-			diagStep.data[i] = lambda*(mixture + (1.0-mixture)*v);
+			double v = Math.abs(diagOrig.data[i]);
+			diagStep.data[i] = v + lambda*(mixture + (1.0-mixture)*v);
 		}
 		hessian.setDiagonals( diagStep );
 
@@ -294,7 +341,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return false;
 		}
 
-		return hessian.solve(residuals,step);
+		if( hessian.solve(gradient,step) ) {
+			CommonOps_DDRM.scale(-1, step);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -308,21 +360,26 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * TODO COmment
-	 * @param x
-	 * @param sameStateAsResiduals
-	 * @param hessian
+	 * Computes the gradient and updates Hessian given the current state
+	 * @param x (Input) Current state
+	 * @param sameStateAsResiduals If true then this is the same value of x when {@link #computeResiduals} was called last
+	 * @param gradient (Output) gradient at x
+	 * @param hessian (Output) hessian at x
 	 */
-	protected abstract void computeHessian(DMatrixRMaj x , boolean sameStateAsResiduals , HM hessian );
+	protected abstract void computeGradientHessian(DMatrixRMaj x , boolean sameStateAsResiduals , DMatrixRMaj gradient , HM hessian );
 
 	/**
-	 * TODO Comment
-	 * @param x
-	 * @param residuals
+	 * Computes the residuals at state 'x'
+	 * @param x (Input) state
+	 * @param residuals (Output) residuals F(x) - Y
 	 */
 	protected abstract void computeResiduals( DMatrixRMaj x , DMatrixRMaj residuals );
 
-	public void setConfiguration( ConfigLevenbergMarquardt config ) {
+	/**
+	 * Changes the optimization's configuration
+	 * @param config New configuration
+	 */
+	public void configure(ConfigLevenbergMarquardt config ) {
 		this.config = config.copy();
 	}
 

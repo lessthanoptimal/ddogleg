@@ -23,8 +23,14 @@ package org.ddogleg.optimization.lm;
  */
 public class ConfigLevenbergMarquardt {
 
-	public double lambdaInitial=1e-4;
+	/**
+	 * Initial value for the dampening parameter.
+	 */
+	public double dampeningInitial =1e-4;
 
+	/**
+	 * Used to switch between Levenberg's and Marquardt's forumula. 1.0=levenberg 0.0=marquardt
+	 */
 	public double mixture=1e-4;
 
 	/**
@@ -39,6 +45,11 @@ public class ConfigLevenbergMarquardt {
 
 	public ConfigLevenbergMarquardt copy() {
 		ConfigLevenbergMarquardt c = new ConfigLevenbergMarquardt();
+
+		c.dampeningInitial = dampeningInitial;
+		c.mixture = mixture;
+		c.gtol = gtol;
+		c.ftol = ftol;
 
 		return c;
 	}

@@ -19,6 +19,8 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.*;
+import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
+import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardt_F64;
 import org.ddogleg.optimization.math.HessianBFGS;
 import org.ddogleg.optimization.math.HessianBFGS_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
@@ -210,5 +212,23 @@ public class FactoryOptimization {
 		UnconMinTrustRegionBFGS_F64 alg = new UnconMinTrustRegionBFGS_F64(update,hessian);
 		alg.configure(config);
 		return alg;
+	}
+
+	public static UnconstrainedLeastSquares<DMatrixRMaj> levenbergMarquardt(
+			@Nullable ConfigLevenbergMarquardt config, boolean robust  )
+	{
+		if( config == null )
+			config = new ConfigLevenbergMarquardt();
+
+		LinearSolverDense<DMatrixRMaj> solver;
+		if( robust )
+			solver = LinearSolverFactory_DDRM.leastSquaresQrPivot(true,false);
+		else
+			solver = LinearSolverFactory_DDRM.chol(100);
+
+		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
+		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
+		lm.configure(config);
+		return lm;
 	}
 }

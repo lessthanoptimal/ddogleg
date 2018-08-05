@@ -22,6 +22,7 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
+import org.ejml.interfaces.linsol.LinearSolver;
 import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
@@ -31,7 +32,7 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
  */
 public class HessianMath_DDRM implements HessianMath {
 
-	protected LinearSolverDense<DMatrixRMaj> solver;
+	protected LinearSolver<DMatrixRMaj,DMatrixRMaj> solver;
 	protected DMatrixRMaj hessian = new DMatrixRMaj(1,1);
 
 	public HessianMath_DDRM() {
@@ -57,6 +58,13 @@ public class HessianMath_DDRM implements HessianMath {
 	}
 
 	@Override
+	public void setDiagonals(DMatrixRMaj diag) {
+		for (int i = 0; i < hessian.numRows; i++) {
+			hessian.set(i,i,diag.data[i]);
+		}
+	}
+
+	@Override
 	public void divideRowsCols(DMatrixRMaj scaling) {
 		CommonOps_DDRM.divideCols(hessian,scaling.data);
 		CommonOps_DDRM.divideRows(scaling.data, hessian);
@@ -67,7 +75,11 @@ public class HessianMath_DDRM implements HessianMath {
 		if( solver == null )
 			throw new RuntimeException("Solver not set");
 
-		return solver.setA(hessian);
+		if( !solver.setA(hessian) ) {
+			hessian.print();
+			return false;
+		}
+		return true;
 	}
 
 	@Override

@@ -125,6 +125,17 @@ public class HessianSchurComplement_DSCC
 	}
 
 	@Override
+	public void setDiagonals(DMatrixRMaj diag) {
+		int N = A.numCols;
+		for (int i = 0; i < N; i++) {
+			A.set(i,i, diag.data[i]);
+		}
+		for (int i = 0; i < D.numCols; i++) {
+			D.set(i,i, diag.data[i+N]);
+		}
+	}
+
+	@Override
 	public void divideRowsCols(DMatrixRMaj scaling) {
 		double []d = scaling.data;
 		CommonOps_DSCC.divideRowsCols(d,0,A,d,0);

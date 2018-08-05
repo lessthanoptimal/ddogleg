@@ -59,6 +59,13 @@ public class HessianMath_DSCC implements HessianMath {
 	}
 
 	@Override
+	public void setDiagonals(DMatrixRMaj diag) {
+		for (int i = 0; i < hessian.numRows; i++) {
+			hessian.set(i,i, diag.data[i]);
+		}
+	}
+
+	@Override
 	public void divideRowsCols(DMatrixRMaj scaling) {
 		CommonOps_DSCC.divideRowsCols(scaling.data,0,hessian,scaling.data,0);
 	}
