@@ -25,6 +25,7 @@ import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DSCC;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DSCC;
+import org.ddogleg.optimization.wrap.GenericUnconstrainedLeastSquaresTests_D64;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Peter Abeles
  */
-public class TestUnconLeastSqLevenbergMarquardt_F64 {
+public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrainedLeastSquaresTests_D64 {
 	@Test
 	public void computeGradientHessian() {
 		fail("Implement");
@@ -49,6 +50,17 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 {
 	@Test
 	public void computeResiduals() {
 		fail("Implement");
+	}
+
+	@Override
+	public UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm() {
+		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+
+		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
+		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
+		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
+		lm.configure(config);
+		return lm;
 	}
 
 	@Nested
@@ -62,7 +74,7 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 {
 			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
 			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
 			lm.configure(config);
-			lm.setVerbose(true);
+//			lm.setVerbose(true);
 			return lm;
 		}
 	}

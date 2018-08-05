@@ -18,9 +18,8 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.DoglegStepFtF;
-import org.ddogleg.optimization.impl.TrustRegionLeastSquares;
-import org.ddogleg.optimization.wrap.TrustRegionLeastSquares_to_UnconstrainedLeastSquares;
+import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
+import org.ejml.data.DMatrixRMaj;
 
 /**
  * @author Peter Abeles
@@ -33,13 +32,22 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
-//		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepF());
-		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new DoglegStepFtF());
-//		TrustRegionLeastSquares alg = new TrustRegionLeastSquares(1,new CauchyStep());
-		return new TrustRegionLeastSquares_to_UnconstrainedLeastSquares(alg);
+		ConfigTrustRegion config = new ConfigTrustRegion();
+		config.regionInitial = 1;
+//		config.scalingMinimum = .1;
+//		config.scalingMaximum = 1e6;
+
+		UnconstrainedLeastSquares<DMatrixRMaj> tr;
+
+//		tr = FactoryOptimization.cauchy(config);
+		tr = FactoryOptimization.dogleg(config,false);
+//		tr = FactoryOptimization.dogleg(config,true);
+
+//		tr.setVerbose(true);
+		return tr;
 	}
 
-	public static void main( String args[] ) {
+	public static void main(String args[]) {
 		EvaluateTrustRegionLeastSquares eval = new EvaluateTrustRegionLeastSquares(false);
 
 		System.out.println("Powell              ----------------");
@@ -51,7 +59,7 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		System.out.println("Rosenbrock          ----------------");
 		eval.rosenbrock();
 		System.out.println("Rosenbrock Mod      ----------------");
-		eval.rosenbrockMod(Math.sqrt(2*1e6));
+		eval.rosenbrockMod(Math.sqrt(2 * 1e6));
 		System.out.println("variably            ----------------");
 		eval.variably();
 		System.out.println("trigonometric       ----------------");

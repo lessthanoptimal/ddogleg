@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.FactoryNumericalDerivative;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
@@ -52,8 +53,10 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	@Override
 	public void setFunction(FunctionNtoM function, FunctionNtoMxN<S> jacobian) {
 		this.functionResiduals = function;
-		this.functionJacobian = jacobian;
-
+		if( jacobian == null )
+			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function,(Class)this.jacobian.getClass());
+		else
+			this.functionJacobian = jacobian;
 		int M = functionResiduals.getNumOfOutputsM();
 		int N = functionResiduals.getNumOfInputsN();
 

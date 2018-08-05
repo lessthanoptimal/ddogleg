@@ -18,32 +18,37 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.LevenbergDampened_DDRM;
-import org.ddogleg.optimization.wrap.LevenbergDampened_to_UnconstrainedLeastSquares;
+import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
 
 /**
  * @author Peter Abeles
  */
-public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluator_DDRM {
+public class EvaluateLevenbergMarquardt extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
-	double dampInit = 1e-3;
-
-	public EvaluateLevenbergDampened(boolean verbose) {
+	public EvaluateLevenbergMarquardt(boolean verbose) {
 		super(verbose, true);
 	}
 
 	@Override
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 
-		LevenbergDampened_DDRM alg = new LevenbergDampened_DDRM(dampInit);
-		return new LevenbergDampened_to_UnconstrainedLeastSquares(alg);
+		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+//		config.mixture = 0.2;
+//		config.mixture = 0;
+//		config.mixture = 1;
+
+		boolean robust = false;
+
+		return FactoryOptimization.levenbergMarquardt(config,robust);
 	}
 
 	public static void main( String args[] ) {
-		EvaluateLevenbergDampened eval = new EvaluateLevenbergDampened(false);
+		EvaluateLevenbergMarquardt eval = new EvaluateLevenbergMarquardt(false);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();
+		System.out.println("Powell Singular     ----------------");
+		eval.powellSingular();
 		System.out.println("Helical Valley      ----------------");
 		eval.helicalValley();
 		System.out.println("Rosenbrock          ----------------");
@@ -56,6 +61,8 @@ public class EvaluateLevenbergDampened extends UnconstrainedLeastSquaresEvaluato
 		eval.trigonometric();
 		System.out.println("Badly Scaled Brown  ----------------");
 		eval.badlyScaledBrown();
+		System.out.println("Badly Scaled Powell ----------------");
+		eval.badlyScalledPowell();
 		System.out.println("Bundle 2D           ----------------");
 		eval.bundle2D();
 	}

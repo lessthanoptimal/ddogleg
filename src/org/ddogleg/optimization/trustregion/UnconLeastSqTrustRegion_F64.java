@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.FactoryNumericalDerivative;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
@@ -60,7 +61,11 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	@Override
 	public void setFunction(FunctionNtoM function, FunctionNtoMxN<S> jacobian) {
 		this.functionResiduals = function;
-		this.functionJacobian = jacobian;
+
+		if( jacobian == null )
+			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function,(Class)this.jacobian.getClass());
+		else
+			this.functionJacobian = jacobian;
 	}
 
 	/**

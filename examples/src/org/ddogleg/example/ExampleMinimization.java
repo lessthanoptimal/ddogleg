@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,6 +22,7 @@ import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.UtilOptimize;
 import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ejml.data.DMatrixRMaj;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class ExampleMinimization {
 
 		// Define the function being optimized and create the optimizer
 		FunctionNtoM func = new FunctionLineDistanceEuclidean(points);
-		UnconstrainedLeastSquares optimizer = FactoryOptimization.leastSquaresLM(1e-3, true);
+		UnconstrainedLeastSquares<DMatrixRMaj> optimizer = FactoryOptimization.levenbergMarquardt(null, true);
 
 		// if no jacobian is specified it will be computed numerically
 		optimizer.setFunction(func,null);

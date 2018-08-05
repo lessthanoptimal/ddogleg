@@ -23,6 +23,8 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
+import org.ejml.UtilEjml;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,9 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericUnconstrainedLeastSquaresTests {
+public abstract class GenericUnconstrainedLeastSquaresTests_D64 {
 
-	public abstract UnconstrainedLeastSquares createAlgorithm();
+	public abstract UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm();
 
 	/**
 	 * Simple optimization which checks several different aspects of its behavior
@@ -45,7 +47,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
 		UnconstrainedLeastSquares alg = createAlgorithm();
 
@@ -80,8 +82,8 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 
 		double found[] = alg.getParameters();
 
-		assertEquals(a, found[0], 1e-4);
-		assertEquals(b, found[1], 1e-4);
+		assertEquals(a, found[0], UtilEjml.TEST_F64_SQ);
+		assertEquals(b, found[1], UtilEjml.TEST_F64_SQ);
 	}
 
 	/**
@@ -93,9 +95,9 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
-		FunctionNtoMxN jacobian = new NumericalJacobianForward_DDRM(residual);
+		FunctionNtoMxN<DMatrixRMaj> jacobian = new NumericalJacobianForward_DDRM(residual);
 
-		UnconstrainedLeastSquares alg = createAlgorithm();
+		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
 
 		alg.setFunction(residual,jacobian);
 		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
@@ -123,7 +125,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests {
 	public void checkAcceptModified() {
 		ModifyInputFunctions residuals = new ModifyInputFunctions();
 
-		UnconstrainedLeastSquares alg = createAlgorithm();
+		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();
 
 		alg.setFunction(residuals,null);
 		alg.initialize(new double[]{1,0.5,9.5},1e-10,1e-10);
