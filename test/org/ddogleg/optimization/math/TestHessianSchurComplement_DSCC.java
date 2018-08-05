@@ -25,21 +25,19 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.IGrowArray;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
+import org.ejml.ops.ConvertDMatrixStruct;
 import org.ejml.sparse.csc.CommonOps_DSCC;
-import org.ejml.sparse.csc.MatrixFeatures_DSCC;
 import org.ejml.sparse.csc.RandomMatrices_DSCC;
-import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
  */
-public class TestHessianSchurComplement_DSCC {
+public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 
 	int M = 10;
 	int N = 6;
@@ -60,8 +58,30 @@ public class TestHessianSchurComplement_DSCC {
 	HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
 
 	public TestHessianSchurComplement_DSCC() {
+		super(new HessianSchurComplement_DSCC());
 		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
 		CommonOps_DSCC.multTransA(J,J,H,gw,gx);
+	}
+
+
+	@Override
+	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
+
+		int M = 3;
+		int N = H.numCols-M;
+
+		HessianSchurComplement_DSCC hm = (HessianSchurComplement_DSCC)alg;
+
+		DMatrixSparseCSC SH = new DMatrixSparseCSC(1,1);
+		ConvertDMatrixStruct.convert(H,SH);
+
+		hm.A.reshape(M,M);
+		hm.B.reshape(M,N);
+		hm.D.reshape(N,N);
+
+		CommonOps_DSCC.extract(SH,0,M,0,M,hm.A,0,0);
+		CommonOps_DSCC.extract(SH,0,M,M,M+N,hm.B,0,0);
+		CommonOps_DSCC.extract(SH,M,M+N,M,M+N,hm.D,0,0);
 	}
 
 	@Test
@@ -77,7 +97,7 @@ public class TestHessianSchurComplement_DSCC {
 	}
 
 	@Test
-	public void extractDiag() {
+	public void computeHessian() {
 		math.computeHessian(jacLeft,jacRight);
 
 		DMatrixRMaj found = new DMatrixRMaj(1,1);
@@ -89,42 +109,19 @@ public class TestHessianSchurComplement_DSCC {
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
 	}
 
-	@Test
-	public void divideRowsCols() {
-		DMatrixRMaj scale = RandomMatrices_DDRM.rectangle(M,1,0,1,rand);
-
-		DMatrixSparseCSC H = this.H.copy();
-		CommonOps_DSCC.divideRowsCols(scale.data,0,H,scale.data,0);
-
-		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
-		math.computeHessian(jacLeft,jacRight);
-
-		math.divideRowsCols(scale);
-
-		// Reconstruct the original matrix
-		DMatrixSparseCSC top = CommonOps_DSCC.concatColumns(math.A,math.B,null);
-		DMatrixSparseCSC Bt = new DMatrixSparseCSC(1,1);
-		CommonOps_DSCC.transpose(math.B,Bt,gw);
-		DMatrixSparseCSC bottom = CommonOps_DSCC.concatColumns(Bt,math.D,null);
-		DMatrixSparseCSC found = CommonOps_DSCC.concatRows(top,bottom,null);
-
-		H.sortIndices(null);
-		found.sortIndices(null);
-		assertTrue(MatrixFeatures_DSCC.isEquals(H,found, UtilEjml.TEST_F64));
-	}
-
-	@Test
-	public void innerVectorHessian() {
-		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
-
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
-
-		math.computeHessian(jacLeft,jacRight);
-		double found = math.innerVectorHessian(v);
-		double expected = MatrixVectorMult_DSCC.innerProduct(v.data,0,H,v.data,0);
-
-		assertEquals(expected,found,UtilEjml.TEST_F64);
-	}
+//
+//	@Test
+//	public void innerVectorHessian() {
+//		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
+//
+//		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
+//
+//		math.computeHessian(jacLeft,jacRight);
+//		double found = math.innerVectorHessian(v);
+//		double expected = MatrixVectorMult_DSCC.innerProduct(v.data,0,H,v.data,0);
+//
+//		assertEquals(expected,found,UtilEjml.TEST_F64);
+//	}
 
 	@Test
 	public void computeStep() {

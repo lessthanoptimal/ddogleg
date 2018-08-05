@@ -20,6 +20,9 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.impl.LevenbergDampened_DSCC;
 import org.ddogleg.optimization.impl.LevenbergMarquardtDampened_DSCC;
+import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
+import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardtSchur_F64;
+import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardt_F64;
 import org.ddogleg.optimization.math.HessianLeastSquares_DSCC;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ddogleg.optimization.math.MatrixMath_DSCC;
@@ -141,5 +144,32 @@ public class FactoryOptimizationSparse {
 		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
 		alg.configure(config);
 		return alg;
+	}
+
+	public static UnconstrainedLeastSquares<DMatrixSparseCSC> levenbergMarquardt(
+			@Nullable ConfigLevenbergMarquardt config  )
+	{
+		if( config == null )
+			config = new ConfigLevenbergMarquardt();
+
+		LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+
+		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
+		UnconLeastSqLevenbergMarquardt_F64<DMatrixSparseCSC> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(),hessian);
+		lm.configure(config);
+		return lm;
+	}
+
+	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> levenbergMarquardtSchur(
+			@Nullable ConfigLevenbergMarquardt config  )
+	{
+		if( config == null )
+			config = new ConfigLevenbergMarquardt();
+
+		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
+		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
+				new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+		lm.configure(config);
+		return lm;
 	}
 }

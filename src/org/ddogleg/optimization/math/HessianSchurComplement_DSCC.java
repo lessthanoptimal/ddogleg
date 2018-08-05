@@ -159,14 +159,13 @@ public class HessianSchurComplement_DSCC
 		CommonOps_DDRM.extract(gradient,0,A.numCols,0,gradient.numCols, b1);
 		CommonOps_DDRM.extract(gradient,A.numCols,gradient.numRows,0,gradient.numCols, b2);
 
-		// x=-inv(A)*b1
+		// x=inv(A)*b1
 		x.reshape(A.numRows,1);
 		solverA.solve(b1,x);
-		CommonOps_DDRM.scale(-1,x);
 		// b2_m = -b_2 - C*inv(A)*b1 = -b_2 - C*x
 		// C = B'
 		CommonOps_DSCC.multTransA(B,x,b2_m); // C*x
-		CommonOps_DDRM.add(-1,b2,-1,b2_m,b2_m); // b2_m = -b_2 - C*x
+		CommonOps_DDRM.subtract(b2,b2_m,b2_m); // b2_m = b_2 - C*x
 
 		// D_m = D - C*inv(A)*B = D - B'*inv(A)*B (thus symmetric)
 		D_m.reshape(A.numRows,B.numCols);

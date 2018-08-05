@@ -47,8 +47,8 @@ public abstract class StandardHessianMathChecks {
 
 	@Test
 	public void innerVectorHessian() {
-		DMatrixRMaj M = RandomMatrices_DDRM.rectangle(6,6,rand);
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6,1,rand);
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10,1,rand);
 
 		double expected = VectorVectorMult_DDRM.innerProdA(v,M,v);
 
@@ -91,9 +91,31 @@ public abstract class StandardHessianMathChecks {
 	}
 
 	@Test
+	public void divideRowsCols() {
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
+		DMatrixRMaj scale = RandomMatrices_DDRM.rectangle(10,1,0,1,rand);
+
+		DMatrixRMaj expected = M.copy();
+		CommonOps_DDRM.divideRows(scale.data,expected);
+		CommonOps_DDRM.divideCols(expected,scale.data);
+
+		setHessian(alg,M);
+
+		alg.divideRowsCols(scale);
+
+		// Not a great unit test since it doesn't check the off diagonal elements
+		DMatrixRMaj found = RandomMatrices_DDRM.rectangle(10,1,rand);
+		alg.extractDiagonals(found);
+
+		for (int i = 0; i < M.numRows; i++) {
+			assertEquals(expected.get(i,i),found.get(i), UtilEjml.TEST_F64);
+		}
+	}
+
+	@Test
 	public void solve() {
-		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(6,rand);
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6,1,rand);
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10,1,rand);
 
 		DMatrixRMaj origv = v.copy();
 
@@ -102,6 +124,7 @@ public abstract class StandardHessianMathChecks {
 
 		DMatrixRMaj found = v.createLike();
 
+		alg.init(M.numCols);
 		setHessian(alg,M);
 		assertTrue(alg.initializeSolver());
 		assertTrue(alg.solve(v,found));
