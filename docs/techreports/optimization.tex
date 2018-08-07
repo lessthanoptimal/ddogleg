@@ -133,6 +133,7 @@ where $B$ is a symmetric matrix and is the Hessian or an approximation of the He
 There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
 
 \subsubsection{Scaling and Elliptical Trust Regions} 
+\label{section:scaling}
 
 Correct scaling of variables in $x$ is critical for achieving high accuracy, especially for problem with a large number of parameters. When variable are correctly scaled their values will on average have the same order of magnitude. Mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers causes significant round off errors. 
 
@@ -395,11 +396,11 @@ Trust Region L-BFGS Dogleg & ? &  Super Linear & [1] & [1] &  & Yes \\[1ex]
 \centering
 \vspace{2mm}
 \begin{itemize}[leftmargin=*]
-\item \emph{Iteration:} Runtime complexity of update step. $N$ is number of parameters.
-\item \emph{Convergence:} how fast it converged.
-\item \emph{Singular:} indicates that it can process singular systems.
-\item \emph{Negative-Definite:} indicate that it can process negative definite systems
-\item \emph{Dense} and \emph{Sparse:} indicate that dense and/or sparse matrices can be processed. 
+\item \emph{Iteration}: Runtime complexity of update step. $N$ is number of parameters.
+\item \emph{Convergence}: how fast it converged.
+\item \emph{Singular}: indicates that it can process singular systems.
+\item \emph{Negative-Definite}: indicate that it can process negative definite systems
+\item \emph{Dense} and \emph{Sparse}: indicate that dense and/or sparse matrices can be processed. 
 \item {[1]} Switches to Cauchy in this situation.
 \end{itemize}
 \end{minipage}
@@ -423,7 +424,7 @@ G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
  
 \subsection{Hessian Approximation} 
 
-Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP \cite{davidonDFP} to estimate the Hessian and BFGS (Broyden-Fletcher-Goldfarb-Shanno) \cite{fletcher1987,numopt2006}\footnote{A quick search failed to assertain the first paper that fully described BFGS. What appears to be a precursor is discussed in \cite{fletcher1987} and \cite{numopt2006} fully describes the method but provides no citations.} to estimate the inverse hessian.
+Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP \cite{davidonDFP} to estimate the Hessian and BFGS (Broyden-Fletcher-Goldfarb-Shanno) \cite{fletcher1987,numopt2006}\footnote{A quick search failed to assertain the first paper which fully described BFGS. What appears to be a precursor is discussed in \cite{fletcher1987} and \cite{numopt2006} fully describes the method but provides no citations.} to estimate the inverse hessian.
 
 \begin{flalign}
 \text{DFP} && \bm{B}_{k+1} &= (I- \rho_k \gamma_k s_k^T) \bm{B}_k (I - \rho_k s_k \gamma_k^T) + \rho_k \gamma_k \gamma_k^T && \\
@@ -466,6 +467,7 @@ $\bm{J}(\bm{x})$ & Jacobian of residual function \\
  & Can be computed numerically \\
 $g(\bm{x})$ & Gradient of $f(\bm{x})$, which is $\bm{J}(\bm{x})^T  \bm{F}(\bm{x})$ \\
 $g_k$ & $g(\bm{x}_k)$ \\
+$\alpha$ & Mixing coefficent for Levenberg's and Marquardt's equations \\
 \textit{UnconstrainedLeastSquares} & High level interface for this unconstrained least squares
 \end{tabular}
 \caption{\label{definitions:UNLS}Definitions and API for Unconstrained Nonlinear Least-Squares}
@@ -473,15 +475,16 @@ $g_k$ & $g(\bm{x}_k)$ \\
 
 Unconstrained Least-Squares is a special case of Unconstrained Minimization. It refers to a problem where the function being optimized has the form
 \begin{equation}
+\label{eq:residual_error}
 \min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
 \end{equation}
-where $r_j(\bm{x})$ is a scalar function which outputs the residual or error and by definition $f(\bm{x}) \ge 0$. When implemented, instead of a set of scalar functions $r_j$ a single column vector function $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$ is written and the problem being solved can be restated as
-\begin{eqnarray}
-\min\limits_{\bm{x}} f(\bm{x})&=&\frac{1}{2} \bm{F}(\bm{x})^T \bm{F}(\bm{x})\\
-&=& \frac{1}{2} \norm{\bm{F}(\bm{x})}^2_2
-\end{eqnarray}
+where $r_j(\bm{x}) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) or error. By definition $f(\bm{x}) \ge 0$. 
 
-The Jacobian can then be defined as
+Matrix notation can also be used to defined \ref{eq:residual_error}:
+\begin{equation}
+\min\limits_{\bm{x}} f(\bm{x}) =\frac{1}{2} \bm{F}(\bm{x})^T \bm{F}(\bm{x}) = \frac{1}{2} \norm{\bm{F}(\bm{x})}^2_2
+\end{equation}
+where $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$. Then the Jacobian is defined as
 \begin{eqnarray}
 \bm{J}(\bm{x}) &=& \left[\frac{\partial r_j}{\partial x_i}\right]\begin{array}{l}j=1,\cdots,m\\i=1,\cdots,n \end{array} \\
 &=& \left[ \begin{array}{c}\nabla r_1(\bm{x})^T \\ \nabla r_2(\bm{x})^T \\ \vdots \\ \nabla r_m(\bm{x})^T \end{array}\right] \\
@@ -489,11 +492,13 @@ The Jacobian can then be defined as
 \end{eqnarray}
 and the Gradient as
 \begin{eqnarray}
-\nabla f(\bm{x}) &=& \sum^m_{j=1}r_j(\bm{x})\nabla r_j(\bm{x}) \\
+\nabla f(\bm{x}) = \bm{g}(\bm{x}) &=& \sum^m_{j=1}r_j(\bm{x})\nabla r_j(\bm{x}) \\
 &=& \bm{J}(\bm{x})^T \bm{F}(\bm{x})
 \end{eqnarray}
 
 \subsection{Convergence Test}
+
+The F-test for convergence has been modified for Least-Squares problem to take advantage of access to the output from each function:
 \begin{center}
 \begin{tabular}{lc}
 F-test & $ftol \leq \norm{\bm{F}_k-\bm{F}_{k-1}}_\infty$ \\
@@ -501,10 +506,51 @@ G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
 \end{tabular}
 \end{center}
 
-\subsection{Levenberg}
-
-
 \subsection{Levenberg-Marquardt}
+
+Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created before Trust Region has been formally been defined \cite{numopt2006,fletcher1987,dennis1996}. The original formulation proposed by Levenberg \ref{levenberg1944} involves solving the system below at every iteration:
+\begin{equation}
+\label{eq:levenberg}
+(J_k^T J_k + \lambda I) p_k = -g_k
+\end{equation} 
+where $\lambda$ is the damping factor that's adjusted at each iteration. Later on Marquardt \ref{marquardt1963} noted that as $\lambda$ increased for information in $J_k^T J_k$ would be used less and less. Instead Levenberg proposed the following adjustment:
+\begin{equation}
+\label{eq:marquardt}
+(J_k^T J_k + \lambda \mbox{diag}(J_k^T J_k)) p_k = -g_k
+\end{equation} 
+This would result in larger steps along the direction with smaller gradient, avoiding slow convergence. 
+
+In the literature, the distinction between these two approaches has blurred over the years and either one can be referred to as LM. Levenberg's forumlation tends to appear in more papers/books, but it's unclear which forumation is used more often in software implementations. Many variants of LM have been proposed and in DDogleg a hybrid of the two approaches is implemented.
+
+DDogleg's implementation (Algorithm \ref{alg:levenberg_marquardt}) is primarily based upon the description found in \cite{IMM2004} but with the ability to choose a mixture of Levenberg's and Marquardt's. The more widely cited algorithm found in \cite{fletcher1987} and others was found to converge slower. Mixing the two approaches is advantagous because it allows you to avoid the negatives of either approach. If the derivative of an element is zero then Marquardt's forumation can produce singular matrices, which Levenberg's forumation will always produce a positive-definate matrix as long as $\lambda$ is greater than zero. The amount of mixing is done using $\alpha$. If $\alpha=1$ then (\ref{eq:levenberg}) is used while if $\alpha=0$ then (\ref{eq:marquardt}) is used. Any value between 0 and 1 will result in a mixture of the two equations.
+
+The easy to use factory functions in DDogleg provide the option to choose two variants, robust and normal. The robust variant will use a solver based on QR with column pivots and the normal one will use Cholesky decomposition. The robust variant can handle degenerate matrices found in the Marquardt forumation. DDogleg does not provide support for solving the least squares forumation, i.e. $J_k p_k = -F_k$, due to the increase in computational cost and code complexity having no noticable improvement in convergence.
+
+Scaling is done using the same methods described in Section \ref{section:scaling}.
+
+\begin{algorithm}{}
+\caption{\label{alg:levenberg_marquardt}Levenberg-Marquardt}
+\begin{algorithmic}[1]
+	\State $k \gets 0$, $\nu \gets 2$
+	\While{$k < k_{\mbox{max}}$ and not $done$}
+		\State Solve $\left(J_k^T J_k + \lambda \left(\alpha I + (1-\alpha)\mbox{diag}(J_k^T J_k) \right)\right) p_k = -g_k$ \Comment{LM Step}
+		\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
+		\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T J_k^T J_k \bm{p}$ \Comment{Predicted reduction in score}
+		\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
+		\If{ $\delta_f \ge 0$} \Comment{Score get better?}
+			\State $\lambda \gets \lambda \cdot \mbox{max}(1/3 , 1-(2\nu-1)^3)$
+			\State $\nu = 2$
+			\State $\Delta_{k+1} \gets \Delta_k$
+			\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
+		\Else
+			\State $\lambda \gets \nu \lambda$ \Comment{Follow the gradient more and decrease the step size}
+			\State $\nu = 2\nu$
+		\EndIf
+		\State $k \gets k + 1$
+	\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
 
 \subsection{Trust Region}
 
@@ -516,11 +562,6 @@ J_k &=& J(\bm{x}+\bm{p}) \\
 \bm{g}_k &=& J^T_k F_k  \\
 \bm{B}_k &=& J_k^T J_k
 \end{eqnarray}
-
-
-\subsection{Dense and Sparse}
-
-\subsection{Shur Complement}
 
 \bibliographystyle{IEEEtran}
 \bibliography{mybib}
