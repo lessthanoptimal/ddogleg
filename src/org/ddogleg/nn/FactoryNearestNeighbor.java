@@ -44,6 +44,7 @@ public class FactoryNearestNeighbor {
 	 * @see AxisSplitterMedian
 	 *
 	 * @param <P> Point type.
+	 * @param distance Specifies how distance is computed between two points.
 	 * @return {@link NearestNeighbor} implementation
 	 */
 	public static <P> NearestNeighbor<P> kdtree( KdTreeDistance<P> distance ) {
@@ -60,6 +61,7 @@ public class FactoryNearestNeighbor {
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Controls speed and accuracy.
 	 * @param <P> Point type.
+	 * @param distance Specifies how distance is computed between two points.
 	 * @return {@link NearestNeighbor} implementation
 	 */
 	public static <P> NearestNeighbor<P> kdtree( KdTreeDistance<P> distance , int maxNodesSearched ) {
@@ -74,6 +76,7 @@ public class FactoryNearestNeighbor {
 	 * @see KdForestBbfSearch
 	 * @see AxisSplitterMedian
 	 *
+	 * @param distance Specifies how distance is computed between two points.
 	 * @param maxNodesSearched  Maximum number of nodes it will search.  Controls speed and accuracy.
 	 * @param numTrees Number of trees that are considered.  Try 10 and tune.
 	 * @param numConsiderSplit Number of nodes that are considered when generating a tree.  Must be less than the
@@ -98,6 +101,7 @@ public class FactoryNearestNeighbor {
 	 *
 	 * @see org.ddogleg.nn.alg.ExhaustiveNeighbor
 	 *
+	 * @param distance Specifies how distance is computed between two points.
 	 * @return {@link NearestNeighbor} implementation
 	 */
 	public static  <P> NearestNeighbor<P> exhaustive(KdTreeDistance<P> distance) {

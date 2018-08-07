@@ -49,11 +49,18 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 
 	@Test
 	public void computeResiduals() {
+		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
+
+//		lm.computeResiduals();
 		fail("Implement");
 	}
 
 	@Override
 	public UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm() {
+		return createLM();
+	}
+
+	private UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> createLM() {
 		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
 		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
@@ -68,14 +75,7 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
-
-			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
-			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
-			lm.configure(config);
-//			lm.setVerbose(true);
-			return lm;
+			return createLM();
 		}
 	}
 

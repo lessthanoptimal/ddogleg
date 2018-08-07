@@ -182,6 +182,16 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return true;
 		}
 
+		return processStepResults(fx_candidate, actualReduction, predictedReduction);
+	}
+
+	/**
+	 * Sees if this is an improvement worth accepting. Adjust dampening parameter and change
+	 * the state if accepted.
+	 *
+	 * @return true if it has converged or false if it has not
+	 */
+	private boolean processStepResults(double fx_candidate, double actualReduction, double predictedReduction) {
 		double ratio = actualReduction/predictedReduction;
 		boolean accepted;
 

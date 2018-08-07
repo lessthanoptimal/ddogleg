@@ -218,10 +218,14 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	/**
 	 * Optimization mode
 	 */
-	protected enum Mode {
+	public enum Mode {
 		FULL_STEP,
 		RETRY,
 		CONVERGED
+	}
+
+	public Mode mode() {
+		return mode;
 	}
 
 	/**
