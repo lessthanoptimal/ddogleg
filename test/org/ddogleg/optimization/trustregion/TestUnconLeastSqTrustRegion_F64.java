@@ -19,7 +19,6 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.MockFunctionNtoM;
-import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
@@ -28,7 +27,7 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Specific configurations are tested in their respective TrustRegionUpdate implementations
@@ -60,25 +59,6 @@ public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSq
 		assertEquals(expected,found, UtilEjml.TEST_F64);
 	}
 
-	/**
-	 * sees if it's checking the region radius for problems
-	 */
-	@Test
-	public void checkConvergenceFTest_radius() {
-		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = createAlg();
-
-		alg.regionRadius = 0;
-		try {
-			alg.checkConvergenceFTest(-1,-1);
-			fail("Should have thrown an exception");
-		} catch( OptimizationException ignore){}
-
-		alg.regionRadius = Double.NaN;
-		try {
-			alg.checkConvergenceFTest(-1,-1);
-			fail("Should have thrown an exception");
-		} catch( OptimizationException ignore){}
-	}
 
 	protected UnconLeastSqTrustRegion_F64<DMatrixRMaj> createAlg() {
 		TrustRegionUpdateCauchy_F64<DMatrixRMaj> update = new TrustRegionUpdateCauchy_F64<>();
@@ -87,22 +67,8 @@ public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSq
 		return new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
 	}
 
-	@Test
-	public void checkConvergenceFTest() {
-		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = createAlg();
-		alg.residuals = new DMatrixRMaj(new double[][]{{0},{-0.1},{1e-5}});
-		alg.config.ftol = 1e-4;
-		alg.regionRadius = 1;
-
-		assertFalse(alg.checkConvergenceFTest(-1,-1));
-
-		alg.residuals.data[1] = -1e-6;
-		assertTrue(alg.checkConvergenceFTest(-1,-1));
-
-	}
-
 	@Override
-	public UnconstrainedLeastSquares createAlgorithm() {
+	public UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm() {
 		return createAlg();
 	}
 }

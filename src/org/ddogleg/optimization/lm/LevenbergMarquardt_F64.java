@@ -68,6 +68,11 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
 public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends HessianMath>
 		extends GaussNewtonBase_F64<ConfigLevenbergMarquardt,HM>
 {
+	/**
+	 * Maximum allowed value of lambda
+	 */
+	public static final double MAX_LAMBDA = 1e100;
+
 	// Math for some matrix operations
 	protected MatrixMath<S> math;
 
@@ -114,11 +119,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		computeResiduals(x,residuals);
 		fx = costFromResiduals(residuals);
 
-		if( checkConvergenceFTest(residuals)) {
-			mode = Mode.CONVERGED;
-		} else {
-			mode = Mode.FULL_STEP;
-		}
+		mode = Mode.FULL_STEP;
 	}
 
 	/**
@@ -158,7 +159,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			lambda *= 4;
 			if( verbose )
 				System.out.println(totalFullSteps+" Step computation failed. Increasing lambda");
-			return false;
+			return maximumLambdaNu();
 		}
 
 		if( isScaling() )
@@ -209,14 +210,15 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		}
 
 		if( UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu) )
-			throw new OptimizationException("lambda="+lambda+"  nu="+nu);
+			throw new OptimizationException("BUG! lambda="+lambda+"  nu="+nu);
 
 		if( verbose )
-			System.out.println(totalFullSteps+" fx_delta="+(fx_candidate-fx)+" ratio="+ratio+" lambda="+lambda);
+			System.out.printf("%d fx_delta=%9.2E ratio=%6.3f lambda=%6.2E\n",totalFullSteps,fx_candidate-fx,ratio,lambda);
 
 		if( accepted ) {
+			double fx_prev = fx;
 			acceptNewState(fx_candidate);
-			return checkConvergenceFTest(residuals);
+			return maximumLambdaNu() || checkConvergenceFTest(fx_candidate,fx_prev);
 		} else
 			return false;
 	}
@@ -240,12 +242,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected boolean checkConvergenceFTest( DMatrixRMaj residuals ) {
-		for (int i = 0; i < residuals.numRows; i++) {
-			if( Math.abs(residuals.data[i]) > config.ftol )
-				return false;
-		}
-		return true;
+	protected boolean checkConvergenceFTest(double fx , double fx_prev ) {
+		if( fx_prev < fx )
+			throw new OptimizationException("Score got worse. Shoul have been caught earlier!");
+
+		// f-test. avoid potential divide by zero errors
+		return config.ftol * fx_prev >= fx_prev - fx;
 	}
 
 	/**
@@ -284,6 +286,13 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * If the size of lambda or nu has grown so large it's reached a limit stop optimizing
+	 */
+	public boolean maximumLambdaNu() {
+		return UtilEjml.isUncountable(lambda) || lambda >= MAX_LAMBDA || UtilEjml.isUncountable(nu);
 	}
 
 	/**

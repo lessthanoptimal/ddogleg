@@ -266,11 +266,23 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	protected abstract double cost( DMatrixRMaj x );
 
 	/**
-	 * <p>Checks for convergence using f-test. f-test is defined differently for different problems</p>
+	 * <p>Checks for convergence using f-test:</p>
+	 *
+	 * f-test : ftol &le; 1.0-f(x+p)/f(x)
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected abstract boolean checkConvergenceFTest(double fx, double fx_prev );
+	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
+		// something really bad has happened if this gets triggered before it thinks it converged
+		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
+			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
+
+		if( fx > fx_prev )
+			throw new RuntimeException("BUG! Shouldn't have gotten this far");
+
+		// f-test. avoid potential divide by zero errors
+		return config.ftol * fx_prev >= fx_prev - fx;
+	}
 
 	public interface ParameterUpdate<S extends DMatrix> {
 

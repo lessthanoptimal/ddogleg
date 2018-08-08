@@ -18,14 +18,14 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.math.HessianBFGS_DDRM;
 import org.ddogleg.optimization.wrap.GenericUnconstrainedMinimizationTests_F64;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Specific configurations on this class are tested inside of the TrustRegionUpdate implementations
@@ -33,38 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 public class TestUnconMinTrustRegionBFGS_F64 extends GenericUnconstrainedMinimizationTests_F64 {
-
-	/**
-	 * sees if it's checking the region radius for problems
-	 */
-	@Test
-	public void checkConvergenceFTest_radius() {
-		UnconMinTrustRegionBFGS_F64 alg = createAlg();
-
-		alg.regionRadius = 0;
-		try {
-			alg.checkConvergenceFTest(-1,-1);
-			fail("Should have thrown an exception");
-		} catch( OptimizationException ignore){}
-
-		alg.regionRadius = Double.NaN;
-		try {
-			alg.checkConvergenceFTest(-1,-1);
-			fail("Should have thrown an exception");
-		} catch( OptimizationException ignore){}
-	}
-
-	@Test
-	public void checkConvergenceFTest() {
-		UnconMinTrustRegionBFGS_F64 alg = createAlg();
-
-		alg.regionRadius = 1;
-		alg.config.ftol = 1e-4;
-
-		assertTrue(alg.checkConvergenceFTest(2,2));
-		assertTrue(alg.checkConvergenceFTest(2,2*(1+1e-5)));
-		assertFalse(alg.checkConvergenceFTest(2,2*(1+9e-3)));
-	}
 
 	@Test
 	public void wolfeCondition() {

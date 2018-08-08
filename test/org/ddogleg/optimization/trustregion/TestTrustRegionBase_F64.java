@@ -18,13 +18,14 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.HessianMath_DDRM;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -40,6 +41,38 @@ public class TestTrustRegionBase_F64 {
 		assertEquals(1,alg.fx, UtilEjml.TEST_F64);
 
 		assertEquals(alg.regionRadius,alg.config.regionInitial, UtilEjml.TEST_F64);
+	}
+
+	/**
+	 * sees if it's checking the region radius for problems
+	 */
+	@Test
+	public void checkConvergenceFTest_radius() {
+		MockTrustRegionBase_F64 alg = createFixedCost(1,0.5);
+
+		alg.regionRadius = 0;
+		try {
+			alg.checkConvergenceFTest(-1,-1);
+			fail("Should have thrown an exception");
+		} catch( OptimizationException ignore){}
+
+		alg.regionRadius = Double.NaN;
+		try {
+			alg.checkConvergenceFTest(-1,-1);
+			fail("Should have thrown an exception");
+		} catch( OptimizationException ignore){}
+	}
+
+	@Test
+	public void checkConvergenceFTest() {
+		MockTrustRegionBase_F64 alg = createFixedCost(1,0.5);
+
+		alg.regionRadius = 1;
+		alg.config.ftol = 1e-4;
+
+		assertTrue(alg.checkConvergenceFTest(2,2));
+		assertTrue(alg.checkConvergenceFTest(2,2*(1+1e-5)));
+		assertFalse(alg.checkConvergenceFTest(2,2*(1+9e-3)));
 	}
 
 	/**
@@ -144,11 +177,6 @@ public class TestTrustRegionBase_F64 {
 
 		public MockTrustRegionBase_F64(ParameterUpdate<DMatrixRMaj> parameterUpdate) {
 			super(parameterUpdate, new HessianMath_DDRM());
-		}
-
-		@Override
-		protected boolean checkConvergenceFTest(double fx, double fx_prev) {
-			return false;
 		}
 
 		@Override

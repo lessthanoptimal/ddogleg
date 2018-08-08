@@ -19,13 +19,11 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.FactoryNumericalDerivative;
-import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.impl.EquationsBFGS;
 import org.ddogleg.optimization.math.HessianBFGS;
-import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
@@ -78,26 +76,6 @@ public class UnconMinTrustRegionBFGS_F64
 		this.initialize(initial,functionCost.getNumOfInputsN(), minimumFunctionValue);
 		config.ftol = ftol;
 		config.gtol = gtol;
-	}
-
-	/**
-	 * <p>Checks for convergence using f-test:</p>
-	 *
-	 * f-test : ftol &le; 1.0-f(x+p)/f(x)
-	 *
-	 * @return true if converged or false if it hasn't converged
-	 */
-	@Override
-	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
-		// something really bad has happened if this gets triggered before it thinks it converged
-		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
-			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
-
-		if( fx > fx_prev )
-			throw new RuntimeException("BUG! Shouldn't have gotten this far");
-
-		// f-test. avoid potential divide by zero errors
-		return config.ftol * fx_prev >= fx_prev - fx;
 	}
 
 	/**

@@ -33,10 +33,9 @@ import org.ejml.data.DMatrix;
  * </p>
  *
  * <p>
- * Convergence is tested using the g-test, which is based off the gradient's norm.<br>
+ * F-test:    ftol &le; 1 - f(x+p)/f(x)<br>
  * G-test:    gtol &le; ||g(x)||<sub>inf</sub><br>
- * A relative f-test is not provided since that test breaks down when the expected function output
- * is zero. An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
+ * An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
  * </p>
  *
  * <p>

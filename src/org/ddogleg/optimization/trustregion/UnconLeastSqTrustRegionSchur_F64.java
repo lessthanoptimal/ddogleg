@@ -18,13 +18,11 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.math.HessianSchurComplement;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
-import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.SpecializedOps_DDRM;
@@ -59,29 +57,6 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 
 		jacLeft = hessian.createMatrix();
 		jacRight = hessian.createMatrix();
-	}
-
-	/**
-	 * <p>Checks for convergence using f-test:</p>
-	 *
-	 * f-test : ftol &le; || r(x+p) || infinity
-	 *
-	 * @param fx Ignored. Residual used instead
-	 * @param fx_prev Ignored. Residual used instead
-	 *
-	 * @return true if converged or false if it hasn't converged
-	 */
-	@Override
-	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
-		// something really bad has happened if this gets triggered before it thinks it converged
-		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
-			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
-
-		for (int i = 0; i < residuals.numRows; i++) {
-			if( Math.abs(residuals.data[i]) > config.ftol )
-				return false;
-		}
-		return true;
 	}
 
 	@Override

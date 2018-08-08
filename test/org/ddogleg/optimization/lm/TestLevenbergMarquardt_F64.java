@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.lm;
 
-import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.HessianMath_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
@@ -27,40 +26,12 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.equation.Equation;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
  */
 public class TestLevenbergMarquardt_F64 {
-
-	Random rand = new Random(234);
-
-	/**
-	 * If the initial state meets the convergence criterial it should be put into the appropriate mode
-	 */
-	@Test
-	public void initialize_check_converged() {
-
-		final double _residuals[] = new double[]{1,0,0,0};
-
-		MockLevenbergMarquardt alg = new MockLevenbergMarquardt() {
-			@Override
-			protected void computeResiduals(DMatrixRMaj x, DMatrixRMaj residuals) {
-				System.arraycopy(_residuals,0,residuals.data,0,4);
-			}
-		};
-		alg.config.ftol = 1e-6;
-		double x[] = new double[]{1,2};
-		alg.initialize(x,2,4);
-		assertEquals(GaussNewtonBase_F64.Mode.FULL_STEP,alg.mode());
-
-		_residuals[0] = 1e-7;
-		alg.initialize(x,2,4);
-		assertEquals(GaussNewtonBase_F64.Mode.CONVERGED,alg.mode());
-	}
 
 	@Test
 	public void computeAndConsiderNew_solve_failed() {
@@ -81,19 +52,11 @@ public class TestLevenbergMarquardt_F64 {
 	public void checkConvergenceFTest() {
 		MockLevenbergMarquardt alg = new MockLevenbergMarquardt();
 
-		alg.config.ftol = 1e-5;
+		alg.config.ftol = 1e-4;
 
-		DMatrixRMaj r = new DMatrixRMaj(2,1);
-		r.data = new double[]{-0.1,0.1};
-		assertFalse(alg.checkConvergenceFTest(r));
-		r.data[0] = -2e-5;
-		assertFalse(alg.checkConvergenceFTest(r));
-		r.data[1] = 2e-5;
-		assertFalse(alg.checkConvergenceFTest(r));
-		r.data[1] = 1e-5;
-		assertFalse(alg.checkConvergenceFTest(r));
-		r.data[0] = 1e-5;
-		assertTrue(alg.checkConvergenceFTest(r));
+		assertTrue(alg.checkConvergenceFTest(2,2));
+		assertTrue(alg.checkConvergenceFTest(2,2*(1+1e-5)));
+		assertFalse(alg.checkConvergenceFTest(2,2*(1+9e-3)));
 	}
 
 	@Test

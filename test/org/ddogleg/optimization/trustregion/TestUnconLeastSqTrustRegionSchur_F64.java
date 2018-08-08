@@ -38,7 +38,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -100,29 +101,6 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 		CommonOps_DSCC.multTransA(J,residuals,exp_g);
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(exp_g,g,UtilEjml.TEST_F64));
-	}
-
-	@Test
-	public void checkConvergenceFTest() {
-		double tol = 1e-4;
-		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
-		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
-		alg.setFunction(new MockFunction(),new MockJacobian());
-		alg.initialize(new double[N],tol,0);
-		alg.regionRadius = 100; // so it doesn't complain
-
-		// give it random matrix where everything is in bounds
-		RandomMatrices_DDRM.fillUniform(alg.residuals,-tol/10,tol/10,rand);
-
-		// these inputs are ignored because a different formula is used with least-squares
-		assertTrue(alg.checkConvergenceFTest(100,1000));
-
-		// one element is not in tolerance
-		alg.residuals.data[3] = tol*1.0001;
-		assertFalse(alg.checkConvergenceFTest(100,1000));
-		alg.residuals.data[3] = -tol*1.0001;
-		assertFalse(alg.checkConvergenceFTest(100,1000));
 	}
 
 	public class MockFunction implements FunctionNtoM {
