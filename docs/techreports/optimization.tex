@@ -36,7 +36,7 @@
 %\begin{titlepage}
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Version 2018-1}}
+\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Revision 2018-1}}
 
 % author names and affiliations
 
@@ -64,6 +64,7 @@ This document describes the implementation details and a little bit of the theor
 \begin{tabular}{cl}
 $\bm{x}$ & Parameters being optimized. $\bm{x} \in \R^n$ \\
 $\bm{x}_k$ & Value of parameters at iteration $k$ \\
+$\bm{p}_k$ & Is the step or difference between $\bm{x}_{k+1}-\bm{x}$ in two iterations \\
 $f(\bm{x})$ & Scalar cost function being optimized. $f \in \R$ \\
 $f_k$ & Short hand for $f(\bm{x}_k)$ \\
 $g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
@@ -82,7 +83,7 @@ This section provides overview of different numerical techniques provided in DDo
 \subsection{Linear Search}
 
 \subsection{Trust Region}
-Trust Region refers to a family of methods that operate by assuming a quadratic model can accurately represent the true function within a local "trust region". The size of the trust region is adjusted based on the performance of the quadratic model. A summary of the trust region can be found in Algorithm \ref{alg:trust_region}. The implementation found in DDogleg\footnote{The variant described in \cite{numopt2006,fletcher1987} was also considered but took significantly longer to converge in test problems.} is primarily based on the description found in \cite{IMM2004}.
+Trust Region refers to a family of optimization methods that operate by assuming a quadratic model is accurate within a local "trust region". The trust region's size is adjusted based on the quadratic model's performance in previous iterations. A summary of Trust Region, as implemented in DDogleg, is found in Algorithm \ref{alg:trust_region}. This implementation\footnote{The more traditional variant described in \cite{numopt2006,fletcher1987} was also considered but found to converge slower in test problems.} is primarily based on the description found in \cite{IMM2004}.
 
 \begin{algorithm}{}
 \caption{\label{alg:trust_region}Trust Region}
@@ -117,25 +118,107 @@ Trust Region refers to a family of methods that operate by assuming a quadratic 
 \end{algorithmic}
 \end{algorithm}
 
-At every iteration a subproblem is solved where an exact or approximate solution for $p$ is found.
+At every iteration the Trust Region subproblem is solved for, either eactly or approximately:
 \begin{equation}
 \begin{array}{lr}
 \min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
 \end{array}
 \label{eq:trust_region_subproblem}
 \end{equation}
-where $B$ is a symmetric matrix and is the Hessian or an approximation of the Hessian. The model $m(\bm{p})$ is a quadratic approximation to $f(x)$, the function being optimized. Without constraints  the solution to Eq. \ref{eq:trust_region_subproblem} can be easily found by setting first deriviative equal to zero and you get:
+where $p$ is the step or change in state, $B$ is a symmetric matrix which is the Hessian or an approximation thereof. The model $m(\bm{p})$ is a quadratic approximation to $f(x)$. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} can be easily found by setting the first deriviative to zero:
 \begin{equation}
 \bm{p} = -\bm{B}^{-1}_k \bm{g}_k
 \label{eq:TR_unconstrained_solution}
 \end{equation}
 
-There are many types of Trust Region algorithms. One important design decision is how to solve for $p$ in Eq. \ref{eq:trust_region_subproblem}. We will describe two approaches which are implemented in the DDogleg library; Cauchy Point, and Dogleg.
+An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute and approximate methods are typically used instead. The Cauchy Point and Dogleg are included in the DDogleg library.
+
+\subsubsection{Cauchy Point}
+\label{section:cauchy} 
+
+The Caunch Point $p^s_k$ is the end point of line segment which starts at $x_{k-1}$ or $p=0$, pointing along unit vector $\hat{p}^s_k$, and has length $\tau_k$. In other words $p^s_k = \tau_k \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem (\ref{eq:trust_region_subproblem}) with only linear terms:
+\begin{equation}
+\begin{array}{lr}
+\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
+\end{array}
+\end{equation}
+The length $\tau_k$ is found by minimizing (\ref{eq:trust_region_subproblem}) along direction $\hat{p}^s_k$
+\begin{equation}
+\begin{array}{lr}
+\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
+\end{array}
+\end{equation}
+
+The solution (see Chapter 4 of \cite{numopt2006} for details and diagrams) is as follows:
+\begin{equation}
+p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
+\label{eq:cauchy_p}
+\end{equation}
+\begin{equation}
+\tau_k = 
+	\begin{cases}
+		\quad 1 & g_k^T B_k g_k \le 0 \\
+		\quad \min\left(1,\norm{g_k}^3/(\Delta_k g_k^T B_k g_k)\right) & g_k^T B_k g_k > 0
+	\end{cases}
+	\label{eq:cauchy_tau}
+\end{equation}
+
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by the step length:
+\begin{eqnarray}
+\hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
+p^s_k &=& -\bar{\tau}_k \hat{g}_k
+\end{eqnarray}
+\begin{equation}
+\bar{\tau}_k = \begin{cases}
+		\quad \Delta_k & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
+		\quad \min\left(\Delta_k,\norm{g_k}/(\hat{g}_k^T B_k \hat{g}_k)\right) & \hat{g}_k^T B_k \bar{g}_k > 0
+	\end{cases}
+\end{equation}
+The predicted reduction in score is found using:
+\begin{equation}
+m_k(\bm{0})-m_k(\bm{p}_k) = \tau_k\left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
+\end{equation}
+
+
+\subsubsection{Dogleg}
+\label{section:dogleg}  
+
+Dogleg considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reforumated to avoid powers of three.
+\begin{eqnarray}
+\hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
+p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
+p^b_k &=& -B^{-1}_k g_k \\
+p^{dog}_k &=&
+\begin{cases}
+	\tau p^u_k & 0 \le \tau < 1 \\
+	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
+\end{cases}
+\end{eqnarray}
+where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the gradient is used instead.
+
+\begin{algorithm}{}
+\caption{\label{alg:dogleg_step}Selection of Dogleg Step}
+\begin{algorithmic}[1]
+  \If{ $B$ is positive definite}
+    \If{$\norm{p^b} < \Delta$} \Comment{Gauss-Newton soluton inside the trust-region?}
+      \State $p^{dog} \gets p^b$
+    \ElsIf{$\norm{p^u} \geq \Delta$} \Comment{Cauchy point outside the trust-region?}
+    \State $p^{dog} \gets \Delta \frac{p^u}{\norm{p^u}}$
+    \Else
+    \State $p^{dog} \gets $ intersection of $p^u \rightarrow p^b$ and trust-region
+    \EndIf
+  \Else
+   \State $p^{dog} \gets -\Delta\frac{g}{\norm{g}}$ \Comment{Follow gradient to end of trust region}
+  \EndIf
+\end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Scaling and Elliptical Trust Regions} 
 \label{section:scaling}
 
-Correct scaling of variables in $x$ is critical for achieving high accuracy, especially for problem with a large number of parameters. When variable are correctly scaled their values will on average have the same order of magnitude. Mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers causes significant round off errors. 
+Correct scaling of $\bm{x}$ typically refers to two different issues, both of which can be critical for achieving high accuracy. The first is adjusting the problem being solved such that the variables in $x$ have on average the same scale. The second is applying a linear transform to the system so that at each iteration the linear problem being solved. The first method we will refer to as prescaling and the second as post scaling.
+
+In general, when performing floating point arithematic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
 
 Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error. It's interesting to note that changing the scale will the change the steepest descent direction, but not the solution to the Newton problem \cite{dennis1996}. 
 
@@ -161,106 +244,22 @@ where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtr
 
 There are two primary ways for the user to specify their own scaling in DDogleg. 1) They can pre-scale the data and adjust their forumlas. 2) They can provide a scaling vector which contains the diagonal elements in $D$. The former is arguably the best way while the later is easier. If the former is done then automatic scaling can still be applied, ensuring that the Hessian matrix is well suited for decomposition. A third option, for advanced users, is to override a class in DDogleg and change the scaling to any arbitrary function you wish.
 
-Most of the literature recommends always properly scaling. In practice people only do so after not converging to a correct solution. Applying automatic scaling does not always improve performance. It can even cause the search to get stuck in a local minimum by changing the trajectory. We suggest the following steps when trying to determine if scaling issues are causing the search to fail:
-\begin{enumargin}{0.2}
-\item Try without scaling. If this works stop.
-\item Double check your math. If an error is found start again.
-\item Try with automatic scaling. If this works stop.
-\item Try try tuning $d_{\bigtriangledown}$ and $d_{\bigtriangleup}$ more. If this works stop.
-\item Scale the problem prior to passing it to DDogleg. If this works stop.
-\item Double check your math. If an error is found start again.
-\item Turn on automatic scaling and see if things improve. If this works stop.
-\item Accept your fate, read the literature, step through the code line by line in a debugger.
-\item Submit a scathing bug report
-\item Find the type-o in your math
-\end{enumargin}
-
-\subsubsection{Cauchy Point}
-\label{section:cauchy} 
-
-The Caunch Point $p^s_k$ is the end point of line segment which starts at $p=0$, pointing in along the direction of unit vector $\hat{p}^s_k$, and is length $\tau_k$. In other words $p^s_k = \tau \hat{p}^s_k$. The unknown $\hat{p}^s_k$ is found by solving the subproblem Eq. \ref{eq:trust_region_subproblem} with only the linear terms:
-\begin{equation}
-\begin{array}{lr}
-\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
-\end{array}
-\end{equation}
-The line segment length is found by minimizing Eq. \ref{eq:trust_region_subproblem} along direction $\hat{p}^s_k$
-\begin{equation}
-\begin{array}{lr}
-\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
-\end{array}
-\end{equation}
-
-The solution (see Chapter 4 of \cite{numopt2006} for details and diagrams) is as follows:
-\begin{equation}
-p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
-\label{eq:cauchy_p}
-\end{equation}
-\begin{equation}
-\tau_k = 
-	\begin{cases}
-		\quad 1 & g_k^T B_k g_k \le 0 \\
-		\quad \min\left(1,\norm{g_k}^3/(\Delta_k g_k^T B_k g_k)\right) & g_k^T B_k g_k > 0
-	\end{cases}
-	\label{eq:cauchy_tau}
-\end{equation}
-
-The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by the step size:
-\begin{eqnarray}
-\hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
-p^s_k &=& -\bar{\tau}_k \hat{g}_k
-\end{eqnarray}
-\begin{equation}
-\bar{\tau}_k = \begin{cases}
-		\quad \Delta_k & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
-		\quad \min\left(\Delta_k,\norm{g_k}/(\hat{g}_k^T B_k \hat{g}_k)\right) & \hat{g}_k^T B_k \bar{g}_k > 0
-	\end{cases}
-\end{equation}
-The predicted reduction in score is found using:
-\begin{equation}
-m_k(\bm{0})-m_k(\bm{p}_k) = \tau_k\left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
-\end{equation}
-
-
-\subsubsection{Dogleg}
-\label{section:dogleg}  
-
-Dogleg improves upon the Cauchy Point by considering second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segmets. The first line starts at the $p_k$ and moves along the steepest descent direction and the second heads towards $p^b$ the solution to the unconstrained version of (\ref{eq:trust_region_subproblem}). As with equations from Cauchy Point, these equations have been reforumated to avoid powers of three and are not identical to \cite{numopt2006,IMM2004}.
-\begin{eqnarray}
-\hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
-p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
-p^b_k &=& -B^{-1}_k g_k \\
-p^{dog}_k &=&
-\begin{cases}
-	\tau p^u_k & 0 \le \tau < 1 \\
-	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
-\end{cases}
-\end{eqnarray}
-where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the Cauchy Point algorithm is used instead.
-
-\begin{algorithm}{}
-\caption{\label{alg:dogleg_step}Selection of Dogleg Step}
-\begin{algorithmic}[1]
-	\State Write this algorithm out
-\end{algorithmic}
-\end{algorithm}
-
 \subsubsection{Initial Region Size} 
 \label{section:init_region_size}
 
 Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
 
-Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected for several iterations. The Cauchy Point is often highly suboptimal and can lead the search down a poor path and incerases the odds of it getting stuck in local minimum. 
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeadidly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
 
-DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive in a few causing the optimization to get stuck. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
+DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressiveand take a very large step into a distant plataue. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
 
-If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one. Setting $\Delta_0$ to excessively large numbers is also problematic because when a step fails it can take numerious iterations to recover, slowing down convergence. Also increasing the possibility of the search jumping into a flat plateau far away and getting stuck. 
+If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
 
 Recommended Procedure for Selection of Initial Trust Region Size:
 \begin{enumargin}{0.2}
 \item Turn on verbose output and examine the progress
 \item Start with automatic selection using \emph{unconstrained initial step}
-\item If unconstrained method selected a very large step size and got stuck try \emph{Cauchy initial step}
+\item If this fails then try \emph{Cauchy initial step}
 \item If performance is still poor follow manual tuning procedure
 \end{enumargin}
 For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
@@ -288,19 +287,16 @@ Bundle 2D [1]  & 7.0e-19 & 4  & 4  & 7.0e-18 & 4  & 4   & 1.5e-15 & 5  & 5  & 7.
 \begin{tablenotes}
 \small
 \item \emph{Fit} is the final fit score where zero is a perfect fit. \emph{G} is the number of times the gradient was computed. \emph{B} is the number of times the Hessian was computed. B is by far the most expensive step.
-\item Dogleg with a Cholesky solver applied to $B=F'F$. 
+\item Unless specified otherwise, all methods use Dogleg with a Cholesky solver. 
 \item [1] Uses QR with column pivots instead of Cholesky and can handle the nearly singular initial state.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-
 \subsection{Schur Complement}
-It is possible to take advantage of the sparse structure in certain problems to greatly reduce computational cost. The Schur Complement provides a mechanism where the computational cost of inverting matrices with certain structures can be greatly reduced. Bundle Adjustment is one such problem \cite{triggs1999bundle}. 
+For sparse systems with a specific structure, the Schur Complement can be used to greatly reduce the computational cost. What would have taken hours or days to solve can be solved in seconds or minutes. Bundle Adjustment is one such problem \cite{triggs1999bundle}. The power of the Schur Complement comes from breaking the system into sub-problems. Since the matrix has a special structure, sparse fill in \cite{davis2006} is avoided its highly efficient.
 
-Bundle adjustment naturely has a sparse structure \cite{triggs1999bundle} but even if optimized by a sparse matrix library solving can be quite slow due to fill in during matrix decomposition, making the sparse matrix much less sparse. Use of the Schur Complement enables the system's structure to be taken advantage of greatly increasing the speed of computations.
-
-Let $M$ be a square matrix which has been broken up into four submatrices. It will have the following factorization:
+Let $M \in \R^{N,N}$ be an invertible square matrix which has been broken up into four submatrices. It can be factorized as follows:
 \begin{equation}
 M = \begin{bmatrix}
 A & B \\
@@ -309,7 +305,7 @@ C & D
 =
 \begin{bmatrix}
 1 & 0 \\
-C A^{-1} 1
+C A^{-1} & 1
 \end{bmatrix}
 \begin{bmatrix}
 A & 0 \\
@@ -328,7 +324,7 @@ This is known as the Schur complement of the block A of matrix M. The Schur coml
 \begin{equation}
 \bar{A} = A - B D^{-1}C
 \end{equation}
-We will discuss the former but the later can be useful too depending on the matrix structure. You will want to use the formulation which reduces the size of the matrix which needs to be inverted.
+We will discuss the former but either can be used. Which one is prefered is simply the one which can be computed fastest and is dependent on the matrix's structure.
 
 These relationships can then be used to solve the following system:
 \begin{equation}
@@ -355,7 +351,7 @@ b_1 \\ b_2
 \end{algorithmic}
 \end{algorithm}
 
-For the least squares problem the Schur Complement is applied to the Jacobian based estimation of the Hessian:
+For the least squares problem, the Schur Complement is applied to the Jacobian inner product:
 \begin{equation}
 J^T J =
 \begin{bmatrix}
@@ -363,8 +359,17 @@ A & B \\
 B^T & D
 \end{bmatrix}
 \end{equation}
-This symmetry can be taken advantage of in matrix multiplication and when solving the system, which DDogleg does. DDogleg provides a specialized function for computing the Jacobian that splits it into a left and right side. This makes computation of the inner matrices more efficient and easier to apply.
+Symmetry can be taken advantage of in matrix multiplication and when solving the system, which DDogleg does.
 
+\subsection{Linear Algebra}
+
+Linear algebra and matrix operations are the workhorses that non-linear optimization is built upon. Of particular importance are algorithms capable of solving equations of the form:
+\begin{equation}
+\bm{A}\bm{b} = \bm{y}
+\end{equation}
+where $\bm{A} \in \R^{m,n}$, $\bm{b} \in \R^n$ is unknown, and $\bm{y} \in \R^m$. The two solvers most frequently used in DDogleg are Cholesky and QR with column pivots. The importantance of choosing the correct solver can be seen in Table \ref{results:initial_region}. A discussion of difference between different solvers and efficient computations is beyound the reach of this document.
+
+DDogleg has a modular design and abstracts aware specific implementations details allowing different libraries and solvers to be used. This design allows most of the same code to be shared between sparse and dense implementations. The source of all default linear algebra operations in DDogleg is Efficicient Java Matrix Library (EJML) \cite{ejml2018}. If you wish to learn more about the computational side of linear algebra then ``Fundamentals of Matrix Computations'' \cite{watkins2010} and ``Direct Methods for Sparse Linear Systems'' \cite{davis2006} are recommended for dense and sparse systems, respectively.
 
 \section{Unconstrained Minimization}
 
@@ -372,8 +377,9 @@ This symmetry can be taken advantage of in matrix multiplication and when solvin
 \centering
 \caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
 \begin{tabular}{cl}
-\textit{FunctionNtoS} & Interface for $f(\bm{x})$ \\
-\textit{FunctionNtoN} & Interface for $g(\bm{x})$ \\
+\textit{FunctionNtoS} & Interface for function $f(\bm{x})$ \\
+\textit{FunctionNtoN} & Interface for gradient $g(\bm{x})$ \\
+& Can be computed numerically \\
 \textit{UnconstrainedMinimization} & Interface for unconstrained minimization
 \end{tabular}
 \end{table}
@@ -384,12 +390,9 @@ This symmetry can be taken advantage of in matrix multiplication and when solvin
 \begin{tabular}{lcccccc}
 Method & Iteration & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
 \hline
-Quasi-Newton BFGS & $O(N^2)$ & Super Linear & ? & ? & Yes &  \rule{0pt}{2.6ex} \\
-Trust Region BFGS Cauchy & $O(N^2)$ & Linear & Yes & Yes & Yes &  \\
-Trust Region BFGS Dogleg & $O(N^2)$ & Super Linear & [1] & [1] & Yes &  \\
-Quasi-Newton L-BFGS & ? & Super Linear & ? & ? &   & Yes \\
-Trust Region L-BFGS Cauchy & ? &  Linear & Yes & Yes &  & Yes \\
-Trust Region L-BFGS Dogleg & ? &  Super Linear & [1] & [1] &  & Yes \\[1ex]
+Quasi-Newton BFGS        & $O(N^2)$ & Super Linear & ?   & ?   & Yes &  \rule{0pt}{2.6ex} \\
+Trust Region BFGS Cauchy & $O(N^2)$ & Linear       & Yes & Yes & Yes & Yes  \\
+Trust Region BFGS Dogleg & $O(N^2)$ & Super Linear & [1] & [1] & Yes & Yes  \\[1ex]
 \hline
 \multicolumn{6}{l}{
 \begin{minipage}{0.6\textwidth}
@@ -408,21 +411,28 @@ Trust Region L-BFGS Dogleg & ? &  Super Linear & [1] & [1] &  & Yes \\[1ex]
 \end{tabular}
 \end{table}
 
-Describe unconstrained minimzation at a high level
+Unconstrained minimization seeks to find a set of parameters which minimizes a function, e.g.:
+\begin{equation}
+\min\limits_{\bm{x} \in \R^N} f(\bm{x})
+\end{equation}
+where $\bm{x}$ is an $N$-dimensional vector and $f : \R^N \Rightarrow \R $ is a function which outputs a scalar. A global minimum $x^*$ is a minimum such that $f(x^*) \le f(x)$ for all $x$. Local minimums are ones where $f(x^*) \le f(x)$ for all $x \in \mathcal{N}$, where $\mathcal{N}$ is bounded set of subset of $\R^N$. For most problems of interest to users of this library the best that can be found is a local minimum which is better than most of the other local minimums. A good introduction to the theory in this subject can be found in \cite{numopt2006}.
 
+In DDogleg, solutions to this problem use the function's gradient and Hessian to find a minimum. Convergence is found by examining the function's rate of change and the gradient, Section \ref{sec:unmin_convergence}. Computing the Hessian is often tedious and computationally expensive so iterative approximations of the Hessian, Section \ref{sec:hessian_approx}. The remaining sections discuss specific implementation details of applying general purpose algorithms to this problem.
 
 \subsection{Convergence Test}
+\label{sec:unmin_convergence}
 
 All unconstrained minimization algorithms in DDogleg use the same convergence tests. F-test checks the function's value to see if it has converged. G-test checks the gradient to see if it has converged. To disable a test assign it a value less than zero.
 
 \begin{center}
 \begin{tabular}{lc}
-F-test & $ftol  \leq 1 - f(x+p)/f(x)$ \\
+F-test & $ftol \cdot f(x)  \leq f(x) - f(x+p)$ \\
 G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
 \end{tabular}
 \end{center}
  
-\subsection{Hessian Approximation} 
+\subsection{Hessian Approximation}
+\label{sec:hessian_approx}
 
 Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP \cite{davidonDFP} to estimate the Hessian and BFGS (Broyden-Fletcher-Goldfarb-Shanno) \cite{fletcher1987,numopt2006}\footnote{A quick search failed to assertain the first paper which fully described BFGS. What appears to be a precursor is discussed in \cite{fletcher1987} and \cite{numopt2006} fully describes the method but provides no citations.} to estimate the inverse hessian.
 
@@ -450,44 +460,70 @@ Implementation Details:
 Future Work:
 \begin{enumargin}{0.2}
 	\item Remove the need to compute $B_k$ and $H_k$ by directly computing the Cholesky factors of $B_k$. 
-	\item \cite{numopt2006} recommends against skipping updates to the Hessian when Wolfe is not meet and suggests using a damped BFGS instead.
 \end{enumargin}
 
 \section{Unconstrained Least-Squares}
 \begin{table*}[h]
 \centering
 \begin{tabular}{cl}
-$\bm{x}$ & Parameter vector which is being optimized and has $n$ elements. $x \in \R^n$ \\
+$\bm{x}$ & Parameter vector which is being optimized and has $n$ elements. $x \in \R^N$ \\
 $f(\bm{x})$ & Scalar error function being optimized. $f \ge 0$ \\
-$f_k$ & $f(\bm{x}_k)$ \\
-$\bm{F}(\bm{x})$ &  Residual function from $\mathbb{R}^n \rightarrow \R^m$ \\
-\textit{FunctionNtoM} & Interface for $\bm{F}(\bm{x})$ \\
+$f_k$ & Short hand for $f(\bm{x}_k)$ \\
+$\bm{F}(\bm{x})$ & Residual function from $\R^N \rightarrow \R^M$ \\
 $\bm{J}(\bm{x})$ & Jacobian of residual function \\
-\textit{FunctionNtoMxN} & Interface for $\bm{J}(\bm{x})$ \\
- & Can be computed numerically \\
+$B(\bm{x})$ & Hessian approximation and is set to $B=\bm{J}^T\bm{J}$ \\
 $g(\bm{x})$ & Gradient of $f(\bm{x})$, which is $\bm{J}(\bm{x})^T  \bm{F}(\bm{x})$ \\
-$g_k$ & $g(\bm{x}_k)$ \\
+$g_k$ & Short hand for $g(\bm{x}_k)$ \\
 $\alpha$ & Mixing coefficent for Levenberg's and Marquardt's equations \\
-\textit{UnconstrainedLeastSquares} & High level interface for this unconstrained least squares
+\textit{FunctionNtoM} & Interface for residuals $\bm{F}(\bm{x}) \in \R^M$ \\
+\textit{FunctionNtoMxN} & Interface for Jacobian $\bm{J}(\bm{x}) \in \R^{M,N}$ \\
+& Can be computed numerically \\
+\textit{UnconstrainedLeastSquares} & High level interface for this unconstrained least squares \\
+\textit{UnconstrainedLeastSquaresSchur} & Least-Squares using Schur Complement
 \end{tabular}
 \caption{\label{definitions:UNLS}Definitions and API for Unconstrained Nonlinear Least-Squares}
 \end{table*}
+
+\begin{table}[h]
+\caption{\label{summary:UM}Summary of Unconstrained Least-Squares Methods.}
+\centering
+\begin{tabular}{lcccccc}
+Method & Iteration & Convergence & Singular & Dense & Sparse & Schur \\[1ex]
+\hline
+Trust Region LS Cauchy & $O(N^3)$ & Linear       & Yes  & Yes  & Yes & Yes \rule{0pt}{2.6ex}  \\
+Trust Region LS Dogleg & $O(N^3)$ & Super Linear & [1]  & Yes  & Yes & Yes \\
+Levenberg-Marquardt    & $O(N^3)$ & Super Linear & [2]  & Yes  & Yes & Yes \\[1ex]
+\multicolumn{6}{l}{
+\begin{minipage}{0.6\textwidth}
+\centering
+\vspace{2mm}
+\begin{itemize}[leftmargin=*]
+\item \emph{Iteration}: Runtime complexity of update step. $N$ is number of parameters.
+\item \emph{Convergence}: how fast it converged.
+\item \emph{Singular}: indicates that it can process singular systems.
+\item \emph{Negative-Definite}: indicate that it can process negative definite systems
+\item \emph{Dense} and \emph{Sparse}: indicate that dense and/or sparse matrices can be processed. 
+\item \emph{Schur}: If a variant is available that uses the Schur Complement
+\item {[1]} Switches to Cauchy in this situation.
+\item {[2]} Depends on solver and mixing coefficient, but in most configurations it can handle singular systems.
+\end{itemize}
+\end{minipage}
+ }
+\end{tabular}
+\end{table}
 
 Unconstrained Least-Squares is a special case of Unconstrained Minimization. It refers to a problem where the function being optimized has the form
 \begin{equation}
 \label{eq:residual_error}
 \min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
 \end{equation}
-where $r_j(\bm{x}) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) or error. By definition $f(\bm{x}) \ge 0$. 
-
-Matrix notation can also be used to defined \ref{eq:residual_error}:
+where $r_j(\bm{x}) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) or error. By definition $f(\bm{x}) \ge 0$. Matrix notation can also be used to defined \ref{eq:residual_error}:
 \begin{equation}
 \min\limits_{\bm{x}} f(\bm{x}) =\frac{1}{2} \bm{F}(\bm{x})^T \bm{F}(\bm{x}) = \frac{1}{2} \norm{\bm{F}(\bm{x})}^2_2
 \end{equation}
-where $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$. Then the Jacobian is defined as
+where $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$. Then the Jacobian is defined as:
 \begin{eqnarray}
-\bm{J}(\bm{x}) &=& \left[\frac{\partial r_j}{\partial x_i}\right]\begin{array}{l}j=1,\cdots,m\\i=1,\cdots,n \end{array} \\
-&=& \left[ \begin{array}{c}\nabla r_1(\bm{x})^T \\ \nabla r_2(\bm{x})^T \\ \vdots \\ \nabla r_m(\bm{x})^T \end{array}\right] \\
+\bm{J}(\bm{x}) &=&  \left[ \begin{array}{c}\nabla r_1(\bm{x})^T \\ \nabla r_2(\bm{x})^T \\ \vdots \\ \nabla r_m(\bm{x})^T \end{array}\right] \\
 \nabla r_j(\bm{x})^T &=& \left[ \frac{\partial r_j}{\partial x_1},\frac{\partial r_j}{\partial x_2}, \cdots , \frac{\partial r_j}{\partial x_n} \right]^T
 \end{eqnarray}
 and the Gradient as
@@ -498,33 +534,31 @@ and the Gradient as
 
 \subsection{Convergence Test}
 
-The F-test for convergence has been modified for Least-Squares problem to take advantage of access to the output from each function:
+The same convergence tests used in unconstrained minimization are used with least squares:
 \begin{center}
 \begin{tabular}{lc}
-F-test & $ftol \leq \norm{\bm{F}_k-\bm{F}_{k-1}}_\infty$ \\
+F-test & $ftol \cdot f(x)  \leq f(x) - f(x+p)$ \\
 G-test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
 \end{tabular}
 \end{center}
 
 \subsection{Levenberg-Marquardt}
 
-Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created before Trust Region has been formally been defined \cite{numopt2006,fletcher1987,dennis1996}. The original formulation proposed by Levenberg \ref{levenberg1944} involves solving the system below at every iteration:
+Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created before Trust Region has been formally been defined \cite{numopt2006,fletcher1987,dennis1996}. The original formulation proposed by Levenberg \cite{levenberg1944} involves solving the system below at every iteration:
 \begin{equation}
 \label{eq:levenberg}
 (J_k^T J_k + \lambda I) p_k = -g_k
 \end{equation} 
-where $\lambda$ is the damping factor that's adjusted at each iteration. Later on Marquardt \ref{marquardt1963} noted that as $\lambda$ increased for information in $J_k^T J_k$ would be used less and less. Instead Levenberg proposed the following adjustment:
+where $\lambda$ is the damping factor that's adjusted at each iteration. Later on Marquardt \cite{marquardt1963} noted that as $\lambda$ increased information in $J_k^T J_k$ is used less, slowly convergence as it becomes a steepest descent search. Instead Levenberg proposed the following adjustment:
 \begin{equation}
 \label{eq:marquardt}
 (J_k^T J_k + \lambda \mbox{diag}(J_k^T J_k)) p_k = -g_k
 \end{equation} 
-This would result in larger steps along the direction with smaller gradient, avoiding slow convergence. 
+This would result in larger steps along the direction with smaller gradient, avoiding slow convergence.
 
-In the literature, the distinction between these two approaches has blurred over the years and either one can be referred to as LM. Levenberg's forumlation tends to appear in more papers/books, but it's unclear which forumation is used more often in software implementations. Many variants of LM have been proposed and in DDogleg a hybrid of the two approaches is implemented.
+DDogleg's implementation (Algorithm \ref{alg:levenberg_marquardt}) is primarily based upon the description found in \cite{IMM2004} but with the ability to choose a mixture of Levenberg's and Marquardt's. The more widely cited algorithm found in \cite{fletcher1987} and others was found to converge slower. Mixing \ref{eq:levenberg} and \ref{eq:marquardt} is advantagous because it allows you to avoid the negatives of either approach. If the derivative of an element is zero then Marquardt's forumation can produce singular matrices. While Levenberg's forumation will always produce a positive-definate matrix as long as $\lambda$ is greater than zero. The amount of mixing is specified using $\alpha$. If $\alpha=1$ then (\ref{eq:levenberg}) is used while if $\alpha=0$ then (\ref{eq:marquardt}) is used. Any value between 0 and 1 will result in a mixture of the two equations.
 
-DDogleg's implementation (Algorithm \ref{alg:levenberg_marquardt}) is primarily based upon the description found in \cite{IMM2004} but with the ability to choose a mixture of Levenberg's and Marquardt's. The more widely cited algorithm found in \cite{fletcher1987} and others was found to converge slower. Mixing the two approaches is advantagous because it allows you to avoid the negatives of either approach. If the derivative of an element is zero then Marquardt's forumation can produce singular matrices, which Levenberg's forumation will always produce a positive-definate matrix as long as $\lambda$ is greater than zero. The amount of mixing is done using $\alpha$. If $\alpha=1$ then (\ref{eq:levenberg}) is used while if $\alpha=0$ then (\ref{eq:marquardt}) is used. Any value between 0 and 1 will result in a mixture of the two equations.
-
-The easy to use factory functions in DDogleg provide the option to choose two variants, robust and normal. The robust variant will use a solver based on QR with column pivots and the normal one will use Cholesky decomposition. The robust variant can handle degenerate matrices found in the Marquardt forumation. DDogleg does not provide support for solving the least squares forumation, i.e. $J_k p_k = -F_k$, due to the increase in computational cost and code complexity having no noticable improvement in convergence.
+The classes \emph{FactoryOptimization} and \emph{FactoryOptimizationSparse} provide easy to use functions for constructing specific implementations of Levenberg-Marquardt. As inputs they take in a \emph{ConfigLevenbergMarquardt} and a boolean flag called \emph{robust}. If the robust flag is set to true then a solver based on QR with column pivots is used and if false then it used Cholesky decomposition. The robust variant can handle degenerate matrices found in the Marquardt's forumation. DDogleg does not provide support for solving the least squares forumation, i.e. $J_k p_k = -F_k$, due to the increase in computational cost and code complexity having no noticable improvement in convergence in any situation the author is aware of.
 
 Scaling is done using the same methods described in Section \ref{section:scaling}.
 
@@ -532,15 +566,16 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 \caption{\label{alg:levenberg_marquardt}Levenberg-Marquardt}
 \begin{algorithmic}[1]
 	\State $k \gets 0$, $\nu \gets 2$
+  	\State $B_k = J_k^T J_k$
 	\While{$k < k_{\mbox{max}}$ and not $done$}
-		\State Solve $\left(J_k^T J_k + \lambda \left(\alpha I + (1-\alpha)\mbox{diag}(J_k^T J_k) \right)\right) p_k = -g_k$ \Comment{LM Step}
+		\State Solve $\left(B_k + \lambda \left(\alpha I + (1-\alpha)\mbox{diag}(B_k) \right)\right) p_k = -g_k$ \Comment{LM Step}
 		\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
 		\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T J_k^T J_k \bm{p}$ \Comment{Predicted reduction in score}
 		\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
 		\If{ $\delta_f \ge 0$} \Comment{Score get better?}
 			\State $\lambda \gets \lambda \cdot \mbox{max}(1/3 , 1-(2\nu-1)^3)$
 			\State $\nu = 2$
-			\State $\Delta_{k+1} \gets \Delta_k$
+			\State $p_{k+1} \gets p_k$
 			\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
 		\Else
 			\State $\lambda \gets \nu \lambda$ \Comment{Follow the gradient more and decrease the step size}
@@ -554,11 +589,8 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 
 \subsection{Trust Region}
 
-When trust region methods are applied to least-squares problems they are defined as follow:
-
+Application of Trust Region to the Least Squares problem is straight forwards. Everything previously discussed still applies with the following variables defined as:
 \begin{eqnarray}
-f_k &=& f(\bm{x}+\bm{p}) \\
-J_k &=& J(\bm{x}+\bm{p}) \\
 \bm{g}_k &=& J^T_k F_k  \\
 \bm{B}_k &=& J_k^T J_k
 \end{eqnarray}
