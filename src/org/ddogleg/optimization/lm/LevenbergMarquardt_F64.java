@@ -26,6 +26,7 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
@@ -120,6 +121,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		fx = costFromResiduals(residuals);
 
 		mode = Mode.FULL_STEP;
+
+		if( verbose ) {
+			System.out.println("Steps     fx        change      |step|     max(g)  tr-ratio  lambda ");
+			System.out.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+					totalFullSteps, fx, 0.0,0.0,0.0, 0.0, lambda);
+		}
 	}
 
 	/**
@@ -212,8 +219,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu) )
 			throw new OptimizationException("BUG! lambda="+lambda+"  nu="+nu);
 
-		if( verbose )
-			System.out.printf("%d fx_delta=%9.2E ratio=%6.3f lambda=%6.2E\n",totalFullSteps,fx_candidate-fx,ratio,lambda);
+		if( verbose ) {
+			// TODO compute elsewhere ?
+			double length_p = NormOps_DDRM.normF(p);
+			System.out.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+					totalFullSteps, fx_candidate, fx_candidate - fx,length_p,g_max, ratio, lambda);
+		}
 
 		if( accepted ) {
 			double fx_prev = fx;
