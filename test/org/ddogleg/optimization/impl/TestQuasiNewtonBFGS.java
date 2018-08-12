@@ -18,7 +18,6 @@
 
 package org.ddogleg.optimization.impl;
 
-import org.ddogleg.optimization.EvaluateQuasiNewtonBFGS;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoS;
@@ -34,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization {
-
-	EvaluateQuasiNewtonBFGS evaluator = new EvaluateQuasiNewtonBFGS(false,false);
 
 	/**
 	 * Basic test that is easily solved.

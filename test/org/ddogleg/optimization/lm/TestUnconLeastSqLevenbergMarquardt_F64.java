@@ -102,9 +102,8 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
-			config.dampeningInitial = 1e-8;
-			config.scalingMinimum = 1e-5;
-			config.scalingMaximum = 1e5;
+			config.dampeningInitial = 0.1;
+			config.hessianScaling = true;
 
 			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
 			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);

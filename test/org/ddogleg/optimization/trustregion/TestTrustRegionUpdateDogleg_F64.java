@@ -296,8 +296,7 @@ public class TestTrustRegionUpdateDogleg_F64 {
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			config.regionInitial = 100;
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e5;
+			config.hessianScaling = true;
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = createSolver();
 			tr.configure(config);
 			return tr;

@@ -64,8 +64,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
 			config.dampeningInitial = 1e-8;
-			config.scalingMinimum = 1e-5;
-			config.scalingMaximum = 1e5;
+			config.hessianScaling = true;
 
 			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
 			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =

@@ -136,9 +136,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected boolean updateState() {
 		functionGradientHessian(x,true, gradient, hessian);
 
-		if( isScaling() ) {
-			computeScaling();
-			applyScaling();
+		if( config.hessianScaling) {
+			computeHessianScaling();
+			applyHessianScaling();
 		}
 
 		hessian.extractDiagonals(diagOrig);
@@ -169,8 +169,8 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return maximumLambdaNu();
 		}
 
-		if( isScaling() )
-			undoScalingOnParameters(p);
+		if( config.hessianScaling )
+			undoHessianScalingOnParameters(p);
 
 		// compute the potential new state
 		CommonOps_DDRM.add(x,p,x_next);

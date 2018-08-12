@@ -112,9 +112,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	protected boolean updateState() {
 		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
 
-		if( isScaling() ) {
-			computeScaling();
-			applyScaling();
+		if( config.hessianScaling ) {
+			computeHessianScaling();
+			applyHessianScaling();
 		}
 
 		// Convergence should be tested on scaled variables to remove their arbitrary natural scale
@@ -162,8 +162,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			parameterUpdate.computeUpdate(p, regionRadius);
 		}
 
-		if( isScaling() )
-			undoScalingOnParameters(p);
+		if(  config.hessianScaling )
+			undoHessianScalingOnParameters(p);
 		CommonOps_DDRM.add(x,p,x_next);
 		double fx_candidate = cost(x_next);
 

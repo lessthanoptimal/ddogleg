@@ -24,7 +24,8 @@ import org.ejml.dense.row.CommonOps_DDRM;
 
 import java.util.Arrays;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 
 /**
  * Base class for Gauss-Newton based approaches for unconstrained optimization.
@@ -55,8 +56,8 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
 	protected boolean sameStateAsCost;
 
-	// Scaling used to compensate for poorly scaled variables
-	protected DMatrixRMaj scaling = new DMatrixRMaj(1,1);
+	// Scaling applied to hessian matrix to improve it's condition
+	protected DMatrixRMaj hessianScaling = new DMatrixRMaj(1,1);
 
 	// which processing step it's on
 	protected Mode mode = Mode.FULL_STEP;
@@ -84,8 +85,8 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 		gradient.reshape(numberOfParameters,1);
 
 		// initialize scaling to 1, which is no scaling
-		scaling.reshape(numberOfParameters,1);
-		Arrays.fill(scaling.data,0,numberOfParameters,1);
+		hessianScaling.reshape(numberOfParameters,1);
+		Arrays.fill(hessianScaling.data,0,numberOfParameters,1);
 
 		hessian.init(numberOfParameters);
 
@@ -147,38 +148,48 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	/**
 	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
 	 */
-	protected void computeScaling() {
-		hessian.extractDiagonals(scaling);
-		computeScaling(scaling, config.scalingMinimum, config.scalingMaximum);
+	protected void computeHessianScaling() {
+		hessian.extractDiagonals(hessianScaling);
+		computeHessianScaling(hessianScaling);
 	}
 
 	/**
 	 * Applies the standard formula for computing scaling. This is broken off into its own
-	 * function so that it easily invoked if the function above is overriden
+	 * function so that it easily invoked if the function above is overridden
 	 */
-	public void computeScaling( DMatrixRMaj scaling , double minimum , double maximum ) {
+	public void computeHessianScaling(DMatrixRMaj scaling ) {
+
+		double max = 0;
 		for (int i = 0; i < scaling.numRows; i++) {
 			// mathematically it should never be negative but...
-			double scale = sqrt(abs(scaling.data[i]));
-			// clamp the scale factor
-			scaling.data[i] = min(maximum, max(minimum, scale));
+			double v = scaling.data[i] = sqrt(abs(scaling.data[i]));
+			if( v > max )
+				max = v;
+		}
+
+		// Add this number to avoid divide by zero.
+		// Ceres solver just uses 1 no matter what. That's probably not the best approach because if you're doing
+		// with very small numbers scaling will be washed out
+		max *= 1e-12;
+		for (int i = 0; i < scaling.numRows; i++) {
+			scaling.data[i] += max;
 		}
 	}
 
 	/**
 	 * Apply scaling to gradient and Hessian
 	 */
-	protected void applyScaling() {
-		CommonOps_DDRM.elementDiv(gradient,scaling);
+	protected void applyHessianScaling() {
+		CommonOps_DDRM.elementDiv(gradient, hessianScaling);
 
-		hessian.divideRowsCols(scaling);
+		hessian.divideRowsCols(hessianScaling);
 	}
 
 	/**
 	 * Undo scaling on estimated parameters
 	 */
-	protected void undoScalingOnParameters( DMatrixRMaj p ) {
-		CommonOps_DDRM.elementDiv(p,scaling);
+	protected void undoHessianScalingOnParameters(DMatrixRMaj p ) {
+		CommonOps_DDRM.elementDiv(p, hessianScaling);
 	}
 
 	/**
@@ -234,12 +245,6 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 		return mode;
 	}
 
-	/**
-	 * True if scaling is turned on
-	 */
-	public boolean isScaling() {
-		return config.scalingMaximum > config.scalingMinimum;
-	}
 
 	/**
 	 * Toggles printing of status to standard out

@@ -35,25 +35,18 @@ public class ConfigGaussNewton {
 	public double ftol=1e-12;
 
 	/**
-	 * <p>
-	 *     Optional dynamic scaling of variables is possible at each iteration. The scale factor is set using the
-	 *     Hessian's diagonal elements. The square root of the diagonal elements absolute value.
-	 * </p>
+	 * Optional scaling of Jacobian to make the Hessian matrix better suited for decomposition by improving
+	 * the matrice's condition
 	 *
-	 * <p>
-	 *     These variables are used to clamp scaling individual scaling values. To turn on this automatic scaling
-	 *     simply set the minimum value such that it is less than the maximum value.
-	 *     The minimum value seems to be of particular importance and don't forget try larger values, such as one.
-	 * </p>
+	 * scaling = sqrt(diag(B))  where B is the Hessian matrix.
 	 *
-	 * <p>Recommended initial tuning values are min=1e-5 and max=1e5</p>
+	 * For Least-Squares B = J'*J
 	 */
-	public double scalingMinimum =1, scalingMaximum =-1;
+	public boolean hessianScaling =false;
 
 	public void set( ConfigGaussNewton config ) {
 		gtol = config.gtol;
 		ftol = config.ftol;
-		scalingMinimum = config.scalingMinimum;
-		scalingMaximum = config.scalingMaximum;
+		hessianScaling = config.hessianScaling;
 	}
 }

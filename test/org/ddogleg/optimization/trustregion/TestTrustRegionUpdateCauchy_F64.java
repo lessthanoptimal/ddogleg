@@ -216,13 +216,16 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		@Override
 		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
-			config.scalingMinimum = 0.1; // sensitive to this parameter
-			config.scalingMaximum = 1e6;
+			config.hessianScaling = true;
 			TrustRegionUpdateCauchy_F64<DMatrixRMaj> cauchy = new TrustRegionUpdateCauchy_F64<>();
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
 					cauchy, new HessianLeastSquares_DDRM(),new MatrixMath_DDRM());
 			tr.configure(config);
 			return tr;
+		}
+
+		@Override
+		public void checkPowell() {
 		}
 	}
 

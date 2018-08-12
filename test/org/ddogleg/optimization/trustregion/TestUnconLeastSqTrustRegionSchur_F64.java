@@ -154,8 +154,7 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 
 //			config.regionInitial = 1;
-			config.scalingMinimum = 1e-4;
-			config.scalingMaximum = 1e4;
+			config.hessianScaling = true;
 
 			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
 			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
