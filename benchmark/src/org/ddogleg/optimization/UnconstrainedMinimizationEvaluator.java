@@ -35,6 +35,9 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	protected boolean printSummary;
 	protected int maxIteration = 1000;
 
+	protected double ftol = 1e-12;
+	protected double gtol = 1e-12;
+
 	protected UnconstrainedMinimizationEvaluator(boolean verbose, boolean printSummary) {
 		this.verbose = verbose;
 		this.printSummary = printSummary;
@@ -70,7 +73,7 @@ public abstract class UnconstrainedMinimizationEvaluator {
 
 		double initialValue = func.process(initial);
 
-		alg.initialize(initial,1e-12, 1e-6);
+		alg.initialize(initial,ftol, gtol);
 		int iter;
 		for( iter = 0; iter < maxIteration && !alg.iterate() ; iter++ ){
 			printError(optimal, alg);

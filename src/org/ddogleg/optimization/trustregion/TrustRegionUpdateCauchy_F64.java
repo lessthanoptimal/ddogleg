@@ -24,6 +24,8 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
+import java.io.PrintStream;
+
 /**
  * <p>
  * The Cauchy point is an approximate solution to the Trust Region subproblem. It's direction is found by solving
@@ -53,7 +55,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 	// This is the length of the step f-norm of p
 	double stepLength;
 
-	boolean verbose=false;
+	PrintStream verbose=null;
 
 	@Override
 	public void initialize( TrustRegionBase_F64<S,?> owner ,
@@ -78,14 +80,14 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 		double gnorm = owner.gradientNorm;
 
 		if( gBg <= 0 ) {
-			if( verbose )
-				System.out.println("  not-positive definite. dBd <= 0");
+			if( verbose != null )
+				verbose.println("  not-positive definite. dBd <= 0");
 			// always decreasing so take the largest possible step to the region's boundary
 			// At the same time don't try to jump past the smallest possible value for the function
 			stepLength = regionRadius;
 		} else {
-			if( verbose )
-				System.out.println("  normal step");
+			if( verbose != null )
+				verbose.println("  normal step");
 			// find the distance of the minimum point
 			stepLength = Math.min(regionRadius,gnorm/gBg);
 		}
@@ -108,7 +110,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
+	public void setVerbose(PrintStream out, int level) {
+		this.verbose = out;
 	}
 }

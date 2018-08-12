@@ -71,7 +71,7 @@ public class TestLineSearchMore94 {
 		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));
-		assertTrue(alg.getWarning() == null);
+		assertTrue(alg.isConverged());
 		double foundTight = alg.getStep();
 
 		// see if the tighter bounds is more accurate

@@ -109,11 +109,6 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 		return mode == Mode.CONVERGED;
 	}
 
-	@Override
-	public String getWarning() {
-		return null;
-	}
-
 	public DMatrixRMaj getResiduals() {
 		return residuals;
 	}

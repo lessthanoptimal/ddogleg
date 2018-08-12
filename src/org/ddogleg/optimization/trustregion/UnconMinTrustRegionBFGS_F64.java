@@ -165,9 +165,4 @@ public class UnconMinTrustRegionBFGS_F64
 	public boolean isConverged() {
 		return mode == Mode.CONVERGED;
 	}
-
-	@Override
-	public String getWarning() {
-		return null;
-	}
 }

@@ -26,6 +26,8 @@ import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.optimization.impl.LineSearchMore94;
 import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
 
+import java.io.PrintStream;
+
 /**
  * Wrapper around {@link QuasiNewtonBFGS} for {@link UnconstrainedMinimization}.  For a description of what
  * the line parameters mean see {@link LineSearchMore94}.
@@ -80,13 +82,9 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	}
 
 	@Override
-	public String getWarning() {
-		return alg.getWarning();
-	}
+	public void setVerbose(PrintStream verbose, int level) {
 
-	@Override
-	public void setVerbose(boolean verbose) {
-		lineSearch.setVerbose(verbose);
+		lineSearch.setVerbose(verbose,level);
 	}
 
 	@Override

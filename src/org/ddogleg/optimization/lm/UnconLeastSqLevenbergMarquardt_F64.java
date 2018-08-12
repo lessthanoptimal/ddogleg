@@ -94,11 +94,6 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	}
 
 	@Override
-	public String getWarning() {
-		return null;
-	}
-
-	@Override
 	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
 										   DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
 		if( !sameStateAsResiduals )

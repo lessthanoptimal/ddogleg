@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization;
 
+import javax.annotation.Nullable;
+import java.io.PrintStream;
 import java.io.Serializable;
 
 /**
@@ -70,17 +72,10 @@ public interface IterativeOptimization extends Serializable {
 	boolean isConverged();
 
 	/**
-	 * Provides feed back if something went wrong, but still produced a solution.
-	 * If there is no message then null is returned.  The meaning and type of messages
-	 * are implementation specific.
+	 * If set to a non-null output then extra information will be printed to the specified stream.
 	 *
-	 * @return Additional info on the computed solution.
+	 * @param out Stream that is printed to. Set to null to disable
+	 * @param level (Future use) Parameter which can be used to specify level of verbose output. Set to zero for now.
 	 */
-	String getWarning();
-
-	/**
-	 * If true then verbose debugging information is printed to standard out
-	 * @param verbose true to print debugging information to standard out
-	 */
-	void setVerbose( boolean verbose );
+	void setVerbose(@Nullable PrintStream out , int level );
 }

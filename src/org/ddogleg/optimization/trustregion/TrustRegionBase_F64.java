@@ -27,6 +27,9 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 
+import javax.annotation.Nullable;
+import java.io.PrintStream;
+
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -143,20 +146,20 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			regionRadius = parameterUpdate.getStepLength();
 
 			if( regionRadius == Double.MAX_VALUE || UtilEjml.isUncountable(regionRadius)) {
-				if( verbose )
-					System.out.println("unconstrained initialization failed. Using Cauchy initialization instead.");
+				if( verbose != null )
+					verbose.println("unconstrained initialization failed. Using Cauchy initialization instead.");
 				regionRadius = -2;
 			} else {
-				if( verbose )
-					System.out.println("unconstrained initialization radius="+regionRadius);
+				if( verbose != null )
+					verbose.println("unconstrained initialization radius="+regionRadius);
 			}
 		}
 		if( regionRadius == -2 ) {
 			// User has selected Cauchy method for initial step size
 			regionRadius = solveCauchyStepLength()*10;
 			parameterUpdate.computeUpdate(p, regionRadius);
-			if( verbose )
-				System.out.println("cauchy initialization radius="+regionRadius);
+			if( verbose != null )
+				verbose.println("cauchy initialization radius="+regionRadius);
 
 		} else {
 			parameterUpdate.computeUpdate(p, regionRadius);
@@ -232,8 +235,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		double actualReduction = fx_prev-fx_candidate;
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
-			if( verbose )
-				System.out.println(totalFullSteps+" reduction of zero");
+			if( verbose != null )
+				verbose.println(totalFullSteps+" reduction of zero");
 			return Convergence.ACCEPT;
 		}
 
@@ -248,8 +251,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			}
 		}
 
-		if( verbose )
-			System.out.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" region="+regionRadius);
+		if( verbose != null )
+			verbose.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" region="+regionRadius);
 
 //		System.out.println(totalRetries+" ratio="+ratio+"   rate="+((fx_prev-fx_candidate)/stepLength));
 		if( fx_candidate < fx_prev && ratio > 0 ) {
@@ -337,13 +340,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		 */
 		double getStepLength();
 
-		void setVerbose( boolean verbose );
+		void setVerbose( PrintStream out , int level );
 	}
 
 	@Override
-	public void setVerbose( boolean verbose ) {
-		super.setVerbose(verbose);
-		this.parameterUpdate.setVerbose(verbose);
+	public void setVerbose(@Nullable PrintStream out, int level) {
+		super.setVerbose(out, level);
+		this.parameterUpdate.setVerbose(verbose,level);
 	}
 
 	protected enum Convergence {

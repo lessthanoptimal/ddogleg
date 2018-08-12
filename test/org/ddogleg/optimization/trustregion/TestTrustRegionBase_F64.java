@@ -25,6 +25,8 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -168,7 +170,7 @@ public class TestTrustRegionBase_F64 {
 		}
 
 		@Override
-		public void setVerbose(boolean verbose) {
+		public void setVerbose(PrintStream out, int level) {
 
 		}
 	}

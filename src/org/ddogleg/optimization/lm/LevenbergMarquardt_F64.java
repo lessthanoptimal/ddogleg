@@ -29,6 +29,9 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  * <p>
  * Implementation of Levenberg-Marquardt non-linear least squares optimization. At each iteration the following
@@ -122,9 +125,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 		mode = Mode.FULL_STEP;
 
-		if( verbose ) {
-			System.out.println("Steps     fx        change      |step|     max(g)  tr-ratio  lambda ");
-			System.out.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+		if( verbose != null ) {
+			verbose.println("Steps     fx        change      |step|     max(g)  tr-ratio  lambda ");
+			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
 					totalFullSteps, fx, 0.0,0.0,0.0, 0.0, lambda);
 		}
 	}
@@ -164,8 +167,8 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 				throw new OptimizationException("Singular matrix encountered. Try setting mixture to a non-zero value");
 			}
 			lambda *= 4;
-			if( verbose )
-				System.out.println(totalFullSteps+" Step computation failed. Increasing lambda");
+			if( verbose != null )
+				verbose.println(totalFullSteps+" Step computation failed. Increasing lambda");
 			return maximumLambdaNu();
 		}
 
@@ -185,8 +188,8 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		double predictedReduction = computePredictedReduction(p);
 
 		if( actualReduction == 0 || predictedReduction == 0 ) {
-			if( verbose )
-				System.out.println(totalFullSteps+" reduction of zero");
+			if( verbose  != null)
+				verbose.println(totalFullSteps+" reduction of zero");
 			return true;
 		}
 
@@ -207,7 +210,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( fx_candidate < fx ) {
 			// reduce the amount of dampening.  Magic equation from [1].  My attempts to improve
 			// upon it have failed.  It is truly magical.
-			lambda = lambda*Math.max(1.0/3.0, 1.0-Math.pow(2.0*ratio-1.0,3.0));
+			lambda = lambda* max(1.0/3.0, 1.0-Math.pow(2.0*ratio-1.0,3.0));
 			nu=NU_INITIAL;
 			accepted = true;
 		} else {
@@ -219,10 +222,10 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu) )
 			throw new OptimizationException("BUG! lambda="+lambda+"  nu="+nu);
 
-		if( verbose ) {
+		if( verbose != null ) {
 			// TODO compute elsewhere ?
 			double length_p = NormOps_DDRM.normF(p);
-			System.out.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
 					totalFullSteps, fx_candidate, fx_candidate - fx,length_p,g_max, ratio, lambda);
 		}
 
@@ -282,7 +285,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 		final double mixture = config.mixture;
 		for (int i = 0; i < diagOrig.numRows; i++) {
-			double v = Math.abs(diagOrig.data[i]);
+			double v = min(config.diagonal_max, max(config.diagonal_min,diagOrig.data[i]));
 			diagStep.data[i] = v + lambda*(mixture + (1.0-mixture)*v);
 		}
 		hessian.setDiagonals( diagStep );

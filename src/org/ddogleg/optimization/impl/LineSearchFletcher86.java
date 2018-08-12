@@ -22,6 +22,9 @@ import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.CoupledDerivative;
 import org.ejml.UtilEjml;
 
+import javax.annotation.Nullable;
+import java.io.PrintStream;
+
 /**
  * <p>
  * Line search which meets the strong Wolfe line condition.  The Wolfe condition stipulates that &alpha;<sub>k</sub> (the step size)
@@ -97,7 +100,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	// if true the estimated parameters have been updated
 	boolean updated;
 
-	String message;
+	PrintStream verbose;
 	boolean converged;
 	
 	/**
@@ -152,7 +155,6 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		mode = 0;
 
-		message = null;
 		converged = false;
 
 		this.stmax = (fmin-fzero)/(ftol*gzero);
@@ -246,7 +248,8 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		// see if it is taking significant steps
 		if( checkSmallStep() ) {
-			message = "WARNING: Small steps";
+			if( verbose != null )
+				verbose.println("WARNING: Small steps");
 			return true;
 		}
 
@@ -281,7 +284,7 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		// see if there is a significant change in alpha
 		if( checkSmallStep() ) {
-			message = "WARNING: Small steps";
+			verbose.println("WARNING: Small steps");
 			return true;
 		}
 
@@ -318,13 +321,8 @@ public class LineSearchFletcher86 implements LineSearch {
 	}
 
 	@Override
-	public String getWarning() {
-		return message;
-	}
-
-	@Override
-	public void setVerbose(boolean verbose) {
-
+	public void setVerbose(@Nullable PrintStream out, int level) {
+		this.verbose = out;
 	}
 
 	/**

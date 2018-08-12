@@ -26,6 +26,8 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
+import java.io.PrintStream;
+
 /**
  * <p>
  * Approximates the optimal solution to the Trust Region's sub-problem using a piecewise linear approach [1,2].
@@ -77,7 +79,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 	// This is the length of the step f-norm of p
 	double stepLength;
 
-	boolean verbose = false;
+	PrintStream verbose = null;
 
 	@Override
 	public void initialize( TrustRegionBase_F64<S,?> owner , int numberOfParameters , double minimumFunctionValue) {
@@ -128,24 +130,24 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 		if( positiveDefinite ) {
 			//  If the GN solution is inside the trust region it should use that solution
 			if( distanceGN <= regionRadius ) {
-				if( verbose )
-					System.out.println("   newton");
+				if( verbose != null )
+					verbose.println("   newton");
 				gaussNewtonStep(step);
 			} else if( distanceCauchy >= regionRadius ) {
-				if( verbose )
-					System.out.println("   cauchy");
+				if( verbose != null )
+					verbose.println("   cauchy");
 				// if the trust region comes before the Cauchy point then perform the cauchy step
 				cauchyStep(regionRadius, step);
 			} else {
-				if( verbose )
-					System.out.println("   combined");
+				if( verbose != null )
+					verbose.println("   combined");
 				// the solution lies on the line connecting Cauchy and GN
 				combinedStep(regionRadius, step);
 			}
 
 		} else {
-			if( verbose )
-				System.out.println("   not positive-definite.");
+			if( verbose != null )
+				verbose.println("   not positive-definite.");
 			// Cauchy step for negative semi-definite systems
 			stepLength = regionRadius;
 			CommonOps_DDRM.scale(-stepLength, direction,step);
@@ -170,7 +172,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setVerbose(boolean verbose) {
+	public void setVerbose(PrintStream verbose, int level ) {
 		this.verbose = verbose;
 	}
 

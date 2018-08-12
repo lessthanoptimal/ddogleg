@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,6 +22,8 @@ import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+
+import java.io.PrintStream;
 
 /**
  * <p>
@@ -88,8 +90,9 @@ public class QuasiNewtonBFGS
 
 	// mode that the algorithm is in
 	private int mode;
+
 	// error message
-	private String message;
+	private PrintStream verbose;
 	// if it converged to a solution or not
 	private boolean hasConverged;
 
@@ -163,7 +166,6 @@ public class QuasiNewtonBFGS
 	public void initialize(double[] initial) {
 		this.mode = 0;
 		this.hasConverged = false;
-		this.message = null;
 		this.iterations = 0;
 
 		// set the change in x to be zero
@@ -233,7 +235,7 @@ public class QuasiNewtonBFGS
 		} else if(Math.abs(derivAtZero) <= gtol ) {
 			// the input might have been modified by the function.  So copy it
 			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
-			return terminateSearch(true,null);
+			return terminateSearch(true);
 		}
 
 		mode = 1;
@@ -312,10 +314,12 @@ public class QuasiNewtonBFGS
 						invokeLineInitialize(fx, maxStep);
 						return false;
 					} else {
-						return terminateSearch(false, "Initial step reduced to zero");
+						if( verbose != null )
+							verbose.println("Initial step reduced to zero");
+						return terminateSearch(false);
 					}
 				} else {
-					return terminateSearch(false, lineSearch.getWarning());
+					return terminateSearch(false);
 				}
 			} else {
 				firstStep = false;
@@ -338,7 +342,7 @@ public class QuasiNewtonBFGS
 			// see if the actual different and predicted differences are smaller than the
 			// error tolerance
 			if( Math.abs(fstp-fx) <= ftol*Math.abs(fx) || Math.abs(derivAtZero) < gtol )
-				return terminateSearch(true,null);
+				return terminateSearch(true);
 
 			if( fstp > fx ) {
 				throw new RuntimeException("Worse results!");
@@ -356,10 +360,8 @@ public class QuasiNewtonBFGS
 	/**
 	 * Helper function that lets converged and the final message bet set in one line
 	 */
-	private boolean terminateSearch( boolean converged , String message ) {
+	private boolean terminateSearch( boolean converged ) {
 		this.hasConverged = converged;
-		this.message = message;
-		
 		return true;
 	}
 
@@ -368,13 +370,6 @@ public class QuasiNewtonBFGS
 	 */
 	public boolean isConverged() {
 		return hasConverged;
-	}
-
-	/**
-	 * Returns the warning message, or null if there is none
-	 */
-	public String getWarning() {
-		return message;
 	}
 
 	public double getFx() {

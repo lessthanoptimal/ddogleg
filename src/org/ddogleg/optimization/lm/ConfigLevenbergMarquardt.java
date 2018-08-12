@@ -37,11 +37,18 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 	 */
 	public double mixture=1e-4;
 
+	/**
+	 * Clamps the diagonal values of J'*J when constructing the LM formula.
+	 */
+	public double diagonal_min = 1e-6, diagonal_max = 1e32;
+
 	public ConfigLevenbergMarquardt copy() {
 		ConfigLevenbergMarquardt c = new ConfigLevenbergMarquardt();
 
 		c.dampeningInitial = dampeningInitial;
 		c.mixture = mixture;
+		c.diagonal_min = diagonal_min;
+		c.diagonal_max = diagonal_max;
 		c.set(this);
 
 		return c;

@@ -22,6 +22,9 @@ import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.functions.CoupledDerivative;
 
+import javax.annotation.Nullable;
+import java.io.PrintStream;
+
 /**
  * <p>
  * Line search algorithm that provides a guaranteed sufficient decrease according to the Wolfe condition.
@@ -98,8 +101,8 @@ public class LineSearchMore94 implements LineSearch {
 	// User specified lower and upper bound for the step stp
 	private double stpmin,stpmax;
 
-	// Indicates if there were any numerical issues that caused it to stop iterating
-	private String message;
+	// Verbose output if not null
+	private PrintStream verbose;
 
 	// Indicates if this iit is the first iteration and indicates if what values need to be computed at stp
 	private boolean firstIteration;
@@ -177,7 +180,6 @@ public class LineSearchMore94 implements LineSearch {
 		stmin = 0;
 		stmax = stp + xtrapu*stp;
 
-		message = null;
 		firstIteration = true;
 		converged = false;
 		updated = false;
@@ -202,16 +204,27 @@ public class LineSearchMore94 implements LineSearch {
 			stage = 1;
 		
 		// check warning conditions
-		if( bracket && (stp <= stmin || stp >= stmax))
-			message = "Rounding error preventing progress.";
-		if( bracket && stmax - stmin <= xtol*stmax) {
+		boolean processBlocked = false;
+		if (bracket && stmax - stmin <= xtol * stmax) {
 			converged = true;
-			message = "XTOL test satisfied";
+			if( verbose != null )
+				verbose.println("XTOL test satisfied");
 		}
-		if( stp == stpmax && fp <= ftest && gp <= gtest )
-			message = "stp == stpmax";
-		if( stp == stpmin && (fp > ftest || gp >= gtest ))
-			message = "stp == stpmin";
+		if (bracket && (stp <= stmin || stp >= stmax)) {
+			processBlocked = true;
+			if( verbose != null )
+				verbose.println("Rounding error preventing progress.");
+		}
+		if (stp == stpmax && fp <= ftest && gp <= gtest) {
+			processBlocked = true;
+			if( verbose != null )
+				verbose.println("stp == stpmax");
+		}
+		if (stp == stpmin && (fp > ftest || gp >= gtest)) {
+			processBlocked = true;
+			if( verbose != null )
+				verbose.println("stp == stpmin");
+		}
 
 		// Check for convergence using the Wolfe conditions
 		if( fp <= ftest && Math.abs(gp) <= gtol*(-ginit)) {
@@ -219,8 +232,8 @@ public class LineSearchMore94 implements LineSearch {
 			return true;
 		}
 
-		// Warning messages indicates that no progress can be made and that it should stop iterating
-		if( message != null || converged )
+		// See if progressBlocked or if it has converged
+		if( processBlocked || converged )
 			return true;
 
 		// See if it is searching for the upper bound still
@@ -421,18 +434,13 @@ public class LineSearchMore94 implements LineSearch {
 	}
 
 	@Override
+	public void setVerbose(@Nullable PrintStream out, int level) {
+		this.verbose = out;
+	}
+
+	@Override
 	public double getStep() {
 		return stp;
-	}
-
-	@Override
-	public String getWarning() {
-		return message;
-	}
-
-	@Override
-	public void setVerbose(boolean verbose) {
-
 	}
 
 	@Override

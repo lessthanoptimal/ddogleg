@@ -23,7 +23,7 @@ import org.ejml.data.DMatrix;
 /**
  * Jacobian calculation for use in Schur Complement.
  *
- * @see org.ddogleg.optimization.impl.LevenbergMarquardtSchur_DSCC
+ * @see org.ddogleg.optimization.UnconstrainedLeastSquaresSchur
  *
  * @author Peter Abeles
  */

@@ -90,16 +90,6 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	}
 
 	@Override
-	public String getWarning() {
-		return null;
-	}
-
-	@Override
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-
-	@Override
 	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
 										   DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
 		if( !sameStateAsResiduals )

@@ -22,6 +22,8 @@ import org.ddogleg.optimization.math.HessianMath;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
+import javax.annotation.Nullable;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 import static java.lang.Math.abs;
@@ -65,8 +67,9 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalRetries;
 
-	// print additional debugging messages to standard out
-	protected boolean verbose;
+	// If not null then print additional information to this stream
+	protected PrintStream verbose;
+	protected int verboseLevel=0;
 
 	// Optimization configuration
 	public C config;
@@ -245,13 +248,15 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 		return mode;
 	}
 
-
 	/**
-	 * Toggles printing of status to standard out
-	 * @param verbose true to print to standard out
+	 * If set to a non-null output then extra information will be printed to the specified stream.
+	 *
+	 * @param out Stream that is printed to. Set to null to disable
+	 * @param level (Future use) Parameter which can be used to specify level of verbose output. Set to zero for now.
 	 */
-	public void setVerbose( boolean verbose ) {
-		this.verbose = verbose;
+	public void setVerbose(@Nullable PrintStream out , int level ) {
+		this.verbose = out;
+		this.verboseLevel = level;
 	}
 
 }
