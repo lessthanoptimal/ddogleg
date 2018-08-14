@@ -44,7 +44,7 @@ public class TestLevenbergMarquardt_F64 {
 
 		alg.lambda = 2;
 
-		assertFalse(alg.computeAndConsiderNew());
+		assertFalse(alg.computeStep());
 		assertEquals(8,alg.lambda, UtilEjml.TEST_F64);
 	}
 

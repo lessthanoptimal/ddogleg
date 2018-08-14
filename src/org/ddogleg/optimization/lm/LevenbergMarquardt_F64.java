@@ -123,7 +123,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		computeResiduals(x,residuals);
 		fx = costFromResiduals(residuals);
 
-		mode = Mode.FULL_STEP;
+		mode = Mode.COMPUTE_DERIVATIVES;
 
 		if( verbose != null ) {
 			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  lambda ");
@@ -136,7 +136,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * Computes derived
 	 * @return true if it has converged or false if it has not
 	 */
-	protected boolean updateState() {
+	protected boolean updateDerivates() {
 		functionGradientHessian(x,true, gradient, hessian);
 
 		if( config.hessianScaling) {
@@ -153,7 +153,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return true;
 		}
 
-		mode = Mode.RETRY;
+		mode = Mode.DETERMINE_STEP;
 
 		return false;
 	}
@@ -163,7 +163,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @return true if it has converged or false if it has not
 	 */
 	@Override
-	protected boolean computeAndConsiderNew() {
+	protected boolean computeStep() {
 
 		// compute the new location and it's score
 		if( !computeStep(lambda,gradient,p) ) {
@@ -245,7 +245,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 	/**
 	 * The new state has been accepted. Switch the internal state over to this
-	 * @param fx_candidate
+	 * @param fx_candidate The new state
 	 */
 	private void acceptNewState( double fx_candidate ) {
 		DMatrixRMaj tmp = x;
@@ -254,7 +254,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 		fx = fx_candidate;
 
-		mode = Mode.FULL_STEP;
+		mode = Mode.COMPUTE_DERIVATIVES;
 	}
 
 	/**
@@ -301,6 +301,8 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			return false;
 		}
 
+		// In the book formulation it solves something like (B + lambda*I)*p = -g
+		// but we don't want to modify g, so we apply the negative to the step instead
 		if( hessian.solve(gradient,step) ) {
 			CommonOps_DDRM.scale(-1, step);
 			return true;

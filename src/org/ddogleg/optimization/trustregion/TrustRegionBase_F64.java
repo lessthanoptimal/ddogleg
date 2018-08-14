@@ -112,7 +112,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			}
 			mode = TrustRegionBase_F64.Mode.CONVERGED;
 		} else {
-			mode = TrustRegionBase_F64.Mode.FULL_STEP;
+			mode = TrustRegionBase_F64.Mode.COMPUTE_DERIVATIVES;
 		}
 	}
 
@@ -121,7 +121,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @return true if it has converged.
 	 */
 	@Override
-	protected boolean updateState() {
+	protected boolean updateDerivates() {
 		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
 
 		if( config.hessianScaling ) {
@@ -151,7 +151,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @return true if it has converged.
 	 */
 	@Override
-	protected boolean computeAndConsiderNew() {
+	protected boolean computeStep() {
 		// If first iteration and automatic
 		if( regionRadius == -1 ) {
 			// user has selected unconstrained method for initial step size
@@ -211,7 +211,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			mode = Mode.CONVERGED;
 			return true;
 		} else {
-			mode = Mode.FULL_STEP;
+			mode = Mode.COMPUTE_DERIVATIVES;
 			return false;
 		}
 	}
@@ -268,7 +268,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 			return acceptNewState(converged,fx_candidate);
 		} else {
-			mode = Mode.RETRY;
+			mode = Mode.DETERMINE_STEP;
 			return false;
 		}
 	}

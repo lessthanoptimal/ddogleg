@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.HessianMath_DDRM;
@@ -83,22 +84,22 @@ public class TestTrustRegionBase_F64 {
 	@Test
 	public void considerUpdate() {
 		// Everything goes well.
-		considerUpdate(1,1.1,0.1,0.1, true);
+		considerUpdate(1,1.1,0.1,0.1, false,true);
 
 		// Score improved by a very small amount relative to distance traveled
-		considerUpdate(1,1.1,0.1,1e10, true);
+		considerUpdate(1,1.1,0.1,1e10, false,true);
 		// poor prediction causes noise
-		considerUpdate(1,1.1,0.001,0.1, true);
+		considerUpdate(1,1.1,0.001,0.1, false,true);
 
 		// the model predicted a much larger gain than there was
-		considerUpdate(1,1.1,2.1,0.1, true);
+		considerUpdate(1,1.1,2.1,0.1, false,true);
 
 		// cost increased
-		considerUpdate(1.0001,1,0.1,0.1, false);
+		considerUpdate(1.0001,1,0.1,0.1, false,false);
 	}
 
 	protected void considerUpdate(double fx_candiate, double fx, double predictedReduction, double stepLength,
-								  boolean expected )
+								  boolean converged , boolean accepted)
 	{
 		ConfigTrustRegion config = new ConfigTrustRegion();
 
@@ -107,11 +108,17 @@ public class TestTrustRegionBase_F64 {
 
 		alg.regionRadius = 2;
 
-		assertEquals(false, alg.considerCandidate(fx_candiate,fx,predictedReduction,stepLength));
+		assertEquals(converged, alg.considerCandidate(fx_candiate,fx,predictedReduction,stepLength));
 
 		double ratio = (fx-fx_candiate)/predictedReduction;
 
-		if( expected ) {
+		if( fx_candiate < fx ) {
+			assertEquals(GaussNewtonBase_F64.Mode.COMPUTE_DERIVATIVES,alg.mode());
+		} else {
+			assertEquals(GaussNewtonBase_F64.Mode.DETERMINE_STEP,alg.mode());
+		}
+
+		if( !accepted ) {
 			assertEquals(2*0.5,alg.regionRadius);
 		} else {
 			if (ratio <= 0.5) {

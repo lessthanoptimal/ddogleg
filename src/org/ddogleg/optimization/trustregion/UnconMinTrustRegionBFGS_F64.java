@@ -158,7 +158,7 @@ public class UnconMinTrustRegionBFGS_F64
 
 	@Override
 	public boolean isUpdated() {
-		return mode == Mode.FULL_STEP;
+		return mode == Mode.COMPUTE_DERIVATIVES;
 	}
 
 	@Override

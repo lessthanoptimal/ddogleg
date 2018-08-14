@@ -55,7 +55,7 @@ public class TestGaussNewtonBase_F64 {
 		assertEquals(0,alg.totalSelectSteps);
 
 
-		assertEquals(GaussNewtonBase_F64.Mode.FULL_STEP,alg.mode);
+		assertEquals(GaussNewtonBase_F64.Mode.COMPUTE_DERIVATIVES,alg.mode);
 	}
 
 	@Test
@@ -156,12 +156,12 @@ public class TestGaussNewtonBase_F64 {
 		}
 
 		@Override
-		protected boolean updateState() {
+		protected boolean updateDerivates() {
 			return false;
 		}
 
 		@Override
-		protected boolean computeAndConsiderNew() {
+		protected boolean computeStep() {
 			return false;
 		}
 

@@ -101,7 +101,7 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 
 	@Override
 	public boolean isUpdated() {
-		return mode == Mode.FULL_STEP;
+		return mode == Mode.COMPUTE_DERIVATIVES;
 	}
 
 	@Override

@@ -61,7 +61,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	protected DMatrixRMaj hessianScaling = new DMatrixRMaj(1,1);
 
 	// which processing step it's on
-	protected Mode mode = Mode.FULL_STEP;
+	protected Mode mode = Mode.COMPUTE_DERIVATIVES;
 
 	// number of each type of step it has taken
 	protected int totalFullSteps, totalSelectSteps;
@@ -110,18 +110,18 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	public boolean iterate() {
 		boolean converged;
 		switch( mode ) {
-			case FULL_STEP:
+			case COMPUTE_DERIVATIVES:
 				totalFullSteps++;
-				converged = updateState();
+				converged = updateDerivates();
 				if( !converged ) {
 					totalSelectSteps++;
-					converged = computeAndConsiderNew();
+					converged = computeStep();
 				}
 				break;
 
-			case RETRY:
+			case DETERMINE_STEP:
 				totalSelectSteps++;
-				converged = computeAndConsiderNew();
+				converged = computeStep();
 				break;
 
 			case CONVERGED:
@@ -143,14 +143,14 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	 * Computes all the derived data structures and attempts to update the parameters
 	 * @return true if it has converged.
 	 */
-	protected abstract boolean updateState();
+	protected abstract boolean updateDerivates();
 
 	/**
 	 * Selects the next step
 	 *
 	 * @return true if it has converged.
 	 */
-	protected abstract boolean computeAndConsiderNew();
+	protected abstract boolean computeStep();
 
 	/**
 	 * Sets scaling to the sqrt() of the diagonal elements in the Hessian matrix
@@ -243,8 +243,8 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	 * Optimization mode
 	 */
 	public enum Mode {
-		FULL_STEP,
-		RETRY,
+		COMPUTE_DERIVATIVES,
+		DETERMINE_STEP,
 		CONVERGED
 	}
 
