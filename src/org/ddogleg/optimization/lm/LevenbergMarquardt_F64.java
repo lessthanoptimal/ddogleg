@@ -126,9 +126,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		mode = Mode.FULL_STEP;
 
 		if( verbose != null ) {
-			verbose.println("Steps     fx        change      |step|     max(g)  tr-ratio  lambda ");
-			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
-					totalFullSteps, fx, 0.0,0.0,0.0, 0.0, lambda);
+			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  lambda ");
+			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
+					totalFullSteps, fx, 0.0,0.0,0.0,0.0, 0.0, lambda);
 		}
 	}
 
@@ -225,8 +225,8 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( verbose != null ) {
 			// TODO compute elsewhere ?
 			double length_p = NormOps_DDRM.normF(p);
-			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
-					totalFullSteps, fx_candidate, fx_candidate - fx,length_p,g_max, ratio, lambda);
+			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+					totalFullSteps, fx_candidate, fx_candidate - fx,length_p,ftest_val,gtest_val, ratio, lambda);
 		}
 
 		if( accepted ) {
@@ -261,6 +261,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			throw new OptimizationException("Score got worse. Shoul have been caught earlier!");
 
 		// f-test. avoid potential divide by zero errors
+		ftest_val = 1.0-fx/fx_prev; // for print later on
 		return config.ftol * fx_prev >= fx_prev - fx;
 	}
 

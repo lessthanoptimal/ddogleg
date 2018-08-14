@@ -53,7 +53,6 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	 * Storage for the gradient
 	 */
 	public DMatrixRMaj gradient = new DMatrixRMaj(1,1);
-	public double g_max; // max(abs(g[:]))
 
 	// Is the value of x being passed in for the hessian the same as the value of x used to compute the cost
 	protected boolean sameStateAsCost;
@@ -73,6 +72,9 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 
 	// Optimization configuration
 	public C config;
+
+	// value of convergence tests after the last test
+	public double ftest_val,gtest_val;
 
 	public GaussNewtonBase_F64(HM hessian) {
 		this.hessian = hessian;
@@ -203,12 +205,12 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	 * @return true if converged or false if it hasn't converged
 	 */
 	protected boolean checkConvergenceGTest( DMatrixRMaj g ) {
-		g_max = 0;
+		gtest_val = 0;
 		for (int i = 0; i < g.numRows; i++) {
 			double v = Math.abs(g.data[i]);
-			if( v > g_max ) {
-				g_max = v;
-				if( g_max > config.gtol )
+			if( v > gtest_val ) {
+				gtest_val = v;
+				if( gtest_val > config.gtol )
 					return false;
 			}
 		}

@@ -109,7 +109,7 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
 			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
 			lm.configure(config);
-//			lm.setVerbose(true);
+//			lm.setVerbose(System.out,0);
 			return lm;
 		}
 	}
