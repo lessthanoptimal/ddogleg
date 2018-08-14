@@ -83,22 +83,22 @@ public class TestTrustRegionBase_F64 {
 	@Test
 	public void considerUpdate() {
 		// Everything goes well.
-		considerUpdate(1,1.1,0.1,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
+		considerUpdate(1,1.1,0.1,0.1, true);
 
 		// Score improved by a very small amount relative to distance traveled
-		considerUpdate(1,1.1,0.1,1e10, TrustRegionBase_F64.Convergence.ACCEPT);
+		considerUpdate(1,1.1,0.1,1e10, true);
 		// poor prediction causes noise
-		considerUpdate(1,1.1,0.001,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
+		considerUpdate(1,1.1,0.001,0.1, true);
 
 		// the model predicted a much larger gain than there was
-		considerUpdate(1,1.1,2.1,0.1, TrustRegionBase_F64.Convergence.ACCEPT);
+		considerUpdate(1,1.1,2.1,0.1, true);
 
 		// cost increased
-		considerUpdate(1.0001,1,0.1,0.1, TrustRegionBase_F64.Convergence.REJECT);
+		considerUpdate(1.0001,1,0.1,0.1, false);
 	}
 
 	protected void considerUpdate(double fx_candiate, double fx, double predictedReduction, double stepLength,
-								  TrustRegionBase_F64.Convergence expected )
+								  boolean expected )
 	{
 		ConfigTrustRegion config = new ConfigTrustRegion();
 
@@ -107,21 +107,18 @@ public class TestTrustRegionBase_F64 {
 
 		alg.regionRadius = 2;
 
-		assertEquals(expected, alg.considerCandidate(fx_candiate,fx,predictedReduction,stepLength));
+		assertEquals(false, alg.considerCandidate(fx_candiate,fx,predictedReduction,stepLength));
 
 		double ratio = (fx-fx_candiate)/predictedReduction;
 
-		switch( expected ) {
-			case REJECT:
-				assertEquals(2*0.5,alg.regionRadius);
-				break;
-
-			default:
-				if( ratio <= 0.5 ) {
-					assertEquals(2*0.5,alg.regionRadius);
-				} else {
-					assertEquals(Math.max(3*stepLength,2),alg.regionRadius);
-				}
+		if( expected ) {
+			assertEquals(2*0.5,alg.regionRadius);
+		} else {
+			if (ratio <= 0.5) {
+				assertEquals(2 * 0.5, alg.regionRadius);
+			} else {
+				assertEquals(Math.max(3 * stepLength, 2), alg.regionRadius);
+			}
 		}
 	}
 

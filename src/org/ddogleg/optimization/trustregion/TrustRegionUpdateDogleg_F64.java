@@ -147,7 +147,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 
 		} else {
 			if( verbose != null )
-				verbose.println("   not positive-definite.");
+				verbose.println("   not positive-definite. gBg="+gBg);
 			// Cauchy step for negative semi-definite systems
 			stepLength = regionRadius;
 			CommonOps_DDRM.scale(-stepLength, direction,step);

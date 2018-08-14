@@ -97,10 +97,19 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 		fx = cost(x);
 
+		if( verbose != null ) {
+			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  region ");
+			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
+					totalSelectSteps, fx, 0.0,0.0,0.0,0.0, 0.0, regionRadius);
+		}
+
 		this.parameterUpdate.initialize(this,numberOfParameters, minimumFunctionValue);
 
 		// a perfect initial guess is a pathological case. easiest to handle it here
 		if( fx <= minimumFunctionValue ) {
+			if( verbose != null ) {
+				verbose.println("Converged minimum value");
+			}
 			mode = TrustRegionBase_F64.Mode.CONVERGED;
 		} else {
 			mode = TrustRegionBase_F64.Mode.FULL_STEP;
@@ -122,8 +131,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 		// Convergence should be tested on scaled variables to remove their arbitrary natural scale
 		// from influencing convergence
-		if( checkConvergenceGTest(gradient))
+		if( checkConvergenceGTest(gradient)) {
+			if( verbose != null ) {
+				verbose.println("Converged g-test");
+			}
 			return true;
+		}
 
 		gradientNorm = NormOps_DDRM.normF(gradient);
 		if(UtilEjml.isUncountable(gradientNorm))
@@ -180,18 +193,9 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		sameStateAsCost = true;
 
 		// NOTE: step length was computed using the weighted/scaled version of 'p', which is correct
-		Convergence result = considerCandidate(fx_candidate,fx,
+		return considerCandidate(fx_candidate,fx,
 				parameterUpdate.getPredictedReduction(),
 				parameterUpdate.getStepLength());
-
-		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
-		if ( result != Convergence.REJECT ) {
-			boolean converged = checkConvergenceFTest(fx_candidate,fx);
-			return acceptNewState(converged,fx_candidate);
-		} else {
-			mode = Mode.RETRY;
-			return false;
-		}
 	}
 
 	protected boolean acceptNewState(boolean converged , double fx_candidate) {
@@ -228,7 +232,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @param stepLength The length of the step, i.e. |p|
 	 * @return true if it should update the state or false if it should try agian
 	 */
-	protected Convergence considerCandidate(double fx_candidate, double fx_prev,
+	protected boolean considerCandidate(double fx_candidate, double fx_prev,
 											double predictedReduction, double stepLength ) {
 
 		// compute model prediction accuracy
@@ -237,7 +241,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		if( actualReduction == 0 || predictedReduction == 0 ) {
 			if( verbose != null )
 				verbose.println(totalFullSteps+" reduction of zero");
-			return Convergence.ACCEPT;
+			return true;
 		}
 
 		double ratio = actualReduction/predictedReduction;
@@ -251,14 +255,22 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			}
 		}
 
-		if( verbose != null )
-			verbose.println(totalFullSteps+" fx_candidate="+fx_candidate+" ratio="+ratio+" region="+regionRadius);
-
-//		System.out.println(totalRetries+" ratio="+ratio+"   rate="+((fx_prev-fx_candidate)/stepLength));
+		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
 		if( fx_candidate < fx_prev && ratio > 0 ) {
-			return Convergence.ACCEPT;
-		} else
-			return Convergence.REJECT;
+			boolean converged = checkConvergenceFTest(fx_candidate,fx_prev);
+			if( verbose != null ) {
+				verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
+						totalSelectSteps, fx_candidate, fx_candidate-fx_prev,stepLength,ftest_val,gtest_val, ratio, regionRadius);
+				if( converged ) {
+					System.out.println("Converged f-test");
+				}
+			}
+
+			return acceptNewState(converged,fx_candidate);
+		} else {
+			mode = Mode.RETRY;
+			return false;
+		}
 	}
 
 	/**
@@ -284,6 +296,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			throw new RuntimeException("BUG! Shouldn't have gotten this far");
 
 		// f-test. avoid potential divide by zero errors
+		ftest_val = 1.0 - fx/fx_prev;
 		return config.ftol * fx_prev >= fx_prev - fx;
 	}
 
@@ -343,16 +356,18 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		void setVerbose( PrintStream out , int level );
 	}
 
+	/**
+	 * Turns on printing of debug messages.
+	 * @param out Stream that is printed to. Set to null to disable
+	 * @param level 0=Debug from solver. > 0 is debug from solver and update
+	 */
 	@Override
 	public void setVerbose(@Nullable PrintStream out, int level) {
 		super.setVerbose(out, level);
-		this.parameterUpdate.setVerbose(verbose,level);
+		if( level > 0 )
+			this.parameterUpdate.setVerbose(verbose,level);
 	}
 
-	protected enum Convergence {
-		REJECT,
-		ACCEPT
-	}
 
 	public void configure(ConfigTrustRegion config) {
 		if( config.regionInitial <= 0 && (config.regionInitial != -1 && config.regionInitial != -2 ))

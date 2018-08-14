@@ -64,7 +64,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	protected Mode mode = Mode.FULL_STEP;
 
 	// number of each type of step it has taken
-	protected int totalFullSteps, totalRetries;
+	protected int totalFullSteps, totalSelectSteps;
 
 	// If not null then print additional information to this stream
 	protected PrintStream verbose;
@@ -99,7 +99,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 		sameStateAsCost = true;
 
 		totalFullSteps = 0;
-		totalRetries = 0;
+		totalSelectSteps = 0;
 	}
 
 	/**
@@ -113,12 +113,14 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 			case FULL_STEP:
 				totalFullSteps++;
 				converged = updateState();
-				if( !converged )
+				if( !converged ) {
+					totalSelectSteps++;
 					converged = computeAndConsiderNew();
+				}
 				break;
 
 			case RETRY:
-				totalRetries++;
+				totalSelectSteps++;
 				converged = computeAndConsiderNew();
 				break;
 

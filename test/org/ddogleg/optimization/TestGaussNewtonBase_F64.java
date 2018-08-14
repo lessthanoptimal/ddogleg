@@ -42,7 +42,7 @@ public class TestGaussNewtonBase_F64 {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 
 		alg.totalFullSteps = 10;
-		alg.totalRetries = 11;
+		alg.totalSelectSteps = 11;
 
 		double x[] = new double[]{1,2};
 		alg.initialize(x,2);
@@ -52,7 +52,7 @@ public class TestGaussNewtonBase_F64 {
 		assertEquals(2,alg.gradient.numRows);
 
 		assertEquals(0,alg.totalFullSteps);
-		assertEquals(0,alg.totalRetries);
+		assertEquals(0,alg.totalSelectSteps);
 
 
 		assertEquals(GaussNewtonBase_F64.Mode.FULL_STEP,alg.mode);

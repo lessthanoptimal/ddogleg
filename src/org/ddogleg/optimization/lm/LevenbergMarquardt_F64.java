@@ -128,7 +128,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( verbose != null ) {
 			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  lambda ");
 			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
-					totalFullSteps, fx, 0.0,0.0,0.0,0.0, 0.0, lambda);
+					totalSelectSteps, fx, 0.0,0.0,0.0,0.0, 0.0, lambda);
 		}
 	}
 
@@ -146,8 +146,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 		hessian.extractDiagonals(diagOrig);
 
-		if( checkConvergenceGTest(gradient) )
+		if( checkConvergenceGTest(gradient) ) {
+			if( verbose != null ) {
+				verbose.println("Converged g-test");
+			}
 			return true;
+		}
 
 		mode = Mode.RETRY;
 
@@ -222,17 +226,19 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		if( UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu) )
 			throw new OptimizationException("BUG! lambda="+lambda+"  nu="+nu);
 
-		if( verbose != null ) {
-			// TODO compute elsewhere ?
-			double length_p = NormOps_DDRM.normF(p);
-			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
-					totalFullSteps, fx_candidate, fx_candidate - fx,length_p,ftest_val,gtest_val, ratio, lambda);
-		}
-
 		if( accepted ) {
-			double fx_prev = fx;
+			boolean converged = checkConvergenceFTest(fx_candidate,fx);
+			if( verbose != null ) {
+				double length_p = NormOps_DDRM.normF(p); // TODO compute elsewhere ?
+				verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.3f   %6.2E\n",
+						totalSelectSteps, fx_candidate, fx_candidate - fx,length_p,ftest_val,gtest_val, ratio, lambda);
+				if( converged ) {
+					verbose.println("Converged f-test");
+				}
+			}
+
 			acceptNewState(fx_candidate);
-			return maximumLambdaNu() || checkConvergenceFTest(fx_candidate,fx_prev);
+			return maximumLambdaNu() || converged;
 		} else
 			return false;
 	}
