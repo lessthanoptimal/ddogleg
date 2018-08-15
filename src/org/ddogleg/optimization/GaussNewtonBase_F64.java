@@ -163,6 +163,8 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	/**
 	 * Applies the standard formula for computing scaling. This is broken off into its own
 	 * function so that it easily invoked if the function above is overridden
+	 *
+	 * @param scaling Vector containing scaling information
 	 */
 	public void computeHessianScaling(DMatrixRMaj scaling ) {
 

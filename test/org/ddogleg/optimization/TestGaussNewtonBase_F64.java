@@ -100,12 +100,25 @@ public class TestGaussNewtonBase_F64 {
 	}
 
 	@Test
-	public void computeScaling() {
-		fail("implement");
+	public void computeHessianScaling() {
+		double d[] = {1,2,3,-0.001,0};
+		DMatrixRMaj m = new DMatrixRMaj(d);
+
+		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
+		alg.computeHessianScaling(m);
+
+		// make sure it handled edge cases
+		for (int i = 0; i < m.numRows; i++) {
+			assertFalse( UtilEjml.isUncountable(m.get(i)));
+			assertTrue( m.get(i) > 0 );
+
+			// looser tolerance because it will have a small number added to it
+			assertEquals(Math.sqrt(Math.abs(d[i])+1e-12), m.get(i) , UtilEjml.TEST_F64_SQ);
+		}
 	}
 
 	@Test
-	public void applyScaling() {
+	public void applyHessianScaling() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 
 		DMatrixRMaj H = ((HessianMath_DDRM)alg.hessian).getHessian();
@@ -132,7 +145,7 @@ public class TestGaussNewtonBase_F64 {
 	}
 
 	@Test
-	public void undoScalingOnParameters() {
+	public void undoHessianScalingOnParameters() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 		alg.hessianScaling = new DMatrixRMaj(new double[][]{{1},{0.1},{2},{0.6}});
 

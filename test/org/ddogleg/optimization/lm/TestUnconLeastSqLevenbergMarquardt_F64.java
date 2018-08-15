@@ -19,8 +19,10 @@
 package org.ddogleg.optimization.lm;
 
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
+import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DDRM;
 import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DSCC;
+import org.ddogleg.optimization.lm.TestUnconLeastSqLevenbergMarquardtSchur_F64.MockResiduals;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DSCC;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
@@ -36,7 +38,8 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
@@ -44,15 +47,37 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
 	@Test
 	public void computeGradientHessian() {
-		fail("Implement");
+		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
+
+		MockResiduals residuals = new MockResiduals();
+		MockJacobian jacobian = new MockJacobian();
+		lm.setFunction(residuals,jacobian);
+		lm.residuals.reshape(2,1);
+		lm.hessian = new MockHessian();
+
+		DMatrixRMaj x = new DMatrixRMaj(2,1);
+		DMatrixRMaj g = new DMatrixRMaj(2,1);
+		lm.functionGradientHessian(x,true,g,lm.hessian);
+		assertFalse(residuals.called);
+
+		MockHessian h = (MockHessian)lm.hessian;
+		assertTrue(h.hessian);
+
+		lm.functionGradientHessian(x,false,g,lm.hessian);
+		assertTrue(residuals.called);
 	}
 
 	@Test
 	public void computeResiduals() {
 		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
 
-//		lm.computeResiduals();
-		fail("Implement");
+		MockResiduals residuals = new MockResiduals();
+		lm.setFunction(residuals,new MockJacobian());
+
+		DMatrixRMaj x = new DMatrixRMaj(1,1);
+		DMatrixRMaj r = new DMatrixRMaj(1,1);
+		lm.computeResiduals(x,r);
+		assertTrue(residuals.called);
 	}
 
 	@Override
@@ -111,6 +136,40 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;
+		}
+	}
+
+	public class MockJacobian implements FunctionNtoMxN<DMatrixRMaj> {
+
+		boolean called = false;
+		@Override
+		public void process(double[] input, DMatrixRMaj output) {
+			called = true;
+			output.reshape(2,3);
+		}
+
+		@Override
+		public DMatrixRMaj declareMatrixMxN() {
+			return null;
+		}
+
+		@Override
+		public int getNumOfInputsN() {
+			return 0;
+		}
+
+		@Override
+		public int getNumOfOutputsM() {
+			return 0;
+		}
+	}
+
+	private class MockHessian extends HessianLeastSquares_DDRM {
+		boolean hessian = false;
+
+		@Override
+		public void updateHessian(DMatrixRMaj jacobian) {
+			this.hessian = true;
 		}
 	}
 }

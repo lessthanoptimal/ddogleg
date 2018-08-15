@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestLevenbergMarquardt_F64 {
 
 	@Test
-	public void computeAndConsiderNew_solve_failed() {
+	public void computeStep_solve_failed() {
 		MockLevenbergMarquardt alg = new MockLevenbergMarquardt() {
 			@Override
 			protected boolean computeStep( double lambda, DMatrixRMaj gradient , DMatrixRMaj step ) {
@@ -46,6 +46,34 @@ public class TestLevenbergMarquardt_F64 {
 
 		assertFalse(alg.computeStep());
 		assertEquals(8,alg.lambda, UtilEjml.TEST_F64);
+	}
+
+	/**
+	 * Makes sure sure hessian scaling is correctly handled
+	 */
+	@Test
+	public void computeStep_hessianScaling() {
+
+		MockLevenbergMarquardt alg = new MockLevenbergMarquardt() {
+
+			@Override
+			protected boolean computeStep( double lambda, DMatrixRMaj gradient , DMatrixRMaj step ) {
+				return true;
+			}
+
+			@Override
+			protected void undoHessianScalingOnParameters(DMatrixRMaj p) {
+				undoCalled = true;
+			}
+		};
+
+		assertTrue(alg.computeStep());
+		assertFalse(alg.undoCalled);
+
+		alg.config.hessianScaling = true;
+
+		assertTrue(alg.computeStep());
+		assertTrue(alg.undoCalled);
 	}
 
 	@Test
@@ -73,16 +101,9 @@ public class TestLevenbergMarquardt_F64 {
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
-	/**
-	 * Checks to see if the diagonal elements are computed as expected
-	 */
-	@Test
-	public void computeStep() {
-		fail("Implement");
-	}
-
-
 	private class MockLevenbergMarquardt extends LevenbergMarquardt_F64<DMatrixRMaj, HessianMath> {
+
+		boolean undoCalled=false;
 
 		public MockLevenbergMarquardt() {
 			super(new MatrixMath_DDRM(), new HessianMath_DDRM());

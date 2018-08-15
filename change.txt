@@ -7,13 +7,11 @@ Version:  0.15
 Date:     2018
 
 - Non-Linear Optimization
-  * Rewrote and redesigned trust region
-  * TODO ADD L-BFGS
-  * TODO Add scaled Trust Region
-- Added Sparse non-linear optimization
-  * LevenbergDampened
-  * LevenbergMarquardtDampened
-  * LevenbergMarquardtSchur
+  * Rewrote and redesigned Trust-Region (TR) and Levenberg-Marquardt (LM)
+  * Scaled Hessian for least squares TR and LM
+  * Sparse LM and TR
+  * Schur Decomposition interface with TR and LM implementations
+  * Better verbose mode
 - Added float circular queues
 - GrowQueue
   * Added contains()
