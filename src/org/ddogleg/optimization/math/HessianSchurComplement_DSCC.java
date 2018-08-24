@@ -83,10 +83,12 @@ public class HessianSchurComplement_DSCC
 
 	@Override
 	public void init(int numParameters) {
-		// The structure will be computed in the first iteration then fixed from then on
-		// saves a tiny bit of memory and time
-		solverA.setStructureLocked(false);
-		solverD.setStructureLocked(false);
+		// CODE BELOW IS COMMENTED OUT TO PREVENT A BAD IDEA FROM BEING REPEATED
+		// In theory, you could lock the structure and avoid the computation. However, one of the
+		// matrix multiplications algorithms is a bit too smart and refuses to fill in zeros.
+		// This changes the structure! A quick test showed no noticeable change in speed on a large system.
+//		solverA.setStructureLocked(false);
+//		solverD.setStructureLocked(false);
 	}
 
 	/**
@@ -148,7 +150,7 @@ public class HessianSchurComplement_DSCC
 		// Don't use quality to reject a solution since it's meaning is too dependent on implementation
 		if( !solverA.setA(A) )
 			return false;
-		solverA.setStructureLocked(true);
+//		solverA.setStructureLocked(true); // for why this is commented out see above
 
 		return true;
 	}
@@ -175,13 +177,10 @@ public class HessianSchurComplement_DSCC
 
 		// Reduced System
 		// D_m*x_2 = b_2
-//		for (int i = 0; i < D_m.numRows; i++) {
-//			D_m.set(i,i, D_m.get(i,i) + 1e-15 );
-//		}
 		if( !solverD.setA(D_m) ) {
 			return false;
 		}
-		solverD.setStructureLocked(true);
+//		solverD.setStructureLocked(true); // for why this is commented out see above
 		x2.reshape(D_m.numRows,b2_m.numCols);
 		solverD.solve(b2_m,x2);
 

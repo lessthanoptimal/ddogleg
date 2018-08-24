@@ -33,9 +33,8 @@ public class EvaluateLevenbergMarquardt extends UnconstrainedLeastSquaresEvaluat
 	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
 
 		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
-//		config.mixture = 0.2;
-//		config.mixture = 0;
-//		config.mixture = 1;
+		config.dampeningInitial = 1e-8;
+		config.hessianScaling = true;
 
 		boolean robust = false;
 
