@@ -1,6 +1,6 @@
 
 plugins {
-    id "com.peterabeles.gversion" version "1.2.4"
+    id "com.peterabeles.gversion" version "1.2.5"
 }
 
 apply plugin: 'idea'
