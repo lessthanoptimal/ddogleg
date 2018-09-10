@@ -54,8 +54,8 @@ public class ExampleRobustModelFit {
 		// RANSAC or LMedS work well here
 		ModelMatcher<Line2D,Point2D> alg =
 				new Ransac<>(234234, manager, generator, distance, 500, 0.01);
-//		ModelMatcher<Line2D,Point2D> alg =
-//				new LeastMedianOfSquares<Line2D, Point2D>(234234,100,0.1,0.5,generator,distance);
+		// ModelMatcher<Line2D,Point2D> alg =
+		//		new LeastMedianOfSquares<Line2D, Point2D>(234234,100,0.1,0.5,generator,distance);
 
 		if( !alg.process(points) )
 			throw new RuntimeException("Robust fit failed!");

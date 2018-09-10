@@ -1,0 +1,70 @@
+Total number of combinations = 6
+
+i =  0 || cat dog
+i =  1 || cat bird
+i =  2 || cat moose
+i =  3 || dog bird
+i =  4 || dog moose
+i =  5 || bird moose
+
+Reverse
+i =  0 || bird moose
+i =  1 || dog moose
+i =  2 || dog bird
+i =  3 || cat moose
+i =  4 || cat bird
+i =  5 || cat dog
+
+
+Total number of permutations = 24
+
+i =  0 || cat dog bird moose
+i =  1 || cat dog moose bird
+i =  2 || cat bird dog moose
+i =  3 || cat bird moose dog
+i =  4 || cat moose bird dog
+i =  5 || cat moose dog bird
+i =  6 || dog cat bird moose
+i =  7 || dog cat moose bird
+i =  8 || dog bird cat moose
+i =  9 || dog bird moose cat
+i = 10 || dog moose bird cat
+i = 11 || dog moose cat bird
+i = 12 || bird dog cat moose
+i = 13 || bird dog moose cat
+i = 14 || bird cat dog moose
+i = 15 || bird cat moose dog
+i = 16 || bird moose cat dog
+i = 17 || bird moose dog cat
+i = 18 || moose dog bird cat
+i = 19 || moose dog cat bird
+i = 20 || moose bird dog cat
+i = 21 || moose bird cat dog
+i = 22 || moose cat bird dog
+i = 23 || moose cat dog bird
+
+Reverse
+i =  0 || moose cat dog bird
+i =  1 || moose cat bird dog
+i =  2 || moose bird cat dog
+i =  3 || moose bird dog cat
+i =  4 || moose dog cat bird
+i =  5 || moose dog bird cat
+i =  6 || bird moose dog cat
+i =  7 || bird moose cat dog
+i =  8 || bird cat moose dog
+i =  9 || bird cat dog moose
+i = 10 || bird dog moose cat
+i = 11 || bird dog cat moose
+i = 12 || dog moose cat bird
+i = 13 || dog moose bird cat
+i = 14 || dog bird moose cat
+i = 15 || dog bird cat moose
+i = 16 || dog cat moose bird
+i = 17 || dog cat bird moose
+i = 18 || cat moose dog bird
+i = 19 || cat moose bird dog
+i = 20 || cat bird moose dog
+i = 21 || cat bird dog moose
+i = 22 || cat dog moose bird
+i = 23 || cat dog bird moose

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -46,29 +46,8 @@ public class ExampleClustering {
 	// if true it will create the clusters from a gaussian distribution.
 	// Otherwise an uniform distribution is used.
 	public static boolean gaussian = true;
-	public static Random rand = new Random();
+	public static Random rand = new Random(324);
 	public static boolean clicked = false;
-
-	public static List<double[]> createCluster( double x , double y , double width , int N ) {
-
-		List<double[]> points = new ArrayList<double[]>();
-
-		for (int i = 0; i < N; i++) {
-			double[] p = new double[2];
-
-			if ( gaussian ) {
-				p[0] = rand.nextGaussian()*width/3+x;
-				p[1] = rand.nextGaussian()*width/3+y;
-			} else {
-				p[0] = rand.nextDouble()*width-width/2+x;
-				p[1] = rand.nextDouble()*width-width/2+y;
-			}
-
-			points.add(p);
-		}
-
-		return points;
-	}
 
 	public static void main(String[] args) {
 		List<double[]> points = new ArrayList<double[]>();
@@ -82,7 +61,7 @@ public class ExampleClustering {
 		Collections.shuffle(points);
 
 		ComputeClusters<double[]> cluster = FactoryClustering.kMeans_F64(null,1000,100, 1e-8);
-//		ComputeClusters<double[]> cluster = FactoryClustering.gaussianMixtureModelEM_F64(1000, 1e-8);
+		// ComputeClusters<double[]> cluster = FactoryClustering.gaussianMixtureModelEM_F64(1000, 1e-8);
 
 		cluster.init(2, rand.nextLong());
 
@@ -109,6 +88,27 @@ public class ExampleClustering {
 			}
 			clicked = false;
 		}
+	}
+
+	public static List<double[]> createCluster( double x , double y , double width , int N ) {
+
+		List<double[]> points = new ArrayList<double[]>();
+
+		for (int i = 0; i < N; i++) {
+			double[] p = new double[2];
+
+			if ( gaussian ) {
+				p[0] = rand.nextGaussian()*width/3+x;
+				p[1] = rand.nextGaussian()*width/3+y;
+			} else {
+				p[0] = rand.nextDouble()*width-width/2+x;
+				p[1] = rand.nextDouble()*width-width/2+y;
+			}
+
+			points.add(p);
+		}
+
+		return points;
 	}
 
 	/**

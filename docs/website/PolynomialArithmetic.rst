@@ -3,10 +3,12 @@ Polynomial Arithmetic
 
 Example of how to perform basic arithmetic on polynomials.
 
-`ExamplePolynomialArithmetic.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.10/examples/src/org/ddogleg/example/ExamplePolynomialArithmetic.java>`_
+`ExamplePolynomialArithmetic.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/ExamplePolynomialArithmetic.java>`_
 
-.. literalinclude:: examples/ExamplePolynomialArithmetic.java
+.. literalinclude:: ../../examples/src/org/ddogleg/example/ExamplePolynomialArithmetic.java
    :language: java
    :linenos:
+   :start-after: public class
    :tab-width: 4
-   :dedent: 2
+   :dedent: 4
+

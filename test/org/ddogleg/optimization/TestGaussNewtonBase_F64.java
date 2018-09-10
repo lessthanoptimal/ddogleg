@@ -102,7 +102,7 @@ public class TestGaussNewtonBase_F64 {
 	@Test
 	public void computeHessianScaling() {
 		double d[] = {1,2,3,-0.001,0};
-		DMatrixRMaj m = new DMatrixRMaj(d);
+		DMatrixRMaj m = new DMatrixRMaj(d.length,1,true,d);
 
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 		alg.computeHessianScaling(m);

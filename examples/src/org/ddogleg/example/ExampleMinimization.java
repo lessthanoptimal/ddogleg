@@ -53,6 +53,9 @@ public class ExampleMinimization {
 		FunctionNtoM func = new FunctionLineDistanceEuclidean(points);
 		UnconstrainedLeastSquares<DMatrixRMaj> optimizer = FactoryOptimization.levenbergMarquardt(null, true);
 
+		// Send to standard out progress information
+		optimizer.setVerbose(System.out,0);
+
 		// if no jacobian is specified it will be computed numerically
 		optimizer.setFunction(func,null);
 
@@ -69,7 +72,7 @@ public class ExampleMinimization {
 		System.out.println("Final Error = "+optimizer.getFunctionValue());
 
 		// Compare the actual parameters to the found parameters
-		System.out.printf("Actual %5.2f  found %5.2f\n",lineX,found[0]);
-		System.out.printf("Actual %5.2f  found %5.2f\n",lineY,found[1]);
+		System.out.printf("Actual lineX %5.2f  found %5.2f\n",lineX,found[0]);
+		System.out.printf("Actual lineY %5.2f  found %5.2f\n",lineY,found[1]);
 	}
 }

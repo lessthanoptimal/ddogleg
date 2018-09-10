@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,10 @@
  */
 
 package org.ddogleg.solver;
+
+import org.ejml.UtilEjml;
+
+import java.text.DecimalFormat;
 
 /**
  * Data structure for storing polynomials.  Internally the coefficients are stored in an array from lowest degree
@@ -202,11 +206,17 @@ public class Polynomial {
 
 	@Override
 	public String toString() {
+		DecimalFormat format = new DecimalFormat("#");
+
 		String ret = "Poly("+size+")[ ";
 		for( int i = 0; i < size; i++ ) {
-			ret += c[i]+" ";
+			ret += UtilEjml.fancyString(c[i],format,9,4);
+			if( i > 0 )
+				ret += "*x^"+i;
+			ret += " ";
+
 		}
-		return ret +" ]";
+		return ret +"]";
 	}
 
 	public void print() {

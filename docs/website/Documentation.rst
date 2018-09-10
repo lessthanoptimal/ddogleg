@@ -28,7 +28,7 @@ List of Example Code:
 
 Latest example code at Github:
 
-https://github.com/lessthanoptimal/ddogleg/tree/v0.14/examples/src/org/ddogleg/example
+https://github.com/lessthanoptimal/ddogleg/tree/v0.15/examples/src/org/ddogleg/example
 
 Building the Library
 --------------------

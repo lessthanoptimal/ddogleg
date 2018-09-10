@@ -21,7 +21,7 @@ package org.ddogleg.example;
 import org.ddogleg.nn.FactoryNearestNeighbor;
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
-import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
+import org.ddogleg.nn.alg.KdTreeDistance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +37,16 @@ public class ExampleNearestNeighbor {
 
 	public static void main( String args[] ) {
 		// Easiest way to create a NN algorithm is using the factory below
-		// KdTreeEuclideanSq_F64 tells it what type of data structure is being searched
-		// F64 standards for double and means double[]. You can easily specify your own
-		// data type by changing what you pass in here
-		NearestNeighbor<double[]> nn = FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64(2));
+		// The class Distance (defined below) describes the data type which the kd tree will be processing
+		// It specifies the degree of freedom and provides access to each element in the data type
+		NearestNeighbor<Point2D> nn = FactoryNearestNeighbor.kdtree(new Distance());
 
 		// Create data that's going to be searched
-		List<double[]> points = new ArrayList<>();
+		List<Point2D> points = new ArrayList<>();
 
 		// For sake of demonstration add a set of points along the line
 		for( int i = 0; i < 10; i++ ) {
-			double[] p = new double[]{i,i*2};
-			points.add(p);
+			points.add(new Point2D(i,i*2));
 		}
 
 		// Pass the points and associated data.  Internally a data structure is constructed that enables fast lookup.
@@ -56,18 +54,45 @@ public class ExampleNearestNeighbor {
 		nn.setPoints(points,true);
 
 		// declare storage for where to store the result
-		NnData<double[]> result = new NnData<>();
+		NnData<Point2D> result = new NnData<>();
 
 		// It will look for the closest point to [1.1,2.2] which will be [1,2]
 		// The second parameter specifies the maximum distance away that it will consider for a neighbor
 		// set to -1 to set to the largest possible value
-		if( nn.findNearest(new double[]{1.1,2.2},-1,result) ) {
+		if( nn.findNearest(new Point2D(1.1,2.2),-1,result) ) {
 			System.out.println("Best match:");
-			System.out.println("   point     = "+result.point[0]+" "+result.point[1]);
+			System.out.println("   point     = "+result.point.x+" "+result.point.y);
 			System.out.println("   data      = "+result.index);
 			System.out.println("   distance  = "+result.distance);
 		} else {
 			System.out.println("No match found");
+		}
+	}
+
+	/**
+	 * Describe the Point2D data type so that the nearest-neighbor search will understand it
+	 */
+	public static class Distance implements KdTreeDistance<Point2D> {
+
+		// How far apart two points are
+		@Override
+		public double distance(Point2D a, Point2D b) {
+			return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+		}
+
+		// value for element index in point
+		@Override
+		public double valueAt(Point2D point, int index) {
+			if( index == 0 )
+				return point.x;
+			else
+				return point.y;
+		}
+
+		// Number of elements in point
+		@Override
+		public int length() {
+			return 2;
 		}
 	}
 }

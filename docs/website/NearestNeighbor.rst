@@ -5,8 +5,9 @@ A nearest neighbor searches for all the neighbors of a point inside of a set whi
 
 `ExampleNearestNeighbor.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.10/examples/src/org/ddogleg/example/ExampleNearestNeighbor.java>`_
 
-.. literalinclude:: examples/ExampleNearestNeighbor.java
+.. literalinclude:: ../../examples/src/org/ddogleg/example/ExampleNearestNeighbor.java
    :language: java
    :linenos:
+   :start-after: public class
    :tab-width: 4
-   :dedent: 2
+   :dedent: 4
