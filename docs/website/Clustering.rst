@@ -1,7 +1,7 @@
 Clustering
 #######################
 
-Example of how to cluster a set of points.  The points are randomly drawn from three different distributions.  The clustering algorithm will attempt to dermine which points belong to the same set.  
+Example of how to cluster a set of points.  The points are randomly drawn from three different distributions.  The clustering algorithm will attempt to dermine which points belong to the same set.
 
 .. figure:: clusters.png
    :scale: 100 %
