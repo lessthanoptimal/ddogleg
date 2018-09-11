@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.wrap;
+package org.ddogleg.optimization.derivative;
 
-import org.ddogleg.optimization.TrivialQuadraticStoS;
+import org.ddogleg.optimization.functions.FunctionStoS;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,21 +26,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestIndividual_to_CoupledDerivative {
+public class TestNumericalDerivativeForward {
 
-	/**
-	 * Sanity check to see if it blows up
-	 */
 	@Test
-	public void trivial() {
-		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
-		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
-		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);
+	public void simple() {
+		// give it a function where one variable does not effect the output
+		// to make the test more interesting
+		SimpleFunction f = new SimpleFunction();
+		NumericalDerivativeForward alg = new NumericalDerivativeForward(f);
 
-		double x = 2.1;
-		alg.setInput(x);
-		
-		assertEquals(f.process(x),alg.computeFunction(),1e-8);
-		assertEquals(g.process(x), alg.computeDerivative(), 1e-8);
+		double output = alg.process(3);
+
+		assertEquals(36, output, 1e-5);
+	}
+
+	private static class SimpleFunction implements FunctionStoS
+	{
+
+		@Override
+		public double process(double x) {
+
+
+			return 6*x*x;
+		}
 	}
 }

@@ -22,8 +22,8 @@ import org.ddogleg.optimization.FactoryNumericalDerivative;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.EquationsBFGS;
 import org.ddogleg.optimization.math.HessianBFGS;
+import org.ddogleg.optimization.quasinewton.EquationsBFGS;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 

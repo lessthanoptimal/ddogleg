@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 

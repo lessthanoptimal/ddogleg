@@ -20,8 +20,8 @@ package org.ddogleg.optimization.wrap;
 
 import org.ddogleg.optimization.CallCounterNtoN;
 import org.ddogleg.optimization.CallCounterNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
-import org.ddogleg.optimization.impl.TrivialFunctionNtoS;
+import org.ddogleg.optimization.TrivialFunctionNtoS;
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

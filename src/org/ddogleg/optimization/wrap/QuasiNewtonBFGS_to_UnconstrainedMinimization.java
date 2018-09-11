@@ -23,8 +23,8 @@ import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
-import org.ddogleg.optimization.impl.LineSearchMore94;
-import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
+import org.ddogleg.optimization.quasinewton.LineSearchMore94;
+import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
 
 import java.io.PrintStream;
 
@@ -83,8 +83,7 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 
 	@Override
 	public void setVerbose(PrintStream verbose, int level) {
-
-		lineSearch.setVerbose(verbose,level);
+		alg.setVerbose(verbose,level);
 	}
 
 	@Override

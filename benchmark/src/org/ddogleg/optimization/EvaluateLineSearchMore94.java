@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.LineSearchMore94;
+import org.ddogleg.optimization.quasinewton.LineSearchMore94;
 
 import java.util.List;
 

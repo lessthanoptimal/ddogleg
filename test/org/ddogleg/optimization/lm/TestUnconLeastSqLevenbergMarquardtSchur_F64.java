@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ddogleg.optimization.math.MatrixMath_DSCC;
 import org.ejml.data.DMatrixRMaj;

@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.ddogleg.optimization.funcs.*;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
 import org.ddogleg.optimization.wrap.LsToNonLinear;
 import org.ddogleg.optimization.wrap.LsToNonLinearDeriv;
 
@@ -70,6 +70,7 @@ public abstract class UnconstrainedMinimizationEvaluator {
 
 		UnconstrainedMinimization alg = createSearch();
 		alg.setFunction(f,d,minimValue);
+//		alg.setVerbose(System.out,0);
 
 		double initialValue = func.process(initial);
 

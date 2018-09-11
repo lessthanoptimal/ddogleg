@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.optimization.derivative.NumericalJacobianForward_DDRM;
+import org.ddogleg.optimization.derivative.NumericalJacobianForward_DSCC;
 import org.ddogleg.optimization.funcs.EvalFuncLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
-import org.ddogleg.optimization.impl.NumericalJacobianForward_DSCC;
 import org.ejml.data.DMatrix;
 
 /**

@@ -16,31 +16,27 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.wrap;
+package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.TrivialQuadraticStoS;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.ddogleg.optimization.functions.FunctionNtoS;
 
 /**
+ * Test function with a minimum at 0 and minimum value of 0.  One of the variables
+ * is redundant.
+ *
  * @author Peter Abeles
  */
-public class TestIndividual_to_CoupledDerivative {
+public class TrivialFunctionNtoS implements FunctionNtoS {
+	@Override
+	public int getNumOfInputsN() {
+		return 3;
+	}
 
-	/**
-	 * Sanity check to see if it blows up
-	 */
-	@Test
-	public void trivial() {
-		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
-		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
-		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);
+	@Override
+	public double process(double[] input) {
+		double x1 = input[0];
+		double x2 = input[1];
 
-		double x = 2.1;
-		alg.setInput(x);
-		
-		assertEquals(f.process(x),alg.computeFunction(),1e-8);
-		assertEquals(g.process(x), alg.computeDerivative(), 1e-8);
+		return 3*x1*x1 + 6*x2*x2 + 0.000001*Math.pow(x1+x2,4);
 	}
 }

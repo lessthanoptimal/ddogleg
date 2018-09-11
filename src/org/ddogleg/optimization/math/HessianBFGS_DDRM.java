@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.math;
 
-import org.ddogleg.optimization.impl.EquationsBFGS;
+import org.ddogleg.optimization.quasinewton.EquationsBFGS;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 

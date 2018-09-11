@@ -16,31 +16,35 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.wrap;
+package org.ddogleg.optimization.quasinewton;
 
-import org.ddogleg.optimization.TrivialQuadraticStoS;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.ddogleg.optimization.LineSearch;
+import org.ddogleg.optimization.functions.FunctionStoS;
+import org.ejml.UtilEjml;
 
 /**
  * @author Peter Abeles
  */
-public class TestIndividual_to_CoupledDerivative {
+public abstract class CommonLineSearch implements LineSearch {
 
-	/**
-	 * Sanity check to see if it blows up
-	 */
-	@Test
-	public void trivial() {
-		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
-		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
-		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);
+	// step tolerance change
+	protected double tolStep = UtilEjml.EPS;
 
-		double x = 2.1;
-		alg.setInput(x);
-		
-		assertEquals(f.process(x),alg.computeFunction(),1e-8);
-		assertEquals(g.process(x), alg.computeDerivative(), 1e-8);
-	}
+	// function being minimized
+	protected FunctionStoS function;
+	// derivative of function being minimized
+	protected FunctionStoS derivative;
+
+	// function value at alpha = 0
+	protected double valueZero;
+	// function derivative at alpha = 0
+	protected double derivZero;
+
+	// current step length, function value, and derivative
+	protected double alphaT;
+	protected double valueT;
+	protected double derivT;
+
+
+
 }

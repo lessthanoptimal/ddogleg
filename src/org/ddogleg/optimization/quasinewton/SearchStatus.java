@@ -16,31 +16,10 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.wrap;
-
-import org.ddogleg.optimization.TrivialQuadraticStoS;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package org.ddogleg.optimization.quasinewton;
 
 /**
  * @author Peter Abeles
  */
-public class TestIndividual_to_CoupledDerivative {
-
-	/**
-	 * Sanity check to see if it blows up
-	 */
-	@Test
-	public void trivial() {
-		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
-		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
-		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);
-
-		double x = 2.1;
-		alg.setInput(x);
-		
-		assertEquals(f.process(x),alg.computeFunction(),1e-8);
-		assertEquals(g.process(x), alg.computeDerivative(), 1e-8);
-	}
+public enum SearchStatus {
 }

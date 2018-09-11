@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
+import org.ddogleg.optimization.derivative.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
-import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;

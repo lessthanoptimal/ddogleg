@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.optimization.TrivialFunctionNtoS;
 import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
-import org.ddogleg.optimization.impl.TrivialFunctionNtoS;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

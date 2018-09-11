@@ -18,14 +18,14 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.LineSearchMore94;
-import org.ddogleg.optimization.impl.QuasiNewtonBFGS;
 import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
 import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardt_F64;
 import org.ddogleg.optimization.math.HessianBFGS;
 import org.ddogleg.optimization.math.HessianBFGS_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
+import org.ddogleg.optimization.quasinewton.LineSearchMore94;
+import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
 import org.ddogleg.optimization.trustregion.*;
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.ejml.data.DMatrixRMaj;

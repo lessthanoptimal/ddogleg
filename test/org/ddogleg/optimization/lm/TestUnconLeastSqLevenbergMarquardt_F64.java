@@ -18,10 +18,10 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquares_DDRM;
+import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquares_DSCC;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DDRM;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DSCC;
 import org.ddogleg.optimization.lm.TestUnconLeastSqLevenbergMarquardtSchur_F64.MockResiduals;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DSCC;

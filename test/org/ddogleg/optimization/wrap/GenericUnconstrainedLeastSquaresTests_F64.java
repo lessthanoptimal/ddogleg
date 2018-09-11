@@ -18,11 +18,11 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.optimization.TrivialLeastSquaresResidual;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
+import org.ddogleg.optimization.derivative.NumericalJacobianForward_DDRM;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
-import org.ddogleg.optimization.impl.NumericalJacobianForward_DDRM;
-import org.ddogleg.optimization.impl.TrivialLeastSquaresResidual;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;

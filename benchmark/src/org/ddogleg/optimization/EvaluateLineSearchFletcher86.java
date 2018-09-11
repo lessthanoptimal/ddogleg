@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ddogleg.optimization.impl.LineSearchFletcher86;
+import org.ddogleg.optimization.quasinewton.LineSearchFletcher86;
 
 import java.util.List;
 

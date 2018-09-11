@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.optimization.derivative.NumericalDerivativeForward;
+import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.FunctionStoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
-import org.ddogleg.optimization.impl.NumericalDerivativeForward;
-import org.ddogleg.optimization.impl.NumericalGradientForward;
 
 /**
  * Numerically computes the gradient and line derivative.  Results are cached independently for function output,

@@ -18,12 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
-import org.ddogleg.optimization.OptimizationException;
-import org.ddogleg.optimization.UnconstrainedLeastSquares;
-import org.ddogleg.optimization.UnconstrainedMinimization;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DDRM;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedLeastSquares_DSCC;
-import org.ddogleg.optimization.impl.CommonChecksUnconstrainedOptimization;
+import org.ddogleg.optimization.*;
 import org.ddogleg.optimization.math.*;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
