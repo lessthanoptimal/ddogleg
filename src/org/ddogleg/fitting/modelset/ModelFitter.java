@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,5 +35,12 @@ public interface ModelFitter<Model,Point> {
 	 * @param found The found model. Can be the same instance as initial.
 	 * @return true if a model was found and false if one was not.
 	 */
-	public boolean fitModel(List<Point> dataSet, Model initial, Model found);
+	boolean fitModel(List<Point> dataSet, Model initial, Model found);
+
+	/**
+	 * Returns the fit score. The meaning of the fit score is entirely implementation
+	 * dependent.
+	 * @return The fit score
+	 */
+	double getFitScore();
 }

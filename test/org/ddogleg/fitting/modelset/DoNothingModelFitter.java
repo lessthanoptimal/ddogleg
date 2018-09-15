@@ -49,6 +49,11 @@ public class DoNothingModelFitter implements ModelFitter<double[],Double> ,
 	}
 
 	@Override
+	public double getFitScore() {
+		return 0;
+	}
+
+	@Override
 	public int getMinimumPoints() {
 		return minPoints;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -47,6 +47,11 @@ public class MeanModelFitter implements ModelFitter<double[],Double> ,
 		foundParam[0] = mean;
 
 		return true;
+	}
+
+	@Override
+	public double getFitScore() {
+		return 0;
 	}
 
 	@Override

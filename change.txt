@@ -16,6 +16,7 @@ Date:     2018
 - GrowQueue
   * Added contains()
   * Added remove(a,b)
+  * Added indexOfGreatest() and indexOfLeast()
 - Misc
   * Added SwapElement
 - Nearest-Neighbor Search

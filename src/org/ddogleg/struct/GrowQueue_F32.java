@@ -266,6 +266,40 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		return -1;
 	}
 
+	public int indexOfGreatest() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		float best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] > best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected	;
+	}
+
+	public int indexOfLeast() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		float best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] < best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected;
+	}
+
 	@Override
 	public void sort() {
 		Arrays.sort(data,0,size);

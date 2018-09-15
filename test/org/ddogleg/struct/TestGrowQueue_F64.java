@@ -230,4 +230,30 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 		assertEquals(19/2,alg.getFraction(0.5), UtilEjml.TEST_F64);
 		assertEquals(19,alg.getFraction(1.0), UtilEjml.TEST_F64);
 	}
+
+	@Test
+	public void indexOfGreatest() {
+		GrowQueue_F64 alg = new GrowQueue_F64(20);
+
+		assertEquals(-1,alg.indexOfGreatest());
+
+		alg.add(-3);
+		alg.add(-2);
+		alg.add(-1);
+
+		assertEquals(2, alg.indexOfGreatest());
+	}
+
+	@Test
+	public void indexOfLeast() {
+		GrowQueue_F64 alg = new GrowQueue_F64(20);
+
+		assertEquals(-1,alg.indexOfLeast());
+
+		alg.add(-3);
+		alg.add(-2);
+		alg.add(-4);
+
+		assertEquals(2, alg.indexOfLeast());
+	}
 }
