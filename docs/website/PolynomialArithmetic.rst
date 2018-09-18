@@ -3,7 +3,7 @@ Polynomial Arithmetic
 
 Example of how to perform basic arithmetic on polynomials.
 
-`ExamplePolynomialArithmetic.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/ExamplePolynomialArithmetic.java>`_
+:gitexample:`ExamplePolynomialArithmetic.java`
 
 .. literalinclude:: ../../examples/src/org/ddogleg/example/ExamplePolynomialArithmetic.java
    :language: java

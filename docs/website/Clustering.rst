@@ -10,7 +10,7 @@ Example of how to cluster a set of points.  The points are randomly drawn from t
 
    Output from example. Each cluster has its own color and each point is colorized to show the cluster it belongs to.
 
-`ExampleClustering.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/ExampleClustering.java>`_
+:gitexample:`ExampleClustering.java`
 
 .. literalinclude:: ../../examples/src/org/ddogleg/example/ExampleClustering.java
    :language: java

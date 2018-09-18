@@ -1,5 +1,5 @@
 Unconstrained Non-Linear Optimization
-#######################
+#####################################
 
 Unconstrained non-linear optimization is a broad topic with a numerous to choose from for solving. DDogleg
 specializes in solving small to large scale problems, where large scale is defined around 100,000 parameters in
@@ -11,8 +11,8 @@ for you to read and learn more about this subject. DDogleg is designed so that a
 full advantage of all of its features, many of which are not available in other packages, then you need to understand
 the math.
 
-Summary of Unconstrained Minimization Methods
----------------------------------------------
+Unconstrained Minimization Methods
+----------------------------------
 
   .. math::
     \min\limits_{\bm{x} \in \Re^N} f(\bm{x})
@@ -20,7 +20,7 @@ Summary of Unconstrained Minimization Methods
 +-------------------------------+-------------+--------------+----------+-------------------+-------+--------+
 | **Method**                    | Iteration   | Convergence  | Singular | Negative-Definite | Dense | Sparse |
 +-------------------------------+-------------+--------------+----------+-------------------+-------+--------+
-| Quasi-Newton BFGS             | :math:`N^2` | Super Linear | ?        | ?                 | Yes   |        |
+| Quasi-Newton BFGS             | :math:`N^2` | Super Linear | Yes      | Yes               | Yes   |        |
 +-------------------------------+-------------+--------------+----------+-------------------+-------+--------+
 | Trust Region BFGS Cauchy      | :math:`N^2` | Linear       | Yes      | Yes               | Yes   | Yes    |
 +-------------------------------+-------------+--------------+----------+-------------------+-------+--------+
@@ -33,8 +33,8 @@ Summary of Unconstrained Minimization Methods
 * **Negative-Definite**: indicate that it can process negative definite systems
 * **Dense** and **Sparse**: indicate that dense and/or sparse matrices can be processed.
 
-Summary of Unconstrained Least Squares Methods
-----------------------------------------------
+Unconstrained Least Squares Methods
+-----------------------------------
 
   .. math::
       \min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
@@ -91,10 +91,16 @@ Recommended Reading
 Usage Examples
 --------------
 
-* Unconstrained Optimization (Quasi-Newton)
-* Unconstrained Least Squares (Levenberg-Marquardt)
-* Writing analytical gradient
+* :doc:`/optimization/NonLinearMinimization` (Quasi-Newton)
+* :doc:`/optimization/NonLinearLeastSquares` (Levenberg-Marquardt)
+* Writing analytical Gradient
 * Writing analytical Jacobian
+
+
+Convergence Tests
+-----------------
+
+TODO Summarize
 
 Numerical Derivatives
 ---------------------
@@ -106,10 +112,13 @@ Numerical Derivatives
 Schur Complement
 ----------------
 
+TODO Link to page here
 
 Weighted Least-Squares
 ----------------------
 
+Being able to directly specify a weight vector is planned for the future. For now you
+can scale the residuals directly and accomplish the same thing.
 
 Quasi-Newton BFGS
 -----------------
@@ -136,9 +145,15 @@ Levenberg-Marquardt
 - Configuration
 - Implementation Notes
 
+Hessian Scaling
+---------------
+
+TODO Summarize
 
 Tip: Input Scaling
 ------------------
+
+TODO link to external website on this subject
 
 
 

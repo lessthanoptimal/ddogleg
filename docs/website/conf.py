@@ -28,7 +28,8 @@ import sphinx_bootstrap_theme
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.imgmath'
+    'sphinx.ext.imgmath',
+    'sphinx.ext.extlinks'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -286,3 +287,7 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/','foo ')}
+extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/%s',
+                      '')}

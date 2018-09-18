@@ -4,7 +4,7 @@ Combinatorics
 Example that demonstrates how to compute all the combinations and permutations of a set. Each variant is printed. See
 example output below.
 
-`ExampleCombinatorics.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/ExampleCombinatorics.java>`_
+:gitexample:`ExampleCombinatorics.java`
 
 .. literalinclude:: ../../examples/src/org/ddogleg/example/ExampleCombinatorics.java
    :language: java

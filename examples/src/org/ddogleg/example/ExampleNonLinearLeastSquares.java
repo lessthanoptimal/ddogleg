@@ -33,7 +33,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class ExampleMinimization {
+public class ExampleNonLinearLeastSquares {
 
 	public static void main( String args[] ) {
 

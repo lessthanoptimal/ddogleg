@@ -1,9 +1,10 @@
 
-Works on sphinx 1.4.9
+Works on sphinx 1.8.0
          sphinx-bootstrap-theme-0.4.12
 
-sudo pip install Sphinx
-sudo pip install sphinx_bootstrap_theme
+pip install Sphinx
+pip install sphinx_bootstrap_theme
+sudo apt-get install dvipng
 
 make html
 then open _build in  browser

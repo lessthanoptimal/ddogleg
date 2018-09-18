@@ -3,7 +3,7 @@ Polynomial Root Finding
 
 The root of a polynomial is a complex number such that when feed into the polynomial will generate an output of 0.
 
-`ExamplePolynomialRoot.java <https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/ExamplePolynomialRoot.java>`_
+:gitexample:`ExamplePolynomialRoot.java`
 
 .. literalinclude:: ../../examples/src/org/ddogleg/example/ExamplePolynomialRoot.java
    :language: java
