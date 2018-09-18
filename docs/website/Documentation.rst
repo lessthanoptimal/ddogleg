@@ -19,16 +19,23 @@ List of Example Code:
 
 * :doc:`/Clustering`
 * :doc:`/Combinatorics`
-* :doc:`/Optimization`
+* :doc:`/optimization/NonLinearLeastSquares`
 * :doc:`/RobustModelFitting`
 * :doc:`/PolynomialArithmetic`
 * :doc:`/PolynomialRootFinding`
 * :doc:`/NearestNeighbor`
 
-
 Latest example code at Github:
 
 https://github.com/lessthanoptimal/ddogleg/tree/v0.15/examples/src/org/ddogleg/example
+
+Manuals
+-------
+
+Manuals are available only when a simple code example is insufficient and provide a more detailed explanation of the techniques available.
+
+* :doc:`/optimization/Manual`
+
 
 Building the Library
 --------------------

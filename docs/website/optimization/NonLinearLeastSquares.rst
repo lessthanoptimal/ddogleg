@@ -1,27 +1,25 @@
-Optimization
-#######################
+Non-Linear Least Squares
+########################
 
-The following code demonstrates non-linear optimization by finding the best fit line to a set of points. It does not cover
-all the possible options or techniques available for non-linear optimization. DDogleg can
-solve dense and sparse systems. Unconstrained minimization and Unconstrained least-squares. Has built in support for
-the Schur complement. There are numerous algorithms to choose from, multiple linear solvers to select, all of
-which are highly configurable. See the BLAH page for a list of numerical methods available and to the BLAH techreport for a detailed discussion of the methods used internally.
+
+The following code demonstrates non-linear optimization by finding the best fit line to a set of points. See
+the `optimization manual <Manual.html>`__ for an overview of all optimization techniques available in DDogleg.
 
 Here we will tackle a problem using dense unconstrained least-squares minimization with a numerical Jacobian.
 Unconstrained least-squares minimization solves problems which can be described by a function of the form:
 
   .. math::
 
-    \min\limits_{\bm{x} \in \Re^N} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
+    \min\limits_{\bm{x} \in \Re^N} f(\bm{x})=\frac{1}{2}\sum^m_{i=1} r^2_i(\bm{x})
 
-where :math:`r_j(\bm{x}) = f_i(x) - y_i` is a scalar function which outputs the residual, predicted value subtracted the observed value.
+where :math:`r_i(\bm{x}) = f_i(\bm{x}) - y_i` is a scalar function which outputs the residual for function :math:`i`, predicted value subtracted the observed value.
 By definition :math:`f(\bm{x}) \ge 0`. In DDogleg you don't define the :math:`f(\bm{x})` function directly but instead define the set of :math:`r_j(\bm{x})` functions
 by implementing FunctionNtoM. Implementations of FunctionNtoM take in an array with N elements and output an array with M elements.
 
 In this example we will consider a very simple unconstrained least-squares problem, fitting a line to a set of points.
-To solve non-linear problems you will need to select which method to use (Levenberg Mardquardt is usually a good choise),
+To solve non-linear problems you will need to select which method to use (Levenberg-Mardquardt is usually a good choice),
 define the function to minimize, and select an initial value.
-You can also specify a Jacobian, an N by M matrix which is the derivative of the residual functions. If you do not
+You can also specify a Jacobian, an N by M matrix, which is the residual functions' derivative. If you do not
 specify this function then it will be computed for you numerically.
 
 The code below walks you through each step.
