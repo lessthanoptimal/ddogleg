@@ -54,7 +54,7 @@ public class TestLineSearchMore94 {
 
 		// the initial value should pass all the tests with this setting
 		LineSearch alg = new LineSearchMore94().setConvergence(0.0001,0.1,0.001);
-		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d),0);
 
 		double valueZero = f.process(0);
 		double derivZero = d.process(0);
@@ -66,7 +66,7 @@ public class TestLineSearchMore94 {
 
 		// now try it with tighter bounds
 		alg = new LineSearchMore94().setConvergence(0.00001,0.000001,0.001);
-		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d),0);
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));
 		assertTrue(alg.isConverged());

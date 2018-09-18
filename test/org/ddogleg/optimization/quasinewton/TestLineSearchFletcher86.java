@@ -46,8 +46,9 @@ public class TestLineSearchFletcher86 {
 		FunctionStoS d = new TrivialQuadraticDerivStoS(expected);
 
 		// the initial value should pass all the tests with this setting
-		LineSearchFletcher86 alg = new LineSearchFletcher86(0.1,0.9,0,9,0.1,0.5);
-		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
+		LineSearchFletcher86 alg = new LineSearchFletcher86(9,0.1,0.5);
+		alg.setConvergence(0.1,0.9);
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d),0);
 
 		double valueZero = f.process(0);
 		double derivZero = d.process(0);
@@ -58,8 +59,9 @@ public class TestLineSearchFletcher86 {
 		double foundLoose = alg.getStep();
 
 		// now try it with tighter bounds
-		alg = new LineSearchFletcher86(1e-5,0.1,0,9,0.05,0.5);
-		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
+		alg = new LineSearchFletcher86(9,0.05,0.5);
+		alg.setConvergence(1e-5,0.1);
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d),0);
 		alg.init(valueZero,derivZero,initValue,1,0,100);
 		assertTrue(UtilOptimize.process(alg, 50));
 		double foundTight = alg.getStep();

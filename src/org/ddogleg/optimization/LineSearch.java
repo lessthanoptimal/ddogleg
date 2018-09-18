@@ -35,8 +35,9 @@ public interface LineSearch extends IterativeOptimization {
 	 * Sets the function being optimized.
 	 *
 	 * @param function Line search function and derivative
+	 * @param fmin Minimum possible function value
 	 */
-	void setFunction( CoupledDerivative function );
+	void setFunction( CoupledDerivative function , double fmin );
 
 	/**
 	 * Initializes and resets the line search.  In some implementations a reasonable
@@ -64,4 +65,9 @@ public interface LineSearch extends IterativeOptimization {
 	 * Function value at the current step
 	 */
 	double getFunction();
+
+	/**
+	 * from wolfe condition.  Used to estimate max line search step
+	 */
+	double getGTol();
 }

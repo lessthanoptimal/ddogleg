@@ -63,9 +63,6 @@ public class QuasiNewtonBFGS
 	// searches for a parameter that meets the Wolfe condition
 	private LineSearch lineSearch;
 	private double funcMinValue;
-	// from wolfe condition.  Used to estimate max line search step
-	// This must be the same as what's specified internally in 'lineSearch'
-	private double lineGTol;
 	// derivative at the start of the line search
 	private double derivAtZero;
 
@@ -110,22 +107,25 @@ public class QuasiNewtonBFGS
 	/**
 	 * Configures the search.
 	 *
-	 * @param function Function being optimized
 	 * @param lineSearch Line search that selects a solution that meets the Wolfe condition.
-	 * @param funcMinValue Minimum possible function value. E.g. 0 for least squares.
 	 */
-	public QuasiNewtonBFGS( GradientLineFunction function ,
-							LineSearch lineSearch ,
-							double funcMinValue )
+	public QuasiNewtonBFGS( LineSearch lineSearch )
 	{
 		this.lineSearch = lineSearch;
-		this.funcMinValue = funcMinValue;
+	}
+
+	/**
+	 * Specify the function being optimized
+	 * @param function Function to optimize
+	 * @param funcMinValue Minimum possible function value. E.g. 0 for least squares.
+	 */
+	public void setFunction( GradientLineFunction function , double funcMinValue ) {
 		this.function = function;
+		this.funcMinValue = funcMinValue;
 
-		lineSearch.setFunction(function);
-
+		lineSearch.setFunction(function,funcMinValue);
 		N = function.getN();
-		
+
 		B = new DMatrixRMaj(N,N);
 		searchVector = new DMatrixRMaj(N,1);
 		g = new DMatrixRMaj(N,1);
@@ -142,19 +142,15 @@ public class QuasiNewtonBFGS
 	 *
 	 * @param ftol Relative error tolerance for function value  0 {@code <=} ftol {@code <=} 1
 	 * @param gtol Absolute convergence based on gradient norm  0 {@code <=} gtol
-	 * @param lineGTol Slope coefficient for wolfe condition used in line search. 0 {@code <} lineGTol
 	 */
-	public void setConvergence( double ftol , double gtol , double lineGTol ) {
+	public void setConvergence( double ftol , double gtol ) {
 		if( ftol < 0 )
 			throw new IllegalArgumentException("ftol < 0");
 		if( gtol < 0 )
 			throw new IllegalArgumentException("gtol < 0");
-		if( lineGTol <= 0 )
-			throw new IllegalArgumentException("lineGTol <= 0");
 
 		this.ftol = ftol;
 		this.gtol = gtol;
-		this.lineGTol = lineGTol;
 	}
 
 	/**
@@ -293,7 +289,7 @@ public class QuasiNewtonBFGS
 		function.setLine(startPoint, direction);
 
 		// use wolfe condition to set the maximum step size
-		maxStep = (funcMinValue-funcAtStart)/(lineGTol*derivAtZero);
+		maxStep = (funcMinValue-funcAtStart)/(lineSearch.getGTol()*derivAtZero);
 		initialStep = 1 < maxStep ? 1 : maxStep;
 		invokeLineInitialize(funcAtStart,maxStep);
 
@@ -410,5 +406,13 @@ public class QuasiNewtonBFGS
 		this.verbose = out;
 		if( level != 0 )
 			this.lineSearch.setVerbose(out,level);
+	}
+
+	public LineSearch getLineSearch() {
+		return lineSearch;
+	}
+
+	public double getFuncMinValue() {
+		return funcMinValue;
 	}
 }

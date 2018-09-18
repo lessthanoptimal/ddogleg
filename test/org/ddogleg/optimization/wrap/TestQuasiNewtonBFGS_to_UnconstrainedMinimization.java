@@ -28,6 +28,6 @@ public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends GenericUnc
 
 	@Override
 	public UnconstrainedMinimization createAlgorithm() {
-		return FactoryOptimization.unconstrained();
+		return FactoryOptimization.quasiNewtonBfgs(null);
 	}
 }

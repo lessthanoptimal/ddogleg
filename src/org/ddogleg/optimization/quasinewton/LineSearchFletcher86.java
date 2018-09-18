@@ -105,16 +105,27 @@ public class LineSearchFletcher86 implements LineSearch {
 	
 	/**
 	 *
-	 * @param ftol Controls required reduction in value. Try 1e-4
-	 * @param gtol Controls decrease in derivative magnitude. Try 0.9
-	 * @param fmin Minimum acceptable value of f(x). zero for least squares.
 	 * @param t1 Prevents alpha from growing too large during bracket phase.  Try 9
 	 * @param t2 Prevents alpha from being too close to bounds during sectioning.  Recommend t2 {@code <} c2. Try 0.1
 	 * @param t3 Prevents alpha from being too close to bounds during sectioning.  Try 0.5
-
 	 */
-	public LineSearchFletcher86(double ftol, double gtol, double fmin,
-								double t1, double t2, double t3 ) {
+	public LineSearchFletcher86(double t1, double t2, double t3 )
+	{
+		this.t1 = t1;
+		this.t2 = t2;
+		this.t3 = t3;
+	}
+
+	public LineSearchFletcher86() {
+		this(9,0.1,0.5);
+	}
+
+	/**
+	 *
+	 * @param ftol Controls required reduction in value. Try 1e-4
+	 * @param gtol Controls decrease in derivative magnitude. Try 0.9
+	 */
+	public void setConvergence( double ftol, double gtol ) {
 		if( ftol < 0 )
 			throw new IllegalArgumentException("c1 must be more than zero");
 		else if( ftol > gtol)
@@ -124,19 +135,17 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		this.ftol = ftol;
 		this.gtol = gtol;
-		this.t1 = t1;
-		this.t2 = t2;
-		this.t3 = t3;
-		this.fmin = fmin;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setFunction(CoupledDerivative function ) {
+	public void setFunction(CoupledDerivative function , double fmin ) {
 		this.function = function;
+		this.fmin = fmin;
 	}
+
 
 	@Override
 	public void init(double funcAtZero, double derivAtZero, double funcAtInit, double initAlpha,
@@ -284,7 +293,8 @@ public class LineSearchFletcher86 implements LineSearch {
 
 		// see if there is a significant change in alpha
 		if( checkSmallStep() ) {
-			verbose.println("WARNING: Small steps");
+			if( verbose != null )
+				verbose.println("WARNING: Small steps");
 			return true;
 		}
 
@@ -375,6 +385,11 @@ public class LineSearchFletcher86 implements LineSearch {
 	@Override
 	public double getFunction() {
 		return fp;
+	}
+
+	@Override
+	public double getGTol() {
+		return gtol;
 	}
 
 	@Override

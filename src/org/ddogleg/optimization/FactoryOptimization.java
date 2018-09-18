@@ -24,6 +24,8 @@ import org.ddogleg.optimization.math.HessianBFGS;
 import org.ddogleg.optimization.math.HessianBFGS_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
+import org.ddogleg.optimization.quasinewton.ConfigQuasiNewton;
+import org.ddogleg.optimization.quasinewton.LineSearchFletcher86;
 import org.ddogleg.optimization.quasinewton.LineSearchMore94;
 import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
 import org.ddogleg.optimization.trustregion.*;
@@ -42,18 +44,6 @@ import javax.annotation.Nullable;
  * @author Peter Abeles
  */
 public class FactoryOptimization {
-	/**
-	 * <p>
-	 * Creates a solver for the unconstrained minimization problem.  Here a function has N parameters
-	 * and a single output.  The goal is the minimize the output given the function and its derivative.
-	 * </p>
-	 *
-	 * @return UnconstrainedMinimization
-	 */
-	public static UnconstrainedMinimization unconstrained()
-	{
-		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
-	}
 
 	/**
 	 * Returns an implementation of {@link QuasiNewtonBFGS} with {@link LineSearchMore94} for the internal line search.
@@ -62,8 +52,30 @@ public class FactoryOptimization {
 	 *
 	 * @return UnconstrainedMinimization
 	 */
-	public static QuasiNewtonBFGS_to_UnconstrainedMinimization createBfgsWithMore94() {
-		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
+	public static QuasiNewtonBFGS_to_UnconstrainedMinimization quasiNewtonBfgs(@Nullable ConfigQuasiNewton config ) {
+		if( config == null )
+			config = new ConfigQuasiNewton();
+
+		LineSearch lineSearch;
+		switch( config.lineSearch ) {
+			case FLETCHER86:
+				LineSearchFletcher86 fletcher86 = new LineSearchFletcher86();
+				fletcher86.setConvergence(1e-4,0.9);
+				lineSearch = fletcher86;
+				break;
+
+			case MORE94:
+				LineSearchMore94 more94 = new LineSearchMore94();
+				more94.setConvergence(1e-3,0.9,0.1);
+				lineSearch = more94;
+				break;
+
+			default:
+				throw new RuntimeException("Unknown line search. "+config.lineSearch);
+		}
+
+		QuasiNewtonBFGS qn = new QuasiNewtonBFGS(lineSearch);
+		return new QuasiNewtonBFGS_to_UnconstrainedMinimization(qn);
 	}
 
 	/**

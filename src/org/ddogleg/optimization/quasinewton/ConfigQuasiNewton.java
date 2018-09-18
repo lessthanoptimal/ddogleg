@@ -18,33 +18,41 @@
 
 package org.ddogleg.optimization.quasinewton;
 
-import org.ddogleg.optimization.LineSearch;
-import org.ddogleg.optimization.functions.FunctionStoS;
-import org.ejml.UtilEjml;
-
 /**
+ * Configuration for {@link QuasiNewtonBFGS}
+ *
  * @author Peter Abeles
  */
-public abstract class CommonLineSearch implements LineSearch {
+public class ConfigQuasiNewton {
 
-	// step tolerance change
-	protected double tolStep = UtilEjml.EPS;
+	/**
+	 * Specifies which line search algorithm to use
+	 */
+	public LineSearch lineSearch = LineSearch.MORE94;
 
-	// function being minimized
-	protected FunctionStoS function;
-	// derivative of function being minimized
-	protected FunctionStoS derivative;
+	/**
+	 * ftol convergence test. 0 {@code <=} ftol {@code <=} 1
+	 */
+	public double ftol=1e-12;
 
-	// function value at alpha = 0
-	protected double valueZero;
-	// function derivative at alpha = 0
-	protected double derivZero;
+	/**
+	 * gtol convergence test. 0 {@code <=} gtol
+	 */
+	public double gtol=1e-12;
 
-	// current step length, function value, and derivative
-	protected double alphaT;
-	protected double valueT;
-	protected double derivT;
+	/**
+	 * gtol convergence for line search. 0 {@code <} lineGTol
+	 */
+	public double lineGTol=1e-12;
 
-
-
+	public enum LineSearch {
+		/**
+		 * {@link LineSearchFletcher86}
+		 */
+		FLETCHER86,
+		/**
+		 * {@link LineSearchMore94}
+		 */
+		MORE94
+	}
 }

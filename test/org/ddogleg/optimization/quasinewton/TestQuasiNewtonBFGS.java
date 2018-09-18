@@ -18,14 +18,10 @@
 
 package org.ddogleg.optimization.quasinewton;
 
-import org.ddogleg.optimization.CommonChecksUnconstrainedOptimization;
-import org.ddogleg.optimization.LineSearch;
-import org.ddogleg.optimization.TrivialFunctionNtoS;
-import org.ddogleg.optimization.UnconstrainedMinimization;
+import org.ddogleg.optimization.*;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.optimization.wrap.CachedNumericalGradientLineFunction;
-import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,19 +54,19 @@ public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization {
 	}
 
 	public QuasiNewtonBFGS createAlg( FunctionNtoS function ) {
-		double gtol = 0.9;
-		LineSearch lineSearch = new LineSearchMore94().setConvergence(1e-3,gtol,0.1);
+		LineSearch lineSearch = new LineSearchMore94().setConvergence(1e-3,0.9,1e-4);
 		GradientLineFunction f = new CachedNumericalGradientLineFunction(function);
 
-		QuasiNewtonBFGS alg = new QuasiNewtonBFGS(f,lineSearch,0);
-		alg.setConvergence(1e-7,1e-7,gtol);
+		QuasiNewtonBFGS alg = new QuasiNewtonBFGS(lineSearch);
+		alg.setFunction(f,0);
+		alg.setConvergence(1e-7,1e-7);
 		return alg;
 	}
 
 
 	@Override
 	protected UnconstrainedMinimization createSearch() {
-		return new QuasiNewtonBFGS_to_UnconstrainedMinimization();
+		return FactoryOptimization.quasiNewtonBfgs(null);
 	}
 
 }

@@ -116,7 +116,7 @@ public class LineSearchMore94 implements LineSearch {
 	 * Configures the line search.
 	 *
 	 * @param ftol Tolerance for sufficient decrease. ftol {@code >} 0. Smaller value for loose tolerance.  Try 1e-4
-	 * @param gtol Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 1e-3
+	 * @param gtol Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 0.9
 	 * @param xtol Relative tolerance for acceptable step. xtol &ge; 0. Larger value for loose tolerance.  Try 1e-4.
 	 *
 	 * @return Reference to this class to allow for command chaining.
@@ -136,7 +136,7 @@ public class LineSearchMore94 implements LineSearch {
 	}
 
 	@Override
-	public void setFunction( CoupledDerivative function) {
+	public void setFunction( CoupledDerivative function, double fmin) {
 		this.function = function;
 	}
 
@@ -446,6 +446,11 @@ public class LineSearchMore94 implements LineSearch {
 	@Override
 	public double getFunction() {
 		return fp;
+	}
+
+	@Override
+	public double getGTol() {
+		return gtol;
 	}
 
 	@Override

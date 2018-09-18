@@ -35,7 +35,9 @@ public class EvaluateLineSearchFletcher86 extends LineSearchEvaluator {
 
 	@Override
 	protected LineSearch createSearch() {
-		return new LineSearchFletcher86(c1,c2,0,9,0.1,0.5);
+		LineSearchFletcher86 s = new LineSearchFletcher86();
+		s.setConvergence(c1,c2);
+		return s;
 	}
 
 

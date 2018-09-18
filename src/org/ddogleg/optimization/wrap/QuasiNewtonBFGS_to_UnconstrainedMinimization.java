@@ -36,18 +36,18 @@ import java.io.PrintStream;
  */
 public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements UnconstrainedMinimization {
 
-	// line search parameters
-	private double line_gtol = 0.9;
-	private double line_ftol = 1e-3;
-	private double line_xtol = 0.1;
-
 	QuasiNewtonBFGS alg;
-	LineSearchMore94 lineSearch = new LineSearchMore94();
+
+	public QuasiNewtonBFGS_to_UnconstrainedMinimization(QuasiNewtonBFGS alg) {
+		this.alg = alg;
+	}
+
+	public QuasiNewtonBFGS_to_UnconstrainedMinimization() {
+		this(new QuasiNewtonBFGS(new LineSearchMore94()));
+	}
 
 	@Override
 	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
-		lineSearch = new LineSearchMore94();
-
 		GradientLineFunction gradLine;
 
 		if( gradient == null ) {
@@ -56,13 +56,12 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 			gradLine = new CachedGradientLineFunction(function,gradient);
 		}
 
-		alg = new QuasiNewtonBFGS(gradLine,lineSearch,minFunctionValue);
+		alg.setFunction(gradLine,minFunctionValue);
 	}
 
 	@Override
 	public void initialize(double[] initial, double ftol, double gtol) {
-		lineSearch.setConvergence(line_ftol, line_gtol, line_xtol);
-		alg.setConvergence(ftol,gtol,line_gtol);
+		alg.setConvergence(ftol,gtol);
 		alg.initialize(initial);
 	}
 
@@ -94,29 +93,5 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	@Override
 	public boolean isUpdated() {
 		return alg.isUpdatedParameters();
-	}
-
-	public double getLine_gtol() {
-		return line_gtol;
-	}
-
-	public void setLine_gtol(double line_gtol) {
-		this.line_gtol = line_gtol;
-	}
-
-	public double getLine_ftol() {
-		return line_ftol;
-	}
-
-	public void setLine_ftol(double line_ftol) {
-		this.line_ftol = line_ftol;
-	}
-
-	public double getLine_xtol() {
-		return line_xtol;
-	}
-
-	public void setLine_xtol(double line_xtol) {
-		this.line_xtol = line_xtol;
 	}
 }

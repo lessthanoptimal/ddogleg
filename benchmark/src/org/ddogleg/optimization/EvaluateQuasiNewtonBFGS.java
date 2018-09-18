@@ -29,7 +29,7 @@ public class EvaluateQuasiNewtonBFGS extends UnconstrainedMinimizationEvaluator{
 
 	@Override
 	protected UnconstrainedMinimization createSearch() {
-		return FactoryOptimization.unconstrained();
+		return FactoryOptimization.quasiNewtonBfgs(null);
 	}
 	
 	public static void main( String args[] ) {

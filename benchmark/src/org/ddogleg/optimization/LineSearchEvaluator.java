@@ -60,7 +60,7 @@ public abstract class LineSearchEvaluator {
 		CallCounterStoS d = new CallCounterStoS(deriv);
 
 		LineSearch alg = createSearch();
-		alg.setFunction(new Individual_to_CoupledDerivative(f,d));
+		alg.setFunction(new Individual_to_CoupledDerivative(f,d),0);
 
 		double valueZero = func.process(0);
 		double derivZero = deriv.process(0);
