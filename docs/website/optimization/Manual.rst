@@ -63,7 +63,7 @@ Sparse Structures
 +-----------------------------+--------------------------------------------------------------------------+
 
 * [1] Switches to Cauchy in this situation and convergence slows down.
-* [2] For dense systems you can handle singular systems using a robust solver like QRP or SVD. For sparse systems it currently can't handle singular systems but a fix for this problem is planned using LDL.
+* [2] For dense problems you can handle singular systems using a robust solver like QRP or SVD. For sparse systems it currently can't handle singular systems but a fix for this is planned using LDL.
 
 
 Introduction
@@ -84,6 +84,7 @@ someone is using it really helps the motivation!
 
 Recommended Reading
 
+* Kaj Madsen, Hans Bruun Nielsen, Ole Tingleff, "Methods for Non-Linear Least Squares Problems" 2nd ed., 2004 Lecture Notes
 * Jorge Nocedal and Stephen J. Wright, "Numerical Optimization" 2nd Ed. Springer
 * Timothy A. Davis, "Direct Methods for Sparse Linear Systems"  2006 SIAM
 
@@ -133,17 +134,19 @@ fill in by carefully taking advantage of the matrice's structure.
 
 https://en.wikipedia.org/wiki/Schur_complement
 
-Schur Complement based optimization routines are implemented by extending the SchurJacobian class. The SchurJacobian
+Schur Complement based optimization routines are implemented by extending the
+`SchurJacobian <../javadoc/org/ddogleg/optimization/functions/SchurJacobian.html>`_ class. The SchurJacobian
 will compute the left and right hand side of the Jacobian. Internally this when be converted into an approximate
 Hessian.
 
 .. math::
-    H &= J'J = [A, B; B, D] \\
+    H &= J'J = \left[\begin{array}[cc] A A & B\\ B& D\end{array}\right] \\
     J &= [L,R] \\
     A &= L^T L \\
     B &= L^T R \\
     D &= R^T R
 
+where L and R are the left and right outputs from your Jacobian calculation.
 All the other implementation details are handled internally. See the JavaDoc for additional details.
 
 Weighted Least-Squares
@@ -158,15 +161,16 @@ Configuring
 The easiest and strongly recommend way to create a new instance of any optimization routine is by using one of
 the following factors:
 
-* FactoryOptimization
-* FactoryOptimizationSparse
+* `FactoryOptimization <../javadoc/org/ddogleg/optimization/FactoryOptimization.html>`_
+* `FactoryOptimizationSparse <../javadoc/org/ddogleg/optimization/FactoryOptimizationSparse.html>`_
 
 Each function will create a different algorithm and takes in a configuration class. These configuration classes
 enable you to change most important parameters. The JavaDoc describes what each parameter does.
 
-* ConfigQuasiNewton
-* ConfigTrustRegion
-* ConfigLevenbergMarquardt
+
+* `ConfigQuasiNewton <../javadoc/org/ddogleg/optimization/quasinewton/ConfigQuasiNewton.html>`_
+* `ConfigTrustRegion <../javadoc/org/ddogleg/optimization/trustregion/ConfigTrustRegion.html>`_
+* `ConfigLevenbergMarquardt <../javadoc/org/ddogleg/optimization/lm/ConfigLevenbergMarquardt.html>`_
 
 Customizing
 -----------

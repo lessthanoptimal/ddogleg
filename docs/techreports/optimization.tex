@@ -390,7 +390,7 @@ DDogleg has a modular design and abstracts aware specific implementations detail
 \begin{tabular}{lcccccc}
 Method & Iteration & Convergence & Singular & Negative-Definite & Dense & Sparse \\[1ex]
 \hline
-Quasi-Newton BFGS        & $O(N^2)$ & Super Linear & ?   & ?   & Yes &  \rule{0pt}{2.6ex} \\
+Quasi-Newton BFGS        & $O(N^2)$ & Super Linear & Yes & Yes & Yes &  \rule{0pt}{2.6ex} \\
 Trust Region BFGS Cauchy & $O(N^2)$ & Linear       & Yes & Yes & Yes & Yes  \\
 Trust Region BFGS Dogleg & $O(N^2)$ & Super Linear & [1] & [1] & Yes & Yes  \\[1ex]
 \hline

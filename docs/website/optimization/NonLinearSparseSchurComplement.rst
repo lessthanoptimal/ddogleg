@@ -32,3 +32,7 @@ least-squaers problem. It's broken up into a left and right side.
   :start-after: public class ExampleSchurComplementLeastSquares
   :tab-width: 4
   :dedent: 4
+
+When you run this example you should see something like the following:
+
+.. literalinclude:: ../example_output/schurcomplement.txt

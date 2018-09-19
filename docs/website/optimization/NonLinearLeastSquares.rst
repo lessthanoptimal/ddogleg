@@ -11,7 +11,7 @@ Unconstrained least-squares minimization solves problems which can be described 
     \min\limits_{\boldsymbol{x} \in \Re^N} f(\boldsymbol{x})=\frac{1}{2}\sum^m_{i=1} r^2_i(\boldsymbol{x})
 
 where :math:`r_i(\boldsymbol{x}) = f_i(\boldsymbol{x}) - y_i` is a scalar function which outputs the residual for function :math:`i`, predicted value subtracted the observed value.
-By definition :math:`f(\boldsymbol{x}) \ge 0`. In DDogleg you don't define the :math:`f(\boldsymbol{x})` function directly but instead define the set of :math:`r_j(\bm{x})` functions
+By definition :math:`f(\boldsymbol{x}) \ge 0`. In DDogleg you don't define the :math:`f(\boldsymbol{x})` function directly but instead define the set of :math:`r_j(\boldsymbol{x})` functions
 by implementing FunctionNtoM. Implementations of FunctionNtoM take in an array with N elements and output an array with M elements.
 
 In this example we will consider a very simple unconstrained least-squares problem, fitting a line to a set of points.
