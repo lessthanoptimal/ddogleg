@@ -60,13 +60,13 @@ public class FactoryOptimization {
 		switch( config.lineSearch ) {
 			case FLETCHER86:
 				LineSearchFletcher86 fletcher86 = new LineSearchFletcher86();
-				fletcher86.setConvergence(1e-4,0.9);
+				fletcher86.setConvergence(config.line_ftol,config.line_gtol);
 				lineSearch = fletcher86;
 				break;
 
 			case MORE94:
 				LineSearchMore94 more94 = new LineSearchMore94();
-				more94.setConvergence(1e-3,0.9,0.1);
+				more94.setConvergence(config.line_ftol,config.line_gtol,0.1);
 				lineSearch = more94;
 				break;
 

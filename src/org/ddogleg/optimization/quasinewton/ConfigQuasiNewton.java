@@ -41,9 +41,15 @@ public class ConfigQuasiNewton {
 	public double gtol=1e-12;
 
 	/**
-	 * gtol convergence for line search. 0 {@code <} lineGTol
+	 * Tolerance for sufficient decrease. ftol {@code >} 0. Smaller value for loose tolerance.  Try 1e-4
 	 */
-	public double lineGTol=1e-12;
+	public double line_ftol=1e-4;
+
+	/**
+	 * Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 0.9
+	 */
+	public double line_gtol=0.9;
+
 
 	public enum LineSearch {
 		/**

@@ -125,6 +125,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	 * @param ftol Controls required reduction in value. Try 1e-4
 	 * @param gtol Controls decrease in derivative magnitude. Try 0.9
 	 */
+	@Override
 	public void setConvergence( double ftol, double gtol ) {
 		if( ftol < 0 )
 			throw new IllegalArgumentException("c1 must be more than zero");

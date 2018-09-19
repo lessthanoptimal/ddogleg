@@ -40,6 +40,13 @@ public interface LineSearch extends IterativeOptimization {
 	void setFunction( CoupledDerivative function , double fmin );
 
 	/**
+	 * Specify convergence criteria for line search
+	 * @param ftol Tolerance for sufficient decrease. ftol {@code >} 0. Smaller value for loose tolerance.  Try 1e-4
+	 * @param gtol Tolerance for curvature condition. gtol &ge; 0. Larger value for loose tolerance.  Try 0.9
+	 */
+	void setConvergence( double ftol, double gtol );
+
+	/**
 	 * Initializes and resets the line search.  In some implementations a reasonable
 	 * minimum and maximum step bound is set here.
 	 *

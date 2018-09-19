@@ -21,52 +21,31 @@ package org.ddogleg.example;
 import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.UtilOptimize;
-import org.ddogleg.optimization.functions.FunctionNtoM;
+import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
-import org.ddogleg.optimization.wrap.LsToNonLinear;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
- * Example of unconstrained minimization using Quasi Newton BFGS.
+ * Example of unconstrained minimization using Quasi Newton BFGS. The function being optimized is from [1]
+ * a function used to test optimization routines.
+ *
+ * [1] ROSENBROCK, H.H. An automatm method for finding the greatest or least value of a function.
+ * Comput. J. 3 (1960), 175-184.
  *
  * @author Peter Abeles
  */
 public class ExampleUnconstrainedMinimization {
 	public static void main(String[] args) {
-		// define a line in 2D space as the tangent from the origin
-		double lineX = -2.1;
-		double lineY = 1.3;
-
-		// randomly generate points along the line
-		Random rand = new Random(234);
-		List<Point2D> points = new ArrayList<Point2D>();
-		for( int i = 0; i < 20; i++ ) {
-			double t = (rand.nextDouble()-0.5)*10;
-			points.add( new Point2D(lineX + t*lineY, lineY - t*lineX) );
-		}
-
-		// We are recycling the function from least-squares.
-		// TODO replace this with a more interest function later on
-		FunctionNtoM funcLS = new FunctionLineDistanceEuclidean(points);
-
-		// This will convert the least squares
-		FunctionNtoS func = new LsToNonLinear(funcLS);
-		// implement FunctionNtoN if you want an analytical gradient
 
 		UnconstrainedMinimization optimizer = FactoryOptimization.quasiNewtonBfgs(null);
 
 		// Send to standard out progress information
 		optimizer.setVerbose(System.out,0);
 
-		// if no jacobian is specified it will be computed numerically
-		// The minimum possible function value is 0. That will only happen if there is no noise in the data
-		optimizer.setFunction(func,null,0);
+		// Provide an analytical gradient to the Rosenbrock function.
+		optimizer.setFunction(new Rosenbrock(),new Gradient(),0);
 
-		// provide it an extremely crude initial estimate of the line equation
-		optimizer.initialize(new double[]{-0.5,0.5},1e-12,1e-12);
+		// [-1.2,  1] is the recommended starting point for testing
+		optimizer.initialize(new double[]{-1.2,1},1e-12,1e-12);
 
 		// iterate 500 times or until it converges.
 		// Manually iteration is possible too if more control over is required
@@ -78,7 +57,43 @@ public class ExampleUnconstrainedMinimization {
 		System.out.println("Final Error = "+optimizer.getFunctionValue());
 
 		// Compare the actual parameters to the found parameters
-		System.out.printf("Actual lineX %5.2f  found %5.2f\n",lineX,found[0]);
-		System.out.printf("Actual lineY %5.2f  found %5.2f\n",lineY,found[1]);
+		System.out.printf("x[0]: expected=1.00  found=%5.2f\n",found[0]);
+		System.out.printf("x[1]: expected=1.00  found=%5.2f\n",found[1]);
+	}
+
+	/**
+	 * A classic function used to test optimization routines
+	 */
+	public static class Rosenbrock implements FunctionNtoS {
+
+		@Override
+		public int getNumOfInputsN() { return 2; }
+
+		@Override
+		public double process(double[] input) {
+			double x1 = input[0];
+			double x2 = input[1];
+			double f1 = 10*(x2 - x1*x1);
+			double f2 = 1-x1;
+			return f1*f1 + f2*f2;
+		}
+	}
+
+	/**
+	 * Gradient of the Rosenbrock function. You can check analytical gradients using the DerivativeChecker class.
+	 */
+	public static class Gradient implements FunctionNtoN {
+
+		@Override
+		public int getN() { return 2; }
+
+		@Override
+		public void process(double[] input, double[] output) {
+			double x1 = input[0];
+			double x2 = input[1];
+
+			output[0] = -400*(x2-x1*x1)*x1 - 2*(1-x1);
+			output[1] = 200*(x2-x1*x1);
+		}
 	}
 }

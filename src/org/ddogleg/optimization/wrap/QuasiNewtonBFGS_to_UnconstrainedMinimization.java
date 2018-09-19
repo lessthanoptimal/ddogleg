@@ -42,10 +42,6 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 		this.alg = alg;
 	}
 
-	public QuasiNewtonBFGS_to_UnconstrainedMinimization() {
-		this(new QuasiNewtonBFGS(new LineSearchMore94()));
-	}
-
 	@Override
 	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
 		GradientLineFunction gradLine;

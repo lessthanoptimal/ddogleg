@@ -141,6 +141,17 @@ public class LineSearchMore94 implements LineSearch {
 	}
 
 	@Override
+	public void setConvergence(double ftol, double gtol) {
+		if( ftol < 0 )
+			throw new IllegalArgumentException("ftol must be >= 0 ");
+		if( gtol < 0 )
+			throw new IllegalArgumentException("gtol must be >= 0 ");
+		this.ftol = ftol;
+		this.gtol = gtol;
+		this.xtol = 0.1; // default value
+	}
+
+	@Override
 	public void init(double funcAtZero, double derivAtZero, double funcAtInit, double stepInit ,
 					 double stepMin, double stepMax )
 	{
