@@ -28,7 +28,7 @@ import sphinx_bootstrap_theme
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.imgmath',
+    'sphinx.ext.mathjax',
     'sphinx.ext.extlinks'
 ]
 
@@ -291,3 +291,7 @@ texinfo_documents = [
 # extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/','foo ')}
 extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/blob/v0.15/examples/src/org/ddogleg/example/%s',
                       '')}
+
+mathjax_config = {
+    'extensions': ['tex2jax.js']
+}

@@ -67,7 +67,7 @@ public class ExampleSchurComplementLeastSquares {
 		double[] optimal = new double[2*(numCameras+numLandmarks)];
 		double[] initial = new double[optimal.length];
 
-		// Randomly create the world and
+		// Randomly create the world and observations
 		List<Point2D> cameras = new ArrayList<>();
 		List<Point2D> landmarks = new ArrayList<>();
 

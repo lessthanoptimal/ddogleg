@@ -20,6 +20,8 @@ List of Example Code:
 * :doc:`/Clustering`
 * :doc:`/Combinatorics`
 * :doc:`/optimization/NonLinearLeastSquares`
+* :doc:`/optimization/NonLinearMinimization`
+* :doc:`/optimization/NonLinearSparseSchurComplement`
 * :doc:`/RobustModelFitting`
 * :doc:`/PolynomialArithmetic`
 * :doc:`/PolynomialRootFinding`

@@ -14,8 +14,8 @@ the math.
 Unconstrained Minimization Methods
 ----------------------------------
 
-  .. math::
-    \min\limits_{\bm{x} \in \Re^N} f(\bm{x})
+.. math::
+  \min\limits_{\boldsymbol{x} \in \Re^N} f(\boldsymbol{x})
 
 +-------------------------------+-------------+--------------+----------+-------------------+-------+--------+
 | **Method**                    | Iteration   | Convergence  | Singular | Negative-Definite | Dense | Sparse |
@@ -36,8 +36,8 @@ Unconstrained Minimization Methods
 Unconstrained Least Squares Methods
 -----------------------------------
 
-  .. math::
-      \min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
+.. math::
+    \min\limits_{\boldsymbol{x}} f(\boldsymbol{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\boldsymbol{x})
 
 +-------------------------------+-------------+--------------+----------+-------+--------+--------+
 | **Method**                    | Iteration   | Convergence  | Singular | Dense | Sparse | Schur  |
@@ -49,7 +49,7 @@ Unconstrained Least Squares Methods
 | Levenberg-Marquardt           | :math:`N^3` | Super Linear | Yes      | Yes   | Yes    | Yes    |
 +-------------------------------+-------------+--------------+----------+-------+--------+--------+
 
-* **Schur**: If a variant is available that uses the Schur Complement
+* **Schur**: Indicates if a variant is available that uses the Schur Complement
 
 Sparse Structures
 -----------------
@@ -93,14 +93,12 @@ Usage Examples
 
 * :doc:`/optimization/NonLinearMinimization` (Quasi-Newton)
 * :doc:`/optimization/NonLinearLeastSquares` (Levenberg-Marquardt)
-* Writing analytical Gradient
-* Writing analytical Jacobian
-
+* :doc:`/optimization/NonLinearSparseSchurComplement` (Sparse Schur Complement)
 
 Convergence Tests
 -----------------
 
-TODO Summarize
+TODO Summarize, ftol, gtol
 
 Numerical Derivatives
 ---------------------
@@ -112,7 +110,7 @@ Numerical Derivatives
 Schur Complement
 ----------------
 
-TODO Link to page here
+https://en.wikipedia.org/wiki/Schur_complement
 
 Weighted Least-Squares
 ----------------------
