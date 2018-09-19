@@ -98,7 +98,24 @@ Usage Examples
 Convergence Tests
 -----------------
 
-TODO Summarize, ftol, gtol
+Deciding when an optimization is done searching and should be stopped can be a tricky issue. If you make the criteria
+too strict then it can take an excessive amount of time. Too loose and the solution can be poor. DDogleg attempts to
+provide two parameters across all of its routines, F-Test and G-Test.
+
+.. math::
+  \mbox{F-test} &\qquad& ftol \cdot f(x)  \leq f(x) - f(x+p) \\
+  \mbox{G-test} &\qquad& gtol \leq \left\lVert g(x) \right\Vert_\infty \\
+
+
+F-Test checks to see when the cost function stops changing significantly and the G-Test when the gradient no longer
+significant. Some libraries omit the F-Test when it is known that the optimal solution will have a cost of zero,
+e.g. least squares. It is true that in this scenario the f-test will never be true. However, DDogleg
+keeps the f-test no matter what since it is inexpensive to compute and when fitting real-world data there is almost
+always noise and the minimum isn't zero.
+
+When you look through the low level implementations there are sometimes other parameters available. If you don't mind
+writing code for that specific algorithm only you can have direct access to those. In general though, they are not
+necissary and reasonable defaults are selected.
 
 Numerical Derivatives
 ---------------------
@@ -110,7 +127,24 @@ Numerical Derivatives
 Schur Complement
 ----------------
 
+The Schur Complement is a "trick" which enables you to avoid decompose an entire matrix when solving a linear
+system. Instead only much smaller internal submatrices are decomposed. In sparse systems this trick also reduces
+fill in by carefully taking advantage of the matrice's structure.
+
 https://en.wikipedia.org/wiki/Schur_complement
+
+Schur Complement based optimization routines are implemented by extending the SchurJacobian class. The SchurJacobian
+will compute the left and right hand side of the Jacobian. Internally this when be converted into an approximate
+Hessian.
+
+.. math::
+    H &= J'J = [A, B; B, D] \\
+    J &= [L,R] \\
+    A &= L^T L \\
+    B &= L^T R \\
+    D &= R^T R
+
+All the other implementation details are handled internally. See the JavaDoc for additional details.
 
 Weighted Least-Squares
 ----------------------
@@ -118,30 +152,32 @@ Weighted Least-Squares
 Being able to directly specify a weight vector is planned for the future. For now you
 can scale the residuals directly and accomplish the same thing.
 
-Quasi-Newton BFGS
------------------
+Configuring
+-----------
 
-- Configuration
-- Implementation Notes
+The easiest and strongly recommend way to create a new instance of any optimization routine is by using one of
+the following factors:
 
-Trust-Region Cauchy
--------------------
+* FactoryOptimization
+* FactoryOptimizationSparse
 
-- Configuration
-- Implementation Notes
+Each function will create a different algorithm and takes in a configuration class. These configuration classes
+enable you to change most important parameters. The JavaDoc describes what each parameter does.
 
-Trust-Region Dogleg
--------------------
+* ConfigQuasiNewton
+* ConfigTrustRegion
+* ConfigLevenbergMarquardt
 
-- Configuration
-- Implementation Notes
+Customizing
+-----------
 
+Whether or not it's a good idea, there are time you want to customize the behavior of an optimization. For example,
+you might want to normalize parameters every iteration or print out aditional debugging information. The code has
+been intentionally written to enable you to do this.
 
-Levenberg-Marquardt
--------------------
-
-- Configuration
-- Implementation Notes
+This is an advance feature and will require browsing through the source code and being very familiar with how
+these algorithms work. If after some effort you're not sure how to do this post a question on the user forum
+and someone will try to help.
 
 Hessian Scaling
 ---------------
@@ -151,7 +187,12 @@ TODO Summarize
 Tip: Input Scaling
 ------------------
 
-TODO link to external website on this subject
+Seems like every discussion on non-linear optimization beats into you the absolute need for scaling your parameters
+so that they are approximately the same order of magnitude. For example, one variable should be around 1e12 and another
+1e-12. That's difficult for solvers to handle and can cause imprecation. It can even cause the parameter search
+to get stuck as it over emphasizes variables!
+
+TODO Flush this out more
 
 
 
