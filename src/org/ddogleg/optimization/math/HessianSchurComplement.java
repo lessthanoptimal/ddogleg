@@ -22,14 +22,42 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 
 /**
+ * <P>Given the already computed Jacobian (broken up into a left and right side) compute the decomposed
+ * approximate Hessian matrix, i.e. [A B, B D]</P>
+ *
+ * <pre>
+ *     A=L'*L
+ *     B=L'*R
+ *     D=R*R
+ * </pre>
+ *
+ * <p>Where L and R are the left and right hand side of the Jacobian, respectively/p>
+ *
  * @author Peter Abeles
  */
 public interface HessianSchurComplement<S extends DMatrix> extends HessianMath
 {
+	/**
+	 * Given the left and right hand side of the Jacobian compute the Hessian.
+	 *
+	 * @param jacLeft (input) Jacobian left side
+	 * @param jacRight (input) Jacobian right side
+	 */
 	void computeHessian(S jacLeft , S jacRight);
 
+	/**
+	 * Computes the gradient given the Jacobian and the residuals.
+	 * @param jacLeft (input) Jacobian left side
+	 * @param jacRight (input) Jacobian right side
+	 * @param residuals (Input) residuals
+	 * @param gradient (Output) gradient
+	 */
 	void computeGradient(S jacLeft , S jacRight ,
 						 DMatrixRMaj residuals, DMatrixRMaj gradient);
 
+	/**
+	 * Creates a matrix of the same type that this interface can process
+	 * @return matrx
+	 */
 	S createMatrix();
 }
