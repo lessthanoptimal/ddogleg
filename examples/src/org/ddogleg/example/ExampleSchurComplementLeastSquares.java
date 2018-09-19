@@ -49,7 +49,7 @@ public class ExampleSchurComplementLeastSquares {
 	public static void main(String[] args)
 	{
 		//------------------------------------------------------------------
-		// Randomly generating the world
+		// Randomly generate the world
 		//
 		Random rand = new Random(0xDEADBEEF);
 		final int numCameras = 10;
