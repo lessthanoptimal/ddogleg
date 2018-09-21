@@ -33,14 +33,14 @@ Trust Region refers to a family of optimization methods that operate by assuming
 \end{algorithmic}
 \end{algorithm}
 
-At every iteration the Trust Region subproblem is solved for, either eactly or approximately:
+At every iteration the Trust Region subproblem is solved for, either exactly or approximately:
 \begin{equation}
 \begin{array}{lr}
 \min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
 \end{array}
 \label{eq:trust_region_subproblem}
 \end{equation}
-where $m(\bm{p}) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first deriviative to zero:
+where $m(\bm{p}) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first derivative to zero:
 \begin{equation}
 \bm{p} = -\bm{B}^{-1}_k \bm{g}_k
 \label{eq:TR_unconstrained_solution}
@@ -50,7 +50,7 @@ An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute 
 \subsubsection{Cauchy Point}
 \label{section:cauchy}
 
-The Caunch Point is the solution which minimizes (\ref{eq:trust_region_subproblem}) along the steppest descent direction. It is defined as $p^s_k = \tau_k \hat{p}^s_k$ and is relative to $x_{k-1}$, where $\hat{p}^s_k$ is a unit vector, and $\tau_k$ is a scalar.
+The Cauchy Point is the solution which minimizes (\ref{eq:trust_region_subproblem}) along the steepest descent direction. It is defined as $p^s_k = \tau_k \hat{p}^s_k$ and is relative to $x_{k-1}$, where $\hat{p}^s_k$ is a unit vector, and $\tau_k$ is a scalar.
 \begin{equation}
 \begin{array}{lr}
 \hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
@@ -97,7 +97,7 @@ m_k(\bm{0})-m_k(\bm{p}_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}
 \subsubsection{Dogleg}
 \label{section:dogleg}
 
-The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reforumated to avoid powers of three.
+The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reformulated to avoid powers of three.
 \begin{eqnarray}
 \hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
 p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
@@ -114,7 +114,7 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 \caption{\label{alg:dogleg_step}Selection of Dogleg Step}
 \begin{algorithmic}[1]
   \If{ $B$ is positive definite}
-    \If{$\norm{p^b} < \Delta$} \Comment{Gauss-Newton soluton inside the trust-region?}
+    \If{$\norm{p^b} < \Delta$} \Comment{Gauss-Newton solution inside the trust-region?}
       \State $p^{dog} \gets p^b$
     \ElsIf{$\norm{p^u} \geq \Delta$} \Comment{Cauchy point outside the trust-region?}
     \State $p^{dog} \gets \Delta \frac{p^u}{\norm{p^u}}$
@@ -132,11 +132,11 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 
 Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
 
-Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeadidly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeatedly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
 
-DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressiveand take a very large step into a distant plataue. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
+DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Unconstrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive and take a very large step into a distant plateau. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
 
-If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
+If the automatic methods fail to produce acceptable results then manual tuning will be necessary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
 
 Recommended Procedure for Selection of Initial Trust Region Size:
 \begin{enumargin}{0.2}

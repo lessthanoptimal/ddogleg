@@ -29,12 +29,12 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
  * <p>
  * Two convergence thresholds are specified, f-test and g-test.  The f-test is a relative convergence
  * test based on the function's value and is designed to test to see when it is near the optimal
- * solution.  G-test is an absolute test based on the gradient's norm,
+ * solution.  G-Test is an absolute test based on the gradient's norm,
  * </p>
  *
  * <p>
- * F-test:    ftol &le; 1 - f(x+p)/f(x)<br>
- * G-test:    gtol &le; ||g(x)||<sub>inf</sub><br>
+ * F-Test:    ftol &le; 1 - f(x+p)/f(x)<br>
+ * G-Test:    gtol &le; ||g(x)||<sub>inf</sub><br>
  * An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
  * </p>
  *

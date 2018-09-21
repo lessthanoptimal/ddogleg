@@ -36,7 +36,7 @@
 %\begin{titlepage}
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Revision 2018-1}}
+\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Revision 2018-1 and DDogleg 0.15}}
 
 % author names and affiliations
 
@@ -52,11 +52,11 @@
 
 \IEEEpeerreviewmaketitle
 \begin{abstract}
-This document describes the implementation details and a little bit of the theory behind unconstrained optimization routines found in DDogleg. Specific algorithms are fully described, implementation details justified, source material cited, tuning best practices described, and benchmark results presented. This document does not fully describe the API, which can be found at \url{http://ddogleg.org}.
+This document describes the implementation details and a little bit of the theory behind unconstrained optimization routines found in DDogleg. Specific algorithms are fully described, implementation details justified, source material cited, tuning best practices described, and benchmark results presented. This document does not fully describe the API, which can be found at \url{http://ddogleg.org}. It is also still a work in progress, following the philosophy that it is better to release something than never release anything waiting for perfection.
 \end{abstract}
 
 
-\section{Optimization Techiques}
+\section{Optimization Techniques}
 
 \begin{table}[h]
 \centering
@@ -88,18 +88,18 @@ This section provides overview of different numerical techniques provided in DDo
 
 \subsection{Scaling}
 
-Variable scaling can refer to several different parts of the non-linear optimization problem. Here we will discuss scaling of the input variables $\bm{x}$ and scalling of the Hessian $B_k$ internally. Thoughout the literature, correct scaling, in all of its forms, is emphansized as an essential task and that you are a bad person doomed to failure if you skip it. 
+Variable scaling can refer to several different parts of the non-linear optimization problem. Here we will discuss scaling of the input variables $\bm{x}$ and scaling of the Hessian $B_k$ internally. Throughout the literature, correct scaling, in all of its forms, is emphasized as an essential task and that you are a bad person doomed to failure if you skip it. 
 
 In reality it is highly dependent on the problem if it will help, hurt, or have no affect. How can it hurt? When correctly applied, scaling will not change the location of minimums, but it can change the path towards a minimum. There's also the saying "a broken clock is right two times a day". In this situation that means for one particular set of input variables the naive method is better but on average your better off correctly scaling. Recommendation: If you have a large set of tests/data let treat scaling as a tuning parameter. If you don't or have no idea what you are doing follow all the general rules of thumb for scaling.
 
-In general, when performing floating point arithematic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
+In general, when performing floating point arithmetic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
 
 Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error. It's interesting to note that changing the scale will the change the steepest descent direction, but not the solution to the Newton problem \cite{dennis1996}.
 
 \subsubsection{Input Scaling}
 
 When formulating the optimization problem it should be designed so that the units
-of all the variables $\bm{x}$ being optimzied are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely neccisary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
+of all the variables $\bm{x}$ being optimized are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely necessary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
 
 Further Reading:
 \begin{itemize}
@@ -110,7 +110,7 @@ TODO provide examples in this document.
 
 \subsubsection{Hessian Scaling}
 
-For Hessian Scaling the Hessian matrix is rescalled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Mardquardt) methods since those are the only methods in DDogleg where it is applied.
+For Hessian Scaling the Hessian matrix is re-scaled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Marquardt) methods since those are the only methods in DDogleg where it is applied.
 
 Hessian Scaling is done by applying a diagonal matrix $\bm{D}$ with positive elements to the Trust Region sub-problem (\ref{eq:trust_region_subproblem}). Changing $p$ into its scalled scaled version $\tilde{p} = \bm{D}p$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
 \begin{equation}
@@ -120,7 +120,7 @@ Hessian Scaling is done by applying a diagonal matrix $\bm{D}$ with positive ele
 \end{equation}
 As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $\bm{D}p$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
 
-DDogleg can be configured to automatatically compute and Apply Hessian scaling at each iteration or to not apply Hessian scaling. Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
+DDogleg can be configured to automatically compute and Apply Hessian scaling at each iteration or to not apply Hessian scaling. Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
 \begin{equation}
 D_k^{ii} = \max\left( d_{\bigtriangledown},\min\left( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} \right)\right)
 \end{equation}
@@ -153,11 +153,11 @@ It can then be shown that
 \begin{equation}
 \bar{D} = D - C A^{-1}B
 \end{equation}
-This is known as the Schur complement of the block A of matrix M. The Schur comlpement of block D of matrix M can also be found:
+This is known as the Schur complement of the block A of matrix M. The Schur Complement of block D of matrix M can also be found:
 \begin{equation}
 \bar{A} = A - B D^{-1}C
 \end{equation}
-We will discuss the former but either can be used. Which one is prefered is simply the one which can be computed fastest and is dependent on the matrix's structure.
+We will discuss the former but either can be used. Which one is preferred is simply the one which can be computed fastest and is dependent on the matrix's structure.
 
 These relationships can then be used to solve the following system:
 \begin{equation}
@@ -200,7 +200,7 @@ Linear algebra and matrix operations are the workhorses that non-linear optimiza
 \begin{equation}
 \bm{A}\bm{b} = \bm{y}
 \end{equation}
-where $\bm{A} \in \R^{M \times N}$, $\bm{b} \in \R^N$ is unknown, and $\bm{y} \in \R^M$. The two solvers most frequently used in DDogleg are Cholesky and QR with column pivots. The importantance of choosing the correct solver can be seen in Table \ref{results:initial_region}. A discussion of difference between different solvers and efficient computations is beyound the reach of this document.
+where $\bm{A} \in \R^{M \times N}$, $\bm{b} \in \R^N$ is unknown, and $\bm{y} \in \R^M$. The two solvers most frequently used in DDogleg are Cholesky and QR with column pivots. The importance of choosing the correct solver can be seen in Table \ref{results:initial_region}. A discussion of difference between different solvers and efficient computations is beyond the reach of this document.
 
 DDogleg has a modular design and abstracts aware specific implementations details allowing different libraries and solvers to be used. This design allows most of the same code to be shared between sparse and dense implementations. The source of all default linear algebra operations in DDogleg is Efficicient Java Matrix Library (EJML) \cite{ejml2018}. If you wish to learn more about the computational side of linear algebra then ``Fundamentals of Matrix Computations'' \cite{watkins2010} and ``Direct Methods for Sparse Linear Systems'' \cite{davis2006} are recommended for dense and sparse systems, respectively.
 
@@ -255,7 +255,7 @@ In DDogleg, solutions to this problem use the function's gradient and Hessian to
 \subsection{Convergence Test}
 \label{sec:unmin_convergence}
 
-All unconstrained minimization algorithms in DDogleg use the same convergence tests. F-test checks the function's value to see if it has converged. G-test checks the gradient to see if it zero and is at a local minima. To disable a test assign it a value less than zero.
+All unconstrained minimization algorithms in DDogleg use the same convergence tests. F-Test checks the function's value to see if it has converged. G-Test checks the gradient to see if it zero and is at a local minima. To disable a test assign it a value less than zero.
 
 \begin{center}
 \begin{tabular}{lc}
@@ -289,7 +289,7 @@ Quasi-Newton is a description of a general framework where at each iteration an 
 p_k = -B_k^{-1}\delta f_k
 \end{equation}
 
-For computational efficiency and robustness, the inverse $H_k = B_k^{-1}$ is estimated directly using BFGS. By estimating the inverse matrix we avoid the requirement that $B_k$ be positive definate and a costly $O(N^3)$ matrix decomposition and replace it with an innexpensive $O(N^2)$ update instead. See Section \ref{sec:hessian_approx} for a discussion of BFGS. 
+For computational efficiency and robustness, the inverse $H_k = B_k^{-1}$ is estimated directly using BFGS. By estimating the inverse matrix we avoid the requirement that $B_k$ be positive definite and a costly $O(N^3)$ matrix decomposition and replace it with an inexpensive $O(N^2)$ update instead. See Section \ref{sec:hessian_approx} for a discussion of BFGS. 
  
 \subsection{Hessian Approximation}
 \label{sec:hessian_approx}
@@ -305,7 +305,7 @@ Unconstrianed minimization techniques need a way to estimate the Hessian. Exact 
 \end{equation*}
 where $H_k = B_k^{-1}$, $s_k = x_{k+1}-x_k$, and $y_k = \nabla f_{k+1} - \nabla f_k$.
 
-DDogleg does not explictly provide support for using an exact Hessian. If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, extend that class, and override the function where the Hessian is estimated. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
+DDogleg does not explicitly provide support for using an exact Hessian. If you wish to use an exact Hessian this can be accomplished with a bit of coding by extending base classes in DDogleg. Search code for where BFGS is being used, extend that class, and override the function where the Hessian is estimated. For example, \textit{UnconMinTrustRegionBFGS} can be used to create your own exact Hessian unconstrained minimization trust region implementation.
 
 \subsection{Trust Region}
 
@@ -418,7 +418,7 @@ This would result in larger steps along the direction with smaller gradient, avo
 
 DDogleg's implementation (Algorithm \ref{alg:levenberg_marquardt}) is primarily based upon the description found in \cite{IMM2004} but with the ability to choose a mixture of Levenberg's and Marquardt's. The more widely cited algorithm found in \cite{fletcher1987} and others was found to converge slower. Mixing (\ref{eq:levenberg}) and (\ref{eq:marquardt}) is advantagous because it allows you to avoid the negatives of either approach. If the derivative of an element is zero then Marquardt's forumation can produce singular matrices. While Levenberg's forumation will always produce a positive-definate matrix as long as $\lambda$ is greater than zero. The amount of mixing is specified using $\alpha$. If $\alpha=1$ then (\ref{eq:levenberg}) is used while if $\alpha=0$ then (\ref{eq:marquardt}) is used. Any value between 0 and 1 will result in a mixture of the two equations.
 
-The classes \emph{FactoryOptimization} and \emph{FactoryOptimizationSparse} provide easy to use functions for constructing specific implementations of Levenberg-Marquardt. As inputs they take in a \emph{ConfigLevenbergMarquardt} and a boolean flag called \emph{robust}. If the robust flag is set to true then a solver based on QR with column pivots is used and if false then it used Cholesky decomposition. The robust variant can handle degenerate matrices found in the Marquardt's forumation. DDogleg does not provide support for solving the least squares forumation, i.e. $J_k p_k = -F_k$, due to the increase in computational cost and code complexity having no noticable improvement in convergence in any situation the author is aware of.
+The classes \emph{FactoryOptimization} and \emph{FactoryOptimizationSparse} provide easy to use functions for constructing specific implementations of Levenberg-Marquardt. As inputs they take in a \emph{ConfigLevenbergMarquardt} and a boolean flag called \emph{robust}. If the robust flag is set to true then a solver based on QR with column pivots is used and if false then it used Cholesky decomposition. The robust variant can handle degenerate matrices found in the Marquardt's formulation. DDogleg does not provide support for solving the least squares formation, i.e. $J_k p_k = -F_k$, due to the increase in computational cost and code complexity having no noticeable improvement in convergence in any situation the author is aware of.
 
 Scaling is done using the same methods described in Section \ref{section:scaling}.
 
@@ -436,9 +436,9 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 			\State $\lambda \gets \lambda \cdot \mbox{max}(1/3 , 1-(2\nu-1)^3)$
 			\State $\nu = 2$
 			\State $p_{k+1} \gets p_k$
-			\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
+			\State $done$ $\gets$ $\mbox{F-Test}$ or $\mbox{G-Test}$ \Comment{Convergence testing}
 		\Else
-			\State $\lambda \gets \nu \lambda$ \Comment{Emphansize the gradient more}
+			\State $\lambda \gets \nu \lambda$ \Comment{Emphasize the gradient more}
 			\State $\nu = 2\nu$
 		\EndIf
 		\State $k \gets k + 1$

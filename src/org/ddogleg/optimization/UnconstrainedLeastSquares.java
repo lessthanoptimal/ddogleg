@@ -33,8 +33,8 @@ import org.ejml.data.DMatrix;
  * </p>
  *
  * <p>
- * F-test:    ftol &le; 1 - f(x+p)/f(x)<br>
- * G-test:    gtol &le; ||g(x)||<sub>inf</sub><br>
+ * F-Test:    ftol &le; 1 - f(x+p)/f(x)<br>
+ * G-Test:    gtol &le; ||g(x)||<sub>inf</sub><br>
  * An absolute f-test can be done by checking the value of {@link #getFunctionValue} in each iteration.
  * </p>
  *
