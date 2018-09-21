@@ -186,7 +186,19 @@ and someone will try to help.
 Hessian Scaling
 ---------------
 
-TODO Summarize
+For Trust Region (including Levenberg-Marquardt) algorithms Hessian scaling cab be applied automatically.
+At each iteration a diagonal matrix :math:`D` is found such that when applied :math:`D_k^{-1} B_k D_k^{-1}`
+the resulting matrix will have diagonal elements of one. Configuration classes can be used to clamp the scaling
+so that :math:`d_{min} \le D_{ii} \le d_{max}`. After scaling has been applied the resulting matrix is more
+numerically favorable to linear algebra operations. You will not get exactly the same answer with and without
+hessian scaling due to scaling changing the gradient direction. It will not change the solution to the Newton
+step.
+
+Hessian Scaling applied to Trust-Region subproblem changes the trust region in an ellipse:
+
+.. math::
+  \min\limits_{p\in \Re^n} m_k(p) = f_k + g^T_k p + \frac{1}{2} p^T B_k p  \hspace{0.5cm} \mbox{s.t.} \hspace{0.5cm} |D p|  \le \Delta_k
+
 
 Tip: Input Scaling
 ------------------
