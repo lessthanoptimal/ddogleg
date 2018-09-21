@@ -1,0 +1,177 @@
+Trust Region refers to a family of optimization methods that operate by assuming a quadratic model is accurate within a local "trust region". The trust region's size is adjusted based on the quadratic model's performance in previous iterations. A summary of Trust Region, as implemented in DDogleg, is found in Algorithm \ref{alg:trust_region}. This implementation\footnote{The more traditional variant described in \cite{numopt2006,fletcher1987} was also considered but found to converge slower in test problems.} is primarily based on the description found in \cite{IMM2004}.
+
+\begin{algorithm}{}
+\caption{\label{alg:trust_region}Trust Region}
+\begin{algorithmic}[1]
+	\State $k \gets 0$, $\Delta_0 \in (0,\Delta_{max})$
+	\State \quad $\Delta_{max}$ is the maximum trust region size
+	\State \quad $\Delta_{0}$ is the initial trust region size. \Comment{Section \ref{section:init_region_size}}
+	\While{$k < k_{\mbox{max}}$ and not $done$}
+	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem} \Comment{Sections \ref{section:cauchy} and \ref{section:dogleg} }
+	\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
+	\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p}$ \Comment{Predicted reduction in score}
+	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio}
+	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Score got worse or the model poor?}
+		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
+	\Else
+		\If{$\nu>\frac{3}{4}$}
+			\Comment{The model is good. Increase the region size?}
+			\State $\Delta_{k+1} \gets \mbox{min}(\mbox{max}(3\norm{p_k},\Delta_k),\Delta_{\mbox{max}})$
+		\Else
+			\State $\Delta_{k+1} \gets \Delta_k$
+		\EndIf
+	\EndIf
+	\If{$\delta_f > 0$ and $\nu > 0$} \Comment{Is the solution acceptable?}
+		\State $x_{k+1} \gets x_k + p_k$ \Comment{Update the state}
+		\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
+	\Else
+		\State $x_{k+1} \gets x_k$
+	\EndIf
+
+	\State $k \gets k + 1$
+	\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+At every iteration the Trust Region subproblem is solved for, either eactly or approximately:
+\begin{equation}
+\begin{array}{lr}
+\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
+\end{array}
+\label{eq:trust_region_subproblem}
+\end{equation}
+where $m(\bm{p}) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first deriviative to zero:
+\begin{equation}
+\bm{p} = -\bm{B}^{-1}_k \bm{g}_k
+\label{eq:TR_unconstrained_solution}
+\end{equation}
+An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute and approximate methods are typically used instead. The Cauchy Point and Dogleg are included in the DDogleg library.
+
+\subsubsection{Cauchy Point}
+\label{section:cauchy}
+
+The Caunch Point is the solution which minimizes (\ref{eq:trust_region_subproblem}) along the steppest descent direction. It is defined as $p^s_k = \tau_k \hat{p}^s_k$ and is relative to $x_{k-1}$, where $\hat{p}^s_k$ is a unit vector, and $\tau_k$ is a scalar.
+\begin{equation}
+\begin{array}{lr}
+\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
+\end{array}
+\end{equation}
+The length $\tau_k$ is found by minimizing (\ref{eq:trust_region_subproblem}) along direction $\hat{p}^s_k$
+\begin{equation}
+\begin{array}{lr}
+\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
+\end{array}
+\end{equation}
+
+The solution (see Chapter 4 of \cite{numopt2006} for details and diagrams) is as follows:
+\begin{equation}
+p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
+\label{eq:cauchy_p}
+\end{equation}
+\begin{equation}
+\tau_k =
+	\begin{cases}
+		\quad 1 & g_k^T B_k g_k \le 0 \\
+		\quad \min\left(1,\norm{g_k}^3/(\Delta_k g_k^T B_k g_k)\right) & g_k^T B_k g_k > 0
+	\end{cases}
+	\label{eq:cauchy_tau}
+\end{equation}
+
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by $\Delta_k$:
+\begin{eqnarray}
+\hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
+p^s_k &=& -\bar{\tau}_k \hat{g}_k
+\end{eqnarray}
+\begin{equation}
+\bar{\tau}_k = \begin{cases}
+		\quad \Delta_k & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
+		\quad \min\left(\Delta_k,\norm{g_k}/(\hat{g}_k^T B_k \hat{g}_k)\right) & \hat{g}_k^T B_k \bar{g}_k > 0
+	\end{cases}
+\end{equation}
+The predicted reduction in score is found using:
+\begin{equation}
+m_k(\bm{0})-m_k(\bm{p}_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
+\end{equation}
+
+
+\subsubsection{Dogleg}
+\label{section:dogleg}
+
+The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reforumated to avoid powers of three.
+\begin{eqnarray}
+\hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
+p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
+p^b_k &=& -B^{-1}_k g_k \\
+p^{dog}_k &=&
+\begin{cases}
+	\tau p^u_k & 0 \le \tau < 1 \\
+	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
+\end{cases}
+\end{eqnarray}
+where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the gradient is used instead.
+
+\begin{algorithm}{}
+\caption{\label{alg:dogleg_step}Selection of Dogleg Step}
+\begin{algorithmic}[1]
+  \If{ $B$ is positive definite}
+    \If{$\norm{p^b} < \Delta$} \Comment{Gauss-Newton soluton inside the trust-region?}
+      \State $p^{dog} \gets p^b$
+    \ElsIf{$\norm{p^u} \geq \Delta$} \Comment{Cauchy point outside the trust-region?}
+    \State $p^{dog} \gets \Delta \frac{p^u}{\norm{p^u}}$
+    \Else
+    \State $p^{dog} \gets $ intersection of $p^u \rightarrow p^b$ and trust-region
+    \EndIf
+  \Else
+   \State $p^{dog} \gets -\Delta\frac{g}{\norm{g}}$ \Comment{Follow gradient to end of trust region}
+  \EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Initial Region Size}
+\label{section:init_region_size}
+
+Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
+
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeadidly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
+
+DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressiveand take a very large step into a distant plataue. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
+
+If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
+
+Recommended Procedure for Selection of Initial Trust Region Size:
+\begin{enumargin}{0.2}
+\item Turn on verbose output and examine the progress
+\item Start with automatic selection using \emph{unconstrained initial step}
+\item If this fails then try \emph{Cauchy initial step}
+\item If performance is still poor follow manual tuning procedure
+\end{enumargin}
+For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
+
+A comparison of different initial conditions for different 'toy' problems is shown in Table \ref{results:initial_region}. In these scenarios, the Automatic Unconstrained method correctly selected the best initial conditions while all the other methods either tied unconstrained's performance or clearly made a poor choice. Unfortunately, these results don't extrapolate to all problems and there are situations where the unconstrained method results in failure. For that reason, the default method is in DDogleg is the more conservative Automatic Cauchy.
+
+\begin{table}[h]
+\centering
+\begin{threeparttable}
+\caption{\label{results:initial_region}Comparison of Initial Region Size}
+\begin{tabular}{|l||c|c|c||c|c|c||c|c|c||c|c|c|}
+\hline
+Problem        & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Manual} & \multicolumn{3}{c|}{Manual}\\
+               & \multicolumn{3}{c||}{Unconstrained} & \multicolumn{3}{c||}{Cauchy} & \multicolumn{3}{c||}{1} & \multicolumn{3}{c|}{100} \\
+\hline
+               & Fit     & G  & B  & Fit     & G  & B   & Fit     & G  & B  & Fit     & G  & B\\
+\hline
+Powel          & 2.0e-17 & 17 & 17 & 2.9e-17 & 30 & 26  & 4.9e-18 & 23 & 19 & 2.0e-17 & 17 & 17 \\
+Powel Singular & 7.3e-11 & 11 & 11 & 2.3e-10 & 13 & 13  & 6.7e-11 & 11 & 11 & 7.3e-11 & 11 & 11 \\
+Helical Valley & 2.5e-26 & 11 & 8  & 5.1e-18 & 11 & 11  & 4.1e-33 & 9  & 8  & 2.7e-26 & 16 & 8\\
+B.S. Powell    & 4.2e-31 & 25 & 18 & 3.7e-23 & 73 & 58  & 2.2e-31 & 25 & 18 & 0       & 62 & 43 \\
+Bundle 2D      & 3.7e-10 & 111& 36 & 7.0e-18 & 111& 36  & 9.0e-10 & 251& 93 & 3.3e-10 & 112 & 37 \\
+Bundle 2D [1]  & 7.0e-19 & 4  & 4  & 7.0e-18 & 4  & 4   & 1.5e-15 & 5  & 5  & 7.0e-18 & 4 & 4 \\ \hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \emph{Fit} is the final fit score where zero is a perfect fit. \emph{G} is the number of times the gradient was computed. \emph{B} is the number of times the Hessian was computed. B is by far the most expensive step.
+\item Unless specified otherwise, all methods use Dogleg with a Cholesky solver.
+\item [1] Uses QR with column pivots instead of Cholesky and can handle the nearly singular initial state.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

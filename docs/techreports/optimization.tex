@@ -83,145 +83,36 @@ MAX\_VALUE & The largest possible floating point value
 This section provides overview of different numerical techniques provided in DDogleg for unconstrained optimization. Techniques described here can often be applied to different problems. Specific implementation details are discussed in the problem's section.
 
 \subsection{Trust Region}
-Trust Region refers to a family of optimization methods that operate by assuming a quadratic model is accurate within a local "trust region". The trust region's size is adjusted based on the quadratic model's performance in previous iterations. A summary of Trust Region, as implemented in DDogleg, is found in Algorithm \ref{alg:trust_region}. This implementation\footnote{The more traditional variant described in \cite{numopt2006,fletcher1987} was also considered but found to converge slower in test problems.} is primarily based on the description found in \cite{IMM2004}.
 
-\begin{algorithm}{}
-\caption{\label{alg:trust_region}Trust Region}
-\begin{algorithmic}[1]
-	\State $k \gets 0$, $\Delta_0 \in (0,\Delta_{max})$
-	\State \quad $\Delta_{max}$ is the maximum trust region size
-	\State \quad $\Delta_{0}$ is the initial trust region size. \Comment{Section \ref{section:init_region_size}}
-	\While{$k < k_{\mbox{max}}$ and not $done$}
-	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem} \Comment{Sections \ref{section:cauchy} and \ref{section:dogleg} }
-	\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
-	\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p}$ \Comment{Predicted reduction in score}
-	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
-	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Score got worse or the model poor?}
-		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
-	\Else
-		\If{$\nu>\frac{3}{4}$}
-			\Comment{The model is good. Increase the region size?}
-			\State $\Delta_{k+1} \gets \mbox{min}(\mbox{max}(3\norm{p_k},\Delta_k),\Delta_{\mbox{max}})$
-		\Else
-			\State $\Delta_{k+1} \gets \Delta_k$
-		\EndIf
-	\EndIf
-	\If{$\delta_f > 0$ and $\nu > 0$} \Comment{Is the solution acceptable?}
-		\State $x_{k+1} \gets x_k + p_k$ \Comment{Update the state}
-		\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
-	\Else
-		\State $x_{k+1} \gets x_k$
-	\EndIf
+\input{trust_region.tex}
 
-	\State $k \gets k + 1$
-	\EndWhile
-\end{algorithmic}
-\end{algorithm}
+\subsection{Scaling}
 
-At every iteration the Trust Region subproblem is solved for, either eactly or approximately:
-\begin{equation}
-\begin{array}{lr}
-\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
-\end{array}
-\label{eq:trust_region_subproblem}
-\end{equation}
-where $m(\bm{p}) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first deriviative to zero:
-\begin{equation}
-\bm{p} = -\bm{B}^{-1}_k \bm{g}_k
-\label{eq:TR_unconstrained_solution}
-\end{equation}
-An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute and approximate methods are typically used instead. The Cauchy Point and Dogleg are included in the DDogleg library.
+Variable scaling can refer to several different parts of the non-linear optimization problem. Here we will discuss scaling of the input variables $\bm{x}$ and scalling of the Hessian $B_k$ internally. Thoughout the literature, correct scaling, in all of its forms, is emphansized as an essential task and that you are a bad person doomed to failure if you skip it. 
 
-\subsubsection{Cauchy Point}
-\label{section:cauchy} 
-
-The Caunch Point is the solution which minimizes (\ref{eq:trust_region_subproblem}) along the steppest descent direction. It is defined as $p^s_k = \tau_k \hat{p}^s_k$ and is relative to $x_{k-1}$, where $\hat{p}^s_k$ is a unit vector, and $\tau_k$ is a scalar.
-\begin{equation}
-\begin{array}{lr}
-\hat{p}^s_k = \min\limits_{p\in \R^n} f_k + g_k^T p & s.t. \norm{p} \le \Delta_k
-\end{array}
-\end{equation}
-The length $\tau_k$ is found by minimizing (\ref{eq:trust_region_subproblem}) along direction $\hat{p}^s_k$
-\begin{equation}
-\begin{array}{lr}
-\tau_k = \min\limits_{\tau \ge 0} m_k(\tau v^s_k) & s.t. \norm{\tau v^s_k} \le \Delta_k
-\end{array}
-\end{equation}
-
-The solution (see Chapter 4 of \cite{numopt2006} for details and diagrams) is as follows:
-\begin{equation}
-p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
-\label{eq:cauchy_p}
-\end{equation}
-\begin{equation}
-\tau_k = 
-	\begin{cases}
-		\quad 1 & g_k^T B_k g_k \le 0 \\
-		\quad \min\left(1,\norm{g_k}^3/(\Delta_k g_k^T B_k g_k)\right) & g_k^T B_k g_k > 0
-	\end{cases}
-	\label{eq:cauchy_tau}
-\end{equation}
-
-The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by $\Delta_k$:
-\begin{eqnarray}
-\hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
-p^s_k &=& -\bar{\tau}_k \hat{g}_k
-\end{eqnarray}
-\begin{equation}
-\bar{\tau}_k = \begin{cases}
-		\quad \Delta_k & \hat{g}_k^T B_k \hat{g}_k\le 0 \\
-		\quad \min\left(\Delta_k,\norm{g_k}/(\hat{g}_k^T B_k \hat{g}_k)\right) & \hat{g}_k^T B_k \bar{g}_k > 0
-	\end{cases}
-\end{equation}
-The predicted reduction in score is found using:
-\begin{equation}
-m_k(\bm{0})-m_k(\bm{p}_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
-\end{equation}
-
-
-\subsubsection{Dogleg}
-\label{section:dogleg}  
-
-The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reforumated to avoid powers of three.
-\begin{eqnarray}
-\hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
-p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
-p^b_k &=& -B^{-1}_k g_k \\
-p^{dog}_k &=&
-\begin{cases}
-	\tau p^u_k & 0 \le \tau < 1 \\
-	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
-\end{cases}
-\end{eqnarray}
-where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the gradient is used instead.
-
-\begin{algorithm}{}
-\caption{\label{alg:dogleg_step}Selection of Dogleg Step}
-\begin{algorithmic}[1]
-  \If{ $B$ is positive definite}
-    \If{$\norm{p^b} < \Delta$} \Comment{Gauss-Newton soluton inside the trust-region?}
-      \State $p^{dog} \gets p^b$
-    \ElsIf{$\norm{p^u} \geq \Delta$} \Comment{Cauchy point outside the trust-region?}
-    \State $p^{dog} \gets \Delta \frac{p^u}{\norm{p^u}}$
-    \Else
-    \State $p^{dog} \gets $ intersection of $p^u \rightarrow p^b$ and trust-region
-    \EndIf
-  \Else
-   \State $p^{dog} \gets -\Delta\frac{g}{\norm{g}}$ \Comment{Follow gradient to end of trust region}
-  \EndIf
-\end{algorithmic}
-\end{algorithm}
-
-\subsubsection{Scaling and Elliptical Trust Regions} 
-\label{section:scaling}
-
-Correct scaling of $\bm{x}$ typically refers to two different issues, both of which can be critical for achieving high accuracy. The first is adjusting optimization $x$ parameters such that their values have on average the same scale. The second is applying a linear transform to the Hessian $B_k$ such that it has favorable numerical properties when being decomposed. The first method we will refer to as prescaling and the second as post scaling. Prescaling must be done by the user while post scaling can be handled by DDogleg.
+In reality it is highly dependent on the problem if it will help, hurt, or have no affect. How can it hurt? When correctly applied, scaling will not change the location of minimums, but it can change the path towards a minimum. There's also the saying "a broken clock is right two times a day". In this situation that means for one particular set of input variables the naive method is better but on average your better off correctly scaling. Recommendation: If you have a large set of tests/data let treat scaling as a tuning parameter. If you don't or have no idea what you are doing follow all the general rules of thumb for scaling.
 
 In general, when performing floating point arithematic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
 
 Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error. It's interesting to note that changing the scale will the change the steepest descent direction, but not the solution to the Newton problem \cite{dennis1996}.
 
-There are a few different ways to adjust variable scaling. One of which is to apply a diagonal matrix $\bm{D}$ with positive elements to the sub-problem. Changing $p$ into its scalled scaled version $\tilde{p} = \bm{D}p$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
+\subsubsection{Input Scaling}
+
+When formulating the optimization problem it should be designed so that the units
+of all the variables $\bm{x}$ being optimzied are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely neccisary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
+
+Further Reading:
+\begin{itemize}
+\item Chapter 2.2 of \cite{numopt2006} contains an illustration of poor scaling.
+\end{itemize}
+
+TODO provide examples in this document.
+
+\subsubsection{Hessian Scaling}
+
+For Hessian Scaling the Hessian matrix is rescalled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Mardquardt) methods since those are the only methods in DDogleg where it is applied.
+
+Hessian Scaling is done by applying a diagonal matrix $\bm{D}$ with positive elements to the Trust Region sub-problem (\ref{eq:trust_region_subproblem}). Changing $p$ into its scalled scaled version $\tilde{p} = \bm{D}p$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
 \begin{equation}
 \begin{array}{lr}
 \min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{\bm{D}p} \le \Delta_k
@@ -229,66 +120,11 @@ There are a few different ways to adjust variable scaling. One of which is to ap
 \end{equation}
 As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $\bm{D}p$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
 
-DDogleg offers the following options for scaling:
-\begin{enumargin}{0.2}
-\item Apply no scaling
-\item Automatically select $\bm{D}$ from the Hessian at every iteration
-\item (In the future) User specifies a fixed $\bm{D}$ 
-\end{enumargin}
-Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
+DDogleg can be configured to automatatically compute and Apply Hessian scaling at each iteration or to not apply Hessian scaling. Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
 \begin{equation}
 D_k^{ii} = \max\left( d_{\bigtriangledown},\min\left( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} \right)\right)
 \end{equation}
-where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtriangleup}$ is the maximum. This approach can handle negative definite $B_k$ and has the desirable property \cite{dennis1996} that the diagonal elements in $\tilde{B}_k = D^{-1}B_k D^{-1}$ will typically be $\tilde{B}_k^{ii} \approx 1$, unless clamped or $B_k^{ii}$ is zero. From a numerical perspective, matrices with this property can be decomposed with high precision. Computing scaling parameters is inexpensive and when configured to automatically scale DDogleg will update its scaling at every iteration.
-
-\subsubsection{Initial Region Size} 
-\label{section:init_region_size}
-
-Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
-
-Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeadidly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
-
-DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Uncontrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressiveand take a very large step into a distant plataue. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
-
-If the automatic methods fail to produce acceptable results then manual tuning will be necissary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
-
-Recommended Procedure for Selection of Initial Trust Region Size:
-\begin{enumargin}{0.2}
-\item Turn on verbose output and examine the progress
-\item Start with automatic selection using \emph{unconstrained initial step}
-\item If this fails then try \emph{Cauchy initial step}
-\item If performance is still poor follow manual tuning procedure
-\end{enumargin}
-For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
-
-A comparison of different initial conditions for different 'toy' problems is shown in Table \ref{results:initial_region}. In these scenarios, the Automatic Unconstrained method correctly selected the best initial conditions while all the other methods either tied unconstrained's performance or clearly made a poor choice. Unfortunately, these results don't extrapolate to all problems and there are situations where the unconstrained method results in failure. For that reason, the default method is in DDogleg is the more conservative Automatic Cauchy.
-
-\begin{table}[h]
-\centering
-\begin{threeparttable}
-\caption{\label{results:initial_region}Comparison of Initial Region Size}
-\begin{tabular}{|l||c|c|c||c|c|c||c|c|c||c|c|c|}
-\hline
-Problem        & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Automatic} & \multicolumn{3}{c||}{Manual} & \multicolumn{3}{c|}{Manual}\\
-               & \multicolumn{3}{c||}{Unconstrained} & \multicolumn{3}{c||}{Cauchy} & \multicolumn{3}{c||}{1} & \multicolumn{3}{c|}{100} \\
-\hline
-               & Fit     & G  & B  & Fit     & G  & B   & Fit     & G  & B  & Fit     & G  & B\\
-\hline
-Powel          & 2.0e-17 & 17 & 17 & 2.9e-17 & 30 & 26  & 4.9e-18 & 23 & 19 & 2.0e-17 & 17 & 17 \\
-Powel Singular & 7.3e-11 & 11 & 11 & 2.3e-10 & 13 & 13  & 6.7e-11 & 11 & 11 & 7.3e-11 & 11 & 11 \\
-Helical Valley & 2.5e-26 & 11 & 8  & 5.1e-18 & 11 & 11  & 4.1e-33 & 9  & 8  & 2.7e-26 & 16 & 8\\
-B.S. Powell    & 4.2e-31 & 25 & 18 & 3.7e-23 & 73 & 58  & 2.2e-31 & 25 & 18 & 0       & 62 & 43 \\
-Bundle 2D      & 3.7e-10 & 111& 36 & 7.0e-18 & 111& 36  & 9.0e-10 & 251& 93 & 3.3e-10 & 112 & 37 \\
-Bundle 2D [1]  & 7.0e-19 & 4  & 4  & 7.0e-18 & 4  & 4   & 1.5e-15 & 5  & 5  & 7.0e-18 & 4 & 4 \\ \hline
-\end{tabular}
-\begin{tablenotes}
-\small
-\item \emph{Fit} is the final fit score where zero is a perfect fit. \emph{G} is the number of times the gradient was computed. \emph{B} is the number of times the Hessian was computed. B is by far the most expensive step.
-\item Unless specified otherwise, all methods use Dogleg with a Cholesky solver. 
-\item [1] Uses QR with column pivots instead of Cholesky and can handle the nearly singular initial state.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtriangleup}$ is the maximum. This approach can handle negative definite $B_k$ and has the desirable property \cite{dennis1996} that the diagonal elements in $\tilde{B}_k = D^{-1}B_k D^{-1}$ will typically be $\tilde{B}_k^{ii} \approx 1$, unless clamped or $B_k^{ii}$ is zero. From a numerical perspective, matrices with this property can be decomposed with high precision. 
 
 \subsection{Schur Complement}
 For sparse systems with a specific structure, the Schur Complement can be used to greatly reduce the computational cost. What would have taken hours or days to solve can be solved in seconds or minutes. Bundle Adjustment is one such problem \cite{triggs1999bundle}. The power of the Schur Complement comes from breaking the system into sub-problems. Since the matrix has a special structure, smaller matrices are inverted and sparse fill in \cite{davis2006} is avoided making it highly efficient.
@@ -444,7 +280,7 @@ f(x_k + \alpha_k p_k) &\le& f(x_k) + c_1 \alpha_k \Delta f^T_k p_k \\
 \end{eqnarray}
 where $0 < c_1 < c_2 < 1$.
 
-In DDogleg, two line search methods are provided Fletcher86 (CITE) and More94 (CITE). Both of which explicitly meet the Wolfe condition when selecting a step length. More94 has shown better convergence and is the default option.
+In DDogleg, two line search methods are provided Fletcher86 \cite{Fletcher1986} and More94 \cite{More1994}. Both of which explicitly meet the Wolfe condition when selecting a step length. More94 has shown better convergence and is the default option. The implementation of More94 contained in DDogleg is a port of csrch function in MINPACK-2 \cite{MINPACK}.
 
 \subsection{Quasi-Newton}
 
@@ -602,7 +438,7 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 			\State $p_{k+1} \gets p_k$
 			\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
 		\Else
-			\State $\lambda \gets \nu \lambda$ \Comment{Follow the gradient more and decrease the step size}
+			\State $\lambda \gets \nu \lambda$ \Comment{Emphansize the gradient more}
 			\State $\nu = 2\nu$
 		\EndIf
 		\State $k \gets k + 1$
