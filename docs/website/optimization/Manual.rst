@@ -146,7 +146,7 @@ Hessian.
     B &= L^T R \\
     D &= R^T R
 
-where L and R are the left and right outputs from your Jacobian calculation.
+where H is the approximate Hessian, J is the full Jacobian matrix, and L and R are the left and right outputs from your Jacobian calculation.
 All the other implementation details are handled internally. See the JavaDoc for additional details.
 
 Weighted Least-Squares
