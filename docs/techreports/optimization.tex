@@ -36,7 +36,7 @@
 %\begin{titlepage}
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Revision 2018-1 and DDogleg 0.15}}
+\title{DDogleg Technical Report\\ Nonlinear Optimization\\{\Large Revision 2018-1}\\{\footnotesize DDogleg v0.15}}
 
 % author names and affiliations
 
@@ -52,7 +52,9 @@
 
 \IEEEpeerreviewmaketitle
 \begin{abstract}
-This document describes the implementation details and a little bit of the theory behind unconstrained optimization routines found in DDogleg. Specific algorithms are fully described, implementation details justified, source material cited, tuning best practices described, and benchmark results presented. This document does not fully describe the API, which can be found at \url{http://ddogleg.org}. It is also still a work in progress, following the philosophy that it is better to release something than never release anything waiting for perfection.
+DDogleg\footnote{DDogleg's name comes from the double dogleg Trust Region method, which is not included with DDogleg.} is a general purposed numerics library. This technical report is focused on describing algorithmic details of nonlinear unconstrained optimization routines found in DDogleg v0.15. It is intended to be used as a reference and a solid understanding of the basic theory of unconstrained optimization is assumed. Theoretical details will only be touched upon with citations for where to find more information. Best practices for implementation, tuning, benchmark results, and justifications for specific implementation decisions are all discussed. API details can be found online at \url{http://ddogleg.org}.
+
+This document should be considered a living work in progress and its release is following the philosophy that it is better to release something than to wait forever for perfection. Corrections and other feedback are welcomed.
 \end{abstract}
 
 
@@ -60,22 +62,21 @@ This document describes the implementation details and a little bit of the theor
 
 \begin{table}[h]
 \centering
-\caption{\label{definitions:Techniques}Definitions for Techniques}
+\caption{Variables and Terminology}
 \begin{tabular}{cl}
-$\bm{x}$ & Parameters being optimized. $\bm{x} \in \R^N$ \\
-$\bm{x}_k$ & Value of parameters at iteration $k$ \\
-$\bm{p}_k$ & Is the step or difference between $\bm{x}_{k+1}-\bm{x}$ in two iterations \\
-$f(\bm{x})$ & Scalar cost function being optimized. $f \in \R$ \\
-$f_k$ & Short hand for $f(\bm{x}_k) \in \R $ \\
-$g(\bm{x})$ & Gradient of $f(\bm{x})$. $g \in \R^n$ \\
-$g_k$ & Short hand for $g(\bm{x}_k)$ \\
-$B(\bm{x})$ & Hessian matrix or an approximation. $B(\bm{x}) \in \R^{N \times N}$ \\ 
-$B_k$ & Short hand for $B(\bm{x}_k)$ \\
-$H(\bm{x})$ & Inverse Hessian matrix or an approximation. $H(\bm{x}) \in \R^{N \times N}$  \\ 
-$H_k$ & Short hand for $H(\bm{x}_k)$ \\
+$x$ & Parameters being optimized. $x \in \R^N$ \\
+$x_k$ & Value of parameters at iteration $k$ \\
+$p_k$ & Is the step or difference between $x_{k+1}-x$ in two iterations \\
+$f(x)$ & Scalar cost function being optimized. $f \in \R$ \\
+$f_k$ & Short hand for $f(x_k) \in \R $ \\
+$g(x)$ & Gradient of $f(x)$. $g \in \R^n$ \\
+$g_k$ & Short hand for $g(x_k)$ \\
+$B(x)$ & Hessian matrix or an approximation. $B(x) \in \R^{N \times N}$ \\ 
+$B_k$ & Short hand for $B(x_k)$ \\
+$H(x)$ & Inverse Hessian matrix or an approximation. $H(x) \in \R^{N \times N}$  \\ 
+$H_k$ & Short hand for $H(x_k)$ \\
 positive definite & Matrix $B$ is positive definite when $y^T B y > 0$ for all non-zero vectors $y$  \\
 $\Delta_k$ & Trust Region size at step $k$. $\Delta_k \in \R^{+}$\\
-$s.t.$ & subject to  \\
 MAX\_VALUE & The largest possible floating point value
 \end{tabular}
 \end{table}
@@ -87,19 +88,20 @@ This section provides overview of different numerical techniques provided in DDo
 \input{trust_region.tex}
 
 \subsection{Scaling}
+\label{section:scaling}
 
-Variable scaling can refer to several different parts of the non-linear optimization problem. Here we will discuss scaling of the input variables $\bm{x}$ and scaling of the Hessian $B_k$ internally. Throughout the literature, correct scaling, in all of its forms, is emphasized as an essential task and that you are a bad person doomed to failure if you skip it. 
+Variable scaling can refer to several different parts of the non-linear optimization problem. Here we will discuss scaling of the input variables $x$ and scaling of the Hessian $B_k$ internally. Throughout the literature, correct scaling, in all of its forms, is emphasized as an essential task and that you are a bad person doomed to failure if you skip it. 
 
-In reality it is highly dependent on the problem if it will help, hurt, or have no affect. How can it hurt? When correctly applied, scaling will not change the location of minimums, but it can change the path towards a minimum. There's also the saying "a broken clock is right two times a day". In this situation that means for one particular set of input variables the naive method is better but on average your better off correctly scaling. Recommendation: If you have a large set of tests/data let treat scaling as a tuning parameter. If you don't or have no idea what you are doing follow all the general rules of thumb for scaling.
+In reality it is highly dependent on the problem if it will help, hurt, or have no affect. How can it hurt? When correctly applied, scaling does not change the location of minimums, but will change the path towards a minimum \cite{dennis1996}. There's also the saying "a broken clock is right two times a day". In this situation that means for one particular set of input variables the naive method is better but on average your better off correctly scaling. Recommendation: If you have a large set of tests/data let treat scaling as a tuning parameter. If you don't or have no idea what you are doing follow all the general rules of thumb for scaling.
 
 In general, when performing floating point arithmetic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
 
-Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error. It's interesting to note that changing the scale will the change the steepest descent direction, but not the solution to the Newton problem \cite{dennis1996}.
+Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error.
 
 \subsubsection{Input Scaling}
 
 When formulating the optimization problem it should be designed so that the units
-of all the variables $\bm{x}$ being optimized are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely necessary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
+of all the variables $x$ being optimized are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely necessary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
 
 Further Reading:
 \begin{itemize}
@@ -110,17 +112,17 @@ TODO provide examples in this document.
 
 \subsubsection{Hessian Scaling}
 
-For Hessian Scaling the Hessian matrix is re-scaled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Marquardt) methods since those are the only methods in DDogleg where it is applied.
+For Hessian Scaling, the Hessian matrix is re-scaled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Marquardt) methods since those are the only methods in DDogleg where it is applied.
 
-Hessian Scaling is done by applying a diagonal matrix $\bm{D}$ with positive elements to the Trust Region sub-problem (\ref{eq:trust_region_subproblem}). Changing $p$ into its scalled scaled version $\tilde{p} = \bm{D}p$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
+Hessian Scaling is done by applying a diagonal matrix $D$ with positive elements to the Trust Region sub-problem (\ref{eq:trust_region_subproblem}). Changing $p$ into its scalled scaled version $\tilde{p} = Dp$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
 \begin{equation}
 \begin{array}{lr}
-\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{\bm{D}p} \le \Delta_k
+\min\limits_{p\in \R^n} m_k(p) = f_k + g^T_k p + \frac{1}{2}p^T B_k p & s.t. \norm{Dp} \le \Delta_k
 \end{array}
 \end{equation}
-As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $\bm{D}p$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
+As suggested in \cite{numopt2006} this is implemented internally in DDogleg by substituting $Dp$ for $p$, $D^{-1}g_k$ for $g_k$, and $D^{-1}B_k D^{-1}$ for $B_k$.  
 
-DDogleg can be configured to automatically compute and Apply Hessian scaling at each iteration or to not apply Hessian scaling. Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$, which are found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
+DDogleg can be configured to automatically compute and Apply Hessian scaling at each iteration or to not apply Hessian scaling. Automatic scaling parameters are found using second derivatives $\frac{\partial^2 f}{\partial x^2_i}$ found in the Hessian's diagonal elements. Variables with larger second derivatives are more sensitive, thus their movement should be restricted more. The specific formula used in DDogleg is as follows:
 \begin{equation}
 D_k^{ii} = \max\left( d_{\bigtriangledown},\min\left( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} \right)\right)
 \end{equation}
@@ -198,9 +200,9 @@ Symmetry can be taken advantage of in matrix multiplication and when solving the
 
 Linear algebra and matrix operations are the workhorses that non-linear optimization is built upon. Of particular importance are algorithms capable of solving equations of the form:
 \begin{equation}
-\bm{A}\bm{b} = \bm{y}
+AB = y
 \end{equation}
-where $\bm{A} \in \R^{M \times N}$, $\bm{b} \in \R^N$ is unknown, and $\bm{y} \in \R^M$. The two solvers most frequently used in DDogleg are Cholesky and QR with column pivots. The importance of choosing the correct solver can be seen in Table \ref{results:initial_region}. A discussion of difference between different solvers and efficient computations is beyond the reach of this document.
+where $A \in \R^{M \times N}$, $B \in \R^N$ is unknown, and $y \in \R^M$. The two solvers most frequently used in DDogleg are Cholesky and QR with column pivots. The importance of choosing the correct solver can be seen in Table \ref{results:initial_region}. A discussion of difference between different solvers and efficient computations is beyond the reach of this document.
 
 DDogleg has a modular design and abstracts aware specific implementations details allowing different libraries and solvers to be used. This design allows most of the same code to be shared between sparse and dense implementations. The source of all default linear algebra operations in DDogleg is Efficicient Java Matrix Library (EJML) \cite{ejml2018}. If you wish to learn more about the computational side of linear algebra then ``Fundamentals of Matrix Computations'' \cite{watkins2010} and ``Direct Methods for Sparse Linear Systems'' \cite{davis2006} are recommended for dense and sparse systems, respectively.
 
@@ -210,8 +212,8 @@ DDogleg has a modular design and abstracts aware specific implementations detail
 \centering
 \caption{\label{definitions:UM}Definitions and API for Unconstrained Minimization}
 \begin{tabular}{cl}
-\textit{FunctionNtoS} & Interface for function $f(\bm{x})$ \\
-\textit{FunctionNtoN} & Interface for gradient $g(\bm{x})$ \\
+\textit{FunctionNtoS} & Interface for function $f(x)$ \\
+\textit{FunctionNtoN} & Interface for gradient $g(x)$ \\
 & Can be computed numerically \\
 \textit{UnconstrainedMinimization} & Interface for unconstrained minimization
 \end{tabular}
@@ -246,11 +248,11 @@ Trust Region BFGS Dogleg & $O(N^2)$ & Super Linear & [1] & [1] & Yes & Yes  \\[1
 
 Unconstrained minimization seeks to find a set of parameters which minimizes a function, e.g.:
 \begin{equation}
-\min\limits_{\bm{x} \in \R^N} f(\bm{x})
+\min\limits_{x \in \R^N} f(x)
 \end{equation}
-where $\bm{x}$ is an $N$-dimensional vector and $f : \R^N \Rightarrow \R $ is a function which outputs a scalar. A global minimum $x^*$ is a minimum such that $f(x^*) \le f(x)$ for all $x$. Local minimums are ones where $f(x^*) \le f(x)$ for all $x \in \mathcal{N}$, where $\mathcal{N}$ is bounded set of subset of $\R^N$. For most problems of interest to users of this library the best that can be found is a local minimum which is better than most of the other local minimums. A good introduction to the theory in this subject can be found in \cite{numopt2006}.
+where $x$ is an $N$-dimensional vector and $f : \R^N \Rightarrow \R $ is a function which outputs a scalar. A global minimum $x^*$ is a minimum such that $f(x^*) \le f(x)$ for all $x$. Local minimums are ones where $f(x^*) \le f(x)$ for all $x \in \mathcal{N}$, where $\mathcal{N}$ is bounded set of subset of $\R^N$. For most non-linear problems the best that can be done is to find a local minimum which are hopefully better than most of the other local minimums. A good introduction to the theory on this subject can be found in \cite{numopt2006}.
 
-In DDogleg, solutions to this problem use the function's gradient and Hessian to find a minimum. Convergence is found by examining the function's rate of change and the gradient, Section \ref{sec:unmin_convergence}. Computing the Hessian is often tedious and computationally expensive so iterative approximations of the Hessian, Section \ref{sec:hessian_approx}. The remaining sections discuss specific implementation details of applying general purpose algorithms to this problem.
+In DDogleg, solutions to this problem are found using use the gradient and Hessian. Convergence is found by examining the function's rate of change and the gradient, Section \ref{sec:unmin_convergence}. Computing the Hessian is often tedious and computationally expensive so iterative approximations of the Hessian, Section \ref{sec:hessian_approx}. The remaining sections discuss specific implementation details of applying general purpose algorithms to this problem.
 
 \subsection{Convergence Test}
 \label{sec:unmin_convergence}
@@ -260,7 +262,7 @@ All unconstrained minimization algorithms in DDogleg use the same convergence te
 \begin{center}
 \begin{tabular}{lc}
 F-Test & $ftol \cdot f(x)  \leq f(x) - f(x+p)$ \\
-G-Test & $gtol \leq \norm{\bm{g}(x)}_\infty$ 
+G-Test & $gtol \leq \norm{g(x)}_\infty$ 
 \end{tabular}
 \end{center}
  
@@ -273,7 +275,7 @@ f_{k+1} & < & \beta f_k
 \end{eqnarray}
 where $\beta$ is some how defined to describe the meaning of significant.
 
-In addition to significant decrease curvature conditions also need to be meet. The strong Wolfe condition is used in some line search algorithms to decide if sufficient decrease and curvature conditions have been meet:
+In addition to significant decrease, curvature conditions also need to be meet. The strong Wolfe condition is used in some line search algorithms to decide if sufficient decrease and curvature conditions have been meet:
 \begin{eqnarray}
 f(x_k + \alpha_k p_k) &\le& f(x_k) + c_1 \alpha_k \Delta f^T_k p_k \\
 |\Delta f(x_k + \alpha_k p_k)^T p_k| &\le& c_2 |\Delta f_k^T p_k|
@@ -297,8 +299,8 @@ For computational efficiency and robustness, the inverse $H_k = B_k^{-1}$ is est
 Unconstrianed minimization techniques need a way to estimate the Hessian. Exact methods of calculating the Hessian can be difficult to derive and expensive to compute. Algorithms which utilize exact methods have faster convergence but this is often offset by additional computational cost \cite{numopt2006}. DDogleg uses gradient based methods for estimating the Hessian. DFP \cite{davidonDFP} to estimate the Hessian and BFGS (Broyden-Fletcher-Goldfarb-Shanno) \cite{fletcher1987,numopt2006}\footnote{A quick search failed to assertain the first paper which fully described BFGS. What appears to be a precursor is discussed in \cite{fletcher1987} and \cite{numopt2006} fully describes the method but provides no citations.} to estimate the inverse hessian.
 
 \begin{flalign}
-\text{DFP} && \bm{B}_{k+1} &= (I- \rho_k \gamma_k s_k^T) \bm{B}_k (I - \rho_k s_k \gamma_k^T) + \rho_k \gamma_k \gamma_k^T && \\
-\text{BFGS} && \bm{H}_{k+1} &= H_k - \frac{H_k \gamma_k \gamma_k^T H_k }{\gamma_k^T H_k \gamma y_k} + \frac{s_k s_k^T}{y_k^T s_k} &&
+\text{DFP} && B_{k+1} &= (I- \rho_k \gamma_k s_k^T) B_k (I - \rho_k s_k \gamma_k^T) + \rho_k \gamma_k \gamma_k^T && \\
+\text{BFGS} && H_{k+1} &= H_k - \frac{H_k \gamma_k \gamma_k^T H_k }{\gamma_k^T H_k \gamma y_k} + \frac{s_k s_k^T}{y_k^T s_k} &&
 \end{flalign}
 \begin{equation*}
 \rho_k=\frac{1}{\gamma_k^T s_k}
@@ -324,24 +326,24 @@ Future Work:
 
 \section{Unconstrained Least-Squares}
 \begin{table*}[h]
+\caption{\label{definitions:UNLS}Definitions and API for Unconstrained Nonlinear Least-Squares}
 \centering
 \begin{tabular}{cl}
-$\bm{x}$ & Parameter vector which is being optimized and has $n$ elements. $x \in \R^N$ \\
-$f(\bm{x})$ & Scalar error function being optimized. $f \ge 0$ \\
-$f_k$ & Short hand for $f(\bm{x}_k)$ \\
-$\bm{F}(\bm{x})$ & Residual function from $\R^N \rightarrow \R^M$ \\
-$\bm{J}(\bm{x})$ & Jacobian of residual function. $\bm{J}(\bm{x}) \in \R^{N \times M}$\\
-$B(\bm{x})$ & Hessian approximation and is set to $B=\bm{J}^T\bm{J} \in \R^{N \times N}$ \\
-$g(\bm{x})$ & Gradient of $f(\bm{x})$, which is $\bm{J}(\bm{x})^T  \bm{F}(\bm{x}) \in \R^{N}$ \\
-$g_k$ & Short hand for $g(\bm{x}_k)$ \\
+$x$ & Parameter vector which is being optimized and has $n$ elements. $x \in \R^N$ \\
+$f(x)$ & Scalar error function being optimized. $f \ge 0$ \\
+$f_k$ & Short hand for $f(x_k)$ \\
+$F(x)$ & Residual function from $\R^N \rightarrow \R^M$ \\
+$J(x)$ & Jacobian of residual function. $J(x) \in \R^{N \times M}$\\
+$B(x)$ & Hessian approximation and is set to $B=J^TJ \in \R^{N \times N}$ \\
+$g(x)$ & Gradient of $f(x)$, which is $J(x)^T  F(x) \in \R^{N}$ \\
+$g_k$ & Short hand for $g(x_k)$ \\
 $\alpha$ & Mixing coefficent for Levenberg's and Marquardt's equations \\
-\textit{FunctionNtoM} & Interface for residuals $\bm{F}(\bm{x}) \in \R^M$ \\
-\textit{FunctionNtoMxN} & Interface for Jacobian $\bm{J}(\bm{x}) \in \R^{M,N}$ \\
+\textit{FunctionNtoM} & Interface for residuals $F(x) \in \R^M$ \\
+\textit{FunctionNtoMxN} & Interface for Jacobian $J(x) \in \R^{M,N}$ \\
 & Can be computed numerically \\
 \textit{UnconstrainedLeastSquares} & High level interface for this unconstrained least squares \\
 \textit{UnconstrainedLeastSquaresSchur} & Least-Squares using Schur Complement
 \end{tabular}
-\caption{\label{definitions:UNLS}Definitions and API for Unconstrained Nonlinear Least-Squares}
 \end{table*}
 
 \begin{table}[h]
@@ -375,21 +377,21 @@ Levenberg-Marquardt    & $O(N^3)$ & Super Linear & [2]  & Yes  & Yes & Yes \\[1e
 Unconstrained Least-Squares is a special case of Unconstrained Minimization. It refers to a problem where the function being optimized has the form
 \begin{equation}
 \label{eq:residual_error}
-\min\limits_{\bm{x}} f(\bm{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\bm{x})
+\min\limits_{x} f(x)=\frac{1}{2}\sum^m_{j=1} r^2_j(x)
 \end{equation}
-where $r_j(\bm{x}) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) or error. By definition $f(\bm{x}) \ge 0$. Matrix notation can also be used to defined \ref{eq:residual_error}:
+where $r_j(x) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) or error. By definition $f(x) \ge 0$. Matrix notation can also be used to defined \ref{eq:residual_error}:
 \begin{equation}
-\min\limits_{\bm{x}} f(\bm{x}) =\frac{1}{2} \bm{F}(\bm{x})^T \bm{F}(\bm{x}) = \frac{1}{2} \norm{\bm{F}(\bm{x})}^2_2
+\min\limits_{x} f(x) =\frac{1}{2} F(x)^T F(x) = \frac{1}{2} \norm{F(x)}^2_2
 \end{equation}
-where $\bm{F}(\bm{x}) = [ r_1(\bm{x}) , r_2(\bm{x}) , \cdots , r_m(\bm{x}) ]^T$. Then the Jacobian is defined as:
+where $F(x) = [ r_1(x) , r_2(x) , \cdots , r_m(x) ]^T$. Then the Jacobian is defined as:
 \begin{eqnarray}
-\bm{J}(\bm{x}) &=&  \left[ \begin{array}{c}\nabla r_1(\bm{x})^T \\ \nabla r_2(\bm{x})^T \\ \vdots \\ \nabla r_m(\bm{x})^T \end{array}\right] \\
-\nabla r_j(\bm{x})^T &=& \left[ \frac{\partial r_j}{\partial x_1},\frac{\partial r_j}{\partial x_2}, \cdots , \frac{\partial r_j}{\partial x_n} \right]^T
+J(x) &=&  \left[ \begin{array}{c}\nabla r_1(x)^T \\ \nabla r_2(x)^T \\ \vdots \\ \nabla r_m(x)^T \end{array}\right] \\
+\nabla r_j(x)^T &=& \left[ \frac{\partial r_j}{\partial x_1},\frac{\partial r_j}{\partial x_2}, \cdots , \frac{\partial r_j}{\partial x_n} \right]^T
 \end{eqnarray}
 and the Gradient as
 \begin{eqnarray}
-\nabla f(\bm{x}) = \bm{g}(\bm{x}) &=& \sum^m_{j=1}r_j(\bm{x})\nabla r_j(\bm{x}) \\
-&=& \bm{J}(\bm{x})^T \bm{F}(\bm{x})
+\nabla f(x) = g(x) &=& \sum^m_{j=1}r_j(x)\nabla r_j(x) \\
+&=& J(x)^T F(x)
 \end{eqnarray}
 
 \subsection{Convergence Test}
@@ -398,7 +400,7 @@ The same convergence tests used in unconstrained minimization are used with leas
 \begin{center}
 \begin{tabular}{lc}
 F-Test & $ftol \cdot f(x)  \leq f(x) - f(x+p)$ \\
-G-Test & $gtol \leq \norm{\bm{g}(x)}_\infty$ \\
+G-Test & $gtol \leq \norm{g(x)}_\infty$ \\
 \end{tabular}
 \end{center}
 
@@ -409,7 +411,7 @@ Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created bef
 \label{eq:levenberg}
 (J_k^T J_k + \lambda I) p_k = -g_k
 \end{equation} 
-where $\lambda$ is the damping factor that's adjusted at each iteration. Later on Marquardt \cite{marquardt1963} noted that as $\lambda$ increased information in $J_k^T J_k$ is used less, slowly convergence as it becomes a steepest descent search. Instead Levenberg proposed the following adjustment:
+where $\lambda$ is the damping factor that's adjusted at each iteration. Later on Marquardt \cite{marquardt1963} noted that as $\lambda$ increased information in $J_k^T J_k$ is used less, slowing convergence as it becomes a steepest descent search. Instead Marquardt proposed the following adjustment:
 \begin{equation}
 \label{eq:marquardt}
 (J_k^T J_k + \lambda \mbox{diag}(J_k^T J_k)) p_k = -g_k
@@ -429,8 +431,8 @@ Scaling is done using the same methods described in Section \ref{section:scaling
   	\State $B_k = J_k^T J_k$
 	\While{$k < k_{\mbox{max}}$ and not $done$}
 		\State Solve $\left(B_k + \lambda \left(\alpha I + (1-\alpha)\mbox{diag}(B_k) \right)\right) p_k = -g_k$ \Comment{LM Step}
-		\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
-		\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T J_k^T J_k \bm{p}$ \Comment{Predicted reduction in score}
+		\State $\delta_f \gets f(x_k) - f(x_k + p_k)$ \Comment{Actual reduction in score}
+		\State $\delta_m \gets m_k()-m_k(p_k) = -g^T_k p - \frac{1}{2}p^T J_k^T J_k p$ \Comment{Predicted reduction in score}
 		\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
 		\If{ $\delta_f \ge 0$} \Comment{Score get better?}
 			\State $\lambda \gets \lambda \cdot \mbox{max}(1/3 , 1-(2\nu-1)^3)$
@@ -448,11 +450,10 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 
 
 \subsection{Trust Region}
-
-Application of Trust Region to the Least Squares problem is straight forwards. Everything previously discussed still applies with the following variables defined as:
+ Everything previously discussed about Trust Region still applies in the Least Squares case with the following variables defined as:
 \begin{eqnarray}
-\bm{g}_k &=& J^T_k F_k  \\
-\bm{B}_k &=& J_k^T J_k
+g_k &=& J^T_k F_k  \\
+B_k &=& J_k^T J_k
 \end{eqnarray}
 
 \bibliographystyle{IEEEtran}

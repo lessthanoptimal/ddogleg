@@ -359,7 +359,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	/**
 	 * Turns on printing of debug messages.
 	 * @param out Stream that is printed to. Set to null to disable
-	 * @param level 0=Debug from solver. > 0 is debug from solver and update
+	 * @param level 0=Debug from solver. {@code > 0} is debug from solver and update
 	 */
 	@Override
 	public void setVerbose(@Nullable PrintStream out, int level) {

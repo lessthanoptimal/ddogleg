@@ -67,6 +67,8 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	/**
 	 * After each iteration this function can be called to get the current best
 	 * set of parameters.
+	 *
+	 * @return parameters
 	 */
 	double[] getParameters();
 

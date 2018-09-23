@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,12 +30,14 @@ import java.util.List;
 /**
  * <p>
  * Standard implementation of k-means [1], summary is provided below:
+ * </p>
  * <ol>
  * <li> The initial seeds for each cluster is selected by the provided
  * {@link InitializeKMeans_F64}.
  * <li> Each point is assigned to a cluster which minimizes the euclidean distance squared.
  * <li> New cluster centers are computed from the average of all points assigned to it.
  * </ol>
+ * <p>
  * This will find a locally optimal solution which minimizes the sum of the distance-squared of each point
  * to the cluster they are assigned to.
  * </p>

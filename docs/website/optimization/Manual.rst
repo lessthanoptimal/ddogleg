@@ -11,6 +11,10 @@ for you to read and learn more about this subject. DDogleg is designed so that a
 full advantage of all of its features, many of which are not available in other packages, then you need to understand
 the math.
 
+
+`Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization" Revision 2018-1 <../reports/ddogleg_optimization_2018_1.pdf>`_
+
+
 Unconstrained Minimization Methods
 ----------------------------------
 
@@ -37,7 +41,7 @@ Unconstrained Least Squares Methods
 -----------------------------------
 
 .. math::
-    \min\limits_{\boldsymbol{x}} f(\boldsymbol{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\boldsymbol{x})
+    \min\limits_{\boldsymbol{x}\in \Re^N} f(\boldsymbol{x})=\frac{1}{2}\sum^m_{j=1} r^2_j(\boldsymbol{x})
 
 +-------------------------------+-------------+--------------+----------+-------+--------+--------+
 | **Method**                    | Iteration   | Convergence  | Singular | Dense | Sparse | Schur  |
@@ -69,7 +73,7 @@ Sparse Structures
 Introduction
 ------------
 
-This manual covers the API and is primarily example based. An (incomplete) technical report is being worked on to cover
+This manual covers the API and is primarily example based. A technical report is provided to cover
 the numerical and algorithmic implementation details. For those who are new to the subject of optimization
 and for see this being an important part of their career we suggest picking up a copy of "Numerical Optimization".
 It covers many of the methods included in this library. The source code is also intended to be browsed and contains
@@ -87,6 +91,7 @@ Recommended Reading
 * Kaj Madsen, Hans Bruun Nielsen, Ole Tingleff, "Methods for Non-Linear Least Squares Problems" 2nd ed., 2004 Lecture Notes
 * Jorge Nocedal and Stephen J. Wright, "Numerical Optimization" 2nd Ed. Springer
 * Timothy A. Davis, "Direct Methods for Sparse Linear Systems"  2006 SIAM
+* Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization" Revision 2018-1
 
 
 Usage Examples
@@ -104,8 +109,8 @@ too strict then it can take an excessive amount of time. Too loose and the solut
 provide two parameters across all of its routines, F-Test and G-Test.
 
 .. math::
-  \mbox{F-test} &\qquad& ftol \cdot f(x)  \leq f(x) - f(x+p) \\
-  \mbox{G-test} &\qquad& gtol \leq \left\lVert g(x) \right\Vert_\infty \\
+  \mbox{F-Test} &\qquad& ftol \cdot f(x)  \leq f(x) - f(x+p) \\
+  \mbox{G-Test} &\qquad& gtol \leq \left\lVert g(x) \right\Vert_\infty \\
 
 
 F-Test checks to see when the cost function stops changing significantly and the G-Test when the gradient no longer
@@ -199,16 +204,6 @@ Hessian Scaling applied to Trust-Region subproblem changes the trust region in a
 .. math::
   \min\limits_{p\in \Re^n} m_k(p) = f_k + g^T_k p + \frac{1}{2} p^T B_k p  \hspace{0.5cm} \mbox{s.t.} \hspace{0.5cm} |D p|  \le \Delta_k
 
-
-Tip: Input Scaling
-------------------
-
-Seems like every discussion on non-linear optimization beats into you the absolute need for scaling your parameters
-so that they are approximately the same order of magnitude. For example, one variable should be around 1e12 and another
-1e-12. That's difficult for solvers to handle and can cause imprecation. It can even cause the parameter search
-to get stuck as it over emphasizes variables!
-
-TODO Flush this out more
 
 
 

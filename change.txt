@@ -11,6 +11,7 @@ Date:     2018
   * Scaled Hessian for least squares TR and LM
   * Sparse LM and TR
   * Schur Decomposition interface with TR and LM implementations
+  * Refactored line search and Quasi Newton
   * Better verbose mode
 - Added float circular queues
 - GrowQueue

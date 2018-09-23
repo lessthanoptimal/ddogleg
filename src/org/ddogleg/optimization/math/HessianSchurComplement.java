@@ -31,7 +31,7 @@ import org.ejml.data.DMatrixRMaj;
  *     D=R*R
  * </pre>
  *
- * <p>Where L and R are the left and right hand side of the Jacobian, respectively/p>
+ * <p>Where L and R are the left and right hand side of the Jacobian, respectively</p>
  *
  * @author Peter Abeles
  */

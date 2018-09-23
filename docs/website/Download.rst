@@ -3,8 +3,6 @@ Download
 
 Both the source code and precompiled jar files are available.  The latest stable code can be downloaded from Sourceforge while the bleeding edge can be checkout from Github. A list of dependencies and build instructions are also provided below.
 
-
-
 Stable Release
 --------------
 
@@ -12,8 +10,8 @@ The latest stable release is available on Source Forge, with direct links provid
 
 https://sourceforge.net/projects/ddogleg/
 
-* `Source Code <https://sourceforge.net/projects/ddogleg/files/v0.15/ddogleg-v0.15-src.zip/download/>`_
-* `Precompiled Jar <https://sourceforge.net/projects/ddogleg/files/v0.15/ddogleg-v0.15-libs.zip/download/>`_
+* :sourceforge:`Source Code <src>`
+* :sourceforge:`Precompiled Jar <libs>`
 
 Bleeding Edge
 -------------
@@ -26,7 +24,7 @@ In Linux you can check out the code from git using the following commands:
 
 ::
 
-  git clone git://github.com/lessthanoptimal/ddogleg.git ddogleg
+  git clone git://github.com/lessthanoptimal/ddogleg.git --branch SNAPSHOT ddogleg
 
 Maven and Gradle
 ------------------------
@@ -34,16 +32,18 @@ Maven and Gradle
 To include the latest stable release in your Maven projects add the following dependency. Be sure to set VERSION to whatever the latest stable version is.
 
 **Maven:**
-::
+
+.. parsed-literal::
     <dependency>
         <groupId>org.ddogleg</groupId>
         <artifactId>ddogleg</artifactId>
-        <version>0.15</version>
+        <version>\ |ddogleg_version|\ </version>
     </dependency>
- 
+
 **Gradle:**
-::
-    compile group: 'org.ddogleg', name: 'ddogleg', version: '0.15'
+
+.. parsed-literal::
+    compile group: 'org.ddogleg', name: 'ddogleg', version: '\ |ddogleg_version|\ '
 
 
 Dependencies

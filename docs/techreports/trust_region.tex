@@ -8,8 +8,8 @@ Trust Region refers to a family of optimization methods that operate by assuming
 	\State \quad $\Delta_{0}$ is the initial trust region size. \Comment{Section \ref{section:init_region_size}}
 	\While{$k < k_{\mbox{max}}$ and not $done$}
 	\State $p_k$ update by optimizing Eq. \ref{eq:trust_region_subproblem} \Comment{Sections \ref{section:cauchy} and \ref{section:dogleg} }
-	\State $\delta_f \gets f(\bm{x}_k) - f(\bm{x}_k + \bm{p}_k)$ \Comment{Actual reduction in score}
-	\State $\delta_m \gets m_k(\bm{0})-m_k(\bm{p}_k) = -g^T_k \bm{p} - \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p}$ \Comment{Predicted reduction in score}
+	\State $\delta_f \gets f(x_k) - f(x_k + p_k)$ \Comment{Actual reduction in score}
+	\State $\delta_m \gets m_k(0)-m_k(p_k) = -g^T_k p - \frac{1}{2}p^T B_k p$ \Comment{Predicted reduction in score}
 	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio}
 	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Score got worse or the model poor?}
 		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
@@ -23,7 +23,7 @@ Trust Region refers to a family of optimization methods that operate by assuming
 	\EndIf
 	\If{$\delta_f > 0$ and $\nu > 0$} \Comment{Is the solution acceptable?}
 		\State $x_{k+1} \gets x_k + p_k$ \Comment{Update the state}
-		\State $done$ $\gets$ $\mbox{F-test}$ or $\mbox{G-test}$ \Comment{Convergence testing}
+		\State $done$ $\gets$ $\mbox{F-Test}$ or $\mbox{G-Test}$ \Comment{Convergence testing}
 	\Else
 		\State $x_{k+1} \gets x_k$
 	\EndIf
@@ -36,16 +36,16 @@ Trust Region refers to a family of optimization methods that operate by assuming
 At every iteration the Trust Region subproblem is solved for, either exactly or approximately:
 \begin{equation}
 \begin{array}{lr}
-\min\limits_{p\in \R^n} m_k(\bm{p}) = f_k + g^T_k \bm{p} + \frac{1}{2}\bm{p}^T \bm{B}_k \bm{p} & s.t. \norm{p} \le \Delta_k
+\min\limits_{p\in \R^n} m_k(p) = f_k + g^T_k p + \frac{1}{2}p^T B_k p & s.t. \norm{p} \le \Delta_k
 \end{array}
 \label{eq:trust_region_subproblem}
 \end{equation}
-where $m(\bm{p}) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first derivative to zero:
+where $m(p) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first derivative to zero:
 \begin{equation}
-\bm{p} = -\bm{B}^{-1}_k \bm{g}_k
+p = -B^{-1}_k g_k
 \label{eq:TR_unconstrained_solution}
 \end{equation}
-An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute and approximate methods are typically used instead. The Cauchy Point and Dogleg are included in the DDogleg library.
+An exact solution to (\ref{eq:trust_region_subproblem}) is expensive to compute and approximate methods are typically used instead. The Cauchy Point and Dogleg are approximate methods and included in the DDogleg library.
 
 \subsubsection{Cauchy Point}
 \label{section:cauchy}
@@ -90,14 +90,14 @@ p^s_k &=& -\bar{\tau}_k \hat{g}_k
 \end{equation}
 The predicted reduction in score is found using:
 \begin{equation}
-m_k(\bm{0})-m_k(\bm{p}_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
+m_k(0)-m_k(p_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \hat{g}_k}{2} \right)
 \end{equation}
 
 
 \subsubsection{Dogleg}
 \label{section:dogleg}
 
-The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}). As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reformulated to avoid powers of three.
+The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}), which is the Newton point. As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reformulated to avoid powers of three.
 \begin{eqnarray}
 \hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
 p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
@@ -134,7 +134,7 @@ Selection of the initial trust region size $\Delta_0$ is important but typically
 
 Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeatedly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
 
-DDogleg provides two automatic methods for finding the initial region size. 1) \emph{Unconstrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method the selected algorithm for choosing a step is given a trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive and take a very large step into a distant plateau. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can make convergence slow.
+DDogleg provides two automatic methods for finding the initial region size, with unreliable results. 1) \emph{Unconstrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method, the selected algorithm (e.g. Dogleg or Cauchy) selects a step when given trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive and take a very large step into a distant plateau. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can converge slowly.
 
 If the automatic methods fail to produce acceptable results then manual tuning will be necessary. One possible manual tuning procedure is to start with $\Delta_0=1$ then trying $\Delta_0=100$, and if results improved try $\Delta_0=10000$. If results don't get better try $0.1$ or other fractions of one.
 
@@ -147,7 +147,7 @@ Recommended Procedure for Selection of Initial Trust Region Size:
 \end{enumargin}
 For instructions on how to switch between the methods described here consult the JavaDoc of ConfigTrustRegion.
 
-A comparison of different initial conditions for different 'toy' problems is shown in Table \ref{results:initial_region}. In these scenarios, the Automatic Unconstrained method correctly selected the best initial conditions while all the other methods either tied unconstrained's performance or clearly made a poor choice. Unfortunately, these results don't extrapolate to all problems and there are situations where the unconstrained method results in failure. For that reason, the default method is in DDogleg is the more conservative Automatic Cauchy.
+A comparison of different initial conditions for different 'toy' problems is shown in Table \ref{results:initial_region}. In these scenarios, the Automatic Unconstrained method correctly selected the best initial conditions while all the other methods either tied unconstrained's performance or clearly made a poor choice. Unfortunately, these results don't extrapolate to all problems and there are situations where the unconstrained method results in failure. For that reason, the default method is the more conservative Automatic Cauchy.
 
 \begin{table}[h]
 \centering

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -62,11 +62,15 @@ public interface DistanceFromModel<Model, Point> {
 
 	/**
 	 * Returns a class for the input point object
+	 *
+	 * @return point class type
 	 */
 	Class<Point> getPointType();
 
 	/**
 	 * Returns a class for the input point object
+	 *
+	 * @return model class type
 	 */
 	Class<Model> getModelType();
 }

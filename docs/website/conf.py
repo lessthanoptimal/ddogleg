@@ -289,8 +289,12 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/blob/v'+version+'/examples/src/org/ddogleg/example/%s',
-                      '')}
+                      ''),
+            'sourceforge': ('https://sourceforge.net/projects/ddogleg/files/v'+version+'/ddogleg-v'+version+'-%s.zip/download/',
+                            '')}
 
 mathjax_config = {
     'extensions': ['tex2jax.js']
 }
+
+rst_epilog = '.. |ddogleg_version| replace:: %s' % version

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,12 +32,12 @@ import org.ddogleg.solver.PolynomialOps;
  * NOTE: Polynomial division by small coefficients can produce erratic results.  There are systems that the Eigenvalue
  * method will produce accurate solutions for but that this algorithm will fail at.  An example of one such system
  * is provided below.  Maybe someone can come up with a fix/reformulation which works better and is still fast.<br>
+ * </P>
  * <pre>
  * Polynomial.wrap(0.06496129844668003,-0.20388125146277708,-0.5346822141623102,3.8451325925247914,
  *				-8.125384551749551,7.281661653591961,-0.1827681555908356,-4.918274060516843,
  *				3.6136415842421954,-0.8418091530846867,5.662137425588298E-15)
  * </pre>
- * </P>
  *
  * @author Peter Abeles
  */
@@ -71,8 +71,8 @@ public class FindRealRootsSturm {
 	 * Configures search parameters.
 	 *
 	 * @param maxCoefficients The maximum number of coefficients a polynomial will have.
-	 * @param searchRadius If > 0 then roots are searched for inside of -searchRadius <= x <= searchRadius.  If
-	 *                     <= 0 then it will find all roots.
+	 * @param searchRadius If {@code >} 0 then roots are searched for inside of -searchRadius &le; x &le; searchRadius.  If
+	 *                     &le; 0 then it will find all roots.
 	 * @param boundTolerance How accurately roots are found using bisection.  Should be close enough that refinement can
 	 *                       accurately converge to the correct root.
 	 * @param maxBoundIterations Maximum number of iterations each step can perform when bounding.
