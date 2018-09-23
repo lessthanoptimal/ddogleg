@@ -1,4 +1,4 @@
-Trust Region refers to a family of optimization methods that operate by assuming a quadratic model is accurate within a local "trust region". The trust region's size is adjusted based on the quadratic model's performance in previous iterations. A summary of Trust Region, as implemented in DDogleg, is found in Algorithm \ref{alg:trust_region}. This implementation\footnote{The more traditional variant described in \cite{numopt2006,fletcher1987} was also considered but found to converge slower in test problems.} is primarily based on the description found in \cite{IMM2004}.
+Trust Region refers to a family of optimization methods that operate by assuming a quadratic model is accurate within a local "trust region". The trust region's size is adjusted based on the quadratic model's performance in previous iterations. A summary of Trust Region, as implemented in DDogleg, is found in Algorithm \ref{alg:trust_region}. This implementation\footnote{The more traditional variant described in \cite{numopt2006,fletcher1987} were considered but found to converge slower in test problems.} is primarily based on the description found in \cite{IMM2004}.
 
 \begin{algorithm}{}
 \caption{\label{alg:trust_region}Trust Region}
@@ -40,7 +40,7 @@ At every iteration the Trust Region subproblem is solved for, either exactly or 
 \end{array}
 \label{eq:trust_region_subproblem}
 \end{equation}
-where $m(p) \in \R$ is a quadratic model approximating $f(x_k) \in \R$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first derivative to zero:
+where $m(p) \in \R$ is a quadratic model approximating $f(x_k)$, $p \in \R^N$ is the step or change in state, $B \in \R^{N \times N}$ is a symmetric matrix representing the Hessian or an approximation, and $\Delta_k \in \R^+$ is the trust region size. The unconstrained solution to Eq. \ref{eq:trust_region_subproblem} is easily found by setting the first derivative to zero:
 \begin{equation}
 p = -B^{-1}_k g_k
 \label{eq:TR_unconstrained_solution}
@@ -77,7 +77,7 @@ p^s_k = -\tau_k \frac{\Delta_k}{\norm{g_k}}g_k
 	\label{eq:cauchy_tau}
 \end{equation}
 
-The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical overflow issues by removing powers of three and division by $\Delta_k$:
+The formulas in (\ref{eq:cauchy_p}) and (\ref{eq:cauchy_tau}) can be improved upon to avoid numerical issues by removing powers of three and division by $\Delta_k$:
 \begin{eqnarray}
 \hat{g}_k &=& \frac{g_k}{\norm{g_k}} \\
 p^s_k &=& -\bar{\tau}_k \hat{g}_k
@@ -97,7 +97,7 @@ m_k(0)-m_k(p_k) = \bar{\tau}_k \left(\norm{g_k} - \frac{\tau_k \hat{g}_k^T B_k \
 \subsubsection{Dogleg}
 \label{section:dogleg}
 
-The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}), which is the Newton point. As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reformulated to avoid powers of three.
+The Dogleg method considers second order terms to provide a more accurate solution to Eq. \ref{eq:trust_region_subproblem}. The optimal solution, as a function of region size, is a curved trajectory. The Dogleg method approximates this curved trajectory using two line segments. The first line starts at the $x_{k-1}$ and ends at the unconstrained Cauchy point. The second heads towards $p^b$ the solution to (\ref{eq:TR_unconstrained_solution}), which is the Gauss-Newton solution. As with equations from Cauchy Point, these equations are not traditional (see \cite{numopt2006,IMM2004}) and have been reformulated to avoid powers of three.
 \begin{eqnarray}
 \hat{g_k} &=& \frac{g_k}{\norm{g_k}} \\
 p^u_k &=& -\frac{g_k}{\hat{g_k}^T B_k \hat{g_k}} \\
@@ -108,7 +108,7 @@ p^{dog}_k &=&
 	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
 \end{cases}
 \end{eqnarray}
-where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then the gradient is used instead.
+where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite the gradient descent is used instead.
 
 \begin{algorithm}{}
 \caption{\label{alg:dogleg_step}Selection of Dogleg Step}
@@ -132,7 +132,7 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
 
 Selection of the initial trust region size $\Delta_0$ is important but typically not discussed in reference material \cite{fletcher1987,numopt2006,IMM2004} in detail. Initial region size is typically considered a tuning parameter that the user is supposed to select through trial and error. While the Trust region size is dynamically adjusted at each iteration in the Trust Region approach, the initial selection of the trust region size can significantly influence the final convergence.
 
-Here is an example of a possible failure mode when the trust region's size is poorly selected. With the Dog Leg method, if $\Delta_0$ is too small then a Cauchy step is selected repeatedly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
+Here is an example of a possible failure mode when the trust region's size is poorly selected. With the dogleg method, if $\Delta_0$ is too small then a Cauchy step is selected repeatedly. The Cauchy Point takes much smaller steps, increasing the chances of getting stuck in a local minimum.
 
 DDogleg provides two automatic methods for finding the initial region size, with unreliable results. 1) \emph{Unconstrained initial step} and 2) \emph{Cauchy initial step}. With the unconstrained method, the selected algorithm (e.g. Dogleg or Cauchy) selects a step when given trust region of MAX\_VALUE. The step it selects is used and the trust region is then set to the length of that step. This works well in many problems but can be overly agressive and take a very large step into a distant plateau. The Cauchy initial step method computes the length of a Cauchy step, then sets the region size to be 10x that. This estimate tends to be conservative will in general converge but can converge slowly.
 
