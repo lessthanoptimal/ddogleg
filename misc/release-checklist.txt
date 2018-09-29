@@ -14,8 +14,8 @@
 - Creating Files for Source Forge
   git clone git@github.com:lessthanoptimal/ddogleg.git
   VERSION=v0.15
-  cd ddogleg;git checkout SNAPSHOT;./gradlew createVersionFile;./gradlew autogenerate;rm -rf .git;cd ..;zip -r ejml-$VERSION-src.zip ejml
-  cd ddogleg;./gradlew createLibraryDirectory;mv libraries ..;cd ..;mv libraries ejml-$VERSION-libs;zip -r ejml-$VERSION-libs.zip ejml-$VERSION-libs
+  cd ddogleg;git checkout SNAPSHOT;./gradlew createVersionFile;rm -rf .git;cd ..;zip -r ddogleg-$VERSION-src.zip ddogleg
+  cd ddogleg;./gradlew createLibraryDirectory;mv libraries ..;cd ..;mv libraries ddogleg-$VERSION-libs;zip -r ddogleg-$VERSION-libs.zip ddogleg-$VERSION-libs
 
 - Generate javadoc
   ./gradlew alljavadoc
