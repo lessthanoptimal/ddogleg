@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.15
-Date:     2018
+Date:     2018/09/29
 
 - Non-Linear Optimization
   * Rewrote and redesigned Trust-Region (TR) and Levenberg-Marquardt (LM)

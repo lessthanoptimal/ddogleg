@@ -1,15 +1,22 @@
 - updated website
   * cd docs/website/
-  * conf.py, Download.rst, index.rst, Documentation.rst
-  * examples/ <-- the source code
+  * conf.py
+  * Examples:
     See what needs to be updated since TAG_NAME "git diff --name-status TAG_NAME ddogleg/examples"
-  * git tag links to github *.rst example files
   * make html
+  * Double check examples and see if the ones that have changed look good.
+    Github links should be auto updated
   * scp _build to ddogleg.org
 - update version in build.gradle
 - update change.txt
 - ./gradlew test
 - ./gradlew install
+- Creating Files for Source Forge
+  git clone git@github.com:lessthanoptimal/ddogleg.git
+  VERSION=v0.15
+  cd ddogleg;git checkout SNAPSHOT;./gradlew createVersionFile;./gradlew autogenerate;rm -rf .git;cd ..;zip -r ejml-$VERSION-src.zip ejml
+  cd ddogleg;./gradlew createLibraryDirectory;mv libraries ..;cd ..;mv libraries ejml-$VERSION-libs;zip -r ejml-$VERSION-libs.zip ejml-$VERSION-libs
+
 - Generate javadoc
   ./gradlew alljavadoc
 - ./gradlew createLibraryDirectory

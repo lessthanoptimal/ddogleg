@@ -1,6 +1,6 @@
 
 plugins {
-    id "com.peterabeles.gversion" version "1.2.5"
+    id "com.peterabeles.gversion" version "1.2.6"
 }
 
 apply plugin: 'idea'
@@ -11,7 +11,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.15-SNAPSHOT'
+version = '0.15'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.8
@@ -68,7 +68,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.36-SNAPSHOT'}
+        compile group: 'org.ejml', name: a, version: '0.36'}
 
     compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
 
