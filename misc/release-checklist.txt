@@ -16,10 +16,8 @@
   VERSION=v0.15
   cd ddogleg;git checkout SNAPSHOT;./gradlew createVersionFile;rm -rf .git;cd ..;zip -r ddogleg-$VERSION-src.zip ddogleg
   cd ddogleg;./gradlew createLibraryDirectory;mv libraries ..;cd ..;mv libraries ddogleg-$VERSION-libs;zip -r ddogleg-$VERSION-libs.zip ddogleg-$VERSION-libs
-
-- Generate javadoc
-  ./gradlew alljavadoc
-- ./gradlew createLibraryDirectory
+- Website JavaDoc
+  cd ddogleg;rm -rf build/docs/javadoc;./gradlew alljavadoc;cd build/docs/;zip -r javadoc.zip javadoc
 - commit and tag release
 - Upload to sourceforge (src,libs)
 - Update Maven central repository
