@@ -11,7 +11,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.15'
+version = '0.16-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.8
@@ -217,6 +217,6 @@ task alljavadoc(type: Javadoc) {
 project.compileJava.dependsOn(createVersionFile)
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = '4.10.2'
 }
-
