@@ -55,11 +55,11 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 		this.search = search;
 		this.searchN = searchN;
 		this.splitter = splitter;
+		constructor = new KdTreeConstructor<>(memory,splitter);
 	}
 
 	public KdTreeNearestNeighbor( KdTreeDistance<P> distance ) {
 		this( new KdTreeSearch1Standard<>(distance), new KdTreeSearchNStandard<>(distance), new AxisSplitterMedian<>(distance));
-		constructor = new KdTreeConstructor<>(memory,splitter);
 	}
 
 	@Override

@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.15.1
+Date:     2018/10/15
+
+- Fixed bug in KdTreeNearestNeighbor constructor
+
+------------------------------------------------------
 Version:  0.15
 Date:     2018/09/29
 
