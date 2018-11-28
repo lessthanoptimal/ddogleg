@@ -125,7 +125,7 @@ public class DerivativeChecker {
 	void jacobianPrintR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 						 double param[] , double tol )
 	{
-		jacobianPrint(func, jacobian, param, tol, Math.sqrt(UtilEjml.EPS));
+		jacobianPrintR(func, jacobian, param, tol, Math.sqrt(UtilEjml.EPS));
 	}
 
 	public static <S extends DMatrix>
@@ -178,7 +178,7 @@ public class DerivativeChecker {
 	boolean jacobianR( FunctionNtoM func , FunctionNtoMxN<S> jacobian ,
 								 double param[] , double tol )
 	{
-		return jacobian(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
+		return jacobianR(func,jacobian,param,tol,Math.sqrt(UtilEjml.EPS));
 	}
 
 	/**

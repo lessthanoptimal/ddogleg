@@ -3,10 +3,11 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.16
+Version:  0.15.2
 Date:
 
-
+- Updated gradle
+- Fixed type-o in DerivativeChecker R variants
 
 ------------------------------------------------------
 Version:  0.15.1
