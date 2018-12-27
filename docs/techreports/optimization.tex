@@ -52,7 +52,7 @@
 
 \IEEEpeerreviewmaketitle
 \begin{abstract}
-DDogleg\footnote{DDogleg's name comes from the double dogleg Trust Region method, which is not included with DDogleg.} is a general purposed numerics library. This technical report is focused on describing algorithmic details of nonlinear unconstrained optimization routines found in DDogleg v0.15. It is intended to be used as a reference and a solid understanding of the basic theory of unconstrained optimization is assumed. Theoretical details will only be touched upon with citations for where to find more information. Best practices for implementation, tuning, benchmark results, and justifications for specific implementation decisions are all discussed. API details can be found online at \url{http://ddogleg.org}.
+DDogleg\footnote{DDogleg's name comes from the double dogleg Trust Region method, which is not included with DDogleg.} is a general purposed numerics library. This technical report is focused on describing algorithmic details of nonlinear unconstrained optimization routines found in DDogleg v0.15 and is intended to be used as a reference. A solid understanding of the basic theory of unconstrained optimization is assumed. Theoretical details will only be touched upon with citations for where to find more information. Best practices for implementation, tuning, benchmark results, and justifications for specific implementation decisions are all discussed. API details can be found online at \url{http://ddogleg.org}.
 
 This document should be considered a living work in progress and its release is following the philosophy that it is better to release something than to wait forever for perfection. Corrections and other feedback are welcomed.
 \end{abstract}
@@ -81,7 +81,7 @@ MAX\_VALUE & The largest possible floating point value
 \end{tabular}
 \end{table}
 
-This section provides overview of different numerical techniques provided in DDogleg for unconstrained optimization. Techniques described here can often be applied to different problems. Specific implementation details are discussed in the problem's section.
+This section provides overview of different numerical techniques provided in DDogleg for unconstrained optimization. Techniques described here can often be applied to different specific problems.
 
 \subsection{Trust Region}
 
@@ -94,14 +94,13 @@ Variable scaling can refer to several different parts of the non-linear optimiza
 
 In reality there are problems where it is essential, but in it does not always help and can sometimes hurt. How can it hurt? When correctly applied, scaling does not change the location of minimums, but will change the path towards a minimum \cite{dennis1996} and can change which variables are emphasized. Scaling should be treated like other tuning parameters and experimented with.
 
-In general, when performing floating point arithmetic \cite{goldberg1991every}, you need to avoid mixing very large (e.g. 1e8) numbers with very small (e.g. 1e-12) numbers can causes significant round off errors. Having all the numbers be very small or very large is problematic because that can cause numerical overflow or underflow. Thus it is desirable to have all numbers take on values close to one.
+In general, when performing floating point arithmetic \cite{goldberg1991every}, it is advisable to avoid mixing very large (e.g. 1e12) numbers with very small (e.g. 1e-12) numbers to reduce round off errors. Thus it is desirable to have all numbers take on values close to one and have a standard deviation of one.
 
 Another reason to scale variables is to reduce the emphasis on sensitive variables. A sensitive variable is one in which a small change in it's value results in a large error, e.g. $1/x^2$ when $x \approx 0$. This can cause the optimization routine to get stuck since any step causes a large error.
 
 \subsubsection{Input Scaling}
 
-When formulating the optimization problem it should be designed so that the units
-of all the variables $x$ being optimized are the same and around one. Input scaling must be done by the user because DDogleg has no knowledge of the units. When solving linear problems, as is often done to initialize non-linear methods, input scaling is absolutely necessary and quick experiments can show that. It's also the step most often skipped by people because of the extra work involved.
+The optimization cost functions should be designed so that the units of all the variables are on average one with a standard deviation of one. This scaling cannot be done by DDogleg automatically because it does not have knowledge of each variable's range.
 
 Further Reading:
 \begin{itemize}
@@ -112,7 +111,7 @@ TODO provide examples in this document.
 
 \subsubsection{Hessian Scaling}
 
-For Hessian Scaling, the Hessian matrix is re-scaled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Marquardt) methods since those are the only methods in DDogleg where it is applied.
+For Hessian Scaling, the Hessian matrix is re-scaled so that the diagonal elements are approximately one. We will discuss Hessian scaling in regards to Trust Region (and Levenberg-Marquardt) methods.
 
 Hessian Scaling is done by applying a diagonal matrix $D$ with positive elements to the Trust Region sub-problem (\ref{eq:trust_region_subproblem}). Changing $p$ into its scalled scaled version $\tilde{p} = Dp$. The trust region is no longer a circle but an ellipse \cite{numopt2006}, resulting in this alternative trust region subproblem:
 \begin{equation}
@@ -126,7 +125,7 @@ DDogleg can be configured to automatically compute and apply Hessian scaling at 
 \begin{equation}
 D_k^{ii} = \max\left( d_{\bigtriangledown},\min\left( \sqrt{|B_k^{ii}|} , d_{\bigtriangleup} \right)\right)
 \end{equation}
-where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtriangleup}$ is the maximum. This approach can handle negative definite $B_k$ and has the desirable property \cite{dennis1996} that the diagonal elements in $\tilde{B}_k = D^{-1}B_k D^{-1}$ will typically be $\tilde{B}_k^{ii} \approx 1$, unless clamped or $B_k^{ii}$ is zero. From a numerical perspective, matrices with this property can be decomposed with high precision. 
+where $d_{\bigtriangledown}$ is the minimum allowed scaling value and $d_{\bigtriangleup}$ is the maximum. This approach can handle negative definite $B_k$ and has the desirable property \cite{dennis1996} that the diagonal elements in $\tilde{B}_k = D^{-1}B_k D^{-1}$ will typically be $\tilde{B}_k^{ii} \approx 1$, unless clamped or $B_k^{ii}$ is zero. 
 
 \subsection{Schur Complement}
 For sparse systems, with a specific structure, the Schur Complement can be used to greatly reduce the computational cost. What would have taken hours or days to solve can be solved in seconds or minutes. Bundle Adjustment is one such problem \cite{triggs1999bundle}. The power of the Schur Complement comes from breaking the system into sub-problems. Since the matrix has a special structure, smaller block diagonal matrices are inverted and sparse fill in \cite{davis2006} is avoided, making it highly efficient.
@@ -194,7 +193,11 @@ A & B \\
 B^T & D
 \end{bmatrix}
 \end{equation}
-Symmetry can be taken advantage of in matrix multiplication and when solving the system, which DDogleg does.
+Symmetry can be taken advantage of in matrix multiplication and when solving the system, which DDogleg does. The Schur Complement is implemented in DDogleg by having the user compute the Jacobian in two column matrices.
+\begin{equation}
+J = [ J_1 , J_2 ]
+\end{equation}
+The rest is handled automatically. See the \emph{SchurJacobian} interface and \emph{ExampleSchurComplementLeastSquares}.
 
 \subsection{Linear Algebra}
 
@@ -204,15 +207,15 @@ AB = y
 \end{equation}
 where $A \in \R^{M \times N}$, $B \in \R^N$ is unknown, and $y \in \R^M$. Solving for $B$ is the most expensive operation, potential source of numerical errors, and often the cause of fatal exceptions.
 
-A singular matrix is one in which there is no unique solution to $B$. This can happen when the search hits a region with a nearly zero slope over some of the parameters. Not all linear methods can handle this situation, in fact most cannot. Being nearly singular is still a problem and some solvers are sensitive.
+A singular matrix is one in which there is no unique solution to $B$. This can happen when the search hits a region with zero slope over some of the parameters. A slope of zero indicates that changing the parameter does not affect the cost function's value. Not all linear methods can handle this situation, in fact most cannot. Nearly singular systems are a also problem and some solvers are more sensitive than others.
 
-Dense solvers tend to be very robust and typically have built in support to minimize overflow. There are many tools that dense solvers can use to mitigate singular and nearly singular systems. For example, they can dynamically change the order in which they decompose the matrix by pivoting (e.g. LUP and QRP). Methods exist which can even decompose and solve singular systems, (e.g. QRP and SVD). Default solvers in DDogleg attempt to strike a balance between speed and robustness. Thus the default will be Choleksy or QR, but if a request for a robust solver is requested then QRP might be used instead. See Table \ref{results:initial_region} for a fairly dramatic example of how changing the solver can improve performance.
+Dense solvers tend to be very robust and typically have built in support to minimize overflow. There are many tools that dense solvers can use to mitigate singular and nearly singular systems. For example, they can dynamically change the order in which they decompose the matrix by pivoting (e.g. LUP and QRP). Methods exist which can even decompose and solve singular systems, (e.g. QRP and SVD). Default solvers in DDogleg attempt to strike a balance between speed and robustness. Thus the default will be Choleksy or QR, but if a request for a robust solver is made then QRP might be used instead. See Table \ref{results:initial_region} for a fairly dramatic example of how changing the solver can improve performance.
 
-Sparse solvers are another story. While by no means new, they are a younger field and orders of magnitude more complex to implement than dense methods. An example of this is Cholesky decomposition. In even the most verbose language, a minimal dense implementation can be done in around 10 lines of code. A direct sparse equivalent is measured in hundreds of lines of code. Automatic scaling is often omitted making them more prone to overflow and because the structure needs to be known in advance, making pivoting difficult. When dealing with large sparse systems, more emphasis is placed on massaging data to make it easier to solve. 
+Sparse solvers are another story. While by no means new, they are a younger field and orders of magnitude more complex to implement. An example of this is Cholesky decomposition. A minimal dense implementation can be done in around 10 lines of code. A direct sparse equivalent is measured in hundreds of lines of code. Automatic scaling is often omitted in the sparse case making sparse solvers more prone to overflow. Pivoting is difficult for sparse systems because the decomposed structure needs to be known in advance. For the reasons just mentioned, when dealing with large sparse systems, more emphasis is placed on massaging data prior to applying a linear solver. 
 
-Fortunately, for a user of DDogleg, almost all of this complexity is hidden from you. However, if you do choose to learn a bit amount linear algebra and all the different solvers DDogleg has a very modular design. You can swap the solver being used internally with any that you wish. Potentially enabling you to solve degenerate systems which could not otherwise be. 
+Fortunately, for a user of DDogleg, almost all of this complexity is hidden from you. For advanced users there is still the option to choose the solver. Potentially enabling you to solve otherwise unsolvable singular/degenerate systems. Any of the solvers in Efficicient Java Matrix Library (EJML) \cite{ejml2018} can be used in DDogleg. Solvers from other libraries can be used too, if you wrap them in the appropriate interface. 
 
-Any of the solvers in Efficicient Java Matrix Library (EJML) \cite{ejml2018} can be used in DDogleg. Solvers from other libraries can be used too, if you wrap them in the appropriate interface. If you wish to learn more about the computational side of linear algebra then ``Fundamentals of Matrix Computations'' \cite{watkins2010} and ``Direct Methods for Sparse Linear Systems'' \cite{davis2006} are recommended for dense and sparse systems, respectively.
+If you wish to learn more about the computational side of linear algebra then ``Fundamentals of Matrix Computations'' \cite{watkins2010} and ``Direct Methods for Sparse Linear Systems'' \cite{davis2006} are recommended for dense and sparse systems, respectively.
 
 \section{Unconstrained Minimization}
 
@@ -258,7 +261,7 @@ Unconstrained minimization seeks to find a set of parameters which minimizes a f
 \begin{equation}
 \min\limits_{x \in \R^N} f(x)
 \end{equation}
-where $x$ is an $N$-dimensional vector and $f : \R^N \Rightarrow \R $ is a function which outputs a scalar. A global minimum $x^*$ is a minimum such that $f(x^*) \le f(x)$ for all $x$. Local minimums are ones where $f(x^*) \le f(x)$ for all $x \in \mathcal{N}$, where $\mathcal{N}$ is bounded set of subset of $\R^N$. For most non-linear problems the best that can be done is to find a local minimum which are hopefully better than most of the other local minimums. A good introduction to the theory on this subject can be found in \cite{numopt2006}.
+where $x$ is an $N$-dimensional vector and $f : \R^N \Rightarrow \R $ is a function which outputs a scalar. A global minimum $x^*$ is a minimum such that $f(x^*) \le f(x)$ for all $x$. Local minimums are ones where $f(x^*) \le f(x)$ for all $x \in \mathcal{N}$, where $\mathcal{N}$ is bounded set of subset of $\R^N$. For most non-linear problems the best that can be done is to find a local minimum. A good introduction to the theory on this subject can be found in \cite{numopt2006}.
 
 In DDogleg, solutions to this problem are found using use the gradient and Hessian. Convergence is found by examining the function's rate of change and the gradient, Section \ref{sec:unmin_convergence}. Computing the Hessian is often tedious and computationally expensive so iterative approximations of the Hessian are used, Section \ref{sec:hessian_approx}. The remaining sections discuss specific implementation details of applying general purpose algorithms to this problem.
 
@@ -321,7 +324,7 @@ DDogleg does not explicitly provide support for using an exact Hessian. If you w
 Trust Region methods can be directly applied to unconstrained minimization without any change in their framework. Specific implementation details are listed below:
 \begin{enumargin}{0.2}
     \item The Hessian is initialized with an identity matrix. 
-	\item The Hessian and inverse is iteratively approximated using DFP and BFGS.
+	\item The Hessian and inverse are iteratively approximated using DFP and BFGS.
 	\item The Hessian is only updated when the Wolfe condition is meet
 	\item Dogleg-BFGS avoids $O(N^3)$ matrix decomposition by computing the inverse Hessian directly with BFGS in $O(N^2)$ time.
 \end{enumargin}
@@ -386,7 +389,7 @@ Unconstrained Least-Squares is a special case of Unconstrained Minimization. It 
 \label{eq:residual_error}
 \min\limits_{x} f(x)=\frac{1}{2}\sum^m_{j=1} r^2_j(x)
 \end{equation}
-where $r_j(x) = $ is a scalar function which outputs the residual (predicted value subtracted the observed value) error. By definition $f(x) \ge 0$. Matrix notation can also be used to defined (\ref{eq:residual_error}):
+where $r_j(x)$ is a scalar function $j$  which outputs the residual (predicted value subtracted the observed value) error. By definition $f(x) \ge 0$. Matrix notation can also be used to defined (\ref{eq:residual_error}):
 \begin{equation}
 \min\limits_{x} f(x) =\frac{1}{2} F(x)^T F(x) = \frac{1}{2} \norm{F(x)}^2_2
 \end{equation}
@@ -413,12 +416,12 @@ G-Test & $gtol \leq \norm{g(x)}_\infty$ \\
 
 \subsection{Levenberg-Marquardt}
 
-Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created before Trust Region had been formally been defined \cite{numopt2006,fletcher1987,dennis1996}. The original formulation proposed by Levenberg \cite{levenberg1944}, where he introduced the dampening parameter $\lambda$ that was dynamically updated at each iteration:
+Levenberg-Marquardt (LM) is a Trust Region based algorithm which was created before Trust Region had been formally been defined \cite{numopt2006,fletcher1987,dennis1996}. The main innovation proposed by Levenberg \cite{levenberg1944} is the dampening parameter $\lambda$.
 \begin{equation}
 \label{eq:levenberg}
 (J_k^T J_k + \lambda I) p_k = -g_k
 \end{equation} 
-This dampend forumation can handle singular systems and automatically increases step size when the quadratic model is accurate. Later on Marquardt \cite{marquardt1963} noted that as $\lambda$ increased information in $J_k^T J_k$ is used less, slowing convergence as it becomes a steepest descent search. Instead Marquardt proposed the following adjustment:
+The dampening parameter enables the solver to handle singular systems. Its value is automatically decreased when the quadratic model is accurate and increased when it is not accurate. Later on Marquardt \cite{marquardt1963} noted that as $\lambda$ increased information in $J_k^T J_k$ is used less, slowing convergence as it becomes a steepest descent search. Instead Marquardt proposed the following adjustment:
 \begin{equation}
 \label{eq:marquardt}
 (J_k^T J_k + \lambda \mbox{diag}(J_k^T J_k)) p_k = -g_k
@@ -439,7 +442,7 @@ Scaling is done using the same methods described in Section \ref{section:scaling
 	\While{$k < k_{\mbox{max}}$ and not $done$}
 		\State Solve $\left(B_k + \lambda \left(\alpha I + (1-\alpha)\mbox{diag}(B_k) \right)\right) p_k = -g_k$ \Comment{LM Step}
 		\State $\delta_f \gets f(x_k) - f(x_k + p_k)$ \Comment{Actual reduction in score}
-		\State $\delta_m \gets m_k()-m_k(p_k) = -g^T_k p - \frac{1}{2}p^T J_k^T J_k p$ \Comment{Predicted reduction in score}
+		\State $\delta_m \gets m_k(x_k)-m_k(x_k + p_k) = -g^T_k p - \frac{1}{2}p^T J_k^T J_k p$ \Comment{Predicted reduction in score}
 		\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio} 
 		\If{ $\delta_f \ge 0$} \Comment{Score get better?}
 			\State $\lambda \gets \lambda \cdot \mbox{max}(1/3 , 1-(2\nu-1)^3)$

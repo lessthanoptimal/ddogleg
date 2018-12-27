@@ -11,11 +11,10 @@ Trust Region refers to a family of optimization methods that operate by assuming
 	\State $\delta_f \gets f(x_k) - f(x_k + p_k)$ \Comment{Actual reduction in score}
 	\State $\delta_m \gets m_k(0)-m_k(p_k) = -g^T_k p - \frac{1}{2}p^T B_k p$ \Comment{Predicted reduction in score}
 	\State $\nu \gets \delta_f / \delta_f$ \Comment{Score reduction ratio}
-	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Score got worse or the model poor?}
+	\If{ $\delta_f \le 0$ or $\nu <\frac{1}{4}$} \Comment{Worse score or model poor?}
 		\State $\Delta_{k+1} \gets \frac{1}{2}\Delta_k$
-	\Else
-		\If{$\nu>\frac{3}{4}$}
-			\Comment{The model is good. Increase the region size?}
+	\Else                                        \Comment{The model is good}
+		\If{$\nu>\frac{3}{4}$}                   \Comment{Increase region size?}
 			\State $\Delta_{k+1} \gets \mbox{min}(\mbox{max}(3\norm{p_k},\Delta_k),\Delta_{\mbox{max}})$
 		\Else
 			\State $\Delta_{k+1} \gets \Delta_k$
@@ -108,7 +107,7 @@ p^{dog}_k &=&
 	p^u_k + (\tau -1)(p^b_k-p^u_k) & 1 \le \tau \le 2
 \end{cases}
 \end{eqnarray}
-where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite the gradient descent is used instead.
+where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the Dogleg method. The solution to $\tau$ can be easily found by solving along each line segment. If $B_k$ is not positive definite then gradient descent is used instead.
 
 \begin{algorithm}{}
 \caption{\label{alg:dogleg_step}Selection of Dogleg Step}
@@ -126,6 +125,8 @@ where $B_k$ is positive definite, and $p^{dog}_k$ is the point selected by the D
   \EndIf
 \end{algorithmic}
 \end{algorithm}
+
+TODO Diagram
 
 \subsubsection{Initial Region Size}
 \label{section:init_region_size}

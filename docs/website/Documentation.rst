@@ -29,7 +29,7 @@ List of Example Code:
 
 Latest example code at Github:
 
-https://github.com/lessthanoptimal/ddogleg/tree/v0.15/examples/src/org/ddogleg/example
+* :gitexampledir:`src/org/ddogleg/example`
 
 Manuals
 -------
