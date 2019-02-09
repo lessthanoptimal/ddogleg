@@ -255,6 +255,21 @@ public class FastQueue<T> implements Serializable {
 		return ret;
 	}
 
+	/**
+	 * Returns the first index which equals() obj. -1 is there is no match
+	 *
+	 * @param obj The object being searched for
+	 * @return index or -1 if not found
+	 */
+	public int indexOf( T obj ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i].equals(obj) ) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	// -------- These are only around so that it can be a java bean
 	public T[] getData() {
 		return data;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -146,11 +146,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public int indexOf(Object o) {
-		for( int i = 0; i < queue.size; i++ ) {
-			if( queue.data[i].equals(o) )
-				return i;
-		}
-		return -1;
+		return queue.indexOf((T)o);
 	}
 
 	@Override

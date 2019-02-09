@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,21 +32,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestFastQueue {
 
 	@Test
-	public void checkDeclareInstance() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void checkDeclareInstance() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		assertTrue(alg.getMaxSize()>0);
-		assertTrue(alg.data[0] != null);
+		assertNotNull(alg.data[0]);
 
-		alg = new FastQueue<DummyData>(10,DummyData.class,false);
+		alg = new FastQueue<>(10,DummyData.class,false);
 
 		assertTrue(alg.getMaxSize()>0);
-		assertTrue(alg.data[0] == null);
+		assertNull(alg.data[0]);
 	}
 
 	@Test
-	public void toList() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void toList() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0,l.size());
@@ -62,8 +63,8 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void removeTail() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void removeTail() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		alg.grow();
 		assertEquals(1,alg.size);
@@ -72,8 +73,8 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void remove() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void remove() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0,l.size());
@@ -104,59 +105,59 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void getTail() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void getTail() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		alg.grow();alg.grow();
 
-		assertTrue(alg.data[1] == alg.getTail());
+		assertSame(alg.data[1], alg.getTail());
 	}
 
 	@Test
-	public void getTail_index() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(10,DummyData.class,true);
+	void getTail_index() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
 		alg.grow();alg.grow();
 
 		for (int i = 0; i < alg.size(); i++) {
-			assertTrue(alg.data[i] == alg.getTail(alg.size-i-1));
+			assertSame(alg.data[i], alg.getTail(alg.size - i - 1));
 		}
 	}
 
 	@Test
-	public void get_pop() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(DummyData.class,true);
+	void get_pop() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData.class,true);
 
 		// test a failure case
 		try {
 			alg.get(0);
 			fail("Didn't fail");
-		} catch( IllegalArgumentException e ) {}
+		} catch( IllegalArgumentException ignore ) {}
 
 		alg.grow();
 		alg.get(0);
 	}
 
 	@Test
-	public void size() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(DummyData.class,true);
+	void size() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData.class,true);
 		assertEquals(0,alg.size);
 		alg.grow();
 		assertEquals(1,alg.size);
 	}
 
 	@Test
-	public void add() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(DummyData.class,false);
+	void add() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData.class,false);
 
 		DummyData a = new DummyData();
 		alg.add(a);
-		assertTrue(a==alg.data[0]);
+		assertSame(a, alg.data[0]);
 	}
 
 	@Test
-	public void reverse() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(2,DummyData.class,true);
+	void reverse() {
+		FastQueue<DummyData> alg = new FastQueue<>(2,DummyData.class,true);
 
 		// 0 items
 		alg.reverse();
@@ -212,25 +213,25 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void addAll() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(DummyData.class,true);
+	void addAll() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData.class,true);
 		alg.grow();
 		alg.grow();
 
-		FastQueue<DummyData> alg2 = new FastQueue<DummyData>(DummyData.class,false);
+		FastQueue<DummyData> alg2 = new FastQueue<>(DummyData.class,false);
 
 		alg2.addAll(alg);
 
-		assertTrue(alg.get(0) == alg2.get(0));
-		assertTrue(alg.get(1) == alg2.get(1));
+		assertSame(alg.get(0), alg2.get(0));
+		assertSame(alg.get(1), alg2.get(1));
 	}
 
 	/**
 	 * Checks to see if pop automatically grows correctly
 	 */
 	@Test
-	public void pop_grow() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(1,DummyData.class,true);
+	void pop_grow() {
+		FastQueue<DummyData> alg = new FastQueue<>(1,DummyData.class,true);
 
 		int before = alg.getMaxSize();
 		for( int i = 0; i < 20; i++ ) {
@@ -242,8 +243,8 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void growArray() {
-		FastQueue<DummyData> alg = new FastQueue<DummyData>(1,DummyData.class,true);
+	void growArray() {
+		FastQueue<DummyData> alg = new FastQueue<>(1,DummyData.class,true);
 
 		alg.grow().value = 10;
 		int before = alg.getMaxSize();
@@ -252,8 +253,8 @@ public class TestFastQueue {
 	}
 
 	@Test
-	public void contains() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+	void contains() {
+		FastQueue<Double> queue = new FastQueue<>(100,Double.class,false);
 		Double d = 1.0;
 
 		assertFalse(queue.contains(d));
@@ -261,5 +262,19 @@ public class TestFastQueue {
 		queue.add( d );
 
 		assertTrue(queue.contains(d));
+	}
+
+	@Test
+	void indexOf() {
+		FastQueue<Double> queue = new FastQueue<>(100,Double.class,false);
+		queue.add(1.0);
+		queue.add(3.0);
+		queue.add(3.0);
+		queue.add(2.0);
+
+		assertEquals(-1,queue.indexOf(0.0), UtilEjml.TEST_F64);
+		assertEquals(0,queue.indexOf(1.0), UtilEjml.TEST_F64);
+		assertEquals(1,queue.indexOf(3.0), UtilEjml.TEST_F64);
+		assertEquals(3,queue.indexOf(2.0), UtilEjml.TEST_F64);
 	}
 }
