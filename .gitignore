@@ -5,6 +5,9 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# Automatically generated
+src/org/ddogleg/DDoglegVersion.java
+
 .gradle
 .idea/*
 *.class
