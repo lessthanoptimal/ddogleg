@@ -11,7 +11,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.15.2'
+version = '0.16-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 sourceCompatibility = 1.8
@@ -73,10 +73,10 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
 
     testImplementation(
-            'org.junit.jupiter:junit-jupiter-api:5.3.2'
+            'org.junit.jupiter:junit-jupiter-api:5.4.0'
     )
     testRuntimeOnly(
-            'org.junit.jupiter:junit-jupiter-engine:5.3.2'
+            'org.junit.jupiter:junit-jupiter-engine:5.4.0'
     )
 
     testCompile project.sourceSets.benchmark.output

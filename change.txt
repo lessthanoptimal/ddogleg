@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.16
+Date:     2018
+
+- Created PrimitiveArrays
+
+------------------------------------------------------
 Version:  0.15.2
 Date:     2018/12/25
 

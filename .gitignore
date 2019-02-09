@@ -6,7 +6,7 @@
 .mtj.tmp/
 
 .gradle
-.idea/libraries
+.idea/*
 *.class
 *.jar
 **/*.iml
