@@ -18,11 +18,15 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
+import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
+import org.ddogleg.optimization.math.HessianSchurComplement_DDRM;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
+import org.ddogleg.optimization.math.MatrixMath_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DSCC;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -162,6 +166,38 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
 			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
 					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+			lm.configure(config);
+//			lm.setVerbose(System.out,0);
+			return lm;
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+		public LeastSquaresDDRM() {
+			maxIterationsFast = 60;
+		}
+
+		@Override
+		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+
+			return FactoryOptimization.levenbergMarquardtSchur(true,config);
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+		@Override
+		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+
+			config.dampeningInitial = 1e-8;
+			config.hessianScaling = true;
+
+			HessianSchurComplement_DDRM hessian = new HessianSchurComplement_DDRM();
+			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixRMaj> lm =
+					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DDRM(),hessian);
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;

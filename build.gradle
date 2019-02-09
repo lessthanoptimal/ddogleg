@@ -68,7 +68,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.37.1'}
+        compile group: 'org.ejml', name: a, version: '0.38-SNAPSHOT'}
 
     compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
 

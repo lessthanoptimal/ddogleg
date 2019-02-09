@@ -19,11 +19,9 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
+import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardtSchur_F64;
 import org.ddogleg.optimization.lm.UnconLeastSqLevenbergMarquardt_F64;
-import org.ddogleg.optimization.math.HessianBFGS;
-import org.ddogleg.optimization.math.HessianBFGS_DDRM;
-import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
-import org.ddogleg.optimization.math.MatrixMath_DDRM;
+import org.ddogleg.optimization.math.*;
 import org.ddogleg.optimization.quasinewton.ConfigQuasiNewton;
 import org.ddogleg.optimization.quasinewton.LineSearchFletcher86;
 import org.ddogleg.optimization.quasinewton.LineSearchMore94;
@@ -44,6 +42,34 @@ import javax.annotation.Nullable;
  * @author Peter Abeles
  */
 public class FactoryOptimization {
+
+	/**
+	 * Creates a sparse Schur Complement trust region optimization using dogleg steps.
+	 *
+	 * @see UnconLeastSqTrustRegionSchur_F64
+	 *
+	 * @param config Trust region configuration
+	 * @return The new optimization routine
+	 */
+	public static UnconstrainedLeastSquaresSchur<DMatrixRMaj> doglegSchur(boolean robust, @Nullable ConfigTrustRegion config ) {
+		if( config == null )
+			config = new ConfigTrustRegion();
+
+		HessianSchurComplement_DDRM hessian;
+
+		if( robust ) {
+			LinearSolverDense<DMatrixRMaj> solverA = LinearSolverFactory_DDRM.pseudoInverse(true);
+			LinearSolverDense<DMatrixRMaj> solverD = LinearSolverFactory_DDRM.pseudoInverse(true);
+			hessian = new HessianSchurComplement_DDRM(solverA,solverD);
+		} else {
+			// defaults to cholesky
+			hessian = new HessianSchurComplement_DDRM();
+		}
+		TrustRegionUpdateDogleg_F64<DMatrixRMaj> update = new TrustRegionUpdateDogleg_F64<>();
+		UnconLeastSqTrustRegionSchur_F64<DMatrixRMaj> alg = new UnconLeastSqTrustRegionSchur_F64<>(update,hessian);
+		alg.configure(config);
+		return alg;
+	}
 
 	/**
 	 * Returns an implementation of {@link QuasiNewtonBFGS} with {@link LineSearchMore94} for the internal line search.
@@ -154,6 +180,37 @@ public class FactoryOptimization {
 
 		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
 		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
+		lm.configure(config);
+		return lm;
+	}
+
+	/**
+	 * LM with Schur Complement
+	 *
+	 * @param robust If true then a slow by robust solver is used. true = use SVD
+	 * @param config configuration for LM
+	 * @return the solver
+	 */
+	public static UnconstrainedLeastSquaresSchur<DMatrixRMaj> levenbergMarquardtSchur(
+			boolean robust,
+			@Nullable ConfigLevenbergMarquardt config  )
+	{
+		if( config == null )
+			config = new ConfigLevenbergMarquardt();
+
+		HessianSchurComplement_DDRM hessian;
+
+		if( robust ) {
+			LinearSolverDense<DMatrixRMaj> solverA = LinearSolverFactory_DDRM.pseudoInverse(true);
+			LinearSolverDense<DMatrixRMaj> solverD = LinearSolverFactory_DDRM.pseudoInverse(true);
+			hessian = new HessianSchurComplement_DDRM(solverA,solverD);
+		} else {
+			// defaults to cholesky
+			hessian = new HessianSchurComplement_DDRM();
+		}
+
+		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixRMaj> lm =
+				new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DDRM(),hessian);
 		lm.configure(config);
 		return lm;
 	}

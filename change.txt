@@ -9,6 +9,8 @@ Date:     2018
 - Created PrimitiveArrays
 - FastQueue
   * Added indexOf()
+- Optimization
+  * Added Dense Schur Complement. Useful when a robust linear solver is needed and not a large problem
 
 ------------------------------------------------------
 Version:  0.15.2
