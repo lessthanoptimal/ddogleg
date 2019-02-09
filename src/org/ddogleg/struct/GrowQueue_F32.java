@@ -108,6 +108,17 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	/**
+	 * Sets this array to be equal to the array segment
+	 * @param array (Input) source array
+	 * @param offset first index
+	 * @param length number of elements to copy
+	 */
+	public void setTo( float[] array , int offset , int length ) {
+		resize(length);
+		System.arraycopy(array,offset,data,0,length);
+	}
+
+	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
 	 * @param first First index you wish to remove. Inclusive.
 	 * @param last Last index you wish to remove. Inclusive.

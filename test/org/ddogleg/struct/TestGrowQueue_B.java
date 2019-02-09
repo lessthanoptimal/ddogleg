@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_B {
 
 	@Test
-	public void auto_grow() {
+	void auto_grow() {
 		GrowQueue_B alg = new GrowQueue_B(3);
 
 		assertEquals(3,alg.data.length);
@@ -44,7 +44,7 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
-	public void reset() {
+	void reset() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 
 		alg.push(true);
@@ -60,7 +60,7 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
-	public void push_pop() {
+	void push_pop() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 
 		alg.push(false);
@@ -73,7 +73,7 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
-	public void remove_two() {
+	void remove_two() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 
 		alg.push(true);
@@ -95,7 +95,7 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
-	public void indexOf() {
+	void indexOf() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 
 		alg.push(true);

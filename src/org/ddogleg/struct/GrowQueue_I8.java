@@ -157,6 +157,16 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		}
 	}
 
+	/**
+	 * Sets this array to be equal to the array segment
+	 * @param array (Input) source array
+	 * @param offset first index
+	 * @param length number of elements to copy
+	 */
+	public void setTo( byte[] array , int offset , int length ) {
+		resize(length);
+		System.arraycopy(array,offset,data,0,length);
+	}
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'

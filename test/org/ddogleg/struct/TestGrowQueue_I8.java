@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
-	public void addAll_queue() {
+	void addAll_queue() {
 		GrowQueue_I8 queue0 = new GrowQueue_I8(2);
 		GrowQueue_I8 queue1 = new GrowQueue_I8(3);
 
@@ -57,7 +57,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void addAll_array() {
+	void addAll_array() {
 		GrowQueue_I8 queue0 = new GrowQueue_I8(2);
 		byte[] array = new byte[]{3,4,5};
 
@@ -80,7 +80,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void auto_grow() {
+	void auto_grow() {
 		GrowQueue_I8 alg = new GrowQueue_I8(3);
 
 		assertEquals(3,alg.data.length);
@@ -95,7 +95,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void reset() {
+	void reset() {
 		GrowQueue_I8 alg = new GrowQueue_I8(10);
 
 		alg.push(1);
@@ -111,7 +111,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void push_pop() {
+	void push_pop() {
 		GrowQueue_I8 alg = new GrowQueue_I8(10);
 
 		alg.push(1);
@@ -124,7 +124,19 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void remove_two() {
+	void setTo_array() {
+		GrowQueue_I8 alg = new GrowQueue_I8(10);
+
+		byte[] foo = new byte[]{1,3,4,5,7};
+		alg.setTo(foo,1,3);
+		assertEquals(3,alg.size);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i),foo[i+1]);
+		}
+	}
+
+	@Test
+	void remove_two() {
 		GrowQueue_I8 alg = new GrowQueue_I8(10);
 
 		alg.push(1);
@@ -166,7 +178,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void indexOf() {
+	void indexOf() {
 		GrowQueue_I8 alg = new GrowQueue_I8(10);
 
 		alg.push(1);
@@ -179,7 +191,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void sort() {
+	void sort() {
 		GrowQueue_I8 alg = new GrowQueue_I8(6);
 
 		alg.push(8);
@@ -199,7 +211,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 	}
 
 	@Test
-	public void getFraction() {
+	void getFraction() {
 		GrowQueue_I8 alg = new GrowQueue_I8(20);
 
 		for (int i = 0; i < 20; i++) {

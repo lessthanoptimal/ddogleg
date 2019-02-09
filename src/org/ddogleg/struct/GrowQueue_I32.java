@@ -129,6 +129,17 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
+	/**
+	 * Sets this array to be equal to the array segment
+	 * @param array (Input) source array
+	 * @param offset first index
+	 * @param length number of elements to copy
+	 */
+	public void setTo( int[] array , int offset , int length ) {
+		resize(length);
+		System.arraycopy(array,offset,data,0,length);
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];

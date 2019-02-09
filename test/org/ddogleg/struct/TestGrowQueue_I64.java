@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 
 	@Test
-	public void addAll_queue() {
+	void addAll_queue() {
 		GrowQueue_I64 queue0 = new GrowQueue_I64(2);
 		GrowQueue_I64 queue1 = new GrowQueue_I64(3);
 
@@ -57,7 +57,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void addAll_array() {
+	void addAll_array() {
 		GrowQueue_I64 queue0 = new GrowQueue_I64(2);
 		long[] array = new long[]{3,4,5};
 
@@ -80,7 +80,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void auto_grow() {
+	void auto_grow() {
 		GrowQueue_I64 alg = new GrowQueue_I64(3);
 
 		assertEquals(3,alg.data.length);
@@ -95,7 +95,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void reset() {
+	void reset() {
 		GrowQueue_I64 alg = new GrowQueue_I64(10);
 
 		alg.push(1);
@@ -111,7 +111,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void push_pop() {
+	void push_pop() {
 		GrowQueue_I64 alg = new GrowQueue_I64(10);
 
 		alg.push(1);
@@ -124,7 +124,19 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void remove_one() {
+	void setTo_array() {
+		GrowQueue_I64 alg = new GrowQueue_I64(10);
+
+		long[] foo = new long[]{1,3,4,5,7};
+		alg.setTo(foo,1,3);
+		assertEquals(3,alg.size);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i),foo[i+1]);
+		}
+	}
+
+	@Test
+	void remove_one() {
 
 		GrowQueue_I64 alg = new GrowQueue_I64(10);
 
@@ -141,7 +153,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void remove_two() {
+	void remove_two() {
 		GrowQueue_I64 alg = new GrowQueue_I64(10);
 
 		alg.push(1);
@@ -183,7 +195,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void indexOf() {
+	void indexOf() {
 		GrowQueue_I64 alg = new GrowQueue_I64(10);
 
 		alg.push(1);
@@ -196,7 +208,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void sort() {
+	void sort() {
 		GrowQueue_I64 alg = new GrowQueue_I64(6);
 
 		alg.push(8);
@@ -214,7 +226,7 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 	}
 
 	@Test
-	public void getFraction() {
+	void getFraction() {
 		GrowQueue_I64 alg = new GrowQueue_I64(20);
 
 		for (int i = 0; i < 20; i++) {

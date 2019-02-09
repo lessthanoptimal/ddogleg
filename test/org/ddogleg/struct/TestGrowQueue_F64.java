@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 
 	@Test
-	public void addAll_queue() {
+	void addAll_queue() {
 		GrowQueue_F64 queue0 = new GrowQueue_F64(2);
 		GrowQueue_F64 queue1 = new GrowQueue_F64(3);
 
@@ -58,7 +58,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void addAll_array() {
+	void addAll_array() {
 		GrowQueue_F64 queue0 = new GrowQueue_F64(2);
 		double[] array = new double[]{3,4,5};
 
@@ -81,7 +81,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void auto_grow() {
+	void auto_grow() {
 		GrowQueue_F64 alg = new GrowQueue_F64(3);
 
 		assertEquals(3,alg.data.length);
@@ -96,7 +96,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void reset() {
+	void reset() {
 		GrowQueue_F64 alg = new GrowQueue_F64(10);
 
 		alg.push(1);
@@ -112,7 +112,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void push_pop() {
+	void push_pop() {
 		GrowQueue_F64 alg = new GrowQueue_F64(10);
 
 		alg.push(1);
@@ -125,7 +125,19 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void remove() {
+	void setTo_array() {
+		GrowQueue_F64 alg = new GrowQueue_F64(10);
+
+		double[] foo = new double[]{1,3,4,5,7};
+		alg.setTo(foo,1,3);
+		assertEquals(3,alg.size);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i),foo[i+1], UtilEjml.TEST_F64);
+		}
+	}
+
+	@Test
+	void remove() {
 
 		GrowQueue_F64 alg = new GrowQueue_F64(10);
 
@@ -142,7 +154,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void remove_two() {
+	void remove_two() {
 		GrowQueue_F64 alg = new GrowQueue_F64(10);
 
 		alg.push(1);
@@ -184,7 +196,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void indexOf() {
+	void indexOf() {
 		GrowQueue_F64 alg = new GrowQueue_F64(10);
 
 		alg.push(1);
@@ -197,7 +209,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void sort() {
+	void sort() {
 		GrowQueue_F64 alg = new GrowQueue_F64(6);
 
 		alg.push(8);
@@ -215,7 +227,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void getFraction() {
+	void getFraction() {
 		GrowQueue_F64 alg = new GrowQueue_F64(20);
 
 		for (int i = 0; i < 20; i++) {
@@ -232,7 +244,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void indexOfGreatest() {
+	void indexOfGreatest() {
 		GrowQueue_F64 alg = new GrowQueue_F64(20);
 
 		assertEquals(-1,alg.indexOfGreatest());
@@ -245,7 +257,7 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
-	public void indexOfLeast() {
+	void indexOfLeast() {
 		GrowQueue_F64 alg = new GrowQueue_F64(20);
 
 		assertEquals(-1,alg.indexOfLeast());
