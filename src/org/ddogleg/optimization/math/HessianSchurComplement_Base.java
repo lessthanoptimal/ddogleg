@@ -119,12 +119,12 @@ public abstract class HessianSchurComplement_Base<S extends DMatrix>
 
 	@Override
 	public void setDiagonals(DMatrixRMaj diag) {
-		int N = A.getNumCols();
+		final int N = A.getNumCols();
 		for (int i = 0; i < N; i++) {
 			A.set(i,i, diag.data[i]);
 		}
-		N = D.getNumCols();
-		for (int i = 0; i < N; i++) {
+		final int D_cols = D.getNumCols();
+		for (int i = 0; i < D_cols; i++) {
 			D.set(i,i, diag.data[i+N]);
 		}
 	}
