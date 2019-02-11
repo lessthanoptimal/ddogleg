@@ -18,7 +18,9 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
+import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
@@ -137,6 +139,25 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 		@Override
 		public int getNumOfOutputsM() {
 			return M;
+		}
+	}
+
+	@Nested
+	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+
+		LeastSquaresDDRM() {
+			// we can do fast convergence check here because dense supports robust solvers like SVD and it
+			// won't get stuck
+		}
+
+		@Override
+		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
+			ConfigTrustRegion config = new ConfigTrustRegion();
+
+//			config.regionInitial = 1;
+			config.hessianScaling = true;
+
+			return FactoryOptimization.doglegSchur(true,config);
 		}
 	}
 

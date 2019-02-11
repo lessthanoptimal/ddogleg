@@ -182,7 +182,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
 			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
 
-			return FactoryOptimization.levenbergMarquardtSchur(true,config);
+			return FactoryOptimization.levenbergMarquardtSchur(false,config);
 		}
 	}
 
