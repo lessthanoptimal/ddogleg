@@ -113,4 +113,89 @@ public class PrimitiveArrays {
 			array[offset+i] = tmp;
 		}
 	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int max( byte []array , int offset , int length ) {
+		int max = -Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int max( short []array , int offset , int length ) {
+		int max = -Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int max( int []array , int offset , int length ) {
+		int max = -Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static long max( long []array , int offset , int length ) {
+		long max = -Long.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			long tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static float max( float []array , int offset , int length ) {
+		float max = -Float.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			float tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static double max( double []array , int offset , int length ) {
+		double max = -Double.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			double tmp = array[offset+i];
+			if( tmp > max ) {
+				max = tmp;
+			}
+		}
+		return max;
+	}
+
 }

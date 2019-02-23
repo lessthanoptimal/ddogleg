@@ -197,4 +197,64 @@ class TestPrimitiveArrays {
 		}
 		assertTrue(matches<10);
 	}
+
+	@Test
+	void max_byte() {
+		byte[] orig = new byte[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = (byte)i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
+
+	@Test
+	void max_short() {
+		short[] orig = new short[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = (short)i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
+
+	@Test
+	void max_int() {
+		int[] orig = new int[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
+
+	@Test
+	void max_long() {
+		long[] orig = new long[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = (long)i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
+
+	@Test
+	void max_float() {
+		float[] orig = new float[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
+
+	@Test
+	void max_double() {
+		double[] orig = new double[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i;
+		}
+		assertEquals(89, PrimitiveArrays.max(orig,10,90));
+	}
 }
