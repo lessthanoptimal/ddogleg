@@ -35,19 +35,25 @@ public class FastQueue<T> implements Serializable {
 	public int size;
 	public Class<T> type;
 
-	// if true then it will declare new instances automatically
-	// if false then
-	private boolean declareInstances;
+	// new instances are created using this. If null then no new instances are created automatically.
+	private Factory<T> factory;
 
 	// Wrapper around this class for lists
 	private FastQueueList<T> list = new FastQueueList<T>(this);
 
 	public FastQueue(int initialMaxSize, Class<T> type, boolean declareInstances) {
-		init(initialMaxSize, type, declareInstances);
+		init(initialMaxSize, declareInstances ? new FactoryClass<>(type):null,type);
 	}
 
 	public FastQueue(Class<T> type, boolean declareInstances ) {
-		this(10,type,declareInstances);
+		init(10, declareInstances ? new FactoryClass<>(type):null,type);
+	}
+
+	/**
+	 * Constructor which allows new instances to be created using a lambda
+	 */
+	public FastQueue(Class<T> type, Factory<T> factory ) {
+		init(10, factory, type);
 	}
 
 	protected FastQueue() {
@@ -56,13 +62,14 @@ public class FastQueue<T> implements Serializable {
 	/**
 	 * Data structure initialization is done here so that child classes can declay initialization until they are ready
 	 */
-	protected void init(int initialMaxSize, Class<T> type, boolean declareInstances) {
+	protected void init(int initialMaxSize, Factory<T> factory, Class<T> type ) {
 		this.size = 0;
 		this.type = type;
-		this.declareInstances = declareInstances;
+		this.factory = factory;
 
 		data = (T[]) Array.newInstance(type, initialMaxSize);
-		if( declareInstances ) {
+
+		if( factory != null ) {
 			for( int i = 0; i < initialMaxSize; i++ ) {
 				try {
 					data[i] = createInstance();
@@ -210,7 +217,7 @@ public class FastQueue<T> implements Serializable {
 		T []data = (T[])Array.newInstance(type, length);
 		System.arraycopy(this.data,0,data,0,this.data.length);
 
-		if( declareInstances ) {
+		if( factory != null ) {
 			for( int i = this.data.length; i < length; i++ ) {
 				data[i] = createInstance();
 			}
@@ -236,14 +243,12 @@ public class FastQueue<T> implements Serializable {
 		return false;
 	}
 
+	/**
+	 * This function will be removed eventually and the factory used directly. DO NOT USE IN NEW CODE
+	 */
+	@Deprecated
 	protected T createInstance() {
-		try {
-			return type.newInstance();
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		return factory.newInstance();
 	}
 
 	public List<T> copyIntoList(List<T> ret) {
@@ -288,11 +293,7 @@ public class FastQueue<T> implements Serializable {
 	}
 
 	public boolean isDeclareInstances() {
-		return declareInstances;
-	}
-
-	public void setDeclareInstances(boolean declareInstances) {
-		this.declareInstances = declareInstances;
+		return factory != null;
 	}
 
 	public Class<T> getType() {
@@ -301,5 +302,26 @@ public class FastQueue<T> implements Serializable {
 
 	public void setType(Class<T> type) {
 		this.type = type;
+	}
+
+	public interface Factory<T> {
+		T newInstance();
+	}
+
+	public class FactoryClass<T> implements Factory<T> {
+		Class type;
+
+		public FactoryClass(Class type) {
+			this.type = type;
+		}
+
+		@Override
+		public T newInstance() {
+			try {
+				return (T)type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

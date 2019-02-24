@@ -7,6 +7,8 @@ Version:  0.16
 Date:     2018
 
 - Created PrimitiveArrays
+- FastQueue now supports Lambdas in its constructor
+  * This is now the preferred method and the old override will be removed
 - GrowQueue
   * Added setTo(array,offset,length)
 - FastQueue
