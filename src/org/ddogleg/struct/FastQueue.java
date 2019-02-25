@@ -56,6 +56,13 @@ public class FastQueue<T> implements Serializable {
 		init(10, type, factory);
 	}
 
+	/**
+	 * Constructor which allows new instances to be created using a lambda
+	 */
+	public FastQueue( int initialMaxSize, Class<T> type, Factory<T> factory ) {
+		init(initialMaxSize, type, factory);
+	}
+
 	protected FastQueue() {
 	}
 
