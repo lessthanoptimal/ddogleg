@@ -42,18 +42,18 @@ public class FastQueue<T> implements Serializable {
 	private FastQueueList<T> list = new FastQueueList<T>(this);
 
 	public FastQueue(int initialMaxSize, Class<T> type, boolean declareInstances) {
-		init(initialMaxSize, declareInstances ? new FactoryClass<>(type):null,type);
+		init(initialMaxSize, type, declareInstances ? new FactoryClass<>(type):null);
 	}
 
 	public FastQueue(Class<T> type, boolean declareInstances ) {
-		init(10, declareInstances ? new FactoryClass<>(type):null,type);
+		init(10, type, declareInstances ? new FactoryClass<>(type):null);
 	}
 
 	/**
 	 * Constructor which allows new instances to be created using a lambda
 	 */
 	public FastQueue(Class<T> type, Factory<T> factory ) {
-		init(10, factory, type);
+		init(10, type, factory);
 	}
 
 	protected FastQueue() {
@@ -62,7 +62,7 @@ public class FastQueue<T> implements Serializable {
 	/**
 	 * Data structure initialization is done here so that child classes can declay initialization until they are ready
 	 */
-	protected void init(int initialMaxSize, Factory<T> factory, Class<T> type ) {
+	protected void init(int initialMaxSize, Class<T> type, Factory<T> factory) {
 		this.size = 0;
 		this.type = type;
 		this.factory = factory;
