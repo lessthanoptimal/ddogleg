@@ -2,7 +2,7 @@
   * cd docs/website/
   * conf.py
   * Examples:
-    See what needs to be updated since TAG_NAME "git diff --name-status TAG_NAME ddogleg/examples"
+    See what needs to be updated since TAG_NAME "git diff --name-status TAG_NAME examples"
   * make html
   * Double check examples and see if the ones that have changed look good.
     Github links should be auto updated
