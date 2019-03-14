@@ -1,6 +1,6 @@
 - updated website
   * cd docs/website/
-  * conf.py
+  * conf.py (version, date)
   * Examples:
     See what needs to be updated since TAG_NAME "git diff --name-status TAG_NAME examples"
   * make html
