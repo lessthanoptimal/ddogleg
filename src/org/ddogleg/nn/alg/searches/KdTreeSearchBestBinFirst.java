@@ -50,7 +50,7 @@ import java.util.PriorityQueue;
 public abstract class KdTreeSearchBestBinFirst<P> {
 
 	// the maximum number of nodes it will search
-	private int maxNodesSearched;
+	protected int maxNodesSearched;
 
 	// dimension of point
 	protected int N;
@@ -86,12 +86,20 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 	}
 
 	public void setTree(KdTree tree) {
-		this.trees = new KdTree[]{tree};
+		if( trees == null || trees.length != 1 ) {
+			this.trees = new KdTree[]{tree};
+		} else {
+			this.trees[0] = tree;
+		}
 		this.N = tree.N;
 	}
 
 	public void setTrees(KdTree[]trees ) {
-		this.trees = trees;
+		if( this.trees == null || this.trees.length != trees.length ) {
+			this.trees = trees.clone();
+		} else {
+			System.arraycopy(trees, 0, this.trees, 0, trees.length);
+		}
 		this.N = trees[0].N;
 	}
 

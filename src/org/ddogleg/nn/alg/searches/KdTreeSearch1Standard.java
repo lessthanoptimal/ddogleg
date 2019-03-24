@@ -93,6 +93,11 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 		return bestDistanceSq;
 	}
 
+	@Override
+	public KdTreeSearch1<P> copy() {
+		return new KdTreeSearch1Standard<>(distance);
+	}
+
 	/**
 	 * Recursive step for finding the closest point
 	 */

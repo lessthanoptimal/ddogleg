@@ -60,6 +60,11 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 		_findClosest(target);
 	}
 
+	@Override
+	public KdTreeSearchN<P> copy() {
+		return new KdTreeSearchNBbf<>(distance,maxNodesSearched);
+	}
+
 	/**
 	 * Checks to see if the current node's point is the closet point found so far
 	 */

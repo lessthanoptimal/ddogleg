@@ -64,23 +64,18 @@ public class VpTree implements NearestNeighbor<double[]> {
 		random = new Random(randSeed);
    }
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void findNearest(double[] target, double maxDistance,
-							int numNeighbors, FastQueue<NnData<double[]>> results)
-	{
-		results.reset();
-		PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);
-
-		while (!heap.isEmpty()) {
-			final HeapItem heapItem = heap.poll();
-			NnData<double[]> objects = new NnData<>();
-			objects.index = indexes.get(heapItem.index);
-			objects.point = items[heapItem.index];
-			objects.distance = heapItem.dist * heapItem.dist; // squared distance is expected
-			results.add(objects);
+	public void setPoints(List<double[]> points, boolean trackIndicies) {
+		// Make a copy because we mutate the lists
+		this.items = points.toArray(new double[0][]);
+		this.indexes = new GrowQueue_I32();
+		indexes.resize(points.size());
+		for (int i = 0; i < points.size(); i++) {
+			indexes.data[i] = i;
 		}
 
-		results.reverse();
+		this.root = buildFromPoints(0, items.length);
 	}
 
 	/**
@@ -182,6 +177,132 @@ public class VpTree implements NearestNeighbor<double[]> {
 		list.data[b] = tmp;
 	}
 
+
+	@Override
+	public Search<double[]> createSearch() {
+		return new InternalSearch();
+	}
+
+	private class InternalSearch implements Search<double[]> {
+
+		@Override
+		public void initialize() {
+
+		}
+
+		@Override
+		public boolean findNearest(double[] point, double maxDistance, NnData<double[]> result) {
+			boolean r = searchNearest(point, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), result);
+			result.distance *= result.distance; // Callee expects squared distance
+			return r;
+		}
+
+		@Override
+		public void findNearest(double[] target, double maxDistance,
+								int numNeighbors, FastQueue<NnData<double[]>> results)
+		{
+			results.reset();
+			PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);
+
+			while (!heap.isEmpty()) {
+				final HeapItem heapItem = heap.poll();
+				NnData<double[]> objects = new NnData<>();
+				objects.index = indexes.get(heapItem.index);
+				objects.point = items[heapItem.index];
+				objects.distance = heapItem.dist * heapItem.dist; // squared distance is expected
+				results.add(objects);
+			}
+
+			results.reverse();
+		}
+
+		/**
+		 * Recursively search for the k nearest neighbors to target.
+		 * @param target target point
+		 * @param maxDistance maximum distance
+		 * @param k number of neighbors to find
+		 */
+		private PriorityQueue<HeapItem> search(final double[] target, double maxDistance, final int k) {
+			PriorityQueue<HeapItem> heap = new PriorityQueue<>();
+			if (root == null) {
+				return heap;
+			}
+
+			double tau = maxDistance;
+			final FastQueue<Node> nodes = new FastQueue<>(20, Node.class, false);
+			nodes.add(root);
+
+			while (nodes.size() > 0) {
+				final Node node = nodes.removeTail();
+				final double dist = distance(items[node.index], target);
+
+				if (dist <= tau) {
+					if (heap.size() == k) {
+						heap.poll();
+					}
+					heap.add(new HeapItem(node.index, dist));
+					if (heap.size() == k) {
+						tau = heap.element().dist;
+					}
+				}
+
+				if (node.left != null && dist - tau <= node.threshold) {
+					nodes.add(node.left);
+				}
+
+				if (node.right != null && dist + tau >= node.threshold) {
+					nodes.add(node.right);
+				}
+			}
+
+			return heap;
+		}
+
+		/**
+		 * Equivalent to the above search method to find one nearest neighbor.
+		 * It is faster as it does not need to allocate and use the heap data structure.
+		 * @param target target point
+		 * @param maxDistance maximum distance
+		 * @param result information about the nearest point (output parameter)
+		 * @return true if a nearest point was found within maxDistance
+		 */
+		private boolean searchNearest(final double[] target, double maxDistance, NnData<double[]> result) {
+			if (root == null) {
+				return false;
+			}
+
+			double tau = maxDistance;
+			final FastQueue<Node> nodes = new FastQueue<Node>(20, Node.class, false);
+			nodes.add(root);
+			result.distance = Double.POSITIVE_INFINITY;
+			boolean found = false;
+
+			while (nodes.size() > 0) {
+				final Node node = nodes.getTail();
+				nodes.removeTail();
+				final double dist = distance(items[node.index], target);
+
+				if (dist <= tau && dist < result.distance) {
+					result.distance = dist;
+					result.index = indexes.data[node.index];
+					result.point = items[node.index];
+					tau = dist;
+					found = true;
+				}
+
+				if (node.left != null && dist - tau <= node.threshold) {
+					nodes.add(node.left);
+				}
+
+				if (node.right != null && dist + tau >= node.threshold) {
+					nodes.add(node.right);
+				}
+			}
+
+			return found;
+		}
+	}
+
 	/**
 	 * Compute the Euclidean distance between p1 and p2.
 	 * @param p1 first point
@@ -203,112 +324,6 @@ public class VpTree implements NearestNeighbor<double[]> {
 		}
 	}
 
-	/**
-	 * Recursively search for the k nearest neighbors to target.
-	 * @param target target point
-	 * @param maxDistance maximum distance
-	 * @param k number of neighbors to find
-	 */
-	private PriorityQueue<HeapItem> search(final double[] target, double maxDistance, final int k) {
-		PriorityQueue<HeapItem> heap = new PriorityQueue<HeapItem>();
-		if (root == null) {
-			return heap;
-		}
-
-		double tau = maxDistance;
-		final FastQueue<Node> nodes = new FastQueue<Node>(20, Node.class, false);
-		nodes.add(root);
-
-		while (nodes.size() > 0) {
-			final Node node = nodes.removeTail();
-			final double dist = distance(items[node.index], target);
-
-			if (dist <= tau) {
-				if (heap.size() == k) {
-					heap.poll();
-				}
-				heap.add(new HeapItem(node.index, dist));
-				if (heap.size() == k) {
-					tau = heap.element().dist;
-				}
-			}
-
-			if (node.left != null && dist - tau <= node.threshold) {
-				nodes.add(node.left);
-			}
-
-			if (node.right != null && dist + tau >= node.threshold) {
-				nodes.add(node.right);
-			}
-		}
-
-		return heap;
-	}
-
-	/**
-	 * Equivalent to the above search method to find one nearest neighbor.
-	 * It is faster as it does not need to allocate and use the heap data structure.
-	 * @param target target point
-	 * @param maxDistance maximum distance
-	 * @param result information about the nearest point (output parameter)
-	 * @return true if a nearest point was found within maxDistance
-	 */
-	private boolean searchNearest(final double[] target, double maxDistance, NnData<double[]> result) {
-		if (root == null) {
-			return false;
-		}
-
-		double tau = maxDistance;
-		final FastQueue<Node> nodes = new FastQueue<Node>(20, Node.class, false);
-		nodes.add(root);
-		result.distance = Double.POSITIVE_INFINITY;
-		boolean found = false;
-
-		while (nodes.size() > 0) {
-			final Node node = nodes.getTail();
-			nodes.removeTail();
-			final double dist = distance(items[node.index], target);
-
-			if (dist <= tau && dist < result.distance) {
-				result.distance = dist;
-				result.index = indexes.data[node.index];
-				result.point = items[node.index];
-				tau = dist;
-				found = true;
-			}
-
-			if (node.left != null && dist - tau <= node.threshold) {
-				nodes.add(node.left);
-			}
-
-			if (node.right != null && dist + tau >= node.threshold) {
-				nodes.add(node.right);
-			}
-		}
-
-		return found;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setPoints(List<double[]> points, boolean trackIndicies) {
-		// Make a copy because we mutate the lists
-		this.items = points.toArray(new double[0][]);
-		this.indexes = new GrowQueue_I32();
-		indexes.resize(points.size());
-		for (int i = 0; i < points.size(); i++) {
-			indexes.data[i] = i;
-		}
-
-		this.root = buildFromPoints(0, items.length);
-	}
-
-	@Override
-	public boolean findNearest(double[] point, double maxDistance, NnData<double[]> result) {
-		boolean r = searchNearest(point, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), result);
-		result.distance *= result.distance; // Callee expects squared distance
-		return r;
-	}
 
 	/**
 	 * Separates the points to "closer than the threshold" (left) and "farther than the threshold" (right).

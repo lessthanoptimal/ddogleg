@@ -36,7 +36,7 @@ public class BenchmarkNearestNeighbor {
 	List<double[]> cloud;
 	List<double[]> searchSet;
 	double maxDistance;
-	NnData result = new NnData();
+	NnData<double[]> result = new NnData<>();
 
 	public class Set implements Performer {
 
@@ -66,7 +66,7 @@ public class BenchmarkNearestNeighbor {
 
 	public class Search implements Performer {
 
-		NearestNeighbor alg;
+		NearestNeighbor<double[]> alg;
 		String name;
 		boolean trackIndicies = false;
 
@@ -83,8 +83,10 @@ public class BenchmarkNearestNeighbor {
 
 		@Override
 		public void process() {
+			NearestNeighbor.Search<double[]> search = alg.createSearch();
+			search.initialize();
 			for( double[]p : searchSet ) {
-				alg.findNearest(p,maxDistance,result);
+				search.findNearest(p,maxDistance,result);
 			}
 		}
 

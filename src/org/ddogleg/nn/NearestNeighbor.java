@@ -47,34 +47,55 @@ public interface NearestNeighbor<P> {
 	void setPoints( List<P> points , boolean trackIndices );
 
 	/**
-	 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
+	 * Creates a new search. This is intended to enabled concurrent searches. The graph created by setPoints()
+	 * is assumed to be fixed during a search and calling multiple instances of search is thread safe. A search
+	 * can only be used with the {@link NearestNeighbor} which created it and {@link #initialize(Search)} needs
+	 * to be called each time {@link #setPoints} is called.
 	 *
-	 * <p>
-	 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
-	 * distance squared is common.
-	 * </p>
-	 *
-	 * @param point (Input) A point being searched for.
-	 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) a neighbor can be from point.
-	 *                    Values {@code <} 0 will be set to the maximum distance.
-	 * @param result (Output) Storage for the result.
-	 * @return true if a match within the max distance was found.
+	 * @return A new search object for this instance.
 	 */
-	boolean findNearest( P point , double maxDistance , NnData<P> result );
+	Search<P> createSearch();
 
 	/**
-	 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
-	 *
-	 * <p>
-	 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
-	 * distance squared is common.
-	 * </p>
-	 *
-	 * @param point (Input) A point being searched for.
-	 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
-	 *                    Values {@code <} 0 will be set to the maximum distance.
-	 * @param numNeighbors (Input) The number of neighbors it will search for.
-	 * @param results (Output) Storage for the result. Reset() is called. Must support grow() function.
+	 * An independent search instance.
 	 */
-	void findNearest( P point , double maxDistance , int numNeighbors , FastQueue<NnData<P>> results );
+	interface Search<P> {
+
+		/**
+		 * A search needs to be initialized at last once after {@link #setPoints} has been called before being used.
+		 */
+		void initialize();
+
+		/**
+		 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.
+		 *
+		 * <p>
+		 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
+		 * distance squared is common.
+		 * </p>
+		 *
+		 * @param point (Input) A point being searched for.
+		 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) a neighbor can be from point.
+		 *                    Values {@code <} 0 will be set to the maximum distance.
+		 * @param result (Output) Storage for the result.
+		 * @return true if a match within the max distance was found.
+		 */
+		boolean findNearest( P point , double maxDistance , NnData<P> result );
+
+		/**
+		 * Searches for the N nearest neighbor to the specified point.  The neighbors must be within maxDistance.
+		 *
+		 * <p>
+		 * NOTE: How distance is measured is not specified here. See the implementation's documentation.  Euclidean
+		 * distance squared is common.
+		 * </p>
+		 *
+		 * @param point (Input) A point being searched for.
+		 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
+		 *                    Values {@code <} 0 will be set to the maximum distance.
+		 * @param numNeighbors (Input) The number of neighbors it will search for.
+		 * @param results (Output) Storage for the result. Reset() is called. Must support grow() function.
+		 */
+		void findNearest( P point , double maxDistance , int numNeighbors , FastQueue<NnData<P>> results );
+	}
 }

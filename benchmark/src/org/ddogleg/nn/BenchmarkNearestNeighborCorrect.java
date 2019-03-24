@@ -44,10 +44,12 @@ public class BenchmarkNearestNeighborCorrect {
 	private double computeCorrectness( NearestNeighbor<double[]> alg ) {
 		alg.setPoints(cloud,false);
 
+		NearestNeighbor.Search<double[]> search = alg.createSearch();
+		search.initialize();
 		int numCorrect = 0;
 		for( int i = 0; i < searchSet.size(); i++ ) {
 			double []p = searchSet.get(i);
-			if( alg.findNearest(p,maxDistance,result) ) {
+			if( search.findNearest(p,maxDistance,result) ) {
 				if( solutions[i] == result.point )
 					numCorrect++;
 			}
@@ -86,8 +88,10 @@ public class BenchmarkNearestNeighborCorrect {
 
 		System.out.println("Computing solutions");
 		exhaustive.setPoints(cloud,false);
+		NearestNeighbor.Search<double[]> search = exhaustive.createSearch();
+		search.initialize();
 		for( int i = 0; i < searchSize; i++ ) {
-			exhaustive.findNearest(searchSet.get(i),maxDistance,result);
+			search.findNearest(searchSet.get(i),maxDistance,result);
 			solutions[i] = result.point;
 		}
 

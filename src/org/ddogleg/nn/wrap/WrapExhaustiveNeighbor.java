@@ -35,55 +35,71 @@ import java.util.List;
  */
 public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 
-	ExhaustiveNeighbor<P> alg;
+	KdTreeDistance<P> distance;
 	List<P> points;
 
-	GrowQueue_I32 outputIndex = new GrowQueue_I32();
-	GrowQueue_F64 outputDistance = new GrowQueue_F64();
-
 	public WrapExhaustiveNeighbor(KdTreeDistance<P> distance ) {
-		alg = new ExhaustiveNeighbor(distance);
+		this.distance = distance;
 	}
 
 	@Override
 	public void setPoints(List<P> points, boolean trackIndicies) {
-		alg.setPoints(points);
 		this.points = points;
 	}
 
 	@Override
-	public boolean findNearest(P point, double maxDistance, NnData<P> result) {
-		if( maxDistance < 0 )
-			maxDistance = Double.MAX_VALUE;
-
-		int index = alg.findClosest(point,maxDistance);
-		if( index >= 0 ) {
-			result.point = points.get(index);
-			result.distance = alg.getBestDistance();
-			result.index = index;
-			return true;
-		} else {
-			return false;
-		}
+	public Search<P> createSearch() {
+		return new InternalSearch(distance);
 	}
 
-	@Override
-	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
-		results.reset();
+	private class InternalSearch implements Search<P> {
+		ExhaustiveNeighbor<P> alg;
+		GrowQueue_I32 outputIndex = new GrowQueue_I32();
+		GrowQueue_F64 outputDistance = new GrowQueue_F64();
 
-		if( maxDistance < 0 )
-			maxDistance = Double.MAX_VALUE;
+		InternalSearch(KdTreeDistance<P> distance) {
+			alg = new ExhaustiveNeighbor<>(distance);
+		}
 
-		outputIndex.reset();
-		outputDistance.reset();
-		alg.findClosestN(point,maxDistance,numNeighbors,outputIndex,outputDistance);
+		@Override
+		public void initialize() {
+			alg.setPoints(points);
+		}
 
-		for( int i = 0; i < outputIndex.size; i++ ) {
-			int index = outputIndex.get(i);
-			NnData<P> r = results.grow();
-			r.distance = outputDistance.get(i);
-			r.point = points.get(index);
-			r.index = index;
+		@Override
+		public boolean findNearest(P point, double maxDistance, NnData<P> result) {
+			if (maxDistance < 0)
+				maxDistance = Double.MAX_VALUE;
+
+			int index = alg.findClosest(point, maxDistance);
+			if (index >= 0) {
+				result.point = points.get(index);
+				result.distance = alg.getBestDistance();
+				result.index = index;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
+			results.reset();
+
+			if (maxDistance < 0)
+				maxDistance = Double.MAX_VALUE;
+
+			outputIndex.reset();
+			outputDistance.reset();
+			alg.findClosestN(point, maxDistance, numNeighbors, outputIndex, outputDistance);
+
+			for (int i = 0; i < outputIndex.size; i++) {
+				int index = outputIndex.get(i);
+				NnData<P> r = results.grow();
+				r.distance = outputDistance.get(i);
+				r.point = points.get(index);
+				r.index = index;
+			}
 		}
 	}
 }

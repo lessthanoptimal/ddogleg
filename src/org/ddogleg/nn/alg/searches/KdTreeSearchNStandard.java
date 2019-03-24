@@ -91,6 +91,11 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 		stepClosest(tree.root,results);
 	}
 
+	@Override
+	public KdTreeSearchN<P> copy() {
+		return new KdTreeSearchNStandard<>(distance);
+	}
+
 	/**
 	 * Recursive step for finding the closest point
 	 */

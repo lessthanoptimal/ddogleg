@@ -80,4 +80,8 @@ public class KdTreeSearch1Bbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 		return false;
 	}
 
+	@Override
+	public KdTreeSearch1<P> copy() {
+		return new KdTreeSearch1Bbf<>(distance,maxNodesSearched);
+	}
 }

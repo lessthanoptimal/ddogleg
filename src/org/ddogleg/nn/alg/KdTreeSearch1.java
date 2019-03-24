@@ -52,4 +52,9 @@ public interface KdTreeSearch1<P> {
 	 * @return distance to closest node.
 	 */
 	double getDistance();
+
+	/**
+	 * Creates a copy of this search with the same configuration. workspace isn't copied
+	 */
+	KdTreeSearch1<P> copy();
 }

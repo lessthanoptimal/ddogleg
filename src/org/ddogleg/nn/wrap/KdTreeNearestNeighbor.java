@@ -19,11 +19,9 @@
 package org.ddogleg.nn.wrap;
 
 import org.ddogleg.nn.NearestNeighbor;
-import org.ddogleg.nn.NnData;
 import org.ddogleg.nn.alg.*;
 import org.ddogleg.nn.alg.searches.KdTreeSearch1Standard;
 import org.ddogleg.nn.alg.searches.KdTreeSearchNStandard;
-import org.ddogleg.struct.FastQueue;
 
 import java.util.List;
 
@@ -39,20 +37,17 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 	// creates a tree from data
 	KdTreeConstructor<P> constructor;
 	// searches the tree for the nearest neighbor
-	KdTreeSearch1<P> search;
+	KdTreeSearch1<P> search1;
 	// searches the tree for the N nearest neighbors
 	KdTreeSearchN<P> searchN;
 	// Used internally during tree construction
 	AxisSplitter<P> splitter;
 
-	// storage for multiple results
-	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
-
 	// used to recycle memory
 	KdTreeMemory<P> memory = new KdTreeMemory<>();
 
-	public KdTreeNearestNeighbor(KdTreeSearch1<P> search, KdTreeSearchN<P> searchN, AxisSplitter<P> splitter) {
-		this.search = search;
+	public KdTreeNearestNeighbor(KdTreeSearch1<P> search1, KdTreeSearchN<P> searchN, AxisSplitter<P> splitter) {
+		this.search1 = search1;
 		this.searchN = searchN;
 		this.splitter = splitter;
 		constructor = new KdTreeConstructor<>(memory,splitter);
@@ -67,46 +62,24 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 		if( tree != null )
 			memory.recycleGraph(tree);
 		tree = constructor.construct(points,trackIndicies);
-		search.setTree(tree);
+		search1.setTree(tree);
 		searchN.setTree(tree);
 	}
 
 	@Override
-	public boolean findNearest( P point , double maxDistance , NnData<P> result ) {
-		if( maxDistance < 0 )
-			search.setMaxDistance(Double.MAX_VALUE);
-		else
-			search.setMaxDistance(maxDistance);
-		KdTree.Node found = search.findNeighbor(point);
-		if( found == null )
-			return false;
-
-		result.point = (P)found.point;
-		result.index = found.index;
-		result.distance = search.getDistance();
-
-		return true;
+	public Search<P> createSearch() {
+		return new InternalSearch(search1.copy(),searchN.copy());
 	}
 
-	@Override
-	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
-		results.reset();
+	private class InternalSearch extends KdTreeInternalSearch<P> {
 
-		if( maxDistance <= 0 )
-			searchN.setMaxDistance(Double.MAX_VALUE);
-		else
-			searchN.setMaxDistance(maxDistance);
+		InternalSearch(KdTreeSearch1<P> search1, KdTreeSearchN<P> searchN) {
+			super(search1, searchN);
+		}
 
-		found.reset();
-		searchN.findNeighbor(point, numNeighbors, found);
-
-		for( int i = 0; i < found.size; i++ ) {
-			KdTreeResult k = found.get(i);
-			NnData<P> r = results.grow();
-
-			r.point = (P)k.node.point;
-			r.index = k.node.index;
-			r.distance = k.distance;
+		@Override
+		public void initialize() {
+			initialize(tree);
 		}
 	}
 }

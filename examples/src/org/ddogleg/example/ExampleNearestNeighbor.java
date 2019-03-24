@@ -40,6 +40,8 @@ public class ExampleNearestNeighbor {
 		// The class Distance (defined below) describes the data type which the kd tree will be processing
 		// It specifies the degree of freedom and provides access to each element in the data type
 		NearestNeighbor<Point2D> nn = FactoryNearestNeighbor.kdtree(new Distance());
+		// Multiple instances of search can be created. Each of these can be called independently in a thread
+		NearestNeighbor.Search<Point2D> search = nn.createSearch();
 
 		// Create data that's going to be searched
 		List<Point2D> points = new ArrayList<>();
@@ -52,6 +54,9 @@ public class ExampleNearestNeighbor {
 		// Pass the points and associated data.  Internally a data structure is constructed that enables fast lookup.
 		// This can be one of the more expensive operations, depending on which implementation is used.
 		nn.setPoints(points,true);
+		// After set points is called you need to initial the search again. This extra bit of verbosity is worth
+		// it for the potential gain in threaded performance
+		search.initialize();
 
 		// declare storage for where to store the result
 		NnData<Point2D> result = new NnData<>();
@@ -59,7 +64,7 @@ public class ExampleNearestNeighbor {
 		// It will look for the closest point to [1.1,2.2] which will be [1,2]
 		// The second parameter specifies the maximum distance away that it will consider for a neighbor
 		// set to -1 to set to the largest possible value
-		if( nn.findNearest(new Point2D(1.1,2.2),-1,result) ) {
+		if( search.findNearest(new Point2D(1.1,2.2),-1,result) ) {
 			System.out.println("Best match:");
 			System.out.println("   point     = "+result.point.x+" "+result.point.y);
 			System.out.println("   data      = "+result.index);

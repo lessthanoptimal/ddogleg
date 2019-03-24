@@ -47,5 +47,11 @@ public interface KdTreeSearchN<P> {
 	 * @param results Storage for the found neighbors.
 	 */
 	void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results);
+
+	/**
+	 * Creates a copy of this search with the same configuration. workspace isn't copied
+	 */
+	KdTreeSearchN<P> copy();
+
 }
 
