@@ -39,6 +39,8 @@ public abstract class StandardKdTreeSearch1Tests {
 	 */
 	public abstract KdTreeSearch1<double[]> createAlg();
 
+	public abstract void setTree( KdTreeSearch1<double[]> alg , KdTree tree );
+	
 	/**
 	 * Try several searches and see if they all produce good results
 	 */
@@ -47,7 +49,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeA();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		// the first decision will be incorrect and it will need to back track
@@ -97,7 +99,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeWithNull();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		// the first decision will be incorrect and it will need to back track
@@ -125,7 +127,7 @@ public abstract class StandardKdTreeSearch1Tests {
 	@Test
 	public void findClosest_empty() {
 		KdTreeSearch1<double[]> alg = createAlg();
-		alg.setTree( new KdTree(2) );
+		setTree( alg, new KdTree(2) );
 
 		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertNull(found);
@@ -140,7 +142,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		tree.root = new KdTree.Node(new double[]{1,2});
 
 		KdTreeSearch1<double[]> alg =createAlg();
-		alg.setTree( tree );
+		setTree( alg , tree );
 
 		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
 		assertSame(found, tree.root);
@@ -157,7 +159,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		tree.root = new KdTree.Node(new double[]{1,2});
 
 		KdTreeSearch1<double[]> alg = createAlg();
-		alg.setTree( tree );
+		setTree( alg , tree );
 		alg.setMaxDistance(2);
 
 		KdTree.Node found = alg.findNeighbor(new double[]{11, 8});
@@ -174,7 +176,7 @@ public abstract class StandardKdTreeSearch1Tests {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeA();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		double[] pt = new double[]{11.5,8.2};

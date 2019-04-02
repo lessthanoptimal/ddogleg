@@ -54,9 +54,6 @@ public class ExampleNearestNeighbor {
 		// Pass the points and associated data.  Internally a data structure is constructed that enables fast lookup.
 		// This can be one of the more expensive operations, depending on which implementation is used.
 		nn.setPoints(points,true);
-		// After set points is called you need to initial the search again. This extra bit of verbosity is worth
-		// it for the potential gain in threaded performance
-		search.initialize();
 
 		// declare storage for where to store the result
 		NnData<Point2D> result = new NnData<>();

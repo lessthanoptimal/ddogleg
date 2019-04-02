@@ -47,10 +47,9 @@ public interface NearestNeighbor<P> {
 	void setPoints( List<P> points , boolean trackIndices );
 
 	/**
-	 * Creates a new search. This is intended to enabled concurrent searches. The graph created by setPoints()
-	 * is assumed to be fixed during a search and calling multiple instances of search is thread safe. A search
-	 * can only be used with the {@link NearestNeighbor} which created it and {@link #initialize(Search)} needs
-	 * to be called each time {@link #setPoints} is called.
+	 * Creates a new search for this data structure. This is intended to enabled concurrent searches. After {@link
+	 * #setPoints} has been called and returned, each searched can be called independently in separate threads. Do
+	 * not call {@link #setPoints} which a search is being performed.
 	 *
 	 * @return A new search object for this instance.
 	 */
@@ -60,11 +59,6 @@ public interface NearestNeighbor<P> {
 	 * An independent search instance.
 	 */
 	interface Search<P> {
-
-		/**
-		 * A search needs to be initialized at last once after {@link #setPoints} has been called before being used.
-		 */
-		void initialize();
 
 		/**
 		 * Searches for the nearest neighbor to the specified point.  The neighbor must be within maxDistance.

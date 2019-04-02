@@ -56,7 +56,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 		assertFalse(search.findNearest(new double[]{1, 2}, 10, found));
 	}
 
@@ -67,7 +66,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 		assertTrue(search.findNearest(new double[]{1, 2}, 10, found));
 
 		assertSame(points.get(0), found.point);
@@ -81,7 +79,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 		assertTrue(search.findNearest(new double[]{6, 7}, 10, found));
 
 		assertSame(points.get(1), found.point);
@@ -95,7 +92,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,true);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 		assertTrue(search.findNearest(new double[]{6, 7}, 10, found));
 
 		assertEquals(1, found.index);
@@ -115,7 +111,6 @@ public abstract class StandardNearestNeighborTests {
 			double[] where = randPoint(2);
 
 			NearestNeighbor.Search<double[]> search = alg.createSearch();
-			search.initialize();
 			assertTrue(search.findNearest(where, 10, found));
 
 			ExhaustiveNeighbor<double[]> exhaustive = new ExhaustiveNeighbor<>(distance);
@@ -148,7 +143,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		// should fail because the tolerance is too tight
 		assertFalse(search.findNearest(target, 0.01, found));
@@ -180,7 +174,6 @@ public abstract class StandardNearestNeighborTests {
 		
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		assertTrue(search.findNearest(target, 1.00000001, found));
 		assertSame(found.point, points.get(2));
@@ -205,7 +198,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		foundN.reset();
 		search.findNearest(target, 1.00000001, 2, foundN);
@@ -231,7 +223,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		assertTrue(search.findNearest(target, 10, found));
 
@@ -254,7 +245,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		foundN.reset();
 		search.findNearest(target, 10, 1, foundN);
@@ -274,7 +264,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,true);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		foundN.reset();
 		search.findNearest(new double[]{6, 7}, 10, 1, foundN);
@@ -293,7 +282,6 @@ public abstract class StandardNearestNeighborTests {
 
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		foundN.add(new NnData<>());
 		search.findNearest(new double[]{6, 7}, 10, 1, foundN);
@@ -319,7 +307,6 @@ public abstract class StandardNearestNeighborTests {
 
 			alg.setPoints(points,false);
 			NearestNeighbor.Search<double[]> search = alg.createSearch();
-			search.initialize();
 
 			double[] where = randPoint(2);
 
@@ -370,7 +357,6 @@ public abstract class StandardNearestNeighborTests {
 		
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
-		search.initialize();
 
 		foundN.reset();
 		search.findNearest(new double[]{6, 7}, 50, 5, foundN);
@@ -412,9 +398,6 @@ public abstract class StandardNearestNeighborTests {
 		}
 
 		alg.setPoints(targets,false);
-		for (int i = 0; i < searches.size(); i++) {
-			searches.get(i).initialize();
-		}
 
 		// runs in a parallel and blocks until all threads are done
 		IntStream.range(0, searches.size())

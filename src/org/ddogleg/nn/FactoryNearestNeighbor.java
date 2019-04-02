@@ -24,7 +24,7 @@ import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.VpTree;
 import org.ddogleg.nn.alg.searches.KdTreeSearch1Bbf;
 import org.ddogleg.nn.alg.searches.KdTreeSearchNBbf;
-import org.ddogleg.nn.wrap.KdForestBbfSearch;
+import org.ddogleg.nn.wrap.KdForestBbfNearestNeighbor;
 import org.ddogleg.nn.wrap.KdTreeNearestNeighbor;
 import org.ddogleg.nn.wrap.WrapExhaustiveNeighbor;
 
@@ -73,7 +73,7 @@ public class FactoryNearestNeighbor {
 	 * Approximate {@link NearestNeighbor} search which uses a set of randomly generated K-D trees and a Best-Bin-First
 	 * search.  Designed to work in high dimensional space. Distance measure is Euclidean squared.
 	 *
-	 * @see KdForestBbfSearch
+	 * @see KdForestBbfNearestNeighbor
 	 * @see AxisSplitterMedian
 	 *
 	 * @param distance Specifies how distance is computed between two points.
@@ -91,7 +91,7 @@ public class FactoryNearestNeighbor {
 
 		Random rand = new Random(randomSeed);
 
-		return new KdForestBbfSearch<>(numTrees,maxNodesSearched,distance,
+		return new KdForestBbfNearestNeighbor<>(numTrees,maxNodesSearched,distance,
 				new AxisSplitterMedian<>(distance,new AxisSplitRuleRandomK(rand,numConsiderSplit)));
 	}
 

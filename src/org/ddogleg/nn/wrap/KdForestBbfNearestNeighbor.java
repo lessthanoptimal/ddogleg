@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class KdForestBbfSearch<P> implements NearestNeighbor<P> {
+public class KdForestBbfNearestNeighbor<P> implements NearestNeighbor<P> {
 
 	// set of K-D trees which are to be searched
 	KdTree[]forest;
@@ -46,10 +46,10 @@ public class KdForestBbfSearch<P> implements NearestNeighbor<P> {
 	int maxNodesSearched;
 	KdTreeDistance<P> distance;
 
-	public KdForestBbfSearch(int numberOfTrees,
-							 int maxNodesSearched,
-							 KdTreeDistance<P> distance ,
-							 AxisSplitter<P> splitter) {
+	public KdForestBbfNearestNeighbor(int numberOfTrees,
+									  int maxNodesSearched,
+									  KdTreeDistance<P> distance ,
+									  AxisSplitter<P> splitter) {
 		this.forest = new KdTree[ numberOfTrees ];
 		this.splitter = splitter;
 		this.maxNodesSearched = maxNodesSearched;
@@ -81,7 +81,7 @@ public class KdForestBbfSearch<P> implements NearestNeighbor<P> {
 		}
 
 		@Override
-		public void initialize() {
+		void setTree() {
 			((KdTreeSearch1Bbf)search1).setTrees(forest);
 			((KdTreeSearchNBbf)searchN).setTrees(forest);
 		}

@@ -36,6 +36,11 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 		return new KdTreeSearchNBbf<>(new KdTreeEuclideanSq_F64(2),10000);
 	}
 
+	@Override
+	public void setTree(KdTreeSearchN<double[]> alg, KdTree tree) {
+		((KdTreeSearchNBbf)alg).setTree(tree);
+	}
+
 	/**
 	 * Provide an insufficient number of steps to produce an optimal solution and see if it produces the expected
 	 * result

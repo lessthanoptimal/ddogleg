@@ -84,7 +84,6 @@ public class BenchmarkNearestNeighbor {
 		@Override
 		public void process() {
 			NearestNeighbor.Search<double[]> search = alg.createSearch();
-			search.initialize();
 			for( double[]p : searchSet ) {
 				search.findNearest(p,maxDistance,result);
 			}

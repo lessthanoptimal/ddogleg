@@ -53,7 +53,6 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 		this.distance = distance;
 	}
 
-	@Override
 	public void setTree( KdTree tree ) {
 		this.tree = tree;
 	}

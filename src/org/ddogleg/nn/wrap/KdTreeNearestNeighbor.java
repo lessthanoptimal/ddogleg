@@ -62,8 +62,6 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 		if( tree != null )
 			memory.recycleGraph(tree);
 		tree = constructor.construct(points,trackIndicies);
-		search1.setTree(tree);
-		searchN.setTree(tree);
 	}
 
 	@Override
@@ -78,8 +76,9 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 		}
 
 		@Override
-		public void initialize() {
-			initialize(tree);
+		void setTree() {
+			((KdTreeSearch1Standard)search1).setTree(tree);
+			((KdTreeSearchNStandard)searchN).setTree(tree);
 		}
 	}
 }

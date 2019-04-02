@@ -59,10 +59,6 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 
 		InternalSearch(KdTreeDistance<P> distance) {
 			alg = new ExhaustiveNeighbor<>(distance);
-		}
-
-		@Override
-		public void initialize() {
 			alg.setPoints(points);
 		}
 
@@ -70,6 +66,8 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 		public boolean findNearest(P point, double maxDistance, NnData<P> result) {
 			if (maxDistance < 0)
 				maxDistance = Double.MAX_VALUE;
+
+			alg.setPoints(points);
 
 			int index = alg.findClosest(point, maxDistance);
 			if (index >= 0) {
@@ -88,6 +86,8 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 
 			if (maxDistance < 0)
 				maxDistance = Double.MAX_VALUE;
+
+			alg.setPoints(points);
 
 			outputIndex.reset();
 			outputDistance.reset();

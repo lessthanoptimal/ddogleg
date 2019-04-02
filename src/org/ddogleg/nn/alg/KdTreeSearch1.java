@@ -26,11 +26,6 @@ package org.ddogleg.nn.alg;
 public interface KdTreeSearch1<P> {
 
 	/**
-	 * Specifies the tree which is to be searched
-	 */
-	void setTree( KdTree tree );
-
-	/**
 	 * Specifies the maximum distance a closest-point needs to be to be considered
 	 *
 	 * @param maxDistance maximum distance from target

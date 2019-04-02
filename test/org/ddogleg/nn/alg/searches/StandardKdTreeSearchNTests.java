@@ -50,6 +50,8 @@ public abstract class StandardKdTreeSearchNTests {
 	 */
 	public abstract KdTreeSearchN<double[]> createAlg();
 
+	public abstract void setTree( KdTreeSearchN<double[]> alg , KdTree tree );
+	
 	/**
 	 * Try several searches and see if they all produce good results.  Just fine the nearest-neighbor
 	 */
@@ -58,7 +60,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		// the first decision will be incorrect and it will need to back track
@@ -91,7 +93,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeWithNull();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		// the first decision will be incorrect and it will need to back track
@@ -109,7 +111,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
-		alg.setTree(tree);
+		setTree(alg,tree);
 
 		List<double[]> data = new ArrayList<double[]>();
 		flattenTree(tree.root,data);
@@ -140,7 +142,7 @@ public abstract class StandardKdTreeSearchNTests {
 	@Test
 	public void findClosest_empty() {
 		KdTreeSearchN<double[]> alg = createAlg();
-		alg.setTree( new KdTree(2) );
+		setTree(alg, new KdTree(2) );
 
 		found.reset();
 		alg.findNeighbor(new double[]{11, 8}, 2, found);
@@ -156,7 +158,7 @@ public abstract class StandardKdTreeSearchNTests {
 		tree.root = new KdTree.Node(new double[]{1,2});
 
 		KdTreeSearchN<double[]> alg =createAlg();
-		alg.setTree( tree );
+		setTree(alg, tree );
 
 		found.reset();
 		alg.findNeighbor(new double[]{11, 8}, 2, found);
@@ -177,7 +179,7 @@ public abstract class StandardKdTreeSearchNTests {
 		tree.root = new KdTree.Node(new double[]{1,2});
 
 		KdTreeSearchN<double[]> alg = createAlg();
-		alg.setTree( tree );
+		setTree(alg, tree );
 		alg.setMaxDistance(2);
 
 		found.reset();
@@ -197,7 +199,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		double[] pt = new double[]{11.5,8.2};
@@ -219,7 +221,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = createTreeDuplicates();
-		alg.setTree(tree);
+		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
 		double[] pt = new double[]{1,2};

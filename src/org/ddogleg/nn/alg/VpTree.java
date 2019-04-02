@@ -186,11 +186,6 @@ public class VpTree implements NearestNeighbor<double[]> {
 	private class InternalSearch implements Search<double[]> {
 
 		@Override
-		public void initialize() {
-
-		}
-
-		@Override
 		public boolean findNearest(double[] point, double maxDistance, NnData<double[]> result) {
 			boolean r = searchNearest(point, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), result);
 			result.distance *= result.distance; // Callee expects squared distance

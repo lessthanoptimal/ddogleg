@@ -42,13 +42,14 @@ public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<
 		this.searchN = searchN;
 	}
 
-	public void initialize( KdTree tree ) {
-		search1.setTree(tree);
-		searchN.setTree(tree);
-	}
+	/**
+	 * Specifies the tree which the internal searches use
+	 */
+	abstract void setTree();
 
 	@Override
 	public boolean findNearest(P point, double maxDistance, NnData<P> result) {
+		setTree();
 		if( maxDistance < 0 )
 			search1.setMaxDistance(Double.MAX_VALUE);
 		else
@@ -66,6 +67,7 @@ public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<
 
 	@Override
 	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
+		setTree();
 		results.reset();
 		if( maxDistance <= 0 )
 			searchN.setMaxDistance(Double.MAX_VALUE);
