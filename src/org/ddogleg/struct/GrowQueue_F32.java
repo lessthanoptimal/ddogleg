@@ -93,7 +93,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 
 	public void push( float val ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2];
+			float temp[] = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -141,7 +141,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	 */
 	public void insert( int index , float value ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2];
+			float temp[] = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);

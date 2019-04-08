@@ -95,7 +95,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		if( size == data.length ) {
 			double temp[];
 			try {
-				temp = new double[ size * 2];
+				temp = new double[ size * 2+5];
 			} catch( OutOfMemoryError e ) {
 				System.gc();
 //				System.out.println("Memory on size "+size+" or "+(size*8/1024/1024)+" MB");
@@ -150,7 +150,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 */
 	public void insert( int index , double value ) {
 		if( size == data.length ) {
-			double temp[] = new double[ size * 2];
+			double temp[] = new double[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);

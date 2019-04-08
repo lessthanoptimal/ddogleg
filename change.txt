@@ -8,6 +8,7 @@ Date:     2019/
 
 - Nearest Neighbor searches can now have the search component parallelized across multiple threads
   * Changed API to accommodate this feature
+- Fixed bug in GrowQueue dealing with an initialize size of zero.
 
 ------------------------------------------------------
 Version:  0.16

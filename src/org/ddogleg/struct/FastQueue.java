@@ -192,7 +192,7 @@ public class FastQueue<T> implements Serializable {
 
 	public void add( T object ) {
 		if( size >= data.length ) {
-			growArray((data.length+1)*2);
+			growArray((size+1)*2);
 		}
 		data[size++] = object;
 	}

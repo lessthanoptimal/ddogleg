@@ -93,7 +93,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			byte temp[] = new byte[ size * 2];
+			byte temp[] = new byte[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -133,7 +133,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 	 */
 	public void insert( int index , int value ) {
 		if( size == data.length ) {
-			byte temp[] = new byte[ size * 2];
+			byte temp[] = new byte[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = (byte)value;
 			System.arraycopy(data,index,temp,index+1,size-index);

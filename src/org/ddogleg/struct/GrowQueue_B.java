@@ -79,7 +79,7 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 
 	public void push( boolean val ) {
 		if( size == data.length ) {
-			boolean temp[] = new boolean[ size * 2];
+			boolean temp[] = new boolean[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -114,7 +114,7 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	 */
 	public void insert( int index , boolean value ) {
 		if( size == data.length ) {
-			boolean temp[] = new boolean[ size * 2];
+			boolean temp[] = new boolean[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
