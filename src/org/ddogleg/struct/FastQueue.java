@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -248,6 +249,15 @@ public class FastQueue<T> implements Serializable {
 		}
 
 		return false;
+	}
+
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int selected = rand.nextInt(size-i);
+			T tmp = data[selected];
+			data[selected] = data[size-i-1];
+			data[size-i-1] = tmp;
+		}
 	}
 
 	/**
