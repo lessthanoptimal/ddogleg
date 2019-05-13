@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestFastQueue {
+class TestFastQueue {
 
 	@Test
 	void checkDeclareInstance() {
@@ -276,5 +276,43 @@ public class TestFastQueue {
 		assertEquals(0,queue.indexOf(1.0), UtilEjml.TEST_F64);
 		assertEquals(1,queue.indexOf(3.0), UtilEjml.TEST_F64);
 		assertEquals(3,queue.indexOf(2.0), UtilEjml.TEST_F64);
+	}
+
+	@Test
+	void flip() {
+		FastQueue<Double> queue = new FastQueue<>(100,Double.class,false);
+		queue.flip();
+
+		queue.add(1.0);
+		queue.flip();
+		assertEquals(1,queue.get(0), UtilEjml.TEST_F64);
+
+		queue.add(2.0);
+		queue.flip();
+		assertEquals(2,queue.get(0), UtilEjml.TEST_F64);
+		assertEquals(1,queue.get(1), UtilEjml.TEST_F64);
+
+		queue.add(3.0);
+		queue.flip();
+		assertEquals(3,queue.get(0), UtilEjml.TEST_F64);
+		assertEquals(1,queue.get(1), UtilEjml.TEST_F64);
+		assertEquals(2,queue.get(2), UtilEjml.TEST_F64);
+	}
+
+	@Test
+	void swap() {
+		FastQueue<Double> queue = new FastQueue<>(100,Double.class,false);
+		queue.add(1.0);
+		queue.add(2.0);
+		queue.add(3.0);
+		queue.add(4.0);
+
+		queue.swap(0,3);
+		queue.swap(0,1);
+
+		assertEquals(2,queue.get(0), UtilEjml.TEST_F64);
+		assertEquals(4,queue.get(1), UtilEjml.TEST_F64);
+		assertEquals(3,queue.get(2), UtilEjml.TEST_F64);
+		assertEquals(1,queue.get(3), UtilEjml.TEST_F64);
 	}
 }

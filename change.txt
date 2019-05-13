@@ -11,6 +11,7 @@ Date:     2019/
 - Fixed bug in GrowQueue dealing with an initialize size of zero.
 - FastQueue
   * Added shuffle
+  * Added flip and swap
 
 ------------------------------------------------------
 Version:  0.16

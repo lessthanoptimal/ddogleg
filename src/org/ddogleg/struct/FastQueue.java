@@ -292,6 +292,24 @@ public class FastQueue<T> implements Serializable {
 		return -1;
 	}
 
+	public void flip() {
+		if( size <= 1 )
+			return;
+
+		int D = size/2;
+		for (int i = 0,j=size-1; i < D; i++,j--) {
+			T tmp = data[i];
+			data[i] = data[j];
+			data[j] = tmp;
+		}
+	}
+
+	public void swap( int idx0 , int idx1 ) {
+		T tmp = data[idx0];
+		data[idx0] = data[idx1];
+		data[idx1] = tmp;
+	}
+
 	// -------- These are only around so that it can be a java bean
 	public T[] getData() {
 		return data;
