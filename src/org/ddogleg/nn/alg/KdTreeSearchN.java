@@ -28,6 +28,13 @@ import org.ddogleg.struct.FastQueue;
 public interface KdTreeSearchN<P> {
 
 	/**
+	 * Specifies the tree which will be searched. The type of object is implementation specific
+	 *
+	 * @param tree search tree
+	 */
+	void setTree( Object tree );
+
+	/**
 	 * Specifies the maximum distance a closest-point needs to be to be considered
 	 *
 	 * @param maxDistance maximum distance from target

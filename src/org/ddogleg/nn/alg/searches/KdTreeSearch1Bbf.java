@@ -44,6 +44,15 @@ public class KdTreeSearch1Bbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	}
 
 	@Override
+	public void setTree(Object tree) {
+		if( tree instanceof KdTree ) {
+			setTree((KdTree)tree);
+		} else {
+			setTrees((KdTree[])tree);
+		}
+	}
+
+	@Override
 	public KdTree.Node findNeighbor(P target) {
 
 		bestNode = null;

@@ -73,7 +73,7 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 	// number of nodes which have been searched
 	protected int numNodesSearched = 0;
 
-	KdTreeDistance<P> distance;;
+	KdTreeDistance<P> distance;
 
 	/**
 	 * Configures the search

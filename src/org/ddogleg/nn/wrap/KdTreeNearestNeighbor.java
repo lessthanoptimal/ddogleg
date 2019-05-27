@@ -77,8 +77,8 @@ public class KdTreeNearestNeighbor<P> implements NearestNeighbor<P> {
 
 		@Override
 		void setTree() {
-			((KdTreeSearch1Standard)search1).setTree(tree);
-			((KdTreeSearchNStandard)searchN).setTree(tree);
+			search1.setTree(tree);
+			searchN.setTree(tree);
 		}
 	}
 }

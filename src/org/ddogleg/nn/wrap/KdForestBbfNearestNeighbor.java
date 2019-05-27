@@ -82,8 +82,8 @@ public class KdForestBbfNearestNeighbor<P> implements NearestNeighbor<P> {
 
 		@Override
 		void setTree() {
-			((KdTreeSearch1Bbf)search1).setTrees(forest);
-			((KdTreeSearchNBbf)searchN).setTrees(forest);
+			search1.setTree(forest);
+			searchN.setTree(forest);
 		}
 	}
 }

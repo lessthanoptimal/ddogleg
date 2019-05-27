@@ -54,9 +54,11 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 		this.distance = distance;
 	}
 
-	public void setTree( KdTree tree ) {
-		this.tree = tree;
+	@Override
+	public void setTree( Object tree ) {
+		this.tree = (KdTree) tree;
 	}
+
 
 	/**
 	 * Specifies the greatest distance it will search

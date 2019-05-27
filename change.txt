@@ -12,6 +12,7 @@ Date:     2019/
 - FastQueue
   * Added shuffle
   * Added flip and swap
+- Fixed typecast issue with KdTree
 
 ------------------------------------------------------
 Version:  0.16

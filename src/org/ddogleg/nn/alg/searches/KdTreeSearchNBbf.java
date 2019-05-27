@@ -50,6 +50,14 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 		super(distance,maxNodesSearched);
 	}
 
+	@Override
+	public void setTree(Object tree) {
+		if( tree instanceof KdTree ) {
+			setTree((KdTree)tree);
+		} else {
+			setTrees((KdTree[])tree);
+		}
+	}
 
 	@Override
 	public void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results) {
