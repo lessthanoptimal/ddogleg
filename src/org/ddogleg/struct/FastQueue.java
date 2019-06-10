@@ -18,9 +18,11 @@
 
 package org.ddogleg.struct;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -99,6 +101,50 @@ public class FastQueue<T> implements Serializable {
 	 */
 	public List<T> toList() {
 		return list;
+	}
+
+	/**
+	 * Removes the indexes from the queue. This is done by swapping removed elements with the last element. O(N) copies.
+	 *
+	 * @param indexes Index of elements which are to be removed. This will be modified
+	 * @param fromIndex the index of the first element, inclusive, to be sorted
+	 * @param toIndex the index of the last element, exclusive, to be sorted
+	 * @param workSpace Optional internal workspace. Can be set to null.
+	 */
+	public void remove( int[] indexes , int fromIndex, int toIndex, @Nullable List<T> workSpace ) {
+		if( toIndex <= fromIndex )
+			return;
+		if( workSpace == null ) {
+			workSpace = new ArrayList<>();
+		} else {
+			workSpace.clear();
+		}
+		// sort indexes from lowest to highest
+		Arrays.sort(indexes,fromIndex,toIndex);
+
+		// the next index wihch should be skipped
+		int target = indexes[fromIndex];
+		// how many indexes have been removed so far
+		int count = 0;
+		for ( int i = indexes[fromIndex]; i < size; i++ ) {
+			if( i == target ) {
+				workSpace.add( data[i] );
+				count++;
+				if( count < toIndex-fromIndex ) {
+					target = indexes[fromIndex+count];
+				} else {
+					target = -1;
+				}
+			} else {
+				data[i-count] = data[i];
+			}
+		}
+
+		// push removed objects to the end
+		for (int i = 0; i < workSpace.size(); i++) {
+			data[size-i-1] = workSpace.get(i);
+		}
+		size -= workSpace.size();
 	}
 
 	/**

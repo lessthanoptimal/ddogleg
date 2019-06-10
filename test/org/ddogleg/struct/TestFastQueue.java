@@ -63,6 +63,42 @@ class TestFastQueue {
 	}
 
 	@Test
+	void remove_indexes() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
+		for (int i = 0; i < 10; i++) {
+			alg.grow().value = i;
+		}
+
+		int[] indexes = new int[]{0,1,4,2,6,8,9};
+		alg.remove(indexes,2,6,null);
+		assertEquals(6,alg.size());
+		assertEquals(0,alg.get(0).value);
+		assertEquals(1,alg.get(1).value);
+		assertEquals(3,alg.get(2).value);
+		assertEquals(5,alg.get(3).value);
+		assertEquals(7,alg.get(4).value);
+		assertEquals(9,alg.get(5).value);
+
+		// make sure original objects were recycled properly
+		for (int i = 0; i < 10; i++) {
+			for (int j = i+1; j < 10; j++) {
+				assertNotEquals(alg.data[i].value,alg.data[j].value);
+			}
+		}
+	}
+
+	@Test
+	void remove_indexes_RemoveNothing() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
+		for (int i = 0; i < 10; i++) {
+			alg.grow().value = i;
+		}
+		int[] indexes = new int[]{};
+		alg.remove(indexes,2,2,null);
+		assertEquals(10,alg.size());
+	}
+
+	@Test
 	void removeTail() {
 		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 
