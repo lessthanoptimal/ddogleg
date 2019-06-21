@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.17
-Date:     2019/
+Date:     2019/06/20
 
 - Nearest Neighbor searches can now have the search component parallelized across multiple threads
   * Changed API to accommodate this feature
