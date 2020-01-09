@@ -198,4 +198,142 @@ public class PrimitiveArrays {
 		return max;
 	}
 
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBound( byte[] array, int offset , int length , int val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( array[idx] < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
+
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param array unsigned byte array
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBoundU( byte[] array, int offset , int length , int val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( (array[idx]&0xFF) < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
+
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBound( short[] array, int offset , int length , int val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( array[idx] < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
+
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBound( int[] array, int offset , int length , int val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( array[idx] < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
+
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBound( float[] array, int offset , int length , float val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( array[idx] < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
+
+	/**
+	 * Finds the first index in 'array' for which val is not &le val
+	 * @param offset First index in the array
+	 * @param length Number of elements in the array
+	 * @param val The value for which the lower bound is being searched for.
+	 * @return lower bound index
+	 */
+	public static int lowerBound( double[] array, int offset , int length , double val ) {
+		int count = length;
+		int first = offset;
+		while( count > 0 ) {
+			int step = count/2;
+			int idx = first+step;
+			if( array[idx] < val ) {
+				first = idx+1;
+				count -= step+1;
+			} else {
+				count = step;
+			}
+		}
+		return first;
+	}
 }

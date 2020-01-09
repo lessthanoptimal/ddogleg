@@ -257,4 +257,88 @@ class TestPrimitiveArrays {
 		}
 		assertEquals(89, PrimitiveArrays.max(orig,10,90));
 	}
+
+	@Test
+	void lowerBoundU_byte() {
+		byte[] orig = new byte[100];
+		orig[0] = 124;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = (byte)(i+100);
+		}
+		assertEquals(51, PrimitiveArrays.lowerBoundU(orig,1,99,151));
+		assertEquals(50, PrimitiveArrays.lowerBoundU(orig,1,99,150));
+		assertEquals(49, PrimitiveArrays.lowerBoundU(orig,1,99,149));
+		assertEquals(1, PrimitiveArrays.lowerBoundU(orig,1,99,0));
+		assertEquals(100, PrimitiveArrays.lowerBoundU(orig,1,99,300));
+	}
+
+	@Test
+	void lowerBound_byte() {
+		byte[] orig = new byte[100];
+		orig[0] = 124;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = (byte)(i-50);
+		}
+		assertEquals(51, PrimitiveArrays.lowerBound(orig,1,99,1));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,0));
+		assertEquals(49, PrimitiveArrays.lowerBound(orig,1,99,-1));
+		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-100));
+		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200));
+	}
+
+	@Test
+	void lowerBound_short() {
+		short[] orig = new short[100];
+		orig[0] = 9999;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = (short)(i-50);
+		}
+		assertEquals(51, PrimitiveArrays.lowerBound(orig,1,99,1));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,0));
+		assertEquals(49, PrimitiveArrays.lowerBound(orig,1,99,-1));
+		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-100));
+		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200));
+	}
+
+	@Test
+	void lowerBound_int() {
+		int[] orig = new int[100];
+		orig[0] = 99999;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = i;
+		}
+		assertEquals(51, PrimitiveArrays.lowerBound(orig,1,99,51));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,50));
+		assertEquals(49, PrimitiveArrays.lowerBound(orig,1,99,49));
+		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-1));
+		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200));
+	}
+
+	@Test
+	void lowerBound_float() {
+		float[] orig = new float[100];
+		orig[0] = 99999;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = i;
+		}
+		assertEquals(51, PrimitiveArrays.lowerBound(orig,1,99,50.1f));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,50f));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,49.9f));
+		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-1f));
+		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200f));
+	}
+
+	@Test
+	void lowerBound_double() {
+		double[] orig = new double[100];
+		orig[0] = 99999;
+		for (int i = 1; i < 100; i++) {
+			orig[i] = i;
+		}
+		assertEquals(51, PrimitiveArrays.lowerBound(orig,1,99,50.1));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,50));
+		assertEquals(50, PrimitiveArrays.lowerBound(orig,1,99,49.9));
+		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-1));
+		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200));
+	}
 }

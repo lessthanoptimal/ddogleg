@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.18
+Date:     2020/
+
+- PrimitiveArrays added lowerBound()
+
+------------------------------------------------------
 Version:  0.17
 Date:     2019/06/20
 
