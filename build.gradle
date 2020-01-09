@@ -119,6 +119,13 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
+// Creates Java 8 byte code on Java 9+
+if(JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    compileJava {
+        options.compilerArgs = ["--release", "8"]
+    }
+}
+
 // if Maven central isn't setup in gradle.properties skip all of this
 if( project.hasProperty('ossrhUsername') ) {
     signing {
