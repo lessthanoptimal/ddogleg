@@ -28,6 +28,7 @@ public class BenchMarkSort
 	public void process( int num ) {
 		double[] data;
 		SortableParameter_F64[] obj;
+		List<Double> list = new ArrayList<>();
 		long before;
 		long after;
 
@@ -51,11 +52,18 @@ public class BenchMarkSort
 		System.out.println("Quicksort = "+(after-before));
 
 		data = createRandom_F64(new Random(0x344), num);
-		int indexes[] = new int[ num ];
+		int[] indexes = new int[ num ];
 		before = System.currentTimeMillis();
 		quicksort.sort(data,0,data.length,indexes);
 		after = System.currentTimeMillis();
 		System.out.println("Quicksort Indexes = "+(after-before));
+
+		data = createRandom_F64(new Random(0x344), num);
+		for( double d : data ) list.add(d);
+		before = System.currentTimeMillis();
+		quicksort.sort(data,data.length,list);
+		after = System.currentTimeMillis();
+		System.out.println("Quicksort w/list = "+(after-before));
 
 		data = createRandom_F64(new Random(0x344), num);
 		ApproximateSort_F64 approx = new ApproximateSort_F64(2000);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,8 @@
  */
 
 package org.ddogleg.sorting;
+
+import java.util.List;
 
 /**
  * An implementation of the quick sort algorithm from Numerical Recipes Third Edition
@@ -128,7 +130,7 @@ public class QuickSort_F64 {
 		}
 	}
 
-	public void sort( double[] arr , int offset , int length , int indexes[] )
+	public void sort( double[] arr , int offset , int length , int[] indexes )
 	{
 		for( int i = 0; i < length; i++ ) {
 			indexes[i] = offset+i;
@@ -210,6 +212,99 @@ public class QuickSort_F64 {
 					l=i;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Sorts the array and modifies the order in the list the same way
+	 */
+	public <T> void sort(double[] arr , int length , List<T> list )
+	{
+		if( length != list.size() )
+			throw new IllegalArgumentException("length and the list's size must be the same");
+
+		int i,ir,j,k;
+		int jstack = -1;
+		int l = 0;
+		// if I ever publish a book I will never use variable l in an algorithm with lots of 1
+
+		double a;
+
+		ir=length-1;
+
+		for(;;) {
+			if( ir-l < M) {
+				for( j=l+1;j<=ir;j++) {
+					a = arr[j];
+					T la = list.get(j);
+					for( i=j-1; i>=l;i-- ) {
+						if( arr[i] <= a ) break;
+						list.set(i+1,list.get(i));
+						arr[i+1]=arr[i];
+					}
+					arr[i+1]=a;
+					list.set(i+1,la);
+				}
+				if(jstack < 0) break;
+
+				ir = istack[jstack--];
+				l=istack[jstack--];
+
+			} else {
+				k=(l+ir)>>>1;
+				swap(k,l+1,arr,list);
+
+				if( arr[l] > arr[ir]) {
+					swap(l,ir,arr,list);
+				}
+				if( arr[l+1] > arr[ir]) {
+					swap(l+1,ir,arr,list);
+				}
+				if( arr[l] > arr[l+1]) {
+					swap(l,l+1,arr,list);
+				}
+				i=l+1;
+				j=ir;
+				a=arr[l+1];
+				T la = list.get(l+1);
+				for(;;) {
+					do { i++; } while( arr[i] < a);
+					do { j--; } while( arr[j] > a);
+					if(j < i ) break;
+					swap(i,j,arr,list);
+				}
+				arr[l+1]=arr[j];
+				arr[j]=a;
+				list.set(l+1,list.get(j));
+				list.set(j,la);
+
+				jstack += 2;
+
+				if( jstack >= NSTACK )
+					throw new RuntimeException("NSTACK too small");
+				if( ir-i+1 >= j-l ) {
+					istack[jstack] = ir;
+					istack[jstack-1] = i;
+					ir=j-1;
+				} else {
+					istack[jstack] = j-1;
+					istack[jstack-1] = l;
+					l=i;
+				}
+			}
+		}
+	}
+
+	private static <T> void swap( int i , int j , double[] arr , List<T> list ) {
+		{
+			double tmp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp;
+		}
+		{
+			T tmp = list.get(i);
+			list.set(i,list.get(j));
+			list.set(j,tmp);
 		}
 	}
 }

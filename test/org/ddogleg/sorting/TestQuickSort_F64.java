@@ -22,16 +22,18 @@ import org.ddogleg.util.UtilDouble;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSort_F64 {
+class TestQuickSort_F64 {
 	Random rand = new Random(0xfeed4);
 
 	@Test
-	public void testSortingRandom() {
+	void testSortingRandom() {
 		double[] ret = BenchMarkSort.createRandom_F64(rand,200);
 
 		double preTotal = UtilDouble.sum(ret);
@@ -54,7 +56,7 @@ public class TestQuickSort_F64 {
 	}
 
 	@Test
-	public void testSortingRandom_indexes() {
+	void testSortingRandom_indexes() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			double[] normal = BenchMarkSort.createRandom_F64(rand,20);
@@ -74,6 +76,28 @@ public class TestQuickSort_F64 {
 				assertEquals(original[i],withIndexes[i+offset], UtilEjml.TEST_F64);
 				// see if it produced the same results as the normal one
 				assertEquals(normal[i],withIndexes[indexes[i]],UtilEjml.TEST_F64);
+			}
+		}
+	}
+
+	@Test
+	void testSortingRandom_List() {
+		for( int a = 0; a < 20; a++ ) {
+			double[] arrayA = BenchMarkSort.createRandom_F64(rand,20);
+			double[] arrayB = arrayA.clone();
+			List<Double> list = new ArrayList<>();
+			for( double d : arrayA ) {
+				list.add(d);
+			}
+
+			QuickSort_F64 sorter = new QuickSort_F64();
+
+			sorter.sort(arrayA,arrayA.length);
+			sorter.sort(arrayB,arrayB.length,list);
+
+			for( int i = 0; i < arrayA.length; i++ ) {
+				assertEquals(arrayA[i],arrayB[i], UtilEjml.TEST_F64);
+				assertEquals(arrayA[i],list.get(i), UtilEjml.TEST_F64);
 			}
 		}
 	}

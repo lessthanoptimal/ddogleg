@@ -21,16 +21,18 @@ package org.ddogleg.sorting;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSort_S32 {
+class TestQuickSort_S32 {
 	Random rand = new Random(0xfeed4);
 
 	@Test
-	public void testSortingRandom() {
+	void testSortingRandom() {
 		int[] ret = BenchMarkSort.createRandom_S32(rand,200);
 
 		int preTotal = sum(ret);
@@ -61,7 +63,7 @@ public class TestQuickSort_S32 {
 	}
 
 	@Test
-	public void testSortingRandom_indexes() {
+	void testSortingRandom_indexes() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			int[] normal = BenchMarkSort.createRandom_S32(rand,20);
@@ -81,6 +83,28 @@ public class TestQuickSort_S32 {
 				assertEquals(original[i],withIndexes[i+offset], UtilEjml.TEST_F64);
 				// see if it produced the same results as the normal one
 				assertEquals(normal[i],withIndexes[indexes[i]],UtilEjml.TEST_F64);
+			}
+		}
+	}
+
+	@Test
+	void testSortingRandom_List() {
+		for( int a = 0; a < 20; a++ ) {
+			int[] arrayA = BenchMarkSort.createRandom_S32(rand,20);
+			int[] arrayB = arrayA.clone();
+			List<Integer> list = new ArrayList<>();
+			for( int d : arrayA ) {
+				list.add(d);
+			}
+
+			QuickSort_S32 sorter = new QuickSort_S32();
+
+			sorter.sort(arrayA,arrayA.length);
+			sorter.sort(arrayB,arrayB.length,list);
+
+			for( int i = 0; i < arrayA.length; i++ ) {
+				assertEquals(arrayA[i],arrayB[i], UtilEjml.TEST_F64);
+				assertEquals(arrayA[i],list.get(i), UtilEjml.TEST_F64);
 			}
 		}
 	}

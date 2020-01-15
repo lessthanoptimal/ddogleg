@@ -19,19 +19,22 @@
 package org.ddogleg.sorting;
 
 import org.ddogleg.util.UtilDouble;
+import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSort_F32 {
+class TestQuickSort_F32 {
 	Random rand = new Random(0xfeed4);
 
 	@Test
-	public void testSortingRandom() {
-		float[] ret = createRandom(rand,200);
+	void testSortingRandom() {
+		float[] ret = BenchMarkSort.createRandom_F32(rand,200);
 
 		float preTotal = UtilDouble.sum(ret);
 
@@ -53,9 +56,9 @@ public class TestQuickSort_F32 {
 	}
 
 	@Test
-	public void testSortingRandom_indexes() {
+	void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
-			float[] normal = createRandom(rand,20);
+			float[] normal = BenchMarkSort.createRandom_F32(rand,20);
 			float[] original = normal.clone();
 			float[] withIndexes = normal.clone();
 			int[] indexes = new int[ normal.length ];
@@ -74,13 +77,25 @@ public class TestQuickSort_F32 {
 		}
 	}
 
-	public static float[] createRandom( Random rand , final int num ) {
-		float[] ret = new float[ num ];
+	@Test
+	void testSortingRandom_List() {
+		for( int a = 0; a < 20; a++ ) {
+			float[] arrayA = BenchMarkSort.createRandom_F32(rand,20);
+			float[] arrayB = arrayA.clone();
+			List<Float> list = new ArrayList<>();
+			for( float d : arrayA ) {
+				list.add(d);
+			}
 
-		for( int i = 0; i < num; i++ ) {
-			ret[i] = (rand.nextFloat()-0.5f)*2000.0f;
+			QuickSort_F32 sorter = new QuickSort_F32();
+
+			sorter.sort(arrayA,arrayA.length);
+			sorter.sort(arrayB,arrayB.length,list);
+
+			for( int i = 0; i < arrayA.length; i++ ) {
+				assertEquals(arrayA[i],arrayB[i], UtilEjml.TEST_F64);
+				assertEquals(arrayA[i],list.get(i), UtilEjml.TEST_F64);
+			}
 		}
-
-		return ret;
 	}
 }
