@@ -1,4 +1,4 @@
-DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.  The API is designed to be user to use, without excessive abstraction often found in other libraries.  The user is provided with the capability to have tight control over memory and CPU usage.  Source code is publicly available and has been released under and Apache 2.0 license.
+DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.  The API is designed to be easy to use, without excessive abstraction often found in other libraries.  The user is provided with the capability to have tight control over memory and CPU usage.  Source code is publicly available and has been released under an Apache 2.0 license.
 
                      http://ddogleg.org
 
