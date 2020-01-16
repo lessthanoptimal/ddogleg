@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -196,13 +196,16 @@ public class Combinations< T >
 	 * @return Total number
 	 */
 	public long computeTotalCombinations() {
+		return computeTotalCombinations(a.size(),k);
+	}
 
-		long numerator = a.size();
-		long denominator = k;
+	static public long computeTotalCombinations( int setSize , int comboSize ) {
+		long numerator = setSize;
+		long denominator = comboSize;
 
-		for( int i = 1; i < k; i++ ) {
-			numerator *= a.size()-i;
-			denominator *= k-i;
+		for( int i = 1; i < comboSize; i++ ) {
+			numerator *= setSize-i;
+			denominator *= comboSize-i;
 		}
 
 		return numerator/denominator;
