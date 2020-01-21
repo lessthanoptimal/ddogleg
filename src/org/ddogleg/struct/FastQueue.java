@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,6 +57,16 @@ public class FastQueue<T> implements Serializable {
 	 */
 	public FastQueue(Class<T> type, Factory<T> factory ) {
 		init(10, type, factory);
+	}
+
+	/**
+	 * Constructor which allows new instances to be created using a lambda and determines the class by
+	 * creating a new instance.
+	 */
+	public FastQueue( Factory<T> factory ) {
+		T tmp = factory.newInstance();
+		init(9, (Class<T>)tmp.getClass(), factory);
+		list.add(tmp);
 	}
 
 	/**

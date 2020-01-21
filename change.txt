@@ -9,6 +9,7 @@ Date:     2020/
 - Updated Gradle
 - QuickSort can now sort a List at the same time
 - PrimitiveArrays added lowerBound()
+- FastQueue constructor which just takes in the Factory
 
 ------------------------------------------------------
 Version:  0.17
