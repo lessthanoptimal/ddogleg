@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -196,6 +196,66 @@ class TestPrimitiveArrays {
 			}
 		}
 		assertTrue(matches<10);
+	}
+
+	@Test
+	void min_byte() {
+		byte[] orig = new byte[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = (byte)(i+2);
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
+	}
+
+	@Test
+	void min_short() {
+		short[] orig = new short[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = (short)(i+2);
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
+	}
+
+	@Test
+	void min_int() {
+		int[] orig = new int[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i+2;
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
+	}
+
+	@Test
+	void min_long() {
+		long[] orig = new long[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i+2;
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
+	}
+
+	@Test
+	void min_float() {
+		float[] orig = new float[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i+2;
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
+	}
+
+	@Test
+	void min_double() {
+		double[] orig = new double[100];
+		orig[1] = 120;
+		for (int i = 0; i < 90; i++) {
+			orig[i+10] = i+2;
+		}
+		assertEquals(2, PrimitiveArrays.min(orig,10,90));
 	}
 
 	@Test

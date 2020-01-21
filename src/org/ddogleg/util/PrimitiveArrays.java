@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -115,6 +115,90 @@ public class PrimitiveArrays {
 	}
 
 	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static int min( byte []array , int offset , int length ) {
+		int min = Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static int min( short []array , int offset , int length ) {
+		int min = Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static int min( int []array , int offset , int length ) {
+		int min = Integer.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static long min( long []array , int offset , int length ) {
+		long min = Long.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			long tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static float min( float []array , int offset , int length ) {
+		float min = Float.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			float tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Returns the value of the element with the minimum value
+	 */
+	public static double min( double []array , int offset , int length ) {
+		double min = Double.MAX_VALUE;
+		for (int i = 0; i < length; i++) {
+			double tmp = array[offset+i];
+			if( tmp < min ) {
+				min = tmp;
+			}
+		}
+		return min;
+	}
+
+	/**
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int max( byte []array , int offset , int length ) {
@@ -199,7 +283,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
@@ -222,7 +306,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param array unsigned byte array
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
@@ -246,7 +330,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
@@ -269,7 +353,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
@@ -292,7 +376,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
@@ -315,7 +399,7 @@ public class PrimitiveArrays {
 	}
 
 	/**
-	 * Finds the first index in 'array' for which val is not &le val
+	 * Finds the first index in 'array' for which val is not &le; val
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
