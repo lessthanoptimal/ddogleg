@@ -65,8 +65,7 @@ public class FastQueue<T> implements Serializable {
 	 */
 	public FastQueue( Factory<T> factory ) {
 		T tmp = factory.newInstance();
-		init(9, (Class<T>)tmp.getClass(), factory);
-		list.add(tmp);
+		init(10, (Class<T>)tmp.getClass(), factory);
 	}
 
 	/**
@@ -187,10 +186,17 @@ public class FastQueue<T> implements Serializable {
 		size = 0;
 	}
 
+	/**
+	 * The maximum number of elements before the 'data' array needs to grow
+	 * @return length of 'data'
+	 */
 	public int getMaxSize() {
 		return data.length;
 	}
 
+	/**
+	 * Number of elements
+	 */
 	public int size() {
 		return size;
 	}
@@ -238,7 +244,7 @@ public class FastQueue<T> implements Serializable {
 	 *
 	 * @param index Index of the element being removed
 	 */
-	public void remove( int index ) {
+	public void remove( int index ) { // TODO return the removed object. Wait until Geo is updated
 		T removed = data[index];
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];
