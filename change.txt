@@ -9,7 +9,9 @@ Date:     2020/
 - Updated Gradle
 - QuickSort can now sort a List at the same time
 - PrimitiveArrays added lowerBound()
-- FastQueue constructor which just takes in the Factory
+- FastQueue
+  * constructor which just takes in the Factory
+  * added copyAll() as a way to copy over elements into the list
 
 ------------------------------------------------------
 Version:  0.17

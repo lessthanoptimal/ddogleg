@@ -45,11 +45,11 @@ public class FastQueue<T> implements Serializable {
 	private FastQueueList<T> list = new FastQueueList<T>(this);
 
 	public FastQueue(int initialMaxSize, Class<T> type, boolean declareInstances) {
-		init(initialMaxSize, type, declareInstances ? new FactoryClass<>(type):null);
+		init(initialMaxSize, type, declareInstances ? new FactoryClass(type):null);
 	}
 
 	public FastQueue(Class<T> type, boolean declareInstances ) {
-		init(10, type, declareInstances ? new FactoryClass<>(type):null);
+		init(10, type, declareInstances ? new FactoryClass(type):null);
 	}
 
 	/**
@@ -239,6 +239,17 @@ public class FastQueue<T> implements Serializable {
 	}
 
 	/**
+	 * Grows the array and adds all the items in list. Values are copied using the provided function
+	 */
+	public void copyAll(List<T> list , Set<T> setter ) {
+		growArray(size()+list.size());
+		for (int i = 0; i < list.size(); i++) {
+			T dst = grow();
+			setter.set(list.get(i),dst);
+		}
+	}
+
+	/**
 	 * Removes an element from the queue by shifting elements in the array down one and placing the removed element
 	 * at the old end of the list.
 	 *
@@ -405,17 +416,21 @@ public class FastQueue<T> implements Serializable {
 		T newInstance();
 	}
 
-	public class FactoryClass<T> implements Factory<T> {
-		Class type;
+	public interface Set<T> {
+		void set( T src , T dst );
+	}
 
-		public FactoryClass(Class type) {
+	public class FactoryClass implements Factory<T> {
+		Class<T> type;
+
+		public FactoryClass(Class<T> type) {
 			this.type = type;
 		}
 
 		@Override
 		public T newInstance() {
 			try {
-				return (T)type.newInstance();
+				return type.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

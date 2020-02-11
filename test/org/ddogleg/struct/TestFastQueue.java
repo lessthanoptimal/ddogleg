@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.struct;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,6 +107,23 @@ class TestFastQueue {
 		assertEquals(1,alg.size);
 		alg.removeTail();
 		assertEquals(0,alg.size);
+	}
+
+	@Test
+	void copyAll() {
+		List<DummyData> data = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			DummyData d = new DummyData();
+			d.value = i;
+			data.add(d);
+		}
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		alg.copyAll(data,(src, dst)-> dst.value=src.value);
+
+		for (int i = 0; i < 10; i++) {
+			assertNotEquals(data.get(i), alg.get(i));
+			assertEquals(i, alg.get(i).value);
+		}
 	}
 
 	@Test
