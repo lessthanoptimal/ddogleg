@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,6 +44,7 @@ import java.util.Random;
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, Point> {
 	// random number generator for selecting points
 	private Random rand;
+	private long randSeed;
 
 	// number of times it performs its fit cycle
 	private int totalCycles;
@@ -98,6 +99,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 								 ModelGenerator<Model,Point> generator,
 								 DistanceFromModel<Model,Point> errorMetric )
 	{
+		this.randSeed = randSeed;
 		this.rand = new Random(randSeed);
 		this.totalCycles = totalCycles;
 		this.maxMedianError = maxMedianError;
@@ -245,6 +247,11 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	@Override
 	public int getMinimumSize() {
 		return sampleSize;
+	}
+
+	@Override
+	public void reset() {
+		this.rand = new Random(randSeed);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -42,21 +42,21 @@ public interface ModelMatcher<Model, Point> {
 	 * @param dataSet Set of points (with noise) that are to be fit.
 	 * @return true if it successfully found a solution or false if not.
 	 */
-	public boolean process(List<Point> dataSet );
+	boolean process( List<Point> dataSet );
 
 	/**
 	 * Model for the match set
 	 *
 	 * @return model.
 	 */
-	public Model getModelParameters();
+	Model getModelParameters();
 
 	/**
 	 * A set of points which match the provided parameters.
 	 *
 	 * @return List of points in the match set.
 	 */
-	public List<Point> getMatchSet();
+	List<Point> getMatchSet();
 
 	/**
 	 * For an item in the match set, return the index of the item in the original input set.
@@ -64,7 +64,7 @@ public interface ModelMatcher<Model, Point> {
 	 * @param matchIndex Index of an element in the match set.
 	 * @return Index of the same element in the original input list.
 	 */
-	public int getInputIndex( int matchIndex );
+	int getInputIndex( int matchIndex );
 
 	/**
 	 * Returns the metric used to evaluate the quality of fit.  Meaning is implementation specific.  Larger
@@ -72,14 +72,20 @@ public interface ModelMatcher<Model, Point> {
 	 *
 	 * @return Quality of fit to matched set of points
 	 */
-	public double getFitQuality();
+	double getFitQuality();
 
 	/**
 	 * This is the minimum number of observations which can be input and produce a valid model.
 	 *
 	 * @return Minimum number of sample points
 	 */
-	public int getMinimumSize();
+	int getMinimumSize();
+
+	/**
+	 * Resets the model matcher to its original state. This means that given identical inputs it would produce the
+	 * same outputs
+	 */
+	void reset();
 
 	/**
 	 * Returns a class for the input point object

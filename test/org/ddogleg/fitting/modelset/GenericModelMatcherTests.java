@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -51,6 +51,9 @@ public abstract class GenericModelMatcherTests {
 	// mean of the true inlier set
 	// this value is the best estimate that can possibly be done
 	private double inlierMean;
+
+	// If the model matcher is deterministic and doesn't use any random numbers
+	protected boolean deterministic = false;
 
 	protected void configure(double minMatchFrac, double parameterTol, boolean checkInlierSet) {
 		this.minMatchFrac = minMatchFrac;
@@ -123,7 +126,7 @@ public abstract class GenericModelMatcherTests {
 	 * @return Set of sample points
 	 */
 	private List<Double> createSampleSet(int numPoints, double mean, double modelDist, double fracOutlier) {
-		List<Double> ret = new ArrayList<Double>();
+		List<Double> ret = new ArrayList<>();
 
 		double numOutlier = (int) (numPoints * fracOutlier);
 
@@ -188,6 +191,57 @@ public abstract class GenericModelMatcherTests {
 
 		// sanity check to make sure the order has been changed
 		assertTrue(orderNotTheSame != matchSet.size());
+	}
+
+	/**
+	 * Make sure that if reset is called it produces identical results
+	 */
+	@Test
+	public void reset() {
+		double mean = 2.5;
+		double tol = 0.2;
+
+		// generate the points with a smaller tolerance to account for fitting error
+		// later on.
+		ModelMatcher<double[],Double> alg = createModel(1, tol * 0.95);
+
+		List<Double> samples = createSampleSet(500, mean, tol, 0.0);
+
+		// add noise so it's ambiguous
+		for (int i = 0; i < samples.size(); i++) {
+			samples.set(i, samples.get(i)+rand.nextDouble()*0.3);
+		}
+
+		assertTrue(alg.process(samples));
+		List<Double> matchesA = new ArrayList<>(alg.getMatchSet());
+
+		assertTrue(alg.process(samples));
+		List<Double> matchesB = new ArrayList<>(alg.getMatchSet());
+
+		// See if this produces different results
+		boolean matched = matchesA.size() == matchesB.size();
+		if( matched ) {
+			for (int i = 0; i < matchesA.size(); i++) {
+				if(!matchesA.get(i).equals(matchesB.get(i))) {
+					matched = false;
+					break;
+				}
+			}
+		}
+		assertEquals(deterministic,matched);
+
+		if( deterministic )
+			return;
+
+		// It should now produce identical results to the first run
+		alg.reset();
+		assertTrue(alg.process(samples));
+		List<Double> matchesC = new ArrayList<>(alg.getMatchSet());
+		assertEquals(matchesA.size(),matchesC.size());
+		for (int i = 0; i < matchesA.size(); i++) {
+			assertEquals(matchesA.get(i), matchesC.get(i));
+		}
+
 	}
 
 	private ModelMatcher<double[],Double> createModel(int minPoints, double fitThreshold) {

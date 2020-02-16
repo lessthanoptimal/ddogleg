@@ -12,6 +12,8 @@ Date:     2020/
 - FastQueue
   * constructor which just takes in the Factory
   * added copyAll() as a way to copy over elements into the list
+- ModelMatcher
+  * Added reset() function to return it into its initial state
 
 ------------------------------------------------------
 Version:  0.17

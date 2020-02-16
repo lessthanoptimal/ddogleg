@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,6 +36,6 @@ public class TestLeastMedianOfSquares extends GenericModelMatcherTests {
 															ModelGenerator<double[],Double> generator,
 															ModelFitter<double[],Double> fitter,
 															int minPoints, double fitThreshold) {
-		return new LeastMedianOfSquares<double[],Double>(4234,10000,fitThreshold,0.9,manager,generator,distance);
+		return new LeastMedianOfSquares<>(4234,50,fitThreshold,0.9,manager,generator,distance);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -54,7 +54,7 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 			rm.add(rm0);
 		}
 
-		return new RansacMulti<Double>(344, 2000, rm, Double.class );
+		return new RansacMulti<>(344, 50, rm, Double.class );
 	}
 
 	/**

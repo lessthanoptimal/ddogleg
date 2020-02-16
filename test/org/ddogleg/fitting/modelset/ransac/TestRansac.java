@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -43,7 +43,7 @@ public class TestRansac extends GenericModelMatcherTests {
 															ModelFitter<double[],Double> fitter,
 															int minPoints,
 															double fitThreshold) {
-		Ransac<double[],Double> ret = new Ransac<double[],Double>(344, manager,generator, distance, 200, fitThreshold);
+		Ransac<double[],Double> ret = new Ransac<double[],Double>(344, manager,generator, distance, 50, fitThreshold);
 		ret.setSampleSize(minPoints);
 
 		return ret;

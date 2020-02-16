@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -58,6 +58,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 
 	// used to randomly select points/samples
 	protected Random rand;
+	protected long randSeed;
 
 	// list of points which are a candidate for the best fit set
 	protected List<Point> candidatePoints = new ArrayList<Point>();
@@ -102,6 +103,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		this.modelGenerator = modelGenerator;
 		this.modelDistance = modelDistance;
 
+		this.randSeed = randSeed;
 		this.rand = new Random(randSeed);
 		this.maxIterations = maxIterations;
 
@@ -256,6 +258,11 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	@Override
 	public int getMinimumSize() {
 		return sampleSize;
+	}
+
+	@Override
+	public void reset() {
+		this.rand = new Random(randSeed);
 	}
 
 	/**
