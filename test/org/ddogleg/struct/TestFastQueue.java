@@ -32,6 +32,42 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TestFastQueue {
 
+	/**
+	 * makes sure reset function is called when the grow command is used
+	 */
+	@Test
+	void reset_grow() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new,(d)->d.value=2);
+
+		for (int i = 0; i < 5; i++) {
+			DummyData d = alg.grow();
+			assertEquals(2,d.value);
+		}
+		assertEquals(5,alg.size);
+	}
+
+	/**
+	 * makes sure reset function is called when the grow command is used
+	 */
+	@Test
+	void reset_resize() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new,(d)->d.value=2);
+
+		alg.resize(3);
+		for (int i = 0; i < alg.size; i++) {
+			alg.get(i).value = 100;
+		}
+
+		// resize again and make sure it doesn't reset elements already in the list
+		alg.resize(10);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(100, alg.get(i).value);
+		}
+		for (int i = 3; i < 10; i++) {
+			assertEquals(2, alg.get(i).value);
+		}
+	}
+
 	@Test
 	void checkDeclareInstance() {
 		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);

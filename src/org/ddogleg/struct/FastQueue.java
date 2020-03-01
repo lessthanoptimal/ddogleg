@@ -40,6 +40,8 @@ public class FastQueue<T> implements Serializable {
 
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
+	// function that's called to reset a returned instance
+	private Process<T> reset = new Process.DoNothing<>();
 
 	// Wrapper around this class for lists
 	private FastQueueList<T> list = new FastQueueList<T>(this);
@@ -64,6 +66,17 @@ public class FastQueue<T> implements Serializable {
 	 * creating a new instance.
 	 */
 	public FastQueue( Factory<T> factory ) {
+		T tmp = factory.newInstance();
+		init(10, (Class<T>)tmp.getClass(), factory);
+	}
+
+	/**
+	 * User provided factory function and reset function.
+	 * @param factory Creates new instances
+	 * @param reset Called whenever an element is recycled and needs to be reset
+	 */
+	public FastQueue( Factory<T> factory , Process<T> reset ) {
+		this.reset = reset;
 		T tmp = factory.newInstance();
 		init(10, (Class<T>)tmp.getClass(), factory);
 	}
@@ -231,7 +244,9 @@ public class FastQueue<T> implements Serializable {
 	 */
 	public T grow() {
 		if( size < data.length ) {
-			return data[size++];
+			T ret = data[size++];
+			reset.process(ret);
+			return ret;
 		} else {
 			growArray((data.length+1)*2);
 			return data[size++];
@@ -312,6 +327,9 @@ public class FastQueue<T> implements Serializable {
 	 */
 	public void resize(int length) {
 		growArray(length);
+		for (int i = size; i < length; i++) {
+			reset.process(data[i]);
+		}
 		this.size = length;
 	}
 
@@ -410,10 +428,6 @@ public class FastQueue<T> implements Serializable {
 
 	public void setType(Class<T> type) {
 		this.type = type;
-	}
-
-	public interface Factory<T> {
-		T newInstance();
 	}
 
 	public interface Set<T> {

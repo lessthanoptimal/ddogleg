@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -96,7 +96,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	 *
 	 * @param maxIterations Maximum number of iterations
 	 * @param maxConverge Maximum iterations before it converges.  It is reseeded if it doesn't converge.
-	 * @param convergeTol Clusters have converged if the change in score is <= to this amount.
+	 * @param convergeTol Clusters have converged if the change in score is &le; to this amount.
 	 * @param seedSelector Used to select initial seeds for the clusters
 	 */
 	public StandardKMeans_F64(int maxIterations, int maxConverge, double convergeTol,
