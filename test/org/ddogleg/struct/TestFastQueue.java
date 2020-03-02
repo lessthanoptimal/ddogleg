@@ -195,6 +195,33 @@ class TestFastQueue {
 	}
 
 	@Test
+	void removeSwap() {
+		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
+
+		List<DummyData> l = alg.toList();
+		assertEquals(0,l.size());
+
+		alg.grow().value = 1;
+		DummyData d = alg.get(0);
+		assertSame(d,alg.removeSwap(0));
+		assertEquals(0,alg.size());
+
+		alg.grow().value = 1;
+		alg.grow().value = 2;
+		alg.grow().value = 3;
+		alg.grow().value = 4;
+
+		alg.removeSwap(1);
+
+		assertEquals(3,alg.size());
+		assertEquals(1,alg.get(0).value);
+		assertEquals(4,alg.get(1).value);
+		assertEquals(3,alg.get(2).value);
+		// Make sure the removed element is at the tail
+		assertEquals(2,alg.data[3].value);
+	}
+
+	@Test
 	void getTail() {
 		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData.class,true);
 

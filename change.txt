@@ -13,6 +13,7 @@ Date:     2020/
   * constructor which just takes in the Factory
   * Can now specify a reset() function
   * added copyAll() as a way to copy over elements into the list
+  * added removeSwap()
 - ModelMatcher
   * Added reset() function to return it into its initial state
 

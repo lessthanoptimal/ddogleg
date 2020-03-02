@@ -265,8 +265,8 @@ public class FastQueue<T> implements Serializable {
 	}
 
 	/**
-	 * Removes an element from the queue by shifting elements in the array down one and placing the removed element
-	 * at the old end of the list.
+	 * Removes an element from the queue and preserves the order of all elements. This is done by shifting elements
+	 * in the array down one and placing the removed element at the old end of the list. O(N) runtime.
 	 *
 	 * @param index Index of the element being removed
 	 */
@@ -277,6 +277,21 @@ public class FastQueue<T> implements Serializable {
 		}
 		data[size-1] = removed;
 		size--;
+	}
+
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public T removeSwap( int index ) {
+		T removed = data[index];
+		data[index] = data[size-1];
+		data[size-1] = removed;
+		size--;
+		return removed;
 	}
 
 	public void add( T object ) {
