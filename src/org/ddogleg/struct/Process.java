@@ -18,6 +18,8 @@
 
 package org.ddogleg.struct;
 
+import java.io.Serializable;
+
 /**
  * Function which processes an object
  *
@@ -29,7 +31,7 @@ public interface Process<T> {
 	/**
 	 * Default implementation which does nothing
 	 */
-	class DoNothing<T> implements Process<T> {
+	class DoNothing<T> implements Process<T>, Serializable {
 		@Override
 		public void process(T o) {}
 	}

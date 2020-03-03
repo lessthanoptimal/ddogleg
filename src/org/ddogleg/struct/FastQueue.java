@@ -41,7 +41,7 @@ public class FastQueue<T> implements Serializable {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
 	// function that's called to reset a returned instance
-	private Process<T> reset = new Process.DoNothing<>();
+	private Process<T> reset;
 
 	// Wrapper around this class for lists
 	private FastQueueList<T> list = new FastQueueList<T>(this);
@@ -98,6 +98,8 @@ public class FastQueue<T> implements Serializable {
 		this.size = 0;
 		this.type = type;
 		this.factory = factory;
+		if( this.reset == null )
+			this.reset = new Process.DoNothing<>();
 
 		data = (T[]) Array.newInstance(type, initialMaxSize);
 
@@ -269,14 +271,16 @@ public class FastQueue<T> implements Serializable {
 	 * in the array down one and placing the removed element at the old end of the list. O(N) runtime.
 	 *
 	 * @param index Index of the element being removed
+	 * @return The object removed.
 	 */
-	public void remove( int index ) { // TODO return the removed object. Wait until Geo is updated
+	public T remove( int index ) {
 		T removed = data[index];
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];
 		}
 		data[size-1] = removed;
 		size--;
+		return removed;
 	}
 
 	/**
