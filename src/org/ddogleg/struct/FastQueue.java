@@ -19,7 +19,6 @@
 package org.ddogleg.struct;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,16 +27,12 @@ import java.util.Random;
 
 
 /**
- * Growable array designed for fast access.  It can be configured to declare new instances
- * or just grow the array.
+ * Growable array designed for fast access which creates, recycles and in general owns all of its elements.
  *
  * @author Peter Abeles
  */
-public class FastQueue<T> implements Serializable {
-	public T []data;
-	public int size;
-	public Class<T> type;
-
+@SuppressWarnings("unchecked")
+public class FastQueue<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
 	// function that's called to reset a returned instance
@@ -46,19 +41,12 @@ public class FastQueue<T> implements Serializable {
 	// Wrapper around this class for lists
 	private FastQueueList<T> list = new FastQueueList<T>(this);
 
-	public FastQueue(int initialMaxSize, Class<T> type, boolean declareInstances) {
-		init(initialMaxSize, type, declareInstances ? new FactoryClass(type):null);
-	}
-
-	public FastQueue(Class<T> type, boolean declareInstances ) {
-		init(10, type, declareInstances ? new FactoryClass(type):null);
-	}
-
 	/**
 	 * Constructor which allows new instances to be created using a lambda
 	 */
 	public FastQueue(Class<T> type, Factory<T> factory ) {
-		init(10, type, factory);
+		super(type);
+		init(10, factory);
 	}
 
 	/**
@@ -66,8 +54,8 @@ public class FastQueue<T> implements Serializable {
 	 * creating a new instance.
 	 */
 	public FastQueue( Factory<T> factory ) {
-		T tmp = factory.newInstance();
-		init(10, (Class<T>)tmp.getClass(), factory);
+		super((Class<T>)factory.newInstance().getClass());
+		init(10, factory);
 	}
 
 	/**
@@ -76,27 +64,24 @@ public class FastQueue<T> implements Serializable {
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 */
 	public FastQueue( Factory<T> factory , Process<T> reset ) {
+		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
-		T tmp = factory.newInstance();
-		init(10, (Class<T>)tmp.getClass(), factory);
+		init(10, factory);
 	}
 
 	/**
 	 * Constructor which allows new instances to be created using a lambda
 	 */
-	public FastQueue( int initialMaxSize, Class<T> type, Factory<T> factory ) {
-		init(initialMaxSize, type, factory);
-	}
-
-	protected FastQueue() {
+	public FastQueue( int initialMaxSize, Factory<T> factory ) {
+		super((Class<T>)factory.newInstance().getClass());
+		init(initialMaxSize, factory);
 	}
 
 	/**
 	 * Data structure initialization is done here so that child classes can declay initialization until they are ready
 	 */
-	protected void init(int initialMaxSize, Class<T> type, Factory<T> factory) {
+	protected void init(int initialMaxSize, Factory<T> factory) {
 		this.size = 0;
-		this.type = type;
 		this.factory = factory;
 		if( this.reset == null )
 			this.reset = new Process.DoNothing<>();
@@ -123,6 +108,7 @@ public class FastQueue<T> implements Serializable {
 	 *
 	 * @return List wrapper.
 	 */
+	@Override
 	public List<T> toList() {
 		return list;
 	}
@@ -184,58 +170,8 @@ public class FastQueue<T> implements Serializable {
 			throw new IllegalArgumentException("Size is already zero");
 	}
 
-	public T getTail() {
-		return data[size-1];
-	}
-
-	/**
-	 * Returns an element in the list relative to the tail
-	 * @param index index relative to tail.  0 == the tail. size-1 = first element
-	 * @return element
-	 */
-	public T getTail( int index ) {
-		return data[size-1-index];
-	}
-
 	public void reset() {
 		size = 0;
-	}
-
-	/**
-	 * The maximum number of elements before the 'data' array needs to grow
-	 * @return length of 'data'
-	 */
-	public int getMaxSize() {
-		return data.length;
-	}
-
-	/**
-	 * Number of elements
-	 */
-	public int size() {
-		return size;
-	}
-
-	/**
-	 * Reverse the item order in this queue.
-	 */
-	public void reverse() {
-		for (int i = 0; i < size / 2; i++) {
-			T tmp = data[i];
-			data[i] = data[size - i - 1];
-			data[size - i - 1] = tmp;
-		}
-	}
-
-	/**
-	 * Returns the element at the specified index.  Bounds checking is performed.
-	 * @param index Index of the element being retrieved
-	 * @return The retrieved element
-	 */
-	public T get( int index ) {
-		if( index >= size )
-			throw new IllegalArgumentException("Index out of bounds: index "+index+" size "+size);
-		return data[index];
 	}
 
 	/**
@@ -273,6 +209,7 @@ public class FastQueue<T> implements Serializable {
 	 * @param index Index of the element being removed
 	 * @return The object removed.
 	 */
+	@Override
 	public T remove( int index ) {
 		T removed = data[index];
 		for( int i = index+1; i < size; i++ ) {
@@ -290,31 +227,13 @@ public class FastQueue<T> implements Serializable {
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
+	@Override
 	public T removeSwap( int index ) {
 		T removed = data[index];
 		data[index] = data[size-1];
 		data[size-1] = removed;
 		size--;
 		return removed;
-	}
-
-	public void add( T object ) {
-		if( size >= data.length ) {
-			growArray((size+1)*2);
-		}
-		data[size++] = object;
-	}
-
-	public void addAll( FastQueue<T> list ) {
-		for( int i = 0; i < list.size; i++ ) {
-			add( list.data[i]);
-		}
-	}
-
-	public void add( T[] array , int first, int length ) {
-		for( int i = 0; i < length; i++ ) {
-			add( array[first+i]);
-		}
 	}
 
 	/**
@@ -420,6 +339,18 @@ public class FastQueue<T> implements Serializable {
 		data[idx1] = tmp;
 	}
 
+	/**
+	 * Checks to see if the object is in the unused list.
+	 */
+	public boolean isUnused( T object ) {
+		final T[] data = this.data;
+		for (int i = size; i < data.length; i++) {
+			if( data[i] == object )
+				return true;
+		}
+		return false;
+	}
+
 	// -------- These are only around so that it can be a java bean
 	public T[] getData() {
 		return data;
@@ -437,16 +368,12 @@ public class FastQueue<T> implements Serializable {
 		this.size = size;
 	}
 
-	public boolean isDeclareInstances() {
+	public final boolean isDeclare() {
 		return factory != null;
 	}
 
 	public Class<T> getType() {
 		return type;
-	}
-
-	public void setType(Class<T> type) {
-		this.type = type;
 	}
 
 	public interface Set<T> {

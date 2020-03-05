@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,7 +31,7 @@ public class CountingSort {
 
 	GrowQueue_I32 histogram = new GrowQueue_I32();
 
-	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<GrowQueue_I32>(GrowQueue_I32.class,true);
+	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<>(GrowQueue_I32::new);
 
 	int minValue,maxValue;
 

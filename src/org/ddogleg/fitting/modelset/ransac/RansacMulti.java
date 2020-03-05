@@ -22,7 +22,7 @@ import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.fitting.modelset.ModelGenerator;
 import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcherMulti;
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.FastArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,17 +59,17 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	protected long randSeed;
 
 	// list of points which are a candidate for the best fit set
-	protected List<Point> candidatePoints = new ArrayList<Point>();
+	protected List<Point> candidatePoints = new ArrayList<>();
 
 	// list of samples from the best fit model
-	protected List<Point> bestFitPoints = new ArrayList<Point>();
+	protected List<Point> bestFitPoints = new ArrayList<>();
 
 	// List of information on objects which can fit the data
 	protected List<ObjectType> objectTypes;
 	// Storage for object model parameters which bestFitParam can be set to
-	protected List<Object> objectParam = new ArrayList<Object>();
+	protected List<Object> objectParam = new ArrayList<>();
 	// Storage for object model parameters which are used to compute candidate models
-	protected List<Object> objectCandidateParam = new ArrayList<Object>();
+	protected List<Object> objectCandidateParam = new ArrayList<>();
 
 	// the best model found so far
 	protected Object bestFitParam;
@@ -85,7 +85,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	protected int maxIterations;
 
 	// the set of points which were initially sampled
-	protected FastQueue<Point> initialSample;
+	protected FastArray<Point> initialSample;
 
 	// list of indexes converting it from match set to input list
 	protected int []matchToInput = new int[1];
@@ -128,7 +128,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 			}
 		}
 
-		initialSample = new FastQueue<Point>(typePoint,false);
+		initialSample = new FastArray<>(typePoint);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		candidatePoints = bestFitPoints;
 		bestFitPoints = tempPts;
 
-		int tempIndex[] = matchToInput;
+		int[] tempIndex = matchToInput;
 		matchToInput = bestMatchToInput;
 		bestMatchToInput = tempIndex;
 
@@ -289,7 +289,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		return candidatePoints;
 	}
 
-	protected FastQueue<Point> getInitialSample() {
+	protected FastArray<Point> getInitialSample() {
 		return initialSample;
 	}
 

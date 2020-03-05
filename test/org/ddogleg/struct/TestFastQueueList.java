@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,74 +33,72 @@ public class TestFastQueueList {
 
 	@Test
 	public void size() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
 
-		List<Double> list = queue.toList();
+		List<Dummy> list = queue.toList();
 
-		assertTrue(0==list.size());
+		assertEquals(0, list.size());
 
-		queue.add( 1.0 );
+		queue.grow().value = 1.0;
 
-		assertTrue(1==list.size());
+		assertEquals(1, list.size());
 	}
 
 	@Test
 	public void isEmpty() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
 
-		List<Double> list = queue.toList();
+		List<Dummy> list = queue.toList();
 
 		assertTrue( list.isEmpty() );
 
-		queue.add( 1.0 );
+		queue.grow().value = 1.0;
 
 		assertFalse(list.isEmpty());
 	}
 
 	@Test
 	public void contains() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		Double d = 1.0;
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		List<Dummy> list = queue.toList();
 
-		List<Double> list = queue.toList();
+		assertFalse(list.contains(new Dummy(1.0)));
 
-		assertFalse(list.contains(d));
-
-		queue.add( d );
+		Dummy d = queue.grow();
 
 		assertTrue(list.contains(d));
 	}
 
 	@Test
 	public void iterator() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
-		queue.add(3.0);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		queue.grow().value = 1.0;
+		queue.grow().value = 2.0;
+		queue.grow().value = 3.0;
 
-		Iterator<Double> iterator = queue.toList().iterator();
+		Iterator<Dummy> iterator = queue.toList().iterator();
 		assertTrue(iterator.hasNext());
-		assertTrue(1.0 == iterator.next());
+		assertEquals(1.0, iterator.next().value);
 		assertTrue(iterator.hasNext());
-		assertTrue(2.0 == iterator.next());
+		assertEquals(2.0, iterator.next().value);
 		assertTrue(iterator.hasNext());
-		assertTrue(3.0 == iterator.next());
+		assertEquals(3.0, iterator.next().value);
 		assertFalse(iterator.hasNext());
 
 	}
 
 	@Test
 	public void toArray() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
-		queue.add(3.0);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		queue.grow().value = 1.0;
+		queue.grow().value = 2.0;
+		queue.grow().value = 3.0;
 
 		Object[] array = queue.toList().toArray();
 		assertEquals(3, array.length);
-		assertTrue(1.0 == (Double)array[0]);
-		assertTrue(2.0 == (Double)array[1]);
-		assertTrue(3.0 == (Double)array[2]);
+		assertEquals(1.0, ((Dummy) array[0]).value);
+		assertEquals(2.0, ((Dummy) array[1]).value);
+		assertEquals(3.0, ((Dummy) array[2]).value);
 
 		// remove an element from the queue to make sure it isn't using array length
 		queue.removeTail();
@@ -109,79 +107,36 @@ public class TestFastQueueList {
 	}
 
 	@Test
-	public void add() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		List<Double> list = queue.toList();
-
-		list.add( 5.0 );
-
-		assertEquals(1,queue.size());
-		assertEquals(5.0,queue.get(0),1e-8);
-	}
-
-	@Test
 	public void containsAll() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
-		queue.add(3.0);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		queue.grow().value = 1.0;
+		queue.grow().value = 2.0;
+		queue.grow().value = 3.0;
 
-		List<Double> list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
+		List<Dummy> list = new ArrayList<>();
+		list.add(queue.get(0));
+		list.add(queue.get(1));
 
 		assertTrue(queue.toList().containsAll(list));
 
-		list.add(5.0);
+		list.add(new Dummy(5.0));
 		assertFalse(queue.toList().containsAll(list));
 	}
 
 	@Test
-	public void addAll() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		List<Double> list = queue.toList();
-		List<Double> stuff = new ArrayList<Double>();
-
-		stuff.add(5.0);
-		stuff.add(10.0);
-
-		assertTrue(list.addAll(stuff));
-
-		assertEquals(2,queue.size());
-		assertEquals(5.0,queue.get(0),1e-8);
-		assertEquals(10.0, queue.get(1), 1e-8);
-	}
-
-	@Test
 	public void get() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
+		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		queue.grow().value = 1.0;
+		queue.grow().value = 2.0;
 
-		assertTrue(2.0==queue.toList().get(1));
+		assertEquals(2.0, queue.toList().get(1).value);
 	}
 
-	@Test
-	public void set() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
+	public static class Dummy {
+		double value;
 
-		List<Double> list = queue.toList();
-		list.set(0,3.0);
-
-		assertTrue(3.0==list.get(0));
-	}
-
-	@Test
-	public void indexOf_lastIndexOf() {
-		FastQueue<Double> queue = new FastQueue<Double>(100,Double.class,false);
-		queue.add(1.0);
-		queue.add(2.0);
-		queue.add(2.0);
-		queue.add(3.0);
-
-		assertTrue(1==queue.toList().indexOf(2.0));
-		assertTrue(2==queue.toList().lastIndexOf(2.0));
+		public Dummy(double value) {
+			this.value = value;
+		}
 	}
 }

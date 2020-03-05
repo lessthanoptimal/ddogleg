@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class StandardKdTreeSearchNTests {
 
 	public int N = 2;
-	FastQueue<KdTreeResult> found = new FastQueue<KdTreeResult>(KdTreeResult.class,true);
+	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult::new);
 
 	Random rand = new Random(234);
 

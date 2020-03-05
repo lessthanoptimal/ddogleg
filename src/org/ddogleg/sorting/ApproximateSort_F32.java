@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.struct.FastArray;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 
@@ -28,8 +29,8 @@ import org.ddogleg.struct.GrowQueue_I32;
  */
 public class ApproximateSort_F32 {
 
-	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<GrowQueue_I32>(GrowQueue_I32.class,true);
-	FastQueue<SortableParameter_F32> histObjs[] = new FastQueue[0];
+	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<>(GrowQueue_I32::new);
+	FastArray<SortableParameter_F32>[] histObjs = new FastArray[0];
 
 	double minValue,maxValue,divisor;
 	int numBins;
@@ -58,9 +59,9 @@ public class ApproximateSort_F32 {
 		histIndexes.resize(numBins);
 
 		if( histObjs.length < numBins ) {
-		histObjs = new FastQueue[ numBins ];
+		histObjs = new FastArray[ numBins ];
 			for (int i = 0; i < numBins; i++) {
-				histObjs[i] = new FastQueue<SortableParameter_F32>(SortableParameter_F32.class,true);
+				histObjs[i] = new FastArray<>(SortableParameter_F32.class);
 			}
 		}
 	}
@@ -152,7 +153,7 @@ public class ApproximateSort_F32 {
 	 * @param start First element in input list
 	 * @param length Length of the input list
 	 */
-	public void sortObject( SortableParameter_F32 input[] , int start , int length ) {
+	public void sortObject( SortableParameter_F32[] input , int start , int length ) {
 
 		for( int i = 0; i < histIndexes.size; i++ ) {
 			histObjs[i].reset();
@@ -168,7 +169,7 @@ public class ApproximateSort_F32 {
 		// over wrist the input data with sorted elements
 		int index = start;
 		for( int i = 0; i < histIndexes.size; i++ ) {
-			FastQueue<SortableParameter_F32>  matches = histObjs[i];
+			FastArray<SortableParameter_F32>  matches = histObjs[i];
 			for( int j = 0; j < matches.size; j++ ) {
 				input[index++] = matches.data[j];
 			}

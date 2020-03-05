@@ -9,7 +9,9 @@ Date:     2020/
 - Updated Gradle
 - QuickSort can now sort a List at the same time
 - PrimitiveArrays added lowerBound()
-- FastQueue
+- FastAccess, FastArray, FastQueue
+  * FastArray has external ownership of its elements
+  * FastQueue owns and manages elements in its list
   * constructor which just takes in the Factory
   * Can now specify a reset() function
   * added copyAll() as a way to copy over elements into the list

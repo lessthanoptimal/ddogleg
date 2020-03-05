@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,7 +34,7 @@ public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<
 	KdTreeSearchN<P> searchN;
 
 	// storage for multiple results
-	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult.class,true);
+	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult::new);
 
 	KdTreeInternalSearch( KdTreeSearch1<P> search1, KdTreeSearchN<P> searchN )
 	{

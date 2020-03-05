@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.FastArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.equation.Equation;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ public class TestGaussianLikelihoodManager {
 		b.covariance.set(2,2,25);
 
 
-		FastQueue<GaussianGmm_F64> mixtures = new FastQueue<GaussianGmm_F64>(GaussianGmm_F64.class,false);
+		FastArray<GaussianGmm_F64> mixtures = new FastArray<>(GaussianGmm_F64.class);
 		mixtures.add(a);
 		mixtures.add(b);
 

@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Wrapper around queue which allows it to act as a {@link List}.
+ * Wrapper around {@link FastArray} which allows it to act as a {@link List}.
  *
  * @author Peter Abeles
  */
-public class FastQueueList<T> implements List<T> , Serializable {
-	FastQueue<T> queue;
+public class FastArrayList<T> implements List<T> , Serializable {
+	FastArray<T> queue;
 
-	public FastQueueList(FastQueue<T> queue) {
+	public FastArrayList(FastArray<T> queue) {
 		this.queue = queue;
 	}
 
@@ -48,7 +48,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public boolean contains(Object o) {
-		return queue.contains(o);
+		return queue.contains((T)o);
 	}
 
 	@Override
@@ -73,7 +73,8 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public boolean add(T t) {
-		throw new RuntimeException("Add is not supported by FastQueue. You need FastArray instead");
+		queue.add(t);
+		return true;
 	}
 
 	@Override
@@ -92,7 +93,15 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		throw new RuntimeException("Add is not supported by FastQueue. You need FastArray instead");
+		Iterator<T> iter = (Iterator)c.iterator();
+
+		boolean changed = iter.hasNext();
+
+		while( iter.hasNext() ) {
+			queue.add(iter.next());
+		}
+
+		return changed;
 	}
 
 	@Override
@@ -122,7 +131,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public T set(int index, T element) {
-		throw new RuntimeException("Set is not supported by FastQueue. You need FastArray instead");
+		return queue.data[index] = element;
 	}
 
 	@Override
@@ -210,15 +219,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 		@Override
 		public void add(T t) {
-			throw new RuntimeException("Add is not supported by FastQueue. Use FastArray instead");
+			queue.add(t);
 		}
-	}
-
-	public FastQueue<T> getQueue() {
-		return queue;
-	}
-
-	public void setQueue(FastQueue<T> queue) {
-		this.queue = queue;
 	}
 }

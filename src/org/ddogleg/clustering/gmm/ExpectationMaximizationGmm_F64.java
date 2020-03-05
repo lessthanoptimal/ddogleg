@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -50,7 +50,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	FastQueue<GaussianGmm_F64> mixture;
 
 	// info for each points
-	FastQueue<PointInfo> info = new FastQueue<PointInfo>(PointInfo.class,true);
+	FastQueue<PointInfo> info = new FastQueue<>(PointInfo::new);
 
 	// Maximum number of iterations\
 	int maxIterations;
@@ -90,12 +90,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	@Override
 	public void init(final int pointDimension, long randomSeed) {
-		mixture = new FastQueue<GaussianGmm_F64>(GaussianGmm_F64.class,true ) {
-			@Override
-			protected GaussianGmm_F64 createInstance() {
-				return new GaussianGmm_F64(pointDimension);
-			}
-		};
+		mixture = new FastQueue<>(()->new GaussianGmm_F64(pointDimension));
 		selectInitial.init(pointDimension,randomSeed);
 
 		if( dx.length < pointDimension )

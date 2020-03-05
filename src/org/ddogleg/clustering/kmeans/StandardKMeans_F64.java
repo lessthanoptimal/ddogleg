@@ -119,12 +119,7 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	}
 
 	private FastQueue<double[]> createQueue( final int pointDimension ) {
-		return new FastQueue<double[]>(double[].class,true) {
-			@Override
-			protected double[] createInstance() {
-				return new double[pointDimension];
-			}
-		};
+		return new FastQueue<>(() -> new double[pointDimension]);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
+import org.ddogleg.struct.FastArray;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 
@@ -201,11 +202,10 @@ public class VpTree implements NearestNeighbor<double[]> {
 
 			while (!heap.isEmpty()) {
 				final HeapItem heapItem = heap.poll();
-				NnData<double[]> objects = new NnData<>();
+				NnData<double[]> objects = results.grow();
 				objects.index = indexes.get(heapItem.index);
 				objects.point = items[heapItem.index];
 				objects.distance = heapItem.dist * heapItem.dist; // squared distance is expected
-				results.add(objects);
 			}
 
 			results.reverse();
@@ -224,7 +224,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 			}
 
 			double tau = maxDistance;
-			final FastQueue<Node> nodes = new FastQueue<>(20, Node.class, false);
+			final FastArray<Node> nodes = new FastArray<>(Node.class,20);
 			nodes.add(root);
 
 			while (nodes.size() > 0) {
@@ -267,7 +267,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 			}
 
 			double tau = maxDistance;
-			final FastQueue<Node> nodes = new FastQueue<Node>(20, Node.class, false);
+			final FastArray<Node> nodes = new FastArray<>(Node.class, 20);
 			nodes.add(root);
 			result.distance = Double.POSITIVE_INFINITY;
 			boolean found = false;

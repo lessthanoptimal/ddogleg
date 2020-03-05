@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -88,7 +88,7 @@ public interface NearestNeighbor<P> {
 		 * @param maxDistance (Input) Maximum distance (inclusive, e.g. d &le; maxDistance) the neighbor can be from point.
 		 *                    Values {@code <} 0 will be set to the maximum distance.
 		 * @param numNeighbors (Input) The number of neighbors it will search for.
-		 * @param results (Output) Storage for the result. Reset() is called. Must support grow() function.
+		 * @param results (Output) Storage for the result. Reset() is called.
 		 */
 		void findNearest( P point , double maxDistance , int numNeighbors , FastQueue<NnData<P>> results );
 	}

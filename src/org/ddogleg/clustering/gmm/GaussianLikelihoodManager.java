@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -51,14 +51,9 @@ public class GaussianLikelihoodManager {
 
 		// this will produce a cholesky decomposition
 		solver = LinearSolverFactory_DDRM.symmPosDef(pointDimension);
-		solver = new LinearSolverSafe<DMatrixRMaj>(solver);
+		solver = new LinearSolverSafe<>(solver);
 
-		precomputes = new FastQueue<Likelihood>(Likelihood.class,true) {
-			@Override
-			protected Likelihood createInstance() {
-				return new Likelihood(pointDimension);
-			}
-		};
+		precomputes = new FastQueue<>(()->new Likelihood(pointDimension));
 
 		diff = new DMatrixRMaj(pointDimension,1);
 	}

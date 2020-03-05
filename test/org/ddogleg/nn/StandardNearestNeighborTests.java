@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,7 +44,7 @@ public abstract class StandardNearestNeighborTests {
 	private NearestNeighbor<double[]> alg;
 
 	private NnData<double[]> found = new NnData<>();
-	private FastQueue<NnData<double[]>> foundN = new FastQueue<>((Class)NnData.class,true);
+	private FastQueue<NnData<double[]>> foundN = new FastQueue<>(NnData::new);
 
 	public void setAlg(NearestNeighbor<double[]> alg) {
 		this.alg = alg;
@@ -283,7 +283,7 @@ public abstract class StandardNearestNeighborTests {
 		alg.setPoints(points,false);
 		NearestNeighbor.Search<double[]> search = alg.createSearch();
 
-		foundN.add(new NnData<>());
+		foundN.grow();
 		search.findNearest(new double[]{6, 7}, 10, 1, foundN);
 
 		assertEquals(1,foundN.size);

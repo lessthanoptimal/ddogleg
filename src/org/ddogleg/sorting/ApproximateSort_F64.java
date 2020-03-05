@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.struct.FastArray;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
 
@@ -28,8 +29,8 @@ import org.ddogleg.struct.GrowQueue_I32;
  */
 public class ApproximateSort_F64 {
 
-	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<GrowQueue_I32>(GrowQueue_I32.class,true);
-	FastQueue<SortableParameter_F64> histObjs[] = new FastQueue[0];
+	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<>(GrowQueue_I32::new);
+	FastArray<SortableParameter_F64>[] histObjs = new FastArray[0];
 
 	double minValue,maxValue,divisor;
 
@@ -59,9 +60,9 @@ public class ApproximateSort_F64 {
 		histIndexes.resize(numBins);
 
 		if( histObjs.length < numBins ) {
-		histObjs = new FastQueue[ numBins ];
+		histObjs = new FastArray[ numBins ];
 			for (int i = 0; i < numBins; i++) {
-				histObjs[i] = new FastQueue<SortableParameter_F64>(SortableParameter_F64.class,true);
+				histObjs[i] = new FastArray<>(SortableParameter_F64.class);
 			}
 		}
 	}
@@ -69,7 +70,7 @@ public class ApproximateSort_F64 {
 	/**
 	 * Examines the list and computes the range from it
 	 */
-	public void computeRange( double input[] , int start , int length ) {
+	public void computeRange( double[] input , int start , int length ) {
 		if( length == 0 ) {
 			divisor = 0;
 			return;
@@ -93,7 +94,7 @@ public class ApproximateSort_F64 {
 	/**
 	 * Examines the list and computes the range from it
 	 */
-	public void computeRange( SortableParameter_F64 input[] , int start , int length ) {
+	public void computeRange( SortableParameter_F64[] input , int start , int length ) {
 		if( length == 0 ) {
 			divisor = 0;
 			return;
@@ -122,7 +123,7 @@ public class ApproximateSort_F64 {
 	 * @param length Length of the input list
 	 * @param indexes Number of elements
 	 */
-	public void sortIndex( double input[] , int start , int length , int indexes[] ) {
+	public void sortIndex( double[] input , int start , int length , int[] indexes ) {
 		for( int i = 0; i < length; i++ )
 			indexes[i] = i;
 
@@ -153,7 +154,7 @@ public class ApproximateSort_F64 {
 	 * @param start First element in input list
 	 * @param length Length of the input list
 	 */
-	public void sortObject( SortableParameter_F64 input[] , int start , int length ) {
+	public void sortObject( SortableParameter_F64[] input , int start , int length ) {
 
 		for( int i = 0; i < histIndexes.size; i++ ) {
 			histObjs[i].reset();
@@ -169,7 +170,7 @@ public class ApproximateSort_F64 {
 		// over wrist the input data with sorted elements
 		int index = start;
 		for( int i = 0; i < histIndexes.size; i++ ) {
-			FastQueue<SortableParameter_F64>  matches = histObjs[i];
+			FastArray<SortableParameter_F64>  matches = histObjs[i];
 			for( int j = 0; j < matches.size; j++ ) {
 				input[index++] = matches.data[j];
 			}
