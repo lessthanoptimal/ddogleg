@@ -294,7 +294,9 @@ public class FastQueue<T> extends FastAccess<T> {
 	 */
 	@Deprecated
 	protected T createInstance() {
-		return factory.newInstance();
+		T instance = factory.newInstance();
+		reset.process(instance);
+		return instance;
 	}
 
 	public List<T> copyIntoList(List<T> ret) {
