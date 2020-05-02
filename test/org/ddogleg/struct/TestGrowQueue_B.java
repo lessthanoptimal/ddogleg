@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,8 +20,7 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -51,7 +50,7 @@ public class TestGrowQueue_B {
 		alg.push(false);
 		alg.push(false);
 
-		assertTrue(true == alg.get(0));
+		assertTrue(alg.get(0));
 		assertEquals(3,alg.size);
 
 		alg.reset();
@@ -68,7 +67,7 @@ public class TestGrowQueue_B {
 
 		assertEquals(2,alg.size);
 		assertTrue(alg.pop());
-		assertTrue(!alg.pop());
+		assertFalse(alg.pop());
 		assertEquals(0, alg.size);
 	}
 
@@ -84,14 +83,14 @@ public class TestGrowQueue_B {
 
 		alg.remove(1,1);
 		assertEquals(4,alg.size);
-		assertEquals(true,alg.get(0));
-		assertEquals(false,alg.get(1));
-		assertEquals(true,alg.get(2));
-		assertEquals(false,alg.get(3));
+		assertTrue(alg.get(0));
+		assertFalse(alg.get(1));
+		assertTrue(alg.get(2));
+		assertFalse(alg.get(3));
 		alg.remove(0,1);
 		assertEquals(2,alg.size);
-		assertEquals(true,alg.get(0));
-		assertEquals(false,alg.get(1));
+		assertTrue(alg.get(0));
+		assertFalse(alg.get(1));
 	}
 
 	@Test
@@ -105,5 +104,18 @@ public class TestGrowQueue_B {
 
 		assertEquals(0,alg.indexOf(true));
 		assertEquals(1,alg.indexOf(false));
+	}
+
+	@Test
+	void getTail() {
+		GrowQueue_B alg = new GrowQueue_B(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i%2==0);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			assertEquals((20-i-1)%2==0,alg.getTail(i));
+		}
 	}
 }

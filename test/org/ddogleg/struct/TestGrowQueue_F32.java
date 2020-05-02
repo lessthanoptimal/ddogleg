@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -268,6 +268,19 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 		alg.add(-4);
 
 		assertEquals(2, alg.indexOfLeast());
+	}
+
+	@Test
+	void getTail() {
+		GrowQueue_F32 alg = new GrowQueue_F32(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			assertEquals(20-i-1,alg.getTail(i));
+		}
 	}
 }
 

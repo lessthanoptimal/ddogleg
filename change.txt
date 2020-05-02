@@ -18,6 +18,8 @@ Date:     2020/
   * added removeSwap()
 - ModelMatcher
   * Added reset() function to return it into its initial state
+- GrowQueue
+  * Added getTail()
 
 ------------------------------------------------------
 Version:  0.17

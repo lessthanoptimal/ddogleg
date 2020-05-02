@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -90,6 +90,15 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[index];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public boolean getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
 	}
 
 	public boolean unsafe_get( int index ) {

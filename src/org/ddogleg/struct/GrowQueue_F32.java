@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -169,6 +169,15 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[index];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public float getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
 	}
 
 	/**

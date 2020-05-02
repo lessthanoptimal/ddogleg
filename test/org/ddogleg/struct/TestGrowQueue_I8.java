@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -225,5 +225,18 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 		assertEquals(1,alg.getFraction(1.7/19.0));
 		assertEquals(19/2,alg.getFraction(0.5));
 		assertEquals(19,alg.getFraction(1.0));
+	}
+
+	@Test
+	void getTail() {
+		GrowQueue_I8 alg = new GrowQueue_I8(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			assertEquals(20-i-1,alg.getTail(i));
+		}
 	}
 }
