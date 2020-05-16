@@ -24,10 +24,13 @@
 
 
 ----
-Gradle
+Releasing code to Maven Central
 
-To post a SNAPSHOT or full release:
-gradle uploadArchives
+To post a SNAPSHOT:
+./gradlew uploadArchives
+
+To post a full release:
+./gradlew assemble;./gradlew uploadArchives -Dorg.gradle.parallel=false
 
 A SNAPSHOT is created if SNAPSHOT is in its name.
 
