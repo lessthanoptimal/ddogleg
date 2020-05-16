@@ -10,11 +10,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.18'
+version = '0.19-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 gversion {
     srcDir       = "src"
@@ -22,11 +19,22 @@ gversion {
     className    = "DDoglegVersion"
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+// Creates Java 8 byte code
+compileJava {
+    options.compilerArgs = [ "--release", "8"  ]
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
 
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url = 'https://jitpack.io' } // Allows annotations past Java 8 to be used
 }
 
 sourceSets {
@@ -67,7 +75,8 @@ dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
         compile group: 'org.ejml', name: a, version: '0.39'}
 
-    compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
+    implementation 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
+    implementation 'javax.annotation:jsr250-api:1.0'       // @Generated
 
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
@@ -77,6 +86,9 @@ dependencies {
     benchmarkCompile project.sourceSets.main.output
     benchmarkCompile project.sourceSets.main.runtimeClasspath
     benchmarkCompile project.sourceSets.main.compileClasspath
+
+    // needed to use Java 11 with 8 byte code
+    annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.2.0'
 }
 
 javadoc {
@@ -111,6 +123,9 @@ if(JavaVersion.current() != JavaVersion.VERSION_1_8) {
         options.compilerArgs = ["--release", "8"]
     }
 }
+
+// Force uploadArchives to fail if trying to upload a stable release and git is dirty
+uploadArchives.dependsOn failDirtyNotSnapshot
 
 // if Maven central isn't setup in gradle.properties skip all of this
 if( project.hasProperty('ossrhUsername') ) {

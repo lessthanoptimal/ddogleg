@@ -3,6 +3,11 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.19
+
+- Updated to Java 11 syntax but generates Java 8 byte code
+
+------------------------------------------------------
 Version:  0.18
 Date:     2020/May/15
 
