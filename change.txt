@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.18
-Date:     2020/
+Date:     2020/May/15
 
 - Updated Gradle
 - QuickSort can now sort a List at the same time
