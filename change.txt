@@ -4,8 +4,11 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.19
+Date:     2020
 
 - Updated to Java 11 syntax but generates Java 8 byte code
+- GrowQueue added resize( size , defaultValue )
+- FastArray added remove(object)
 
 ------------------------------------------------------
 Version:  0.18

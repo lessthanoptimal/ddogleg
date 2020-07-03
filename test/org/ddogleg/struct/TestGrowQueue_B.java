@@ -59,6 +59,44 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
+	void resize() {
+		GrowQueue_B alg = new GrowQueue_B(2);
+		assertEquals(0,alg.size);
+		alg.resize(12);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		// Make sure it doesn't declare a new array since it doesn't have to
+		alg.data[2] = true;
+		alg.resize(10);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		assertTrue(alg.get(2));
+	}
+
+	@Test
+	void resize_default() {
+		GrowQueue_B alg = new GrowQueue_B(2);
+		assertEquals(0,alg.size);
+		alg.resize(12, true);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertTrue(alg.get(i));
+		}
+		// The array isn't redeclared but the value should still change
+		alg.resize(10,false);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertFalse(alg.get(i));
+		}
+		// it shouldn't change the entire array's value since that's wasteful
+		for (int i = alg.size; i < alg.data.length; i++) {
+			assertTrue(alg.data[i]);
+		}
+	}
+
+	@Test
 	void push_pop() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 

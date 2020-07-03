@@ -40,21 +40,13 @@ repositories {
 sourceSets {
 
     benchmark {
-        java {
-            srcDir 'benchmark/src'
-        }
-        resources {
-            srcDir 'benchmark/resources'
-        }
+        java { srcDir 'benchmark/src' }
+        resources {  srcDir 'benchmark/resources' }
     }
 
     main {
-        java {
-            srcDir 'src'
-        }
-        resources {
-            srcDir 'resources/src'
-        }
+        java { srcDir 'src'  }
+        resources { srcDir 'resources/src' }
     }
 
     test {

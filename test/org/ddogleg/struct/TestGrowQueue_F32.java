@@ -103,12 +103,50 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 		alg.push(3);
 		alg.push(-2);
 
-		assertTrue(1.0f == alg.get(0));
+		assertEquals(1.0f, alg.get(0));
 		assertEquals(3,alg.size);
 
 		alg.reset();
 
 		assertEquals(0, alg.size);
+	}
+
+	@Test
+	void resize() {
+		GrowQueue_F32 alg = new GrowQueue_F32(2);
+		assertEquals(0,alg.size);
+		alg.resize(12);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		// Make sure it doesn't declare a new array since it doesn't have to
+		alg.data[2] = 5;
+		alg.resize(10);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		assertEquals(5,alg.get(2));
+	}
+
+	@Test
+	void resize_default() {
+		GrowQueue_F32 alg = new GrowQueue_F32(2);
+		assertEquals(0,alg.size);
+		alg.resize(12, 1.0f);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(1.0f,alg.get(i));
+		}
+		// The array isn't redeclared but the value should still change
+		alg.resize(10,2.0f);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(2.0f,alg.get(i));
+		}
+		// it shouldn't change the entire array's value since that's wasteful
+		for (int i = alg.size; i < alg.data.length; i++) {
+			assertEquals(1.0f,alg.data[i]);
+		}
 	}
 
 	@Test
@@ -119,8 +157,8 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 		alg.push(3);
 
 		assertEquals(2,alg.size);
-		assertTrue(3==alg.pop());
-		assertTrue(1==alg.pop());
+		assertEquals(3, alg.pop());
+		assertEquals(1, alg.pop());
 		assertEquals(0,alg.size);
 	}
 
@@ -161,7 +199,6 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 
 	@Test
 	void remove() {
-
 		GrowQueue_F32 alg = new GrowQueue_F32(10);
 
 		alg.push(1);

@@ -222,6 +222,16 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		this.size = size;
 	}
 
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , float value ) {
+		resize(size);
+		fill(value);
+	}
+
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {

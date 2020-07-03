@@ -158,7 +158,7 @@ class TestFastQueue {
 	}
 
 	@Test
-	void remove() {
+	void remove_index() {
 		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
 
 		List<DummyData> l = alg.toList();
@@ -187,6 +187,22 @@ class TestFastQueue {
 		assertEquals(1,alg.data[0].value);
 		assertEquals(3,alg.data[1].value);
 		assertEquals(2,alg.data[2].value);
+	}
+
+	@Test
+	void remove_object() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+
+		alg.grow().value = 10;
+		alg.grow().value = 11;
+		alg.grow().value = 12;
+
+		assertFalse(alg.remove(new DummyData()));
+
+		assertTrue(alg.remove(alg.get(1)));
+		assertEquals(2,alg.size);
+		assertEquals(10,alg.get(0).value);
+		assertEquals(12,alg.get(1).value);
 	}
 
 	@Test

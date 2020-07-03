@@ -78,6 +78,19 @@ public class FastArray<T> extends FastAccess<T> {
 		return ret;
 	}
 
+	/**
+	 * Searches for the object and removes it if it's contained in the list. O(N) operation.
+	 * @param target Object to be removed
+	 * @return true if it was removed or false if it was not found
+	 */
+	public boolean remove( T target ) {
+		int index = indexOf(target);
+		if( index < 0 )
+			return false;
+		remove(index);
+		return true;
+	}
+
 	public T removeTail() {
 		if( size <= 0 )
 			throw new IllegalArgumentException("The array is empty");

@@ -174,6 +174,16 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		this.size = size;
 	}
 
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , boolean value ) {
+		resize(size);
+		fill(value);
+	}
+
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {

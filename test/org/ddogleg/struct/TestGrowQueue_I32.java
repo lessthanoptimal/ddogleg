@@ -21,6 +21,7 @@ package org.ddogleg.struct;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -107,6 +108,44 @@ public class TestGrowQueue_I32 extends ChecksGrowQueue<GrowQueue_I32> {
 		alg.reset();
 
 		assertEquals(0,alg.size);
+	}
+
+	@Test
+	void resize() {
+		GrowQueue_I32 alg = new GrowQueue_I32(2);
+		assertEquals(0,alg.size);
+		alg.resize(12);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		// Make sure it doesn't declare a new array since it doesn't have to
+		alg.data[2] = 5;
+		alg.resize(10);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		assertEquals(5,alg.get(2));
+	}
+
+	@Test
+	void resize_default() {
+		GrowQueue_I32 alg = new GrowQueue_I32(2);
+		assertEquals(0,alg.size);
+		alg.resize(12, 1);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(1,alg.get(i));
+		}
+		// The array isn't redeclared but the value should still change
+		alg.resize(10,2);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10,alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(2,alg.get(i));
+		}
+		// it shouldn't change the entire array's value since that's wasteful
+		for (int i = alg.size; i < alg.data.length; i++) {
+			assertEquals(1,alg.data[i]);
+		}
 	}
 
 	@Test

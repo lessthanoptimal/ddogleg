@@ -57,6 +57,17 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		return out;
 	}
 
+	/**
+	 * Creates a new array initialized with values from min to max, exclusive.
+	 */
+	public static GrowQueue_I32 range( int min , int max ) {
+		GrowQueue_I32 out = zeros(max-min);
+		for (int i = min; i < max; i++) {
+			out.data[i-min] = i;
+		}
+		return out;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -221,6 +232,11 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 			data = new int[size];
 		}
 		this.size = size;
+	}
+
+	public void resize( int size , int value ) {
+		resize(size);
+		fill(value);
 	}
 
 	@Override

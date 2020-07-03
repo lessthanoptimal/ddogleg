@@ -212,6 +212,16 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		this.size = size;
 	}
 
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , long value ) {
+		resize(size);
+		fill(value);
+	}
+
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {

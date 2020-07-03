@@ -221,6 +221,21 @@ public class FastQueue<T> extends FastAccess<T> {
 	}
 
 	/**
+	 * Searches for and removes the 'target' from the list. Returns true if the target was found. If false
+	 * then the target was never found and no change has been made. This is an O(N) operation.
+	 *
+	 * @param target Object to remove from the list
+	 * @return true if the target was found and removed
+	 */
+	public boolean remove( T target ) {
+		int index = indexOf(target);
+		if( index < 0 )
+			return false;
+		remove(index);
+		return true;
+	}
+
+	/**
 	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
 	 * but has a runtime of O(1).
 	 *
