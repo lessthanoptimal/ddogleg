@@ -28,7 +28,7 @@ import java.util.Arrays;
  */
 public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 
-	public long data[];
+	public long[] data;
 	public int size;
 
 	public GrowQueue_I64(int maxSize) {
@@ -55,6 +55,18 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 			out.data[i] = values[i];
 		}
 		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occures in the list
+	 */
+	public int count( long value ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				total++;
+		}
+		return total;
 	}
 
 	@Override

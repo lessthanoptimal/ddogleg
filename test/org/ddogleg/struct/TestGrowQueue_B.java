@@ -43,6 +43,14 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
+	void count() {
+		GrowQueue_B alg = GrowQueue_B.array(0,0,1,1,1);
+
+		assertEquals(2,alg.count(false));
+		assertEquals(3,alg.count(true));
+	}
+
+	@Test
 	void reset() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 

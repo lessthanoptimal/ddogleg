@@ -31,6 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 
 	@Test
+	void count() {
+		GrowQueue_F64 alg = GrowQueue_F64.array(0.0,0.0,1.0,1.0,1.0);
+
+		assertEquals(2,alg.count(0.0));
+		assertEquals(3,alg.count(1.0));
+	}
+
+	@Test
 	void addAll_queue() {
 		GrowQueue_F64 queue0 = new GrowQueue_F64(2);
 		GrowQueue_F64 queue1 = new GrowQueue_F64(3);

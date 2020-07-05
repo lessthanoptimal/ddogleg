@@ -28,7 +28,7 @@ import java.util.Arrays;
  */
 public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
-	public int data[];
+	public int[] data;
 	public int size;
 
 	public GrowQueue_I32( int maxSize ) {
@@ -66,6 +66,18 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 			out.data[i-min] = i;
 		}
 		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occures in the list
+	 */
+	public int count( int value ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				total++;
+		}
+		return total;
 	}
 
 	@Override

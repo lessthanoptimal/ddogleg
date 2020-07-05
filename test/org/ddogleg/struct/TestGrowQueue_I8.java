@@ -30,6 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
+	void count() {
+		GrowQueue_I8 alg = GrowQueue_I8.array(0,0,1,1,1);
+
+		assertEquals(2,alg.count(0));
+		assertEquals(3,alg.count(1));
+	}
+
+	@Test
 	void addAll_queue() {
 		GrowQueue_I8 queue0 = new GrowQueue_I8(2);
 		GrowQueue_I8 queue1 = new GrowQueue_I8(3);

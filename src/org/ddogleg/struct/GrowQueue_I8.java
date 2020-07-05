@@ -28,7 +28,7 @@ import java.util.Arrays;
  */
 public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 
-	public byte data[];
+	public byte[] data;
 	public int size;
 
 	public GrowQueue_I8(int maxSize) {
@@ -55,6 +55,18 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 			out.data[i] = (byte)values[i];
 		}
 		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occures in the list
+	 */
+	public int count( int value ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				total++;
+		}
+		return total;
 	}
 
 	@Override

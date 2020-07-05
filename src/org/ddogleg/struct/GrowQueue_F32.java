@@ -28,7 +28,7 @@ import java.util.Arrays;
  */
 public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 
-	public float data[];
+	public float[] data;
 	public int size;
 
 	public GrowQueue_F32( int maxSize ) {
@@ -55,6 +55,18 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 			out.data[i] = values[i];
 		}
 		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occures in the list
+	 */
+	public int count( float value ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				total++;
+		}
+		return total;
 	}
 
 	@Override

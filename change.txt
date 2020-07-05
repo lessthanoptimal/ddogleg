@@ -7,7 +7,9 @@ Version:  0.19
 Date:     2020
 
 - Updated to Java 11 syntax but generates Java 8 byte code
-- GrowQueue added resize( size , defaultValue )
+- GrowQueue
+  * Added resize( size , defaultValue )
+  * Added count( value )
 - FastArray added remove(object)
 
 ------------------------------------------------------

@@ -28,7 +28,7 @@ import java.util.Arrays;
  */
 public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 
-	public boolean data[];
+	public boolean[] data;
 	public int size;
 
 	public GrowQueue_B(int maxSize) {
@@ -66,6 +66,18 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 			out.data[i] = values[i] != 0;
 		}
 		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occures in the list
+	 */
+	public int count( boolean value ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				total++;
+		}
+		return total;
 	}
 
 	@Override
