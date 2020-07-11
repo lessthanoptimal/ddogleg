@@ -136,4 +136,18 @@ class TestFastArray {
 		assertSame(alg.get(0), alg2.get(0));
 		assertSame(alg.get(1), alg2.get(1));
 	}
+
+	@Test
+	void forEach() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		alg.grow();
+		alg.grow();
+		alg.grow();
+
+		alg.forEach((i,o)->o.value=i);
+
+		assertEquals(0,alg.get(0).value);
+		assertEquals(1,alg.get(1).value);
+		assertEquals(2,alg.get(2).value);
+	}
 }

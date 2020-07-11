@@ -109,4 +109,17 @@ public abstract class FastAccess<T> implements Serializable {
 			data[size - i - 1] = tmp;
 		}
 	}
+
+	/**
+	 * The passed in function is called once for each element in the list
+	 */
+	public void forEach( FunctionEach<T> function ) {
+		for (int i = 0; i < size; i++) {
+			function.process(i,data[i]);
+		}
+	}
+
+	public interface FunctionEach<T> {
+		void process( int index, T o );
+	}
 }
