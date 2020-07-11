@@ -150,4 +150,22 @@ class TestFastArray {
 		assertEquals(1,alg.get(1).value);
 		assertEquals(2,alg.get(2).value);
 	}
+
+	@Test
+	void forEach_idx() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		for (int i = 0; i < 10; i++) {
+			alg.grow();
+		}
+
+		alg.forEach(2,5,(i,o)->o.value=i);
+
+		for (int i = 0; i < 10; i++) {
+			if( i >= 2 && i < 5 ) {
+				assertEquals(i,alg.get(i).value);
+			} else {
+				assertEquals(0,alg.get(i).value);
+			}
+		}
+	}
 }

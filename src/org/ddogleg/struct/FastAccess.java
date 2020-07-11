@@ -119,6 +119,20 @@ public abstract class FastAccess<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * For each with a range of values specified
+	 * @param idx0 lower extent, inclusive
+	 * @param idx1 upper extent, exclusive
+	 */
+	public void forEach( int idx0 , int idx1, FunctionEach<T> function ) {
+		if( idx1 > size )
+			throw new IllegalArgumentException("idx1 is out of range");
+
+		for (int i = idx0; i < idx1; i++) {
+			function.process(i,data[i]);
+		}
+	}
+
 	public interface FunctionEach<T> {
 		void process( int index, T o );
 	}
