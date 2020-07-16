@@ -138,34 +138,21 @@ class TestFastArray {
 	}
 
 	@Test
-	void forEach() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
-		alg.grow();
-		alg.grow();
-		alg.grow();
+	void resize_fill() {
+		DummyData data0 = new DummyData();
 
-		alg.forEach((i,o)->o.value=i);
-
-		assertEquals(0,alg.get(0).value);
-		assertEquals(1,alg.get(1).value);
-		assertEquals(2,alg.get(2).value);
-	}
-
-	@Test
-	void forEach_idx() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
-		for (int i = 0; i < 10; i++) {
-			alg.grow();
+		FastArray<DummyData> alg = new FastArray<>(DummyData.class);
+		for (int i = 0; i < 3; i++) {
+			alg.add(data0);
 		}
 
-		alg.forEach(2,5,(i,o)->o.value=i);
+		DummyData data1 = new DummyData();
+		alg.resize(6,data1);
+		assertEquals(6,alg.size);
+		assertTrue(alg.data.length>=6);
 
-		for (int i = 0; i < 10; i++) {
-			if( i >= 2 && i < 5 ) {
-				assertEquals(i,alg.get(i).value);
-			} else {
-				assertEquals(0,alg.get(i).value);
-			}
+		for (int i = 0; i < alg.size; i++) {
+			assertSame(data1,alg.get(i));
 		}
 	}
 }

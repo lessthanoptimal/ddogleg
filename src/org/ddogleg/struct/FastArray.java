@@ -123,12 +123,17 @@ public class FastArray<T> extends FastAccess<T> {
 	 * @param length Requested size of internal array.
 	 */
 	public void growArray( int length) {
+		growArray(length,true);
+	}
+
+	public void growArray( int length, boolean copy) {
 		// now need to grow since it is already larger
 		if( this.data.length >= length)
 			return;
 
 		T []data = (T[])Array.newInstance(type, length);
-		System.arraycopy(this.data,0,data,0,size);
+		if( copy )
+			System.arraycopy(this.data,0,data,0,size);
 		this.data = data;
 	}
 
@@ -153,6 +158,15 @@ public class FastArray<T> extends FastAccess<T> {
 	 */
 	public void resize(int length) {
 		growArray(length);
+		this.size = length;
+	}
+
+	/**
+	 * Changes the size and fills each element with this value
+	 */
+	public void resize(int length, T value) {
+		growArray(length,false);
+		Arrays.fill(data,0,length,value);
 		this.size = length;
 	}
 
