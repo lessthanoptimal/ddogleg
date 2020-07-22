@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,11 +38,11 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 		implements UnconstrainedLeastSquaresSchur<S>
 {
 	// Left and right side of the jacobian matrix
-	protected S jacLeft;
-	protected S jacRight;
+	public S jacLeft;
+	public S jacRight;
 
-	protected FunctionNtoM functionResiduals;
-	protected SchurJacobian<S> functionJacobian;
+	public FunctionNtoM functionResiduals;
+	public SchurJacobian<S> functionJacobian;
 
 	public UnconLeastSqLevenbergMarquardtSchur_F64(MatrixMath<S> math,
 												   HessianSchurComplement<S> hessian )
@@ -64,9 +64,7 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 		config.ftol = ftol;
 		config.gtol = gtol;
 
-		super.initialize(initial,
-				functionResiduals.getNumOfInputsN(),
-				functionResiduals.getNumOfOutputsM());
+		super.initialize(initial, functionResiduals.getNumOfInputsN(), functionResiduals.getNumOfOutputsM());
 	}
 
 	@Override

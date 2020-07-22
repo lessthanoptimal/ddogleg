@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -78,12 +78,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	public static final double MAX_LAMBDA = 1e100;
 
 	// Math for some matrix operations
-	protected MatrixMath<S> math;
+	public MatrixMath<S> math;
 
-	DMatrixRMaj residuals = new DMatrixRMaj(1,1);
+	public DMatrixRMaj residuals = new DMatrixRMaj(1,1);
 
-	DMatrixRMaj diagOrig = new DMatrixRMaj(1,1);
-	DMatrixRMaj diagStep = new DMatrixRMaj(1,1);
+	public DMatrixRMaj diagOrig = new DMatrixRMaj(1,1);
+	public DMatrixRMaj diagStep = new DMatrixRMaj(1,1);
 
 	/**
 	 * Dampening parameter. Scalar that's adjusted at every step. smaller values for a Gauss-Newton step and larger
