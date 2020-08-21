@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,127 +20,124 @@ package org.ddogleg.graph;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
  */
 public class TestGraphDataManager
 {
+	@Test
+	void reset()
+	{
+		GraphDataManager alg = new GraphDataManager();
 
-   @Test
-   public void reset()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Node n = alg.createNode();
+		n.data = 1;
+		n.edges.grow();
 
-      Node n = alg.createNode();
-      n.data = 1;
-      n.edges.grow();
+		Edge e = alg.createEdge();
+		e.data = 1;
+		e.dest = n;
 
-      Edge e = alg.createEdge();
-      e.data = 1;
-      e.dest = n;
+		alg.reset();
 
-      alg.reset();
+		assertEquals(0,alg.usedEdges.size());
+		assertEquals(1,alg.unusedEdges.size());
+		assertEquals(0,alg.usedNodes.size());
+		assertEquals(1,alg.unusedNodes.size());
 
-      assertEquals(0,alg.usedEdges.size());
-      assertEquals(1,alg.unusedEdges.size());
-      assertEquals(0,alg.usedNodes.size());
-      assertEquals(1,alg.unusedNodes.size());
+		assertNotNull(((Edge) alg.unusedEdges.getFirst()).data);
+		assertNotNull(((Edge) alg.unusedEdges.getFirst()).dest);
+		assertNotNull(((Node) alg.unusedNodes.getFirst()).data);
+		assertTrue(((Node)alg.unusedNodes.getFirst()).edges.size != 0 );
+	}
 
-      assertTrue(((Edge)alg.unusedEdges.get(0)).data != null);
-      assertTrue(((Edge)alg.unusedEdges.get(0)).dest != null);
-      assertTrue(((Node)alg.unusedNodes.get(0)).data != null);
-      assertTrue(((Node)alg.unusedNodes.get(0)).edges.size != 0 );
-   }
+	@Test
+	void resetHard()
+	{
+		GraphDataManager alg = new GraphDataManager();
 
-   @Test
-   public void resetHard()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Node n = alg.createNode();
+		n.data = 1;
+		n.edges.grow();
 
-      Node n = alg.createNode();
-      n.data = 1;
-      n.edges.grow();
+		Edge e = alg.createEdge();
+		e.data = 1;
+		e.dest = n;
 
-      Edge e = alg.createEdge();
-      e.data = 1;
-      e.dest = n;
+		alg.resetHard();
 
-      alg.resetHard();
+		assertEquals(0,alg.usedEdges.size());
+		assertEquals(1,alg.unusedEdges.size());
+		assertEquals(0,alg.usedNodes.size());
+		assertEquals(1,alg.unusedNodes.size());
 
-      assertEquals(0,alg.usedEdges.size());
-      assertEquals(1,alg.unusedEdges.size());
-      assertEquals(0,alg.usedNodes.size());
-      assertEquals(1,alg.unusedNodes.size());
+		assertNull(((Edge) alg.unusedEdges.getFirst()).data);
+		assertNull(((Edge) alg.unusedEdges.getFirst()).dest);
+		assertNull(((Node) alg.unusedNodes.getFirst()).data);
+		assertEquals(((Node) alg.unusedNodes.getFirst()).edges.size, 0);
+	}
 
-      assertTrue(((Edge)alg.unusedEdges.get(0)).data == null);
-      assertTrue(((Edge)alg.unusedEdges.get(0)).dest == null);
-      assertTrue(((Node)alg.unusedNodes.get(0)).data == null);
-      assertTrue(((Node)alg.unusedNodes.get(0)).edges.size == 0 );
-   }
+	@Test
+	void createEdge()
+	{
+		GraphDataManager<?,?> alg = new GraphDataManager<>();
 
-   @Test
-   public void createEdge()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Edge e = alg.createEdge();
+		assertEquals(1,alg.usedEdges.size());
+		assertEquals(0,alg.unusedEdges.size());
 
-      Edge e = alg.createEdge();
-      assertEquals(1,alg.usedEdges.size());
-      assertEquals(0,alg.unusedEdges.size());
+		alg.reset();
 
-      alg.reset();
+		assertSame(e, alg.createEdge());
+		assertEquals(1,alg.usedEdges.size());
+		assertEquals(0,alg.unusedEdges.size());
+	}
 
-      assertTrue( e == alg.createEdge() );
-      assertEquals(1,alg.usedEdges.size());
-      assertEquals(0,alg.unusedEdges.size());
-   }
+	@Test
+	void recycleEdge()
+	{
+		GraphDataManager alg = new GraphDataManager();
 
-   @Test
-   public void recycleEdge()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Edge e = alg.createEdge();
+		assertEquals(1,alg.usedEdges.size());
+		assertEquals(0,alg.unusedEdges.size());
 
-      Edge e = alg.createEdge();
-      assertEquals(1,alg.usedEdges.size());
-      assertEquals(0,alg.unusedEdges.size());
+		alg.recycleEdge(e);
 
-      alg.recycleEdge(e);
+		assertEquals(0,alg.usedEdges.size());
+		assertEquals(1,alg.unusedEdges.size());
+	}
 
-      assertEquals(0,alg.usedEdges.size());
-      assertEquals(1,alg.unusedEdges.size());
-   }
+	@Test
+	void createNode()
+	{
+		GraphDataManager alg = new GraphDataManager();
 
-   @Test
-   public void createNode()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Node e = alg.createNode();
+		assertEquals(1,alg.usedNodes.size());
+		assertEquals(0,alg.unusedNodes.size());
 
-      Node e = alg.createNode();
-      assertEquals(1,alg.usedNodes.size());
-      assertEquals(0,alg.unusedNodes.size());
+		alg.recycleNode(e);
 
-      alg.recycleNode(e);
+		assertEquals(0,alg.usedNodes.size());
+		assertEquals(1, alg.unusedNodes.size());
+	}
 
-      assertEquals(0,alg.usedNodes.size());
-      assertEquals(1, alg.unusedNodes.size());
-   }
+	@Test
+	void recycleNode()
+	{
+		GraphDataManager alg = new GraphDataManager();
 
-   @Test
-   public void recycleNode()
-   {
-      GraphDataManager alg = new GraphDataManager();
+		Node n = alg.createNode();
+		assertEquals(1,alg.usedNodes.size());
+		assertEquals(0,alg.unusedNodes.size());
 
-      Node n = alg.createNode();
-      assertEquals(1,alg.usedNodes.size());
-      assertEquals(0,alg.unusedNodes.size());
+		alg.reset();
 
-      alg.reset();
-
-      assertTrue( n == alg.createNode() );
-      assertEquals(1,alg.usedNodes.size());
-      assertEquals(0, alg.unusedNodes.size());
-   }
-
+		assertSame(n, alg.createNode());
+		assertEquals(1,alg.usedNodes.size());
+		assertEquals(0, alg.unusedNodes.size());
+	}
 }

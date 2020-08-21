@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -123,9 +123,9 @@ public class TestAxisSplitterMedian {
 
 		assertEquals(1,alg.getSplitAxis(),1e-8);
 		assertEquals(-3,alg.getSplitPoint()[0],1e-8);
-		assertTrue(data.get(2) == alg.getSplitIndex());
-		assertTrue(data.get(0) == leftData.get(0));
-		assertTrue(data.get(1) == rightData.get(0));
+		assertEquals(alg.getSplitIndex(), data.get(2));
+		assertEquals(leftData.get(0), data.get(0));
+		assertEquals(rightData.get(0), data.get(1));
 	}
 
 	/**
@@ -151,8 +151,7 @@ public class TestAxisSplitterMedian {
 	@Test
 	public void checkRuleSetCalled() {
 		DummyRule rule = new DummyRule(2);
-		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,rule);
-
+		new AxisSplitterMedian<>(distance,rule);
 		assertTrue(rule.calledSetDimension);
 	}
 

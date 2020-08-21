@@ -36,10 +36,10 @@ public class FastQueue<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
 	// function that's called to reset a returned instance
-	private Process<T> reset;
+	private DProcess<T> reset;
 
 	// Wrapper around this class for lists
-	private FastQueueList<T> list = new FastQueueList<T>(this);
+	private final FastQueueList<T> list = new FastQueueList<>(this);
 
 	/**
 	 * Constructor which allows new instances to be created using a lambda
@@ -63,7 +63,7 @@ public class FastQueue<T> extends FastAccess<T> {
 	 * @param factory Creates new instances
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 */
-	public FastQueue( Factory<T> factory , Process<T> reset ) {
+	public FastQueue( Factory<T> factory , DProcess<T> reset ) {
 		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
 		init(10, factory);
@@ -84,7 +84,7 @@ public class FastQueue<T> extends FastAccess<T> {
 		this.size = 0;
 		this.factory = factory;
 		if( this.reset == null )
-			this.reset = new Process.DoNothing<>();
+			this.reset = new DProcess.DoNothing<>();
 
 		data = (T[]) Array.newInstance(type, initialMaxSize);
 
@@ -316,7 +316,7 @@ public class FastQueue<T> extends FastAccess<T> {
 
 	public List<T> copyIntoList(List<T> ret) {
 		if( ret == null )
-			ret = new ArrayList<T>(size);
+			ret = new ArrayList<>(size);
 		for( int i = 0; i < size; i++ ) {
 			ret.add(data[i]);
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,10 +32,10 @@ public class TestPermute {
 
 	@Test
 	public void testSetSize1() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		l.add(1);
 
-		Permute<Integer> alg = new Permute<Integer>(l);
+		Permute<Integer> alg = new Permute<>(l);
 
 		assertEquals(1, alg.getTotalPermutations());
 
@@ -44,11 +44,11 @@ public class TestPermute {
 
 	@Test
 	public void testSetSize2() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
 
-		Permute<Integer> alg = new Permute<Integer>(l);
+		Permute<Integer> alg = new Permute<>(l);
 
 		assertEquals(2, alg.getTotalPermutations());
 
@@ -57,12 +57,12 @@ public class TestPermute {
 
 	@Test
 	public void testSetSize3() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
 		l.add(3);
 
-		Permute<Integer> alg = new Permute<Integer>(l);
+		Permute<Integer> alg = new Permute<>(l);
 
 		assertEquals(6, alg.getTotalPermutations());
 
@@ -72,13 +72,13 @@ public class TestPermute {
 
 	@Test
 	public void testSetSize4() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
 		l.add(3);
 		l.add(4);
 
-		Permute<Integer> alg = new Permute<Integer>(l);
+		Permute<Integer> alg = new Permute<>(l);
 
 		assertEquals(24, alg.getTotalPermutations());
 
@@ -87,7 +87,7 @@ public class TestPermute {
 
 	@Test
 	public void testSetSize5_to_7() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
 		l.add(3);
@@ -97,7 +97,7 @@ public class TestPermute {
 		int total = 24*5;
 		for (int i = 0; i <= 2; i++) {
 
-			Permute<Integer> alg = new Permute<Integer>(l);
+			Permute<Integer> alg = new Permute<>(l);
 
 			assertEquals(total, alg.getTotalPermutations());
 
@@ -110,13 +110,13 @@ public class TestPermute {
 
 	@Test
 	public void previous() {
-		List<Integer> l = new ArrayList<Integer>();
+		List<Integer> l = new ArrayList<>();
 		for (int size = 0; size < 9; size++) {
 			l.add(size);
 
-			Permute<Integer> alg = new Permute<Integer>(l);
+			Permute<Integer> alg = new Permute<>(l);
 
-			List<List<Integer>> forward = new ArrayList<List<Integer>>();
+			List<List<Integer>> forward = new ArrayList<>();
 			do {
 				forward.add( alg.getPermutation(null));
 			} while( alg.next() );
@@ -127,14 +127,14 @@ public class TestPermute {
 				List<Integer> expected = forward.get(i--);
 
 				for( int j = 0; j < size; j++ ) {
-					assertTrue(found.get(j) == expected.get(j));
+					assertSame(found.get(j), expected.get(j));
 				}
 			} while( alg.previous() );
 		}
 	}
 
 	private void checkList( Permute p , int expected ) {
-		List<List> all = new ArrayList<List>();
+		List<List> all = new ArrayList<>();
 
 		do {
 			List l = p.getPermutation(null);

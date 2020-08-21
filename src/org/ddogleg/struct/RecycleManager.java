@@ -34,8 +34,7 @@ public class RecycleManager<T> {
 		this.targetClass = targetClass;
 	}
 
-	protected RecycleManager() {
-	}
+	protected RecycleManager() {}
 
 	/**
 	 * Either returns a recycled instance or a new one.
@@ -63,9 +62,7 @@ public class RecycleManager<T> {
 	protected T createInstance() {
 		try {
 			return targetClass.newInstance();
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}

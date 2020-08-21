@@ -25,13 +25,13 @@ import java.io.Serializable;
  *
  * @author Peter Abeles
  */
-public interface Process<T> {
+public interface DProcess<T> {
 	void process(T o);
 
 	/**
 	 * Default implementation which does nothing
 	 */
-	class DoNothing<T> implements Process<T>, Serializable {
+	class DoNothing<T> implements DProcess<T>, Serializable {
 		@Override
 		public void process(T o) {}
 	}

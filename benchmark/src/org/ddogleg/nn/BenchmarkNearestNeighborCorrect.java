@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,7 +34,7 @@ public class BenchmarkNearestNeighborCorrect {
 	int dimen;
 	List<double[]> cloud;
 	List<double[]> searchSet;
-	double[] solutions[];
+	double[][] solutions;
 	double maxDistance;
 	NnData<double[]> result = new NnData<>();
 
@@ -113,8 +113,9 @@ public class BenchmarkNearestNeighborCorrect {
 
 	// TODO have a search set
 	// TODO Compute correct solution using exhaustive
-	public static void main( String args[] ) {
-		BenchmarkNearestNeighborCorrect app = new BenchmarkNearestNeighborCorrect();
+	@SuppressWarnings("EmptyCatch")
+	public static void main(String[] args) {
+		final BenchmarkNearestNeighborCorrect app = new BenchmarkNearestNeighborCorrect();
 
 //		app.evaluateDataSet(3,30);
 //		app.evaluateDataSet(3,300);
@@ -126,9 +127,7 @@ public class BenchmarkNearestNeighborCorrect {
 		app.evaluateDataSet(120,100000,1000);
 
 		try {
-			synchronized ( app ) {
-				Thread.sleep(100);
-			}
-		} catch (InterruptedException e) {}
+			Thread.sleep(100);
+		} catch (InterruptedException ignore) {}
 	}
 }

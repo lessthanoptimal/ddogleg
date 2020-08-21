@@ -389,39 +389,40 @@ public class TestDogLinkedList {
 	/**
 	 * Performs checks on the lists preconditions
 	 */
-	protected void checkList( DogLinkedList list ) {
-		for (int i = 0; i < list.available.size(); i++) {
-			DogLinkedList.Element<Integer> e = (DogLinkedList.Element<Integer>)list.available.get(i);
+	protected void checkList( DogLinkedList<Integer> queue ) {
+		DogLinkedList.Element<Integer> e = queue.first;
+		while( e != null ) {
 			assertNull(e.previous);
 			assertNull(e.next);
 			assertNull(e.object);
+			e = e.next;
 		}
 
-		if( list.size == 0 ) {
-			assertNull(list.first);
-			assertNull(list.last);
+		if( queue.size == 0 ) {
+			assertNull(queue.first);
+			assertNull(queue.last);
 		} else {
 			List<DogLinkedList.Element<Integer>> forwards = new ArrayList<DogLinkedList.Element<Integer>>();
 			List<DogLinkedList.Element<Integer>> backwards = new ArrayList<DogLinkedList.Element<Integer>>();
 
-			DogLinkedList.Element<Integer> e = list.first;
+			e = queue.first;
 			while( e != null ) {
 				forwards.add(e);
 				e = e.next;
-				if( forwards.size() > list.size() )
+				if( forwards.size() > queue.size() )
 					fail("too many elements in forward direction");
 			}
 
-			e = list.last;
+			e = queue.last;
 			while( e != null ) {
 				backwards.add(e);
 				e = e.previous;
-				if( backwards.size() > list.size() )
+				if( backwards.size() > queue.size() )
 					fail("too many elements in forward direction");
 			}
 
 			assertEquals(forwards.size(),backwards.size());
-			assertEquals(forwards.size(),list.size());
+			assertEquals(forwards.size(),queue.size());
 
 			for (int i = 0; i < forwards.size(); i++) {
 				int j = forwards.size()-1-i;

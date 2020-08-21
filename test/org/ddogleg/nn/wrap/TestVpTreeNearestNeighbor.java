@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,6 +26,6 @@ import org.ddogleg.nn.StandardNearestNeighborTests;
  */
 public class TestVpTreeNearestNeighbor extends StandardNearestNeighborTests {
 	public TestVpTreeNearestNeighbor() {
-		setAlg(FactoryNearestNeighbor.<Double>vptree(345345));
+		setAlg(FactoryNearestNeighbor.vptree(345345));
 	}
 }

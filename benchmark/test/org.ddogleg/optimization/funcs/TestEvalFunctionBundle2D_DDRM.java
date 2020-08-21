@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,6 @@
 package org.ddogleg.optimization.funcs;
 
 import org.ddogleg.optimization.DerivativeChecker;
-import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.SchurJacobian_to_NtoMxN;
 import org.ejml.data.DMatrixRMaj;
@@ -36,7 +35,7 @@ public class TestEvalFunctionBundle2D_DDRM {
 		EvalFunctionBundle2D_DDRM eval = new EvalFunctionBundle2D_DDRM(234,20,10,2,3);
 
 		FunctionNtoMxN<DMatrixRMaj> jac = new SchurJacobian_to_NtoMxN.DDRM(eval.getJacobianSchur());
-		FunctionNtoM func = eval.getFunction();
+		eval.getFunction();
 		double[] params = eval.initial;
 
 //		DerivativeChecker.jacobianPrintR(func, jac, params, 1e-3);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -53,7 +53,7 @@ public class EvalFuncBadlyScaledBrown_DSCC implements EvalFuncLeastSquares<DMatr
 		return new double[]{1e6,2e-6};
 	}
 
-	public class Func implements FunctionNtoM
+	public static class Func implements FunctionNtoM
 	{
 		@Override
 		public int getNumOfInputsN() {return 2;}
@@ -72,7 +72,7 @@ public class EvalFuncBadlyScaledBrown_DSCC implements EvalFuncLeastSquares<DMatr
 		}
 	}
 
-	public class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
+	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
 	{
 		@Override
 		public int getNumOfInputsN() {return 2;}

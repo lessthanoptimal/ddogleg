@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,17 +41,17 @@ public abstract class EvalFunctionBundle2D<S extends DMatrix> implements
 	double length,depth;
 	int numCamera,numLandmarks;
 
-	double observations[];
+	double[] observations;
 
-	double optimal[];
-	double initial[];
+	double[] optimal;
+	double[] initial;
 
-	public EvalFunctionBundle2D() {
+	protected EvalFunctionBundle2D() {
 		this(0xDEADBEF,20,10,20,10);
 	}
 
-	public EvalFunctionBundle2D(long seed , double length, double depth,
-								int numCamera, int numLandmarks)
+	protected EvalFunctionBundle2D(long seed , double length, double depth,
+								   int numCamera, int numLandmarks)
 	{
 		this.length = length;
 		this.depth = depth;
