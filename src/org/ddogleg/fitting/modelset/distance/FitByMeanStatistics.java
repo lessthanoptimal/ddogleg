@@ -29,10 +29,11 @@ import java.util.Iterator;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,Point> {
 
 	protected DistanceFromModel<Model,Point> modelError;
-	protected ArrayDeque<PointIndex<Point>> allPoints = new ArrayDeque<PointIndex<Point>>();
+	protected ArrayDeque<PointIndex<Point>> allPoints = new ArrayDeque<>();
 
 	// the number of standard deviations away that points are pruned
 	private final double pruneThreshold;

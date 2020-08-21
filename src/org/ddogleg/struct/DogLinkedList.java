@@ -18,6 +18,10 @@
 
 package org.ddogleg.struct;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.List;
 
@@ -27,16 +31,15 @@ import java.util.List;
  * @author Peter Abeles
  */
 public class DogLinkedList<T> {
-
 	// first element in the list
-	Element<T> first;
+	@Nullable Element<T> first;
 	// last element in the list
-	Element<T> last;
+	@Nullable Element<T> last;
 	// total number of elements in the list
 	int size;
 
 	// recycled elements.  It is assumed that all elements inside of here have all parameters set to null already
-	ArrayDeque<Element<T>> available = new ArrayDeque<>();
+	final ArrayDeque<Element<T>> available = new ArrayDeque<>();
 
 	/**
 	 * Puts the linked list back into its initial state.  Elements are saved for later use.
@@ -67,7 +70,7 @@ public class DogLinkedList<T> {
 	 * @param index Number of elements away from the first or last element. Must be positive.
 	 * @return if true then the number of elements will be from first otherwise last
 	 */
-
+	@SuppressWarnings("NullAway")
 	public Element<T> getElement( int index , boolean fromFront ) {
 		if( index > size || index < 0 ) {
 			throw new IllegalArgumentException("index is out of bounds");
@@ -75,12 +78,16 @@ public class DogLinkedList<T> {
 		if( fromFront ) {
 			Element<T> e = first;
 			for( int i = 0; i < index; i++ ) {
+				if( e == null )
+					throw new IllegalArgumentException("Element "+i+" is null");
 				e = e.next;
 			}
 			return e;
 		} else {
 			Element<T> e = last;
 			for( int i = 0; i < index; i++ ) {
+				if( e == null )
+					throw new IllegalArgumentException("Element "+i+" is null");
 				e = e.previous;
 			}
 			return e;
@@ -293,7 +300,7 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Removes the last element from the list
-	 * @return The object which was contained in the lsat element
+	 * @return The object which was contained in the last element
 	 */
 	public Object removeTail() {
 		if( last == null )
@@ -320,7 +327,7 @@ public class DogLinkedList<T> {
 	 * @param object Object which is being searched for
 	 * @return First element which contains object or null if none can be found
 	 */
-	public Element<T> find( T object ) {
+	public @Nullable Element<T> find( T object ) {
 		Element<T> e = first;
 		while( e != null ) {
 			if( e.object == object ) {
@@ -335,7 +342,7 @@ public class DogLinkedList<T> {
 	 * Returns the first element in the list
 	 * @return first element
 	 */
-	public Element<T> getHead() {
+	public @Nullable Element<T> getHead() {
 		return first;
 	}
 
@@ -343,7 +350,7 @@ public class DogLinkedList<T> {
 	 * Returns the last element in the list
 	 * @return last element
 	 */
-	public Element<T> getTail() {
+	public @Nullable Element<T> getTail() {
 		return last;
 	}
 
@@ -431,40 +438,17 @@ public class DogLinkedList<T> {
 		}
 	}
 
+	@SuppressWarnings("NullAway")
 	public static class Element<T>
 	{
-		public Element<T> next;
-		public Element<T> previous;
-		public T object;
+		public @Nullable @Getter @Setter Element<T> next;
+		public @Nullable @Getter @Setter Element<T> previous;
+		public @Getter @Setter T object;
 
 		public void clear() {
 			next = null;
 			previous = null;
 			object = null;
-		}
-
-		public Element<T> getNext() {
-			return next;
-		}
-
-		public void setNext(Element<T> next) {
-			this.next = next;
-		}
-
-		public Element<T> getPrevious() {
-			return previous;
-		}
-
-		public void setPrevious(Element<T> previous) {
-			this.previous = previous;
-		}
-
-		public T getObject() {
-			return object;
-		}
-
-		public void setObject(T object) {
-			this.object = object;
 		}
 	}
 }

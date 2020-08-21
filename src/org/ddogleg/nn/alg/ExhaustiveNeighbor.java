@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,6 +29,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class ExhaustiveNeighbor<P> {
 
 	// List of points
@@ -37,17 +38,14 @@ public class ExhaustiveNeighbor<P> {
 	// the distance to the closest node found so far
 	double bestDistance;
 
-	GrowQueue_F64 distances = new GrowQueue_F64();
-	GrowQueue_I32 indexes = new GrowQueue_I32();
-	GrowQueue_I32 indexesSort = new GrowQueue_I32();
+	final GrowQueue_F64 distances = new GrowQueue_F64();
+	final GrowQueue_I32 indexes = new GrowQueue_I32();
+	final GrowQueue_I32 indexesSort = new GrowQueue_I32();
 
 	KdTreeDistance<P> distance;
 
 	public ExhaustiveNeighbor( KdTreeDistance<P> distance) {
 		this.distance = distance;
-	}
-
-	public ExhaustiveNeighbor() {
 	}
 
 	/**

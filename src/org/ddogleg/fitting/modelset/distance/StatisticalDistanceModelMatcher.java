@@ -65,7 +65,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 	private final int minFitPoints;
 
 	// computes a set of model parameters from a list of points
-	private final ModelFitter<Model,Point> modelFitter;
+	private final ModelGenerator<Model,Point> modelFitter;
 	// computes the difference between the model and a point
 	private final DistanceFromModel<Model,Point> modelError;
 
@@ -103,7 +103,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 										   StatisticalDistance statistics,
 										   double pruneThreshold,
 										   ModelManager<Model> modelManager ,
-										   ModelFitter<Model,Point> modelFitter,
+										   ModelGenerator<Model,Point> modelFitter,
 										   DistanceFromModel<Model,Point> modelError,
 										   ModelCodec<Model> codec ) {
 		this.maxIterations = maxIterations;
@@ -161,7 +161,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 				inliers.add(p.data);
 			}
 
-			if (!modelFitter.fitModel(inliers, null, currParam)) {
+			if (!modelFitter.generate(inliers, currParam)) {
 				// failed to fit the model, so stop before it screws things up
 				break;
 			}
@@ -206,8 +206,8 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 	 */
 	protected double computeDiff(Model modelA, Model modelB ) {
 
-		double paramA[] = new double[ codec.getParamLength() ];
-		double paramB[] = new double[ codec.getParamLength() ];
+		double[] paramA = new double[ codec.getParamLength() ];
+		double[] paramB = new double[ codec.getParamLength() ];
 
 		codec.encode(modelA,paramA);
 		codec.encode(modelB,paramB);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,6 +23,7 @@ import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.struct.FastQueue;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.
@@ -30,6 +31,7 @@ import org.ddogleg.struct.FastQueue;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 
 	// the targeted tree
@@ -100,7 +102,7 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 	/**
 	 * Recursive step for finding the closest point
 	 */
-	private void stepClosest(KdTree.Node node , FastQueue<KdTreeResult> neighbors ) {
+	private void stepClosest(@Nullable KdTree.Node node , FastQueue<KdTreeResult> neighbors ) {
 
 		if( node == null )
 			return;

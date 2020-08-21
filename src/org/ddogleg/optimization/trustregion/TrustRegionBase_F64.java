@@ -26,8 +26,8 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 
 import static java.lang.Math.max;
@@ -57,6 +57,7 @@ import static java.lang.Math.min;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianMath>
 		extends GaussNewtonBase_F64<ConfigTrustRegion,HM>
 {
@@ -353,7 +354,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		 */
 		double getStepLength();
 
-		void setVerbose( PrintStream out , int level );
+		void setVerbose( @Nullable PrintStream out , int level );
 	}
 
 	/**

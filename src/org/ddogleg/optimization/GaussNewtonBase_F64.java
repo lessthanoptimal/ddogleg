@@ -21,8 +21,8 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 import java.util.Arrays;
 
@@ -34,6 +34,7 @@ import static java.lang.Math.sqrt;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends HessianMath>
 {
 	// Manipulating and extracting information from the Hessian
@@ -67,7 +68,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	protected int totalFullSteps, totalSelectSteps;
 
 	// If not null then print additional information to this stream
-	protected PrintStream verbose;
+	protected @Nullable PrintStream verbose;
 	protected int verboseLevel=0;
 
 	// Optimization configuration
@@ -80,10 +81,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 		this.hessian = hessian;
 	}
 
-	protected GaussNewtonBase_F64() {
-	}
-
-	public void initialize(double initial[] , int numberOfParameters ) {
+	public void initialize(double[] initial, int numberOfParameters ) {
 		x.reshape(numberOfParameters,1);
 		x_next.reshape(numberOfParameters,1);
 		p.reshape(numberOfParameters,1);

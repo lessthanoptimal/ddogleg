@@ -27,6 +27,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class FastAccess<T> implements Serializable {
 	public T[] data;
 	public int size;

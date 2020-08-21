@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,13 @@
 
 package org.ddogleg.graph;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author Peter Abeles
  */
 public class Edge<N,E>
 {
-   E data;
-   Node<N,E> dest;
+	@Nullable E data;
+	@Nullable Node<N,E> dest;
 }

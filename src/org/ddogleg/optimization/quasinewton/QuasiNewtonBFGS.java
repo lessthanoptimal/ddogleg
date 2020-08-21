@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,6 +23,7 @@ import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 
@@ -46,6 +47,7 @@ import java.io.PrintStream;
  * </p>
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class QuasiNewtonBFGS
 {
 	// number of inputs
@@ -90,7 +92,7 @@ public class QuasiNewtonBFGS
 	private int mode;
 
 	// error message
-	private PrintStream verbose;
+	private @Nullable PrintStream verbose;
 	private int verboseLevel;
 	// if it converged to a solution or not
 	private boolean hasConverged;
@@ -402,7 +404,7 @@ public class QuasiNewtonBFGS
 		return updated;
 	}
 
-	public void setVerbose( PrintStream out , int level ) {
+	public void setVerbose(@Nullable PrintStream out , int level ) {
 		this.verbose = out;
 		if( level != 0 )
 			this.lineSearch.setVerbose(out,level);

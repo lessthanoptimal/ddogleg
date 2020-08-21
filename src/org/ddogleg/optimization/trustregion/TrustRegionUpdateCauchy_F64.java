@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,6 +23,7 @@ import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 
@@ -38,6 +39,7 @@ import java.io.PrintStream;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 		implements TrustRegionBase_F64.ParameterUpdate<S>
 {
@@ -55,7 +57,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 	// This is the length of the step f-norm of p
 	double stepLength;
 
-	PrintStream verbose=null;
+	@Nullable PrintStream verbose=null;
 
 	@Override
 	public void initialize( TrustRegionBase_F64<S,?> owner ,
@@ -110,7 +112,7 @@ public class TrustRegionUpdateCauchy_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setVerbose(PrintStream out, int level) {
+	public void setVerbose(@Nullable PrintStream out, int level) {
 		this.verbose = out;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,6 +24,7 @@ import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
 import org.ddogleg.clustering.kmeans.InitializePlusPlus;
 import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Factory for creating clustering algorithms.
@@ -64,7 +65,7 @@ public class FactoryClustering {
 	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
 	 * @return StandardKMeans_F64
 	 */
-	public static StandardKMeans_F64 kMeans_F64( KMeansInitializers initializer,
+	public static StandardKMeans_F64 kMeans_F64( @Nullable KMeansInitializers initializer,
 												 int maxIterations, int maxConverge , double convergeTol) {
 		InitializeKMeans_F64 seed;
 

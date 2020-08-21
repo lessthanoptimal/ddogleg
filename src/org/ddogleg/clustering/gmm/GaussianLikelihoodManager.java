@@ -78,6 +78,7 @@ public class GaussianLikelihoodManager {
 	/**
 	 * Likelihood for a specific Gaussian
 	 */
+	@SuppressWarnings("NullAway.Init")
 	public class Likelihood {
 
 		public GaussianGmm_F64 gaussian;

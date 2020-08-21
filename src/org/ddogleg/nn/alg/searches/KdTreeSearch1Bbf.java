@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.nn.alg.searches;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.KdTreeSearch1;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ import org.ddogleg.nn.alg.KdTreeSearch1;
 public class KdTreeSearch1Bbf<P> extends KdTreeSearchBestBinFirst<P> implements KdTreeSearch1<P> {
 
 	// the best node so far
-	private KdTree.Node bestNode;
+	private @Nullable KdTree.Node bestNode;
 
 	/**
 	 * Configures the search
@@ -53,7 +54,7 @@ public class KdTreeSearch1Bbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	}
 
 	@Override
-	public KdTree.Node findNeighbor(P target) {
+	public @Nullable KdTree.Node findNeighbor(P target) {
 
 		bestNode = null;
 

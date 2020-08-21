@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,8 +21,8 @@ package org.ddogleg.optimization.quasinewton;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.CoupledDerivative;
 import org.ejml.UtilEjml;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 
 /**
@@ -50,6 +50,7 @@ import java.io.PrintStream;
  * 
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class LineSearchFletcher86 implements LineSearch {
 
 	// step tolerance change
@@ -100,7 +101,7 @@ public class LineSearchFletcher86 implements LineSearch {
 	// if true the estimated parameters have been updated
 	boolean updated;
 
-	PrintStream verbose;
+	@Nullable PrintStream verbose;
 	boolean converged;
 	
 	/**

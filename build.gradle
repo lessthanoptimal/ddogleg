@@ -71,6 +71,8 @@ dependencies {
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
 
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+
     testCompile project.sourceSets.benchmark.output
 
     benchmarkCompile project.sourceSets.main.output
@@ -92,13 +94,16 @@ dependencies {
     annotationProcessor "com.uber.nullaway:nullaway:0.8.0"
     testAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
     benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
+
+    // @Getter @Setter
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
     if( name.startsWith("compileTest") )
         return
-    if( path.contains("experimental") )
+    if( path.contains("compileBenchmark") )
         return
     if( path.contains("example") )
         return
@@ -116,7 +121,7 @@ tasks.withType(JavaCompile).configureEach {
     options.errorprone {
         check("NullAway", CheckSeverity.ERROR)
         option("NullAway:TreatGeneratedAsUnannotated", true)
-        option("NullAway:AnnotatedPackages", "org.ejml")
+        option("NullAway:AnnotatedPackages", "org.ddogleg")
     }
 }
 

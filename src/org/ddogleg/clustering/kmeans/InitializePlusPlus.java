@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,6 +38,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class InitializePlusPlus implements InitializeKMeans_F64{
 
 	Random rand;

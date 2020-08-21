@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.nn.alg.searches;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.KdTreeSearch1;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Standard algorithm for searching a {@link KdTree} for the nearest-neighbor of a search.  This is the algorithm
@@ -31,6 +32,7 @@ import org.ddogleg.nn.alg.KdTreeSearch1;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 
 	// the targeted tree
@@ -45,7 +47,7 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 	private double bestDistanceSq;
 
 	// the node which has been found to be the closest so far
-	private KdTree.Node closest;
+	private @Nullable KdTree.Node closest;
 
 	KdTreeDistance<P> distance;
 
@@ -75,7 +77,7 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 	 * @return Closest node or null if none is within the minimum distance.
 	 */
 	@Override
-	public KdTree.Node findNeighbor(P target) {
+	public @Nullable KdTree.Node findNeighbor(P target) {
 		if( tree.root == null )
 			return null;
 
@@ -101,7 +103,7 @@ public class KdTreeSearch1Standard<P> implements KdTreeSearch1<P> {
 	/**
 	 * Recursive step for finding the closest point
 	 */
-	private void stepClosest(KdTree.Node node) {
+	private void stepClosest(@Nullable KdTree.Node node) {
 
 		if( node == null )
 			return;

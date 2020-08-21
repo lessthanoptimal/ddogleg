@@ -50,6 +50,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	// how many points are drawn to generate the model
 	protected int sampleSize;
@@ -331,6 +332,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 	/**
 	 * Describes a model and RANSAC fit parameters for specific type of object.
 	 */
+	@SuppressWarnings("NullAway.Init")
 	public static class ObjectType<Model,Point>
 	{
 		/** how close a point needs to be considered part of the model */

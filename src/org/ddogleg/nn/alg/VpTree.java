@@ -23,6 +23,7 @@ import org.ddogleg.nn.NnData;
 import org.ddogleg.struct.FastArray;
 import org.ddogleg.struct.FastQueue;
 import org.ddogleg.struct.GrowQueue_I32;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.PriorityQueue;
@@ -50,11 +51,12 @@ import java.util.Random;
  *
  * @author Karel Petránek
  */
+@SuppressWarnings("NullAway.Init")
 public class VpTree implements NearestNeighbor<double[]> {
 	GrowQueue_I32 indexes;
 	private double[][] items;
-	private Node root;
-	private Random random;
+	private @Nullable Node root;
+	private final Random random;
 
 	/**
 	 * Constructor
@@ -86,7 +88,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 	 * @param upper end of range (exclusive)
 	 * @return root of the tree or null if lower == upper
 	 */
-	private Node buildFromPoints(int lower, int upper) {
+	private @Nullable Node buildFromPoints(int lower, int upper) {
 		if (upper == lower) {
 			return null;
 		}
@@ -177,7 +179,6 @@ public class VpTree implements NearestNeighbor<double[]> {
 		list.data[a] = list.data[b];
 		list.data[b] = tmp;
 	}
-
 
 	@Override
 	public Search<double[]> createSearch() {
@@ -319,15 +320,14 @@ public class VpTree implements NearestNeighbor<double[]> {
 		}
 	}
 
-
 	/**
 	 * Separates the points to "closer than the threshold" (left) and "farther than the threshold" (right).
 	 */
 	private static class Node {
 		int index;
 		double threshold;
-		Node left;
-		Node right;
+		@Nullable Node left;
+		@Nullable Node right;
 	}
 
 	/**

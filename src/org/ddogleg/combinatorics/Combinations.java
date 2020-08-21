@@ -83,16 +83,13 @@ public class Combinations< T >
 		init( a , bucketSize );
 	}
 
-	public Combinations(){
-	}
-
 	/**
 	 * Initialize with a new list and bucket size
 	 *
 	 * @param list List which is to be symbols
 	 * @param bucketSize Size of the bucket
 	 */
-	public void init( List<T> list , int bucketSize ) {
+	public final void init( List<T> list , int bucketSize ) {
 		if( list.size() < bucketSize ) {
 			throw new RuntimeException("There needs to be more than or equal to elements in the 'list' that there are in the bucket");
 		}

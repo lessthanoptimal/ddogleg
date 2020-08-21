@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,6 +25,7 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.SpecializedOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 
@@ -45,10 +46,10 @@ import java.io.PrintStream;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 		implements TrustRegionBase_F64.ParameterUpdate<S> {
 	// TODO consider more accurate intersection method in paper
-
 
 	// the trust region instance which is using the update function
 	protected TrustRegionBase_F64<S,?> owner;
@@ -79,7 +80,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 	// This is the length of the step f-norm of p
 	double stepLength;
 
-	PrintStream verbose = null;
+	@Nullable PrintStream verbose = null;
 
 	@Override
 	public void initialize( TrustRegionBase_F64<S,?> owner , int numberOfParameters , double minimumFunctionValue) {
@@ -172,7 +173,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setVerbose(PrintStream verbose, int level ) {
+	public void setVerbose(@Nullable PrintStream verbose, int level ) {
 		this.verbose = verbose;
 	}
 

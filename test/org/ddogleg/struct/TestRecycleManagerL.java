@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -40,10 +40,8 @@ public class TestRecycleManagerL {
 		assertEquals(3, manager.getUnused().size());
 		assertEquals(0, manager.getUsed().size());
 
-
 		assertTrue(first != third);
 		assertTrue(first != second);
-
 
 		assertTrue(third == manager.requestInstance()); // just needs to be an element previously returned, really
 		assertEquals(2, manager.getUnused().size());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,6 +29,7 @@ import java.io.Serializable;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class GaussianGmm_F64 implements Serializable {
 	// These specify the parameters of the Gaussian in the mixture
 	public DMatrixRMaj mean;

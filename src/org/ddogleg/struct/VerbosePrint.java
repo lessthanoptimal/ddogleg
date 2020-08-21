@@ -18,7 +18,8 @@
 
 package org.ddogleg.struct;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.PrintStream;
 import java.util.Set;
 

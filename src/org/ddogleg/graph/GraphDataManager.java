@@ -30,14 +30,14 @@ import java.util.List;
 public class GraphDataManager<N,E>
 {
    // edges which are being actively used
-   protected List<Edge<N,E>> usedEdges = new ArrayList<>();
+   protected final List<Edge<N,E>> usedEdges = new ArrayList<>();
    // edge data which is not being used
-   protected ArrayDeque<Edge<N,E>> unusedEdges = new ArrayDeque<>();
+   protected final ArrayDeque<Edge<N,E>> unusedEdges = new ArrayDeque<>();
 
    // nodes which are being actively used
-   protected List<Node<N,E>> usedNodes = new ArrayList<>();
+   protected final List<Node<N,E>> usedNodes = new ArrayList<>();
    // node data which is not being used
-   protected ArrayDeque<Node<N,E>> unusedNodes = new ArrayDeque<>();
+   protected final ArrayDeque<Node<N,E>> unusedNodes = new ArrayDeque<>();
 
    /**
     * Takes all the used nodes and makes them unused.

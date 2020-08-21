@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.struct.GrowQueue_I32;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class KdTreeConstructor<P> {
 	 *
 	 * @return The node associated with this region
 	 */
-	protected KdTree.Node computeBranch(List<P> points, GrowQueue_I32 indexes)
+	protected KdTree.Node computeBranch(List<P> points, @Nullable GrowQueue_I32 indexes)
 	{
 		// declare storage for the split data
 		List<P> left = new ArrayList<>(points.size()/2);
@@ -132,7 +133,7 @@ public class KdTreeConstructor<P> {
 	/**
 	 * Creates a child by checking to see if it is a leaf or branch.
 	 */
-	protected KdTree.Node computeChild(List<P> points , GrowQueue_I32 indexes )
+	protected @Nullable KdTree.Node computeChild(List<P> points , @Nullable GrowQueue_I32 indexes )
 	{
 		if( points.size() == 0 )
 			return null;
@@ -146,7 +147,7 @@ public class KdTreeConstructor<P> {
 	/**
 	 * Convenient function for creating a leaf node
 	 */
-	private KdTree.Node createLeaf(List<P> points , GrowQueue_I32 indexes ) {
+	private KdTree.Node createLeaf(List<P> points , @Nullable GrowQueue_I32 indexes ) {
 		int index = indexes == null ? -1 : indexes.get(0);
 		return memory.requestNode(points.get(0),index);
 	}

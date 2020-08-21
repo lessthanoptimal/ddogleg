@@ -308,8 +308,8 @@ public class TestDogLinkedList {
 	public void addAll_List() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
-		List<Integer> list0 = new ArrayList<Integer>();
-		List<Integer> list1 = new ArrayList<Integer>();
+		List<Integer> list0 = new ArrayList<>();
+		List<Integer> list1 = new ArrayList<>();
 
 
 		alg.addAll(list0);
@@ -390,22 +390,20 @@ public class TestDogLinkedList {
 	 * Performs checks on the lists preconditions
 	 */
 	protected void checkList( DogLinkedList<Integer> queue ) {
-		DogLinkedList.Element<Integer> e = queue.first;
-		while( e != null ) {
+		for( var e : queue.available ) {
 			assertNull(e.previous);
 			assertNull(e.next);
 			assertNull(e.object);
-			e = e.next;
 		}
 
 		if( queue.size == 0 ) {
 			assertNull(queue.first);
 			assertNull(queue.last);
 		} else {
-			List<DogLinkedList.Element<Integer>> forwards = new ArrayList<DogLinkedList.Element<Integer>>();
-			List<DogLinkedList.Element<Integer>> backwards = new ArrayList<DogLinkedList.Element<Integer>>();
+			List<DogLinkedList.Element<Integer>> forwards = new ArrayList<>();
+			List<DogLinkedList.Element<Integer>> backwards = new ArrayList<>();
 
-			e = queue.first;
+			DogLinkedList.Element<Integer> e = queue.first;
 			while( e != null ) {
 				forwards.add(e);
 				e = e.next;

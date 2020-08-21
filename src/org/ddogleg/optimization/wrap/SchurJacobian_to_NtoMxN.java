@@ -31,6 +31,7 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class SchurJacobian_to_NtoMxN<T extends DMatrix> implements FunctionNtoMxN<T> {
 
 	SchurJacobian<T> function;

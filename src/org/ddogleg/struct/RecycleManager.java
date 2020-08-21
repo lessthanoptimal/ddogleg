@@ -34,15 +34,13 @@ public class RecycleManager<T> {
 		this.targetClass = targetClass;
 	}
 
-	protected RecycleManager() {}
-
 	/**
 	 * Either returns a recycled instance or a new one.
 	 */
 	public T requestInstance() {
 		T a;
 		if( unused.size() > 0 ) {
-			a = unused.pop();
+			a = unused.removeLast();
 		} else {
 			a = createInstance();
 		}

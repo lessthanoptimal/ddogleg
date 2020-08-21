@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 		extends TrustRegionBase_F64<S,HessianSchurComplement<S>>
 		implements UnconstrainedLeastSquaresSchur<S>

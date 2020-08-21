@@ -31,6 +31,7 @@ import java.util.Iterator;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class FitByMedianStatistics<Model, Point> implements StatisticalFit<Model, Point> {
 
 	private DistanceFromModel<Model, Point> modelError;

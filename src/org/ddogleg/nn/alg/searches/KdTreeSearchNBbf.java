@@ -31,6 +31,7 @@ import org.ddogleg.struct.FastQueue;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements KdTreeSearchN<P> {
 
 
@@ -45,8 +46,7 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Used to limit CPU time.
 	 */
-	public KdTreeSearchNBbf(KdTreeDistance<P> distance,
-							int maxNodesSearched) {
+	public KdTreeSearchNBbf(KdTreeDistance<P> distance, int maxNodesSearched) {
 		super(distance,maxNodesSearched);
 	}
 

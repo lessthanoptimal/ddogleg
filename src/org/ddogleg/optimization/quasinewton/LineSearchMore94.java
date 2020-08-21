@@ -21,8 +21,8 @@ package org.ddogleg.optimization.quasinewton;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.functions.CoupledDerivative;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 
 /**
@@ -57,6 +57,7 @@ import java.io.PrintStream;
  * </p>
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class LineSearchMore94 implements LineSearch {
 
 	// Various magic numbers.  See [1]
@@ -102,7 +103,7 @@ public class LineSearchMore94 implements LineSearch {
 	private double stpmin,stpmax;
 
 	// Verbose output if not null
-	private PrintStream verbose;
+	private @Nullable PrintStream verbose;
 
 	// Indicates if this iit is the first iteration and indicates if what values need to be computed at stp
 	private boolean firstIteration;

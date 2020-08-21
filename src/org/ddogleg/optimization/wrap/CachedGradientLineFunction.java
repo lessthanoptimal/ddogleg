@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,6 +29,7 @@ import org.ddogleg.optimization.functions.GradientLineFunction;
  * 
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class CachedGradientLineFunction implements GradientLineFunction {
 
 	// number of parameters

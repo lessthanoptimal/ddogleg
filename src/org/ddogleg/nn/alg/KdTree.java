@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,8 @@
  */
 
 package org.ddogleg.nn.alg;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
@@ -38,7 +40,7 @@ public class KdTree {
 	// Number of elements/dimension in each point
 	public int N;
 	// tree data structure
-	public Node root;
+	public @Nullable Node root;
 
 	/**
 	 * Specifies the type of points it can process.
@@ -49,16 +51,16 @@ public class KdTree {
 		this.N = N;
 	}
 
-	public KdTree() {
-	}
+	public KdTree() {}
 
 	/**
 	 * Data type for each node in the binary tree.  A branch will have two non-null left and right children
 	 * and the value for split will be {@code >= 0}.  If any of those conditions are not meet then it is a leaf.
 	 */
+	@SuppressWarnings("NullAway.Init")
 	public static class Node {
-
-		/** The node's point.  For branches this is used to split the data. NOTE: This is a reference to the
+		/**
+		 * The node's point.  For branches this is used to split the data. NOTE: This is a reference to the
 		 * original input data.
 		 **/
 		public Object point;
@@ -67,9 +69,9 @@ public class KdTree {
 		/** axis used to split the data. -1 for leafs */
 		public int split = -1;
 		/** Branch &le; point[split] */
-		public Node left;
+		public @Nullable Node left;
 		/** Branch &ge; point[split] */
-		public Node right;
+		public @Nullable Node right;
 
 		public Node( double[] point , int index ) {
 			this.point = point;
@@ -81,8 +83,7 @@ public class KdTree {
 			this.index = -1;
 		}
 
-		public Node() {
-		}
+		public Node() {}
 
 		public <T>T getPoint() {
 			return (T)point;

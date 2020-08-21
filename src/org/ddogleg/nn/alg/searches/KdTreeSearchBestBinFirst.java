@@ -47,6 +47,7 @@ import java.util.PriorityQueue;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class KdTreeSearchBestBinFirst<P> {
 
 	// the maximum number of nodes it will search
@@ -59,16 +60,16 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 	private double maxDistance = Double.MAX_VALUE;
 
 	// List of graph nodes that still need to be explored
-	private PriorityQueue<Helper> queue = new PriorityQueue<Helper>();
+	private final PriorityQueue<Helper> queue = new PriorityQueue<>();
 
 	// Forest of trees to search
-	private KdTree trees[];
+	private KdTree[] trees;
 
 	// distance of the best node squared
 	protected double bestDistanceSq;
 
 	// used for recycling data structures
-	private List<Helper> unused = new ArrayList<Helper>();
+	private final List<Helper> unused = new ArrayList<>();
 
 	// number of nodes which have been searched
 	protected int numNodesSearched = 0;
@@ -94,7 +95,7 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 		this.N = tree.N;
 	}
 
-	public void setTrees(KdTree[]trees ) {
+	public void setTrees(KdTree[] trees ) {
 		if( this.trees == null || this.trees.length != trees.length ) {
 			this.trees = trees.clone();
 		} else {

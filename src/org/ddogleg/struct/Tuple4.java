@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,18 +18,22 @@
 
 package org.ddogleg.struct;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Simple data structure for passing a quad of data.
  *
  * @author Peter Abeles
  */
 public class Tuple4<A,B,C,D> {
-	public A d0;
-	public B d1;
-	public C d2;
-	public D d3;
+	public @Nullable @Getter @Setter A d0;
+	public @Nullable @Getter @Setter B d1;
+	public @Nullable @Getter @Setter C d2;
+	public @Nullable @Getter @Setter D d3;
 
-	public Tuple4(A d0, B d1, C d2, D d3) {
+	public Tuple4(@Nullable A d0, @Nullable B d1, @Nullable C d2, @Nullable D d3) {
 		this.d0 = d0;
 		this.d1 = d1;
 		this.d2 = d2;
@@ -37,38 +41,6 @@ public class Tuple4<A,B,C,D> {
 	}
 
 	public Tuple4() {
-	}
-
-	public A getD0() {
-		return d0;
-	}
-
-	public void setD0(A d0) {
-		this.d0 = d0;
-	}
-
-	public B getD1() {
-		return d1;
-	}
-
-	public void setD1(B d1) {
-		this.d1 = d1;
-	}
-
-	public void setD2(C d2) {
-		this.d2 = d2;
-	}
-
-	public C getD2() {
-		return d2;
-	}
-
-	public D getD3() {
-		return d3;
-	}
-
-	public void setD3(D d3) {
-		this.d3 = d3;
 	}
 }
 

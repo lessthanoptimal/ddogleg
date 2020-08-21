@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,6 +25,7 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.optimization.quasinewton.LineSearchMore94;
 import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 
@@ -77,7 +78,7 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	}
 
 	@Override
-	public void setVerbose(PrintStream verbose, int level) {
+	public void setVerbose(@Nullable PrintStream verbose, int level) {
 		alg.setVerbose(verbose,level);
 	}
 

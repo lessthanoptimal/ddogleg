@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,6 +33,7 @@ import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class HessianSchurComplement_DSCC
 	extends HessianSchurComplement_Base<DMatrixSparseCSC>
 {

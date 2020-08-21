@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,9 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.sorting.QuickSelect;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -41,13 +43,8 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 	int actualConsiderSplit;
 
 	// stores the original indexes of the 'numConsider' largest elements
-	int indexes[];
+	@Nullable int[] indexes;
 
-	/**
-	 *
-	 * @param rand
-	 * @param numConsiderSplit
-	 */
 	public AxisSplitRuleRandomK(Random rand, int numConsiderSplit) {
 		this.rand = rand;
 		this.numConsiderSplit = numConsiderSplit;
@@ -62,6 +59,7 @@ public class AxisSplitRuleRandomK implements AxisSplitRule {
 
 	@Override
 	public int select(double[] variance) {
+		Objects.requireNonNull(indexes,"Call setDimensions()");
 
 		// invert so that the largest variances will be at the bottom
 		for( int i = 0; i < N; i++ )

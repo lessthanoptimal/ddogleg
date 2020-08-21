@@ -41,6 +41,7 @@ import java.util.List;
 // TODO Unconstrained covariance
 // TODO just diagonal covariance
 	// TODO added shared and tied covariance?
+@SuppressWarnings("NullAway.Init")
 public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>  {
 
 	 // Used to select initial parameters
@@ -50,9 +51,10 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	FastQueue<GaussianGmm_F64> mixture;
 
 	// info for each points
-	FastQueue<PointInfo> info = new FastQueue<>(PointInfo::new);
+	@SuppressWarnings("NullAway")
+	FastQueue<PointInfo> info = new FastQueue<>(PointInfo::new,p->p.point=null);
 
-	// Maximum number of iterations\
+	// Maximum number of iterations
 	int maxIterations;
 
 	// If the fractional change in score is less or equal to this value then it has converged.
@@ -63,7 +65,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	GaussianLikelihoodManager likelihoodManager;
 
 	// internal work space for computing the difference between the mean and point
-	double dx[] = new double[1];
+	double[] dx = new double[1];
 
 	// compute chi-square error
 	double errorChiSquare;
@@ -133,11 +135,6 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 			// update the Gaussian distributions
 			maximization();
 			likelihoodManager.precomputeAll();
-		}
-
-		// clean up
-		for (int i = 0; i < info.size; i++) {
-			info.data[i].point = null; // de-reference so the memory could be freed
 		}
 		info.reset();
 	}

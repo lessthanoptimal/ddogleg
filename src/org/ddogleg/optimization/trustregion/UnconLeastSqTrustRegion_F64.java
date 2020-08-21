@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,6 +34,7 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		extends TrustRegionBase_F64<S,HessianLeastSquares<S>>
 		implements UnconstrainedLeastSquares<S>

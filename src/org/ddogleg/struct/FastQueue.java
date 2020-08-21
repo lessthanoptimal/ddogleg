@@ -18,7 +18,8 @@
 
 package org.ddogleg.struct;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","NullAway.Init"})
 public class FastQueue<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;

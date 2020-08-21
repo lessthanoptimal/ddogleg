@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,6 +23,7 @@ package org.ddogleg.nn;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class NnData<P> {
 	// tuple data
 	public P point;

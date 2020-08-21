@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,8 @@
  */
 
 package org.ddogleg.nn.alg;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for searching a single tree for the nearest-neighbor
@@ -46,7 +48,7 @@ public interface KdTreeSearch1<P> {
 	 * @param target Point whose nearest neighbor is being searched for
 	 * @return The closest point or null if there is none.
 	 */
-	KdTree.Node findNeighbor(P target);
+	@Nullable KdTree.Node findNeighbor(P target);
 
 	/**
 	 * Returns the distance of the closest node.

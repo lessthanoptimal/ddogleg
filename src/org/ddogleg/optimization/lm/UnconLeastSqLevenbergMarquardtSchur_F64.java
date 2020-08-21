@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 		extends LevenbergMarquardt_F64<S,HessianSchurComplement<S>>
 		implements UnconstrainedLeastSquaresSchur<S>

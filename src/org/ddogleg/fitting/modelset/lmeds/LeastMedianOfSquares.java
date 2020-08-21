@@ -41,6 +41,7 @@ import java.util.Random;
  */
 // TODO Better algorithm for selecting the inlier set.
 // Maybe revert this back to the way it was before and just have it be a separate alg entirely.
+@SuppressWarnings("NullAway.Init")
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, Point> {
 	// random number generator for selecting points
 	private Random rand;

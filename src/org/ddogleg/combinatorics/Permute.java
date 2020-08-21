@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -64,8 +64,8 @@ import java.util.List;
 public class Permute< T >
 {
 	protected List<T> list;
-	private int indexes[];
-	private int counters[];
+	private int[] indexes;
+	private int[] counters;
 
 	private int total;
 	private int permutation;
@@ -75,9 +75,6 @@ public class Permute< T >
 	 */
 	public Permute(List<T> list) {
 		init( list );
-	}
-
-	public Permute() {
 	}
 
 	/**

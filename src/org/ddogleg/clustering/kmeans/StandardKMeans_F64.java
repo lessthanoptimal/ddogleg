@@ -54,6 +54,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 
 	// number of elements in each point
@@ -76,12 +77,12 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	FastQueue<double[]> clusters;
 
 	// labels for all the points
-	GrowQueue_I32 labels = new GrowQueue_I32();
+	final GrowQueue_I32 labels = new GrowQueue_I32();
 
 	// work space for computing the new cluster centers.  The sum for points in a cluster is computed on the fly
 	// instead of labeling each point and computing it later.  Should save memory and maybe slightly faster.
 	FastQueue<double[]> workClusters;
-	GrowQueue_I32 memberCount = new GrowQueue_I32();
+	final GrowQueue_I32 memberCount = new GrowQueue_I32();
 
 	// distance of the best match to the point
 	double bestDistance;

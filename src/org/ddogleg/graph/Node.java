@@ -19,12 +19,13 @@
 package org.ddogleg.graph;
 
 import org.ddogleg.struct.FastQueue;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Peter Abeles
  */
 public class Node<N,E>
 {
-   N data;
-   FastQueue<Edge<N,E>> edges = new FastQueue<>(Edge<N,E>::new);
+   @Nullable N data;
+   final FastQueue<Edge<N,E>> edges = new FastQueue<>(Edge::new);
 }

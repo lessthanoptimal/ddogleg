@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,8 +20,10 @@ package org.ddogleg.nn.alg;
 
 import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.GrowQueue_I32;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Splits the points in K-D Tree node by selecting the axis with the largest variance.  The point with the median
@@ -30,18 +32,19 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 
 	// Number of elements/axes in each data point
-	private int N;
+	private final int N;
 
 	// storage for variance calculation
-	private double mean[];
-	private double var[];
+	private final double[] mean;
+	private final double[] var;
 
 	// storage for median calculation
-	private double tmp[] = new double[1];
-	private int indexes[] = new int[1];
+	private double[] tmp = new double[1];
+	private int[] indexes = new int[1];
 
 	// using each axis's variance, selects which axis to split along
 	// This abstraction was done so that random trees could use the same code
@@ -74,9 +77,9 @@ public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 	}
 
 	@Override
-	public void splitData(List<P> points, GrowQueue_I32 indexes,
-						  List<P> left, GrowQueue_I32 leftIndexes,
-						  List<P> right, GrowQueue_I32 rightIndexes) {
+	public void splitData(List<P> points, @Nullable GrowQueue_I32 indexes,
+						  List<P> left, @Nullable GrowQueue_I32 leftIndexes,
+						  List<P> right, @Nullable GrowQueue_I32 rightIndexes) {
 		computeAxisVariance(points);
 		for (int i = 0; i < N; i++) {
 			if( Double.isNaN(var[i])) {
@@ -102,6 +105,8 @@ public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 				right.add(points.get(this.indexes[i]));
 			}
 		} else {
+			Objects.requireNonNull(leftIndexes);
+			Objects.requireNonNull(rightIndexes);
 			leftIndexes.reset();
 			rightIndexes.reset();
 

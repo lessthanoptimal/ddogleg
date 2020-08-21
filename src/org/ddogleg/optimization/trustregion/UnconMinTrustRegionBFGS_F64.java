@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,16 +34,17 @@ import org.ejml.dense.row.CommonOps_DDRM;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway.Init")
 public class UnconMinTrustRegionBFGS_F64
 		extends TrustRegionBase_F64<DMatrixRMaj,HessianBFGS>
 		implements UnconstrainedMinimization
 {
 	// temp variable of length N
-	private DMatrixRMaj y = new DMatrixRMaj(1,1);
+	private final DMatrixRMaj y = new DMatrixRMaj(1,1);
 
-	private DMatrixRMaj gradientPrevious = new DMatrixRMaj(1,1);
-	private DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
-	private DMatrixRMaj s = new DMatrixRMaj(1,1);
+	private final DMatrixRMaj gradientPrevious = new DMatrixRMaj(1,1);
+	private final DMatrixRMaj xPrevious = new DMatrixRMaj(1,1);
+	private final DMatrixRMaj s = new DMatrixRMaj(1,1);
 
 	protected double f_prev;
 
@@ -57,7 +58,7 @@ public class UnconMinTrustRegionBFGS_F64
 
 	double c1=1e-4,c2=0.9;
 
-	public UnconMinTrustRegionBFGS_F64(ParameterUpdate parameterUpdate, HessianBFGS hessian ) {
+	public UnconMinTrustRegionBFGS_F64(ParameterUpdate<DMatrixRMaj> parameterUpdate, HessianBFGS hessian ) {
 		super(parameterUpdate, hessian);
 	}
 
