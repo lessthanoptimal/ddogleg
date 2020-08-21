@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -54,8 +54,6 @@ public class NumericalDerivativeFB implements FunctionStoS
 	public double process(double x) {
 
 		double temp;
-
-		double valueOrig = function.process(x);
 		double h = x != 0 ? differenceScale*Math.abs(x) : differenceScale;
 
 		// backwards

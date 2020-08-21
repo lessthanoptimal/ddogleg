@@ -209,6 +209,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		data[index] = value;
 	}
 
+	@Override
 	public void setTo( GrowQueue_F32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -80,7 +80,7 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 	 *
 	 * @param maxNodesSearched Maximum number of nodes it will search.  Used to limit CPU time.
 	 */
-	public KdTreeSearchBestBinFirst(KdTreeDistance<P> distance, int maxNodesSearched) {
+	protected KdTreeSearchBestBinFirst(KdTreeDistance<P> distance, int maxNodesSearched) {
 		this.distance = distance;
 		this.maxNodesSearched = maxNodesSearched;
 	}

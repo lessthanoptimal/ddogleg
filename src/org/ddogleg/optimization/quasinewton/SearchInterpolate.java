@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -78,9 +78,9 @@ public class SearchInterpolate {
 	 * needs to be computed.  Care has been taken reduce overflow/underflow by normalizing.
 	 * </p>
 	 *
-	 * {@code
+	 * <p>
 	 * &phi;(&alpha;) =  a*&alpha;<sup>3</sup>  + b*&alpha;<sup>2</sup> + &alpha;<sup>3</sup>  + &alpha;*&phi;'(0) + &phi;(0)
-	 * }
+	 * </p>
 	 *
 	 * @param f0 Function value at f(0)
 	 * @param g0 Derivative value at g(0)

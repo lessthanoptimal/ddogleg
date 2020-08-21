@@ -95,7 +95,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected double nu;
 	private final static double NU_INITIAL = 2;
 
-	public LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian )
+	protected LevenbergMarquardt_F64(MatrixMath<S> math , HM hessian )
 	{
 		super(hessian);
 		configure(new ConfigLevenbergMarquardt());
@@ -136,6 +136,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * Computes derived
 	 * @return true if it has converged or false if it has not
 	 */
+	@Override
 	protected boolean updateDerivates() {
 		functionGradientHessian(x,true, gradient, hessian);
 

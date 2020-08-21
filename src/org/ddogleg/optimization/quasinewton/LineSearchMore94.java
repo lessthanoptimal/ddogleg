@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,8 +35,8 @@ import java.io.PrintStream;
  *
  * <p>
  * Wolfe condition<br>
- * {@code &phi;(&alpha;) &le; &phi;(0) + ftol*&alpha;&phi;'(0)}<br>
- * {@code |&phi;'(&alpha;)| &le; gtol*|&phi;'(0)|}<br>
+ * &phi;(&alpha;) &le; &phi;(0) + ftol*&alpha;&phi;'(0)<br>
+ * |&phi;'(&alpha;)| &le; gtol*|&phi;'(0)|<br>
  * where ftol and gtol determine the precision needed to terminate the search..
  * </p>
  *
@@ -238,7 +238,7 @@ public class LineSearchMore94 implements LineSearch {
 		}
 
 		// Check for convergence using the Wolfe conditions
-		if( fp <= ftest && Math.abs(gp) <= gtol*(-ginit)) {
+		if( fp <= ftest && Math.abs(gp) <= -gtol*ginit) {
 			converged = true;
 			return true;
 		}
@@ -298,7 +298,7 @@ public class LineSearchMore94 implements LineSearch {
 
 		// see if further progress can be made. If not set stp to be equal to
 		// the best point obtained so far
-		if( bracket && (stp <= stmin || stp >= stmax ) || (bracket && stmax-stmin <= xtol*stmax))
+		if( (bracket && (stp <= stmin || stp >= stmax )) || (bracket && stmax-stmin <= xtol*stmax))
 			stp=stx;
 
 		updated = true;

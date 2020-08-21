@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.struct;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 /**
  * Simple class which helps minimize declaring new objects by helping you recycle them.
@@ -28,7 +28,7 @@ import java.util.Stack;
 public class RecycleManager<T> {
 
 	protected Class<T> targetClass;
-	protected Stack<T> unused = new Stack<T>();
+	protected ArrayDeque<T> unused = new ArrayDeque<>();
 
 	public RecycleManager(Class<T> targetClass) {
 		this.targetClass = targetClass;
@@ -73,7 +73,7 @@ public class RecycleManager<T> {
 	/**
 	 * Returns the stack containing all the unused instances.
 	 */
-	public Stack<T> getUnused() {
+	public ArrayDeque<T> getUnused() {
 		return unused;
 	}
 }

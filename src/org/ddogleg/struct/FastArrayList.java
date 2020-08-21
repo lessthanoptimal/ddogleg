@@ -66,7 +66,7 @@ public class FastArrayList<T> implements List<T> , Serializable {
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <A> A[] toArray(A[] a) {
 		System.arraycopy(queue.data,0,a,0,queue.size);
 		return a;
 	}

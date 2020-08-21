@@ -32,7 +32,7 @@ public abstract class FastAccess<T> implements Serializable {
 	public int size;
 	public final Class<T> type;
 
-	public FastAccess(Class<T> type ) {
+	protected FastAccess(Class<T> type ) {
 		this.type = type;
 	}
 

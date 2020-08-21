@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,15 +18,15 @@
 
 package org.ddogleg.struct;
 
+import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * A double linked list.  Internal data structures are recycled to minimize creation of new memory.
  *
  * @author Peter Abeles
  */
-public class LinkedList<T> {
+public class DogLinkedList<T> {
 
 	// first element in the list
 	Element<T> first;
@@ -36,15 +36,15 @@ public class LinkedList<T> {
 	int size;
 
 	// recycled elements.  It is assumed that all elements inside of here have all parameters set to null already
-	Stack<Element<T>> available = new Stack<>();
+	ArrayDeque<Element<T>> available = new ArrayDeque<>();
 
 	/**
 	 * Puts the linked list back into its initial state.  Elements are saved for later use.
 	 */
 	public void reset() {
-		Element e = first;
+		Element<T> e = first;
 		while( e != null ) {
-			Element n = e.next;
+			Element<T> n = e.next;
 			e.clear();
 			available.add( e );
 			e = n;
@@ -443,7 +443,7 @@ public class LinkedList<T> {
 			object = null;
 		}
 
-		public Element getNext() {
+		public Element<T> getNext() {
 			return next;
 		}
 
@@ -451,7 +451,7 @@ public class LinkedList<T> {
 			this.next = next;
 		}
 
-		public Element getPrevious() {
+		public Element<T> getPrevious() {
 			return previous;
 		}
 

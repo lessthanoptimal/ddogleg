@@ -249,6 +249,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		bestFitParam = param;
 	}
 
+	@Override
 	public List<Point> getMatchSet() {
 		return bestFitPoints;
 	}

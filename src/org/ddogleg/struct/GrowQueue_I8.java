@@ -144,6 +144,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		data[index] = (byte)value;
 	}
 
+	@Override
 	public void setTo( GrowQueue_I8 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
@@ -247,6 +248,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		this.size = size;
 	}
 
+	@Override
 	public void setMaxSize( int size ) {
 		if( data.length < size ) {
 			data = new byte[size];

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,8 +21,8 @@ package org.ddogleg.fitting.modelset.distance;
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 import org.ddogleg.sorting.QuickSort_F64;
 
+import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 
 /**
@@ -35,7 +35,7 @@ public class FitByMedianStatistics<Model, Point> implements StatisticalFit<Model
 
 	private DistanceFromModel<Model, Point> modelError;
 	// set of points which contains all the inliers
-	private LinkedList<PointIndex<Point>> allPoints;
+	private ArrayDeque<PointIndex<Point>> allPoints;
 
 	// The fraction of samples that are not pruned
 	private double pruneThreshold;
@@ -64,7 +64,7 @@ public class FitByMedianStatistics<Model, Point> implements StatisticalFit<Model
 	}
 
 	@Override
-	public void init(DistanceFromModel<Model, Point> modelError, LinkedList<PointIndex<Point>> allPoints ) {
+	public void init(DistanceFromModel<Model, Point> modelError, ArrayDeque<PointIndex<Point>> allPoints ) {
 		this.modelError = modelError;
 		this.allPoints = allPoints;
 	}

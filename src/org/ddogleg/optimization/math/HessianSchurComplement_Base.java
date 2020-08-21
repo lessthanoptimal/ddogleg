@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -60,8 +60,8 @@ public abstract class HessianSchurComplement_Base<S extends DMatrix>
 	// Two solvers are created so that the structure can be saved and not recomputed each iteration
 	protected LinearSolverSparse<S,DMatrixRMaj> solverA, solverD;
 
-	public HessianSchurComplement_Base(LinearSolverSparse<S, DMatrixRMaj> solverA,
-									   LinearSolverSparse<S, DMatrixRMaj> solverD) {
+	protected HessianSchurComplement_Base(LinearSolverSparse<S, DMatrixRMaj> solverA,
+										  LinearSolverSparse<S, DMatrixRMaj> solverD) {
 		this.solverA = solverA;
 		this.solverD = solverD;
 

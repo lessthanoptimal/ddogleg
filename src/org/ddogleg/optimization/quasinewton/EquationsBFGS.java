@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -143,17 +143,12 @@ public class EquationsBFGS {
 	 * [1] D. Byatt and I. D. Coope and C. J. Price, "Effect of limited precision on the BFGS quasi-Newton algorithm"
 	 * Proc. of 11th Computational Techniques and Applications Conference CTAC-2003
 	 * </p>
-	 *
-	 * @param C
-	 * @param d
-	 * @param y
-	 * @param tempV0
 	 */
 	public static void conjugateUpdateC( DMatrixRMaj C , DMatrixRMaj d , DMatrixRMaj y ,
 										 double step, DMatrixRMaj tempV0 , DMatrixRMaj tempV1)
 	{
 		DMatrixRMaj z = tempV0;
-		DMatrixRMaj d_bar = tempV1;
+//		DMatrixRMaj d_bar = tempV1;
 
 		CommonOps_DDRM.multTransA(C,y,z);
 

@@ -20,8 +20,8 @@ package org.ddogleg.fitting.modelset.distance;
 
 import org.ddogleg.fitting.modelset.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -42,40 +42,40 @@ import java.util.List;
 public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatcher<Model,Point> {
 
 	// maximum number of times it will perform the pruning process
-	private int maxIterations;
+	private final int maxIterations;
 	// if the error changes by less than this amount it stops iterating
-	private double minChange;
+	private final double minChange;
 
 	// current best fit parameters
 	protected Model param;
 	protected Model currParam;
 
 	// what computes the error metrics
-	private StatisticalFit<Model,Point> errorAlg;
+	private final StatisticalFit<Model,Point> errorAlg;
 
 	// error in previous iteration
 	protected double oldCenter;
 	// the error for the current fit parameters
 	protected double centerError;
 	// if the center error is less than this value it stops iterating immediately
-	private double exitCenterError;
+	private final double exitCenterError;
 	// if the error is more than this amount it failed
-	private double failError;
+	private final double failError;
 	// the minimum number of points that can be left over before it is considered a failure
-	private int minFitPoints;
+	private final int minFitPoints;
 
 	// computes a set of model parameters from a list of points
-	private ModelFitter<Model,Point> modelFitter;
+	private final ModelFitter<Model,Point> modelFitter;
 	// computes the difference between the model and a point
-	private DistanceFromModel<Model,Point> modelError;
+	private final DistanceFromModel<Model,Point> modelError;
 
 	// converts the model into an array parameter format
-	private ModelCodec<Model> codec;
+	private final ModelCodec<Model> codec;
 
 	// list containing points that are to be pruned
-	LinkedList<PointIndex<Point>> pruneList = new LinkedList<PointIndex<Point>>();
+	ArrayDeque<PointIndex<Point>> pruneList = new ArrayDeque<>();
 	// set of points which fit the model
-	private List<Point> inliers = new ArrayList<Point>();
+	private final List<Point> inliers = new ArrayList<>();
 	// list of indexes converting it from match set to input list
 	private int []matchToInput = new int[1];
 

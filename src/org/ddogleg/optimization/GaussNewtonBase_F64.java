@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -76,7 +76,7 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends
 	// value of convergence tests after the last test
 	public double ftest_val,gtest_val;
 
-	public GaussNewtonBase_F64(HM hessian) {
+	protected GaussNewtonBase_F64(HM hessian) {
 		this.hessian = hessian;
 	}
 

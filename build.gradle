@@ -1,6 +1,7 @@
 
 plugins {
-    id "com.peterabeles.gversion" version "1.7.0"
+    id "com.peterabeles.gversion" version "1.8.3"
+    id "net.ltgt.errorprone" version "1.2.1"
 }
 
 apply plugin: 'idea'
@@ -26,7 +27,7 @@ java {
 
 // Creates Java 8 byte code
 compileJava {
-    options.compilerArgs = [ "--release", "8"  ]
+    options.compilerArgs = [ "--release", "8" ]
 }
 
 repositories {
@@ -38,7 +39,6 @@ repositories {
 }
 
 sourceSets {
-
     benchmark {
         java { srcDir 'benchmark/src' }
         resources {  srcDir 'benchmark/resources' }
@@ -56,19 +56,16 @@ sourceSets {
             srcDir 'generate'
             srcDir 'benchmark/test'
         }
-        resources {
-            srcDir 'resources/test'
-        }
+        resources { srcDir 'resources/test' }
     }
-
 }
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
         compile group: 'org.ejml', name: a, version: '0.39'}
 
-    implementation 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable
-    implementation 'javax.annotation:jsr250-api:1.0'       // @Generated
+    compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
+    compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
 
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
@@ -86,13 +83,28 @@ dependencies {
     }
     annotationProcessor("net.bytebuddy:byte-buddy:1.10.10")
     annotationProcessor("net.bytebuddy:byte-buddy-agent:1.10.10")
+
+    errorprone "com.google.errorprone:error_prone_core:2.4.0"
+    errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone.disableWarningsInGeneratedCode = true
+    options.errorprone.disable("TypeParameterUnusedInFormals","StringSplitter","InconsistentCapitalization",
+            "HidingField", // this is sometimes done when the specific type is known by child. Clean up later.
+            "ClassNewInstance", // yes it's deprecated, but new version is more verbose with ignored errors
+            "FloatingPointLiteralPrecision", // too many false positives in test code
+            "MissingSummary","UnescapedEntity","EmptyBlockTag")
+    options.errorprone.error("MissingOverride","MissingCasesInEnumSwitch","BadInstanceof",
+            "PublicConstructorForAbstractClass","EmptyCatch","NarrowingCompoundAssignment","JdkObsolete")
 }
 
 javadoc {
     configure(options) {
-        links = [ 'http://docs.oracle.com/javase/8/docs/api/',
-                  'http://ejml.org/javadoc/']
+        links = ['http://docs.oracle.com/javase/8/docs/api/',
+                 'http://ejml.org/javadoc/']
         failOnError = false
+        enabled = false // disable to stop it from spamming stdout
     }
 }
 

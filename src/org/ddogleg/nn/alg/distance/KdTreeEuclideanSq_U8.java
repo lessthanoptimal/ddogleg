@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -39,7 +39,7 @@ public class KdTreeEuclideanSq_U8 implements KdTreeDistance<byte[]> {
 
 		final int N = a.length;
 		for (int i = 0; i < N; i++) {
-			double d = (a[i]&0xFF)-(b[i]&0xFF);
+			int d = (a[i]&0xFF)-(b[i]&0xFF);
 			sum += d*d;
 		}
 

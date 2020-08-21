@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -74,7 +74,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 */
 	public double gradientNorm;
 
-	public TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, HM hessian ) {
+	protected TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, HM hessian ) {
 		super(hessian);
 		configure(new ConfigTrustRegion());
 		this.parameterUpdate = parameterUpdate;
@@ -88,7 +88,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @param numberOfParameters Number many parameters are being optimized.
 	 * @param minimumFunctionValue The minimum possible value that the function can output
 	 */
-	public void initialize(double initial[] , int numberOfParameters , double minimumFunctionValue ) {
+	public void initialize(double[] initial, int numberOfParameters , double minimumFunctionValue ) {
 		super.initialize(initial,numberOfParameters);
 
 		tmp_p.reshape(numberOfParameters,1);

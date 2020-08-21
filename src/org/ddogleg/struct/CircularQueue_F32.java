@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,7 +25,7 @@ package org.ddogleg.struct;
  */
 public class CircularQueue_F32 {
 	//
-	public float data[];
+	public float[] data;
 
 	// index which is the start of the queue
 	public int start;
@@ -116,15 +116,6 @@ public class CircularQueue_F32 {
 			data[(start+size)%data.length] = value;
 			size++;
 		}
-	}
-
-	private int nextDataSize() {
-		if( data.length < 1000 )
-			return data.length*2;
-		else if( data.length < 10000 )
-			return data.length*3/2;
-		else
-			return data.length*6/5;
 	}
 
 	public void set( CircularQueue_F32 original ) {

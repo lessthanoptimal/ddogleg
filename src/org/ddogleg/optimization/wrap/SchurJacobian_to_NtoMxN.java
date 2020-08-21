@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,7 +37,7 @@ public abstract class SchurJacobian_to_NtoMxN<T extends DMatrix> implements Func
 
 	T left,right;
 
-	public SchurJacobian_to_NtoMxN(SchurJacobian<T> function) {
+	protected SchurJacobian_to_NtoMxN(SchurJacobian<T> function) {
 		this.function = function;
 	}
 

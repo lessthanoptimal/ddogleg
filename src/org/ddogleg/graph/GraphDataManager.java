@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,9 +18,9 @@
 
 package org.ddogleg.graph;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Handles creating and recycling data in a graph.
@@ -30,14 +30,14 @@ import java.util.Stack;
 public class GraphDataManager<N,E>
 {
    // edges which are being actively used
-   protected List<Edge<N,E>> usedEdges = new ArrayList<Edge<N,E>>();
+   protected List<Edge<N,E>> usedEdges = new ArrayList<>();
    // edge data which is not being used
-   protected Stack<Edge<N,E>> unusedEdges = new Stack<Edge<N,E>>();
+   protected ArrayDeque<Edge<N,E>> unusedEdges = new ArrayDeque<>();
 
    // nodes which are being actively used
-   protected List<Node<N,E>> usedNodes = new ArrayList<Node<N,E>>();
+   protected List<Node<N,E>> usedNodes = new ArrayList<>();
    // node data which is not being used
-   protected Stack<Node<N,E>> unusedNodes = new Stack<Node<N,E>>();
+   protected ArrayDeque<Node<N,E>> unusedNodes = new ArrayDeque<>();
 
    /**
     * Takes all the used nodes and makes them unused.
@@ -77,7 +77,7 @@ public class GraphDataManager<N,E>
    public Edge<N,E> createEdge() {
       Edge<N,E> e;
       if( unusedEdges.isEmpty() ) {
-         e = new Edge<N, E>();
+         e = new Edge<>();
       } else {
          e = unusedEdges.pop();
       }
@@ -95,7 +95,7 @@ public class GraphDataManager<N,E>
    public Node<N,E> createNode() {
       Node<N,E> n;
       if( unusedNodes.isEmpty() ) {
-         n = new Node<N, E>();
+         n = new Node<>();
       } else {
          n = unusedNodes.pop();
       }

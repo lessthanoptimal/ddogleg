@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.fitting.modelset.distance;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 
 /**
@@ -37,7 +37,7 @@ public interface StatisticalFit<Model, Point> {
 	 * @param modelDistance Computes the error between a point and the model
 	 * @param allPoints	   Contains all the points which are currently considered part of the model.
 	 */
-	void init(DistanceFromModel<Model,Point> modelDistance, LinkedList<PointIndex<Point>> allPoints );
+	void init(DistanceFromModel<Model,Point> modelDistance, ArrayDeque<PointIndex<Point>> allPoints );
 
 	/**
 	 * Returns the computed statistical error.

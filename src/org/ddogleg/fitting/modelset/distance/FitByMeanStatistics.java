@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,8 +20,8 @@ package org.ddogleg.fitting.modelset.distance;
 
 import org.ddogleg.fitting.modelset.DistanceFromModel;
 
+import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 
 /**
@@ -32,10 +32,10 @@ import java.util.LinkedList;
 public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,Point> {
 
 	protected DistanceFromModel<Model,Point> modelError;
-	protected LinkedList<PointIndex<Point>> allPoints = new LinkedList<PointIndex<Point>>();
+	protected ArrayDeque<PointIndex<Point>> allPoints = new ArrayDeque<PointIndex<Point>>();
 
 	// the number of standard deviations away that points are pruned
-	private double pruneThreshold;
+	private final double pruneThreshold;
 
 	// the mean error
 	private double meanError;
@@ -50,7 +50,7 @@ public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,P
 	}
 
 	@Override
-	public void init(DistanceFromModel<Model,Point> modelError, LinkedList<PointIndex<Point>> allPoints ) {
+	public void init(DistanceFromModel<Model,Point> modelError, ArrayDeque<PointIndex<Point>> allPoints ) {
 
 		this.modelError = modelError;
 		this.allPoints = allPoints;

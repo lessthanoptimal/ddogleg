@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -76,6 +76,7 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	/**
 	 * Checks to see if the current node's point is the closet point found so far
 	 */
+	@Override
 	protected void checkBestDistance(KdTree.Node node, P target) {
 
 		double distanceSq = distance.distance((P)node.point,target);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,9 +20,7 @@ package org.ddogleg.fitting.modelset.distance;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,16 +34,17 @@ public class TestFitByMeanStatistics {
 
 	@Test
 	public void metric_and_prune() {
-		LinkedList<PointIndex<Double>> inliers = new LinkedList<PointIndex<Double>>();
+		List<PointIndex<Double>> list = new ArrayList<>(200);
 
 		for (int i = 0; i < 200; i++) {
-			inliers.add(new PointIndex<Double>((double) i,i));
+			list.add(new PointIndex<>((double) i,i));
 		}
 
 		// randomize the inputs
-		Collections.shuffle(inliers,rand);
+		Collections.shuffle(list,rand);
+		ArrayDeque<PointIndex<Double>> inliers = new ArrayDeque<>(list);
 
-		FitByMeanStatistics<double[],Double> fit = new FitByMeanStatistics<double[],Double>(1);
+		FitByMeanStatistics<double[],Double> fit = new FitByMeanStatistics<>(1);
 
 		fit.init(new DistanceFromMeanModel(), inliers);
 

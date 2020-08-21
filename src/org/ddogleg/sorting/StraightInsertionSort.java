@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,10 +32,10 @@ public class StraightInsertionSort
 	/**
 	 * Sorts data into ascending order
 	 */
+	@SuppressWarnings("EmptyCatch")
 	public static void sort( double[] data )
 	{
 		int i=0,j;
-		final int n = data.length;
 		double a;
 
 		// by doing the ugly exception catching it was 13% faster
@@ -47,9 +47,9 @@ public class StraightInsertionSort
 					for( i=j; data[i-1] > a;i-- ) {
 						data[i]=data[i-1];
 					}
-				}catch( ArrayIndexOutOfBoundsException e ) {}
+				}catch( ArrayIndexOutOfBoundsException ignore ) {}
 				data[i]=a;
 			}
-		}catch( ArrayIndexOutOfBoundsException e ) {}
+		}catch( ArrayIndexOutOfBoundsException ignore ) {}
 	}
 }
