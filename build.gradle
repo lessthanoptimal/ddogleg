@@ -96,6 +96,14 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
+    if( name.startsWith("compileTest") )
+        return
+    if( path.contains("experimental") )
+        return
+    if( path.contains("example") )
+        return
+
+    options.errorprone.enabled = true
     options.errorprone.disableWarningsInGeneratedCode = true
     options.errorprone.disable("TypeParameterUnusedInFormals","StringSplitter","InconsistentCapitalization",
             "HidingField", // this is sometimes done when the specific type is known by child. Clean up later.
@@ -105,22 +113,9 @@ tasks.withType(JavaCompile).configureEach {
     options.errorprone.error("MissingOverride","MissingCasesInEnumSwitch","BadInstanceof",
             "PublicConstructorForAbstractClass","EmptyCatch","NarrowingCompoundAssignment","JdkObsolete")
 
-    // By default have all NullAway issues be fata errors but don't run this analysis on auto generated files
     options.errorprone {
         check("NullAway", CheckSeverity.ERROR)
-        // The line below effectively disables NullAway by default
-        option("NullAway:AnnotatedPackages", "RANDOM.PACKAGE.TO.DISABLE")
         option("NullAway:TreatGeneratedAsUnannotated", true)
-    }
-
-    if( name.startsWith("compileTest") )
-        return
-    if( name.startsWith("compileBenchmark") )
-        return
-    options.errorprone.enabled = true
-
-    // Enable NullAway
-    options.errorprone {
         option("NullAway:AnnotatedPackages", "org.ejml")
     }
 }
