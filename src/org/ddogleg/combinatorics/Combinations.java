@@ -62,6 +62,7 @@ import java.util.List;
  * 345
  * </pre>
  **/
+@SuppressWarnings({"NullAway.Init"})
 public class Combinations< T >
 {
 	protected List<T> a; // the original unmolested list
@@ -84,6 +85,8 @@ public class Combinations< T >
 	public Combinations(List<T> a, int bucketSize) {
 		init( a , bucketSize );
 	}
+
+	public Combinations(){}
 
 	/**
 	 * Initialize with a new list and bucket size
