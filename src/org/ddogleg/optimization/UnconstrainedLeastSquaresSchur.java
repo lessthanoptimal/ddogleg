@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,8 +23,6 @@ import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.data.DMatrix;
 
-import javax.annotation.Nonnull;
-
 /**
  * <p>
  *   A variant on {@link UnconstrainedLeastSquares} for solving large scale systems which can be simplified using the
@@ -42,7 +40,6 @@ import javax.annotation.Nonnull;
 public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 		extends IterativeOptimization
 {
-
 	/**
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
 	 * on output data format.
@@ -50,7 +47,7 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	 * @param function Computes the output of M functions f<sub>i</sub>(x) which take in N fit parameters as input.
 	 * @param jacobian Computes the Jacobian of the M functions and breaks it up into left and right components.
 	 */
-	void setFunction(FunctionNtoM function, @Nonnull SchurJacobian<S> jacobian);
+	void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian);
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after
@@ -61,7 +58,7 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
 	 *             Try 1e-12
 	 */
-	void initialize(double initial[], double ftol, double gtol);
+	void initialize(double[] initial, double ftol, double gtol);
 	// TODO consider adding scaling vector
 
 	/**

@@ -43,7 +43,7 @@ public class TestRansac extends GenericModelMatcherTests {
 															ModelFitter<double[],Double> fitter,
 															int minPoints,
 															double fitThreshold) {
-		Ransac<double[],Double> ret = new Ransac<double[],Double>(344, manager,generator, distance, 50, fitThreshold);
+		Ransac<double[],Double> ret = new Ransac<>(344, manager, generator, distance, 50, fitThreshold);
 		ret.setSampleSize(minPoints);
 
 		return ret;
@@ -61,13 +61,13 @@ public class TestRansac extends GenericModelMatcherTests {
 	}
 
 	private void randomDraw_sanity( int total , int numSample ) {
-		List<Integer> dataSet = new ArrayList<Integer>();
+		List<Integer> dataSet = new ArrayList<>();
 
 		for (int i = 0; i < total; i++) {
 			dataSet.add(i);
 		}
 
-		List<Integer> initSet = new ArrayList<Integer>();
+		List<Integer> initSet = new ArrayList<>();
 		Ransac.randomDraw(dataSet, numSample, initSet, rand);
 
 		assertEquals(numSample, initSet.size());
@@ -80,7 +80,7 @@ public class TestRansac extends GenericModelMatcherTests {
 			assertTrue(dataSet.contains(o));
 
 			// make sure the order has been changed
-			assertTrue(dataSet.get(i) != o);
+			assertNotSame(dataSet.get(i), o);
 
 			// make sure the order has been changed
 			if (o == i)
@@ -88,7 +88,7 @@ public class TestRansac extends GenericModelMatcherTests {
 
 			// make sure only one copy is in the init set
 			for (int j = i + 1; j < initSet.size(); j++) {
-				if (o == initSet.get(j)) {
+				if (o.equals(initSet.get(j))) {
 					fail("Multiple copies in initSet");
 				}
 			}
@@ -107,14 +107,14 @@ public class TestRansac extends GenericModelMatcherTests {
 	 */
 	@Test
 	public void randomDraw_Histogram() {
-		List<Integer> dataSet = new ArrayList<Integer>();
+		List<Integer> dataSet = new ArrayList<>();
 
 		for (int i = 0; i < 30; i++) {
 			dataSet.add(i);
 		}
-		int histogram[] = new int[ dataSet.size() ];
+		int[] histogram = new int[ dataSet.size() ];
 
-		List<Integer> selected = new ArrayList<Integer>();
+		List<Integer> selected = new ArrayList<>();
 
 		int numTrials = 10000;
 		for (int i = 0; i < numTrials; i++) {
@@ -130,7 +130,6 @@ public class TestRansac extends GenericModelMatcherTests {
 		for (int i = 0; i < histogram.length; i++) {
 			assertTrue( Math.abs(histogram[i]-expected)/expected < 0.1 );
 		}
-
 	}
 
 	/**
@@ -140,31 +139,30 @@ public class TestRansac extends GenericModelMatcherTests {
 	public void selectMatchSet() {
 		double modelVal = 50;
 
-		List<Integer> dataSet = new ArrayList<Integer>();
+		List<Integer> dataSet = new ArrayList<>();
 
 		for (int i = 0; i < 200; i++) {
 			dataSet.add(i);
 		}
 
 		DebugModelStuff stuff = new DebugModelStuff((int) modelVal);
-		Ransac<double[],Integer> ransac = new Ransac<double[],Integer>(234,stuff,stuff,stuff,20,1);
+		Ransac<double[],Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
 		ransac.setSampleSize(5);
 		// declare the array so it doesn't blow up when accessed
 		ransac.matchToInput = new int[ dataSet.size()];
-		double param[] = new double[]{modelVal};
+		double[] param = new double[]{modelVal};
 
 		ransac.selectMatchSet(dataSet, 4, param);
 
-		assertTrue(ransac.candidatePoints.size() == 7);
+		assertEquals(ransac.candidatePoints.size(), 7);
 	}
 
+	@SuppressWarnings({"NullAway"})
 	public static class DebugModelStuff implements
 			ModelManager<double[]>,DistanceFromModel<double[],Integer>, ModelGenerator<double[],Integer> {
 
 		int threshold;
-
 		double error;
-
 		double[] param;
 
 		public DebugModelStuff(int threshold) {

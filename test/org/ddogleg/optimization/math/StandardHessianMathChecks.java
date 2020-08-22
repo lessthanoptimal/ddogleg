@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -39,7 +39,7 @@ public abstract class StandardHessianMathChecks {
 	Random rand = new Random(234);
 	HessianMath alg;
 
-	public StandardHessianMathChecks(HessianMath alg ) {
+	protected StandardHessianMathChecks(HessianMath alg ) {
 		this.alg = alg;
 	}
 

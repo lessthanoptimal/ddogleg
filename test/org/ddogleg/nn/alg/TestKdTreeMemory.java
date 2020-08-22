@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestKdTreeMemory {
 
 	@Test
-	public void requestNode() {
+	void requestNode() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		// Empty unused list
@@ -46,7 +46,7 @@ public class TestKdTreeMemory {
 	}
 
 	@Test
-	public void requestNode_leaf() {
+	void requestNode_leaf() {
 		// create a node with values that need to be changed
 		KdTree.Node n = new KdTree.Node();
 		n.point = new double[2];
@@ -65,7 +65,7 @@ public class TestKdTreeMemory {
 	}
 
 	@Test
-	public void requestTree() {
+	void requestTree() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		// Empty unused list
@@ -80,7 +80,7 @@ public class TestKdTreeMemory {
 	}
 
 	@Test
-	public void recycle() {
+	void recycle() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		KdTree.Node n = new KdTree.Node();
@@ -93,8 +93,10 @@ public class TestKdTreeMemory {
 		assertTrue(n.right == null);
 		assertEquals(1,alg.unusedNodes.size());
 	}
+
 	@Test
-	public void recycleGraph() {
+	@SuppressWarnings("NullAway")
+	void recycleGraph() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		KdTree tree = new KdTree();
@@ -113,7 +115,7 @@ public class TestKdTreeMemory {
 	}
 
 	@Test
-	public void recycleGraph_nullRoot() {
+	void recycleGraph_nullRoot() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		KdTree tree = new KdTree();

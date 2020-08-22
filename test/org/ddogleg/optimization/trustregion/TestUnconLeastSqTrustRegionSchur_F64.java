@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -144,7 +144,6 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 
 	@Nested
 	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
-
 		LeastSquaresDDRM() {
 			// we can do fast convergence check here because dense supports robust solvers like SVD and it
 			// won't get stuck

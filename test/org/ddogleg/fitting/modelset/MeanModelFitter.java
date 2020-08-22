@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,8 @@
 
 package org.ddogleg.fitting.modelset;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 
@@ -35,7 +37,7 @@ public class MeanModelFitter implements ModelFitter<double[],Double> ,
 	}
 
 	@Override
-	public boolean fitModel(List<Double> dataSet, double[] initParam, double[] foundParam) {
+	public boolean fitModel(List<Double> dataSet, @Nullable double[] initParam, double[] foundParam) {
 		double mean = 0;
 
 		for (double d : dataSet) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
 	@Test
 	public void computeGradientHessian() {
@@ -148,20 +149,9 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			output.reshape(2,3);
 		}
 
-		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return null;
-		}
-
-		@Override
-		public int getNumOfInputsN() {
-			return 0;
-		}
-
-		@Override
-		public int getNumOfOutputsM() {
-			return 0;
-		}
+		@Override public DMatrixRMaj declareMatrixMxN() {return null;}
+		@Override public int getNumOfInputsN() {return 0;}
+		@Override public int getNumOfOutputsM() {return 0;}
 	}
 
 	private class MockHessian extends HessianLeastSquares_DDRM {

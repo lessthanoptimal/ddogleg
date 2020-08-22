@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,11 +22,13 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class TestKdTreeSearchBestBinFirst {
 
 	/**
@@ -43,7 +45,7 @@ public class TestKdTreeSearchBestBinFirst {
 		KdTree.Node found = alg.findClosest(new double[]{12,2});
 
 		// The first search from the root node is not counted.  In that search it will traverse down to a leaf
-		assertTrue(found==tree.root.left.right);
+		assertSame(found, tree.root.left.right);
 	}
 
 	/**
@@ -64,7 +66,7 @@ public class TestKdTreeSearchBestBinFirst {
 		// make sure it searched some nodes besides the root ones
 		assertTrue(alg.numNodesSearched>0);
 		// the best node should be the root node in the second forest
-		assertTrue(found==forest[1].root);
+		assertSame(found, forest[1].root);
 	}
 
 	private static class BBF extends KdTreeSearchBestBinFirst<double[]> {

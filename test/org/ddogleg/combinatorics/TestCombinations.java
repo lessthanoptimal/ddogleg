@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,10 +32,10 @@ public class TestCombinations {
 	
 	@Test
 	public void next_1_1() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		
-		Combinations<Integer> alg =new Combinations<Integer>(list,1);
+		Combinations<Integer> alg = new Combinations<>(list, 1);
 		
 		assertEquals(1, (int)alg.get(0));
 		assertFalse(alg.next());
@@ -43,11 +43,11 @@ public class TestCombinations {
 
 	@Test
 	public void next_1_2() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
 
-		Combinations<Integer> alg =new Combinations<Integer>(list,1);
+		Combinations<Integer> alg = new Combinations<>(list, 1);
 
 		assertEquals(1, (int)alg.get(0));
 
@@ -58,11 +58,11 @@ public class TestCombinations {
 
 	@Test
 	public void next_2_2() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
 
-		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+		Combinations<Integer> alg = new Combinations<>(list, 2);
 
 		assertEquals(1, (int)alg.get(0));
 		assertEquals(2, (int)alg.get(1));
@@ -72,12 +72,12 @@ public class TestCombinations {
 
 	@Test
 	public void next_2_3() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
 		list.add(3);
 
-		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+		Combinations<Integer> alg = new Combinations<>(list, 2);
 
 		assertEquals(1, (int)alg.get(0));
 		assertEquals(2, (int)alg.get(1));
@@ -93,12 +93,12 @@ public class TestCombinations {
 
 	@Test
 	public void previous() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
 		list.add(3);
 
-		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+		Combinations<Integer> alg = new Combinations<>(list, 2);
 
 		assertTrue(alg.next());
 		// sanity check
@@ -126,17 +126,17 @@ public class TestCombinations {
 
 	@Test
 	public void getList_getOutside() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
 		list.add(3);
 
-		Combinations<Integer> alg = new Combinations<Integer>(list,2);
+		Combinations<Integer> alg = new Combinations<>(list, 2);
 
 		assertTrue(alg.next());
 
 		// test getBucket() with and without storage
-		List<Integer> a = new ArrayList<Integer>();
+		List<Integer> a = new ArrayList<>();
 		alg.getBucket(a);
 		List<Integer> b = alg.getBucket(null);
 
@@ -148,7 +148,7 @@ public class TestCombinations {
 		assertEquals(3,(int)b.get(1));
 
 		// test getOutside() with and without storage
-		a = new ArrayList<Integer>();
+		a = new ArrayList<>();
 		alg.getOutside(a);
 		b = alg.getOutside(null);
 
@@ -168,11 +168,11 @@ public class TestCombinations {
 	}
 	
 	private long computeNumShuffles( int numBins , int numItems ) {
-		List<Number> l = new ArrayList<Number>();
+		List<Number> l = new ArrayList<>();
 		for( int i = 0; i < numItems; i++ ) {
 			l.add(i);
 		}
-		Combinations<Number> c = new Combinations<Number>(l,numBins);
+		Combinations<Number> c = new Combinations<>(l, numBins);
 		
 		return c.computeTotalCombinations();
 	}

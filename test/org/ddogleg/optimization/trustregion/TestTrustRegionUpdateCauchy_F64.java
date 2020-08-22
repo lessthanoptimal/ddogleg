@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,6 +26,7 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -132,10 +133,10 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		assertEquals(2, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
 	}
 
-
+	@SuppressWarnings({"NullAway"})
 	private static class MockOwner extends TrustRegionBase_F64<DMatrixRMaj,HessianMath> {
 
-		public MockOwner(ParameterUpdate<DMatrixRMaj> parameterUpdate) {
+		public MockOwner( @Nullable ParameterUpdate<DMatrixRMaj> parameterUpdate) {
 			super(parameterUpdate, new HessianMath_DDRM());
 		}
 

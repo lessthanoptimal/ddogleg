@@ -7,7 +7,7 @@ plugins {
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
@@ -45,14 +45,17 @@ sourceSets {
         resources {  srcDir 'benchmark/resources' }
     }
 
+    examples {
+        java { srcDir 'examples/src' }
+    }
+
     main {
-        java { srcDir 'src'  }
+        java { srcDir 'src' }
         resources { srcDir 'resources/src' }
     }
 
     test {
         java {
-            srcDir 'examples/src'
             srcDir 'test'
             srcDir 'generate'
             srcDir 'benchmark/test'
@@ -63,21 +66,22 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.39'}
+        compile group: 'org.ejml', name: a, version: '0.40-SNAPSHOT'}
 
-    implementation 'org.jetbrains:annotations:20.0.0' // @Nullable
-    implementation 'javax.annotation:jsr250-api:1.0'  // @Generated
+    compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
+    compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+    testCompile project.sourceSets.main.compileClasspath
 
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
-
-    compileOnly 'org.projectlombok:lombok:1.18.10'
 
     testCompile project.sourceSets.benchmark.output
 
     benchmarkCompile project.sourceSets.main.output
     benchmarkCompile project.sourceSets.main.runtimeClasspath
     benchmarkCompile project.sourceSets.main.compileClasspath
+    examplesCompile project.sourceSets.main.output
 
     // needed to use Java 11+ syntax with Java 1.8 byte code
     annotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.2.0'){
@@ -95,14 +99,11 @@ dependencies {
     testAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
     benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
 
-    // @Getter @Setter
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.10' // @Getter @Setter
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
-    if( name.startsWith("compileTest") )
-        return
     if( path.contains("compileBenchmark") )
         return
     if( path.contains("example") )
@@ -118,6 +119,10 @@ tasks.withType(JavaCompile).configureEach {
     options.errorprone.error("MissingOverride","MissingCasesInEnumSwitch","BadInstanceof",
             "PublicConstructorForAbstractClass","EmptyCatch","NarrowingCompoundAssignment","JdkObsolete")
 
+    if( name.startsWith("compileTest") ) {
+        options.errorprone.disable("ReferenceEquality","IntLongMath","ClassCanBeStatic")
+    }
+
     options.errorprone {
         check("NullAway", CheckSeverity.ERROR)
         option("NullAway:TreatGeneratedAsUnannotated", true)
@@ -130,7 +135,7 @@ javadoc {
         links = ['http://docs.oracle.com/javase/8/docs/api/',
                  'http://ejml.org/javadoc/']
         failOnError = false
-        enabled = false // disable to stop it from spamming stdout
+        enabled = !project.version.contains("SNAPSHOT") // disable to stop it from spamming stdout
     }
 }
 

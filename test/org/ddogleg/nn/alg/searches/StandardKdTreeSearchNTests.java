@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public abstract class StandardKdTreeSearchNTests {
 
 	public int N = 2;
@@ -67,22 +68,22 @@ public abstract class StandardKdTreeSearchNTests {
 		found.reset();
 		alg.findNeighbor(new double[]{11, 8}, 1, found);
 		assertEquals(1,found.size);
-		assertTrue(found.data[0].node == tree.root.right.right);
+		assertSame(found.data[0].node, tree.root.right.right);
 
 		// the root will be the best
 		found.reset();
 		alg.findNeighbor(new double[]{1.001, 1.99999}, 1, found);
-		assertTrue(found.data[0].node == tree.root);
+		assertSame(found.data[0].node, tree.root);
 
 		// a point on the left branch will be a perfect fit
 		found.reset();
 		alg.findNeighbor(new double[]{2, 0.8}, 1, found);
-		assertTrue(found.data[0].node == tree.root.left.right);
+		assertSame(found.data[0].node, tree.root.left.right);
 
 		// a point way outside the tree's bounds
 		found.reset();
 		alg.findNeighbor(new double[]{-10000, 0.5}, 1, found);
-		assertTrue(found.data[0].node == tree.root.left.left);
+		assertSame(found.data[0].node, tree.root.left.left);
 	}
 
 	/**
@@ -99,7 +100,7 @@ public abstract class StandardKdTreeSearchNTests {
 		// the first decision will be incorrect and it will need to back track
 		found.reset();
 		alg.findNeighbor(new double[]{2, 3}, 1, found);
-		assertTrue(found.get(0).node == tree.root);
+		assertSame(found.get(0).node, tree.root);
 
 	}
 
@@ -113,7 +114,7 @@ public abstract class StandardKdTreeSearchNTests {
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 		setTree(alg,tree);
 
-		List<double[]> data = new ArrayList<double[]>();
+		List<double[]> data = new ArrayList<>();
 		flattenTree(tree.root,data);
 
 		for( int i = 0; i < 100; i++ ) {
@@ -163,11 +164,11 @@ public abstract class StandardKdTreeSearchNTests {
 		found.reset();
 		alg.findNeighbor(new double[]{11, 8}, 2, found);
 		assertEquals(1,found.size);
-		assertTrue(found.data[0].node == tree.root);
+		assertSame(found.data[0].node, tree.root);
 		found.reset();
 		alg.findNeighbor(new double[]{2, 5}, 2, found);
 		assertEquals(1,found.size);
-		assertTrue(found.data[0].node == tree.root);
+		assertSame(found.data[0].node, tree.root);
 	}
 
 	/**
@@ -188,7 +189,7 @@ public abstract class StandardKdTreeSearchNTests {
 		found.reset();
 		alg.findNeighbor(new double[]{1, 1.5}, 1, found);
 		assertEquals(1, found.size);
-		assertTrue(found.data[0].node == tree.root);
+		assertSame(found.data[0].node, tree.root);
 	}
 
 	/**
@@ -233,18 +234,9 @@ public abstract class StandardKdTreeSearchNTests {
 		for( int i = 0; i < 3; i++ ) {
 			double[] a = (double[])found.get(i).node.point;
 			for( int j = i+1; j < 3; j++ ) {
-				assertTrue(found.get(j).node.point != a);
+				assertNotSame(found.get(j).node.point, a);
 			}
 		}
-	}
-
-	private void checkContains( KdTree.Node node ) {
-		for( int i = 0; i < found.size; i++ ) {
-			if( found.data[i].node == node )
-				return;
-		}
-
-		fail("can't find");
 	}
 
 	private void checkContains( double[] d ) {
@@ -273,9 +265,9 @@ public abstract class StandardKdTreeSearchNTests {
 	}
 
 	private static List<double[]> findNeighbors( List<double[]> data , double[]target , double maxDistance , int maxN ) {
-		List<double[]> ret = new ArrayList<double[]>();
+		List<double[]> ret = new ArrayList<>();
 
-		List<double[]> found = new ArrayList<double[]>();
+		List<double[]> found = new ArrayList<>();
 		GrowQueue_F64 distances = new GrowQueue_F64();
 		GrowQueue_I32 indexes = new GrowQueue_I32();
 

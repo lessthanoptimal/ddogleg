@@ -27,6 +27,7 @@ import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementation of {@link LevenbergMarquardt_F64} for {@link UnconstrainedLeastSquares}.
@@ -52,7 +53,7 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, FunctionNtoMxN<S> jacobian) {
+	public void setFunction(FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian) {
 		this.functionResiduals = function;
 		if( jacobian == null )
 			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function,(Class)this.jacobian.getClass());

@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings("NullAway")
 public class TestDogLinkedList {
 	@Test
 	public void reset() {
@@ -199,7 +200,7 @@ public class TestDogLinkedList {
 	public void remove() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
-		DogLinkedList.Element<Integer> e0,e1,e2;
+		DogLinkedList.Element<Integer> e0,e1;
 
 		e0 = alg.pushTail(1);
 		alg.remove(e0);
@@ -223,7 +224,7 @@ public class TestDogLinkedList {
 		checkList(alg);
 
 		e0 = alg.pushHead(1);
-		e2 = alg.pushTail(3);
+		alg.pushTail(3);
 		alg.remove(e1);
 		assertSame(e0, alg.first);
 		assertEquals(2,alg.size);
@@ -311,7 +312,6 @@ public class TestDogLinkedList {
 		List<Integer> list0 = new ArrayList<>();
 		List<Integer> list1 = new ArrayList<>();
 
-
 		alg.addAll(list0);
 		assertEquals(0,alg.size);
 		checkList(alg);
@@ -330,9 +330,8 @@ public class TestDogLinkedList {
 		alg.addAll(list1);
 		assertEquals(3,alg.size);
 		checkList(alg);
-		assertSame(Integer.valueOf(1), alg.getHead().object);
-		assertSame(Integer.valueOf(3), alg.getTail().object);
-
+		assertSame(1, alg.getHead().object);
+		assertSame(3, alg.getTail().object);
 	}
 
 	@Test
@@ -352,15 +351,15 @@ public class TestDogLinkedList {
 
 		alg.addAll(array0,1,1);
 		assertEquals(1,alg.size);
-		assertSame(Integer.valueOf(1), alg.getHead().object);
+		assertSame(1, alg.getHead().object);
 		checkList(alg);
 
 		alg.addAll(array0,0,3);
 		assertEquals(4,alg.size);
-		assertSame(Integer.valueOf(1), alg.getHead().object);
-		assertSame(Integer.valueOf(0), alg.getElement(1, true).object);
-		assertSame(Integer.valueOf(1), alg.getElement(2, true).object);
-		assertSame(Integer.valueOf(2), alg.getElement(3, true).object);
+		assertSame(1, alg.getHead().object);
+		assertSame(0, alg.getElement(1, true).object);
+		assertSame(1, alg.getElement(2, true).object);
+		assertSame(2, alg.getElement(3, true).object);
 		checkList(alg);
 	}
 

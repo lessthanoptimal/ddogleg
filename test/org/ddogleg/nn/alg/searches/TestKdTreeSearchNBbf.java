@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	@Override
 	public KdTreeSearchN<double[]> createAlg() {
@@ -55,7 +56,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 		KdTree.Node found = alg.findNeighbor(new double[]{12, 2});
 
 		// The first search from the root node is not counted.  In that search it will traverse down to a leaf
-		assertTrue(found==tree.root.left.right);
+		assertSame(found, tree.root.left.right);
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	 */
 	@Test
 	public void multiTreeSearch() {
-		KdTree forest[] = new KdTree[2];
+		KdTree[] forest = new KdTree[2];
 		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2});

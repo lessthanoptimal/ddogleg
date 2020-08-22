@@ -27,8 +27,6 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.SpecializedOps_DDRM;
 
-import javax.annotation.Nonnull;
-
 /**
  * Implementations of {@link UnconstrainedLeastSquaresSchur}. Uses {@link HessianSchurComplement_DSCC}
  * to compute the Schur complement and perform all math related to the Hessian. The Hessian
@@ -61,7 +59,7 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, @Nonnull SchurJacobian<S> jacobian) {
+	public void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian) {
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
 		residuals.reshape(jacobian.getNumOfOutputsM(),1);

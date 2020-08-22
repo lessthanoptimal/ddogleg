@@ -18,6 +18,8 @@
 
 package org.ddogleg.combinatorics;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +197,7 @@ public class Permute< T >
 	 * @param storage Optional storage.  If null a new list will be declared.
 	 * @return Current permutation
 	 */
-	public List<T> getPermutation(List<T> storage) {
+	public List<T> getPermutation( @Nullable List<T> storage) {
 		if( storage == null )
 			storage = new ArrayList<T>();
 		else

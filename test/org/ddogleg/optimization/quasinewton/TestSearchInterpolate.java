@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -49,7 +49,7 @@ public class TestSearchInterpolate {
 	public void quadratic2() {
 		double a = 2;
 		double b = -3;
-		double c = 1;
+//		double c = 1;
 
 		double alpha0 = 1;
 		double g0 = quadDeriv(a,b,alpha0);

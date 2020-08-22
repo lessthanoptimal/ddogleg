@@ -35,16 +35,16 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public abstract class StandardNearestNeighborTests {
-
-	private Random rand = new Random(234);
+	private final Random rand = new Random(234);
 
 	public int N = 2;
-	private KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);
+	private final KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);
 	private NearestNeighbor<double[]> alg;
 
-	private NnData<double[]> found = new NnData<>();
-	private FastQueue<NnData<double[]>> foundN = new FastQueue<>(NnData::new);
+	private final NnData<double[]> found = new NnData<>();
+	private final FastQueue<NnData<double[]>> foundN = new FastQueue<>(NnData::new);
 
 	public void setAlg(NearestNeighbor<double[]> alg) {
 		this.alg = alg;
@@ -404,15 +404,15 @@ public abstract class StandardNearestNeighborTests {
 				.parallel().forEach(i -> {
 					NearestNeighbor.Search<double[]> s = searches.get(i);
 					NnData<double[]> r = new NnData<>();
-					assertTrue(s.findNearest(targets.get(i),Double.MAX_VALUE,r));
+					assertTrue(s.findNearest(points.get(i),Double.MAX_VALUE,r));
 					results[i] = r.point;
 				});
 
 		// compare results to single thread version
 		NearestNeighbor.Search<double[]> search = searches.get(0);
 		NnData<double[]> r = new NnData<>();
-		for (int i = 0; i < searches.size(); i++) {
-			search.findNearest(targets.get(i),Double.MAX_VALUE,r);
+		for (int i = 0; i < points.size(); i++) {
+			search.findNearest(points.get(i),Double.MAX_VALUE,r);
 			assertSame(results[i], r.point);
 		}
 	}

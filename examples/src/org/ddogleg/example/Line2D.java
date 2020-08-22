@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -40,6 +40,7 @@ public class Line2D {
 	 */
 	double x,y;
 
+	@Override
 	public String toString() {
 		return "Line2D( x="+x+" y="+y+" )";
 	}

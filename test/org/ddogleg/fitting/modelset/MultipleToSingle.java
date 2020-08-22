@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway.Init"})
 public class MultipleToSingle implements ModelMatcher {
 
 	ModelMatcherMulti alg;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrix;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
@@ -61,7 +62,6 @@ import org.ejml.data.DMatrix;
 public interface UnconstrainedLeastSquares<S extends DMatrix>
 		extends IterativeOptimization
 {
-
 	/**
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
 	 * on output data format.
@@ -69,7 +69,7 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 * @param function Computes the output of M functions f<sub>i</sub>(x) which take in N fit parameters as input.
 	 * @param jacobian Computes the Jacobian of the M functions.  If null a numerical Jacobian will be used.
 	 */
-	void setFunction( FunctionNtoM function , FunctionNtoMxN<S> jacobian );
+	void setFunction( FunctionNtoM function , @Nullable FunctionNtoMxN<S> jacobian );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after
@@ -80,7 +80,7 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
 	 *             Try 1e-12
 	 */
-	void initialize( double initial[] , double ftol , double gtol );
+	void initialize(double[] initial, double ftol , double gtol );
 	// TODO consider adding scaling vector
 
 	/**

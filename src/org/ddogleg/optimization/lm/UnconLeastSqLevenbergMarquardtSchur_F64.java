@@ -26,8 +26,6 @@ import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 
-import javax.annotation.Nonnull;
-
 /**
  * Implementation of {@link LevenbergMarquardt_F64} for {@link UnconstrainedLeastSquaresSchur}.
  *
@@ -55,7 +53,7 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, @Nonnull SchurJacobian<S> jacobian) {
+	public void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian) {
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
 	}

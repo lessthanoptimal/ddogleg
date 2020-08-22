@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,7 +44,7 @@ public abstract class StandardMatrixMathChecks<T extends DMatrix> {
 	Random rand = new Random(234);
 	MatrixMath<T> alg;
 
-	public StandardMatrixMathChecks(MatrixMath<T> alg ) {
+	protected StandardMatrixMathChecks(MatrixMath<T> alg ) {
 		this.alg = alg;
 	}
 

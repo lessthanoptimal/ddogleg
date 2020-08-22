@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -91,7 +91,7 @@ public class TestLsToNonLinearDeriv {
 
 		@Override
 		public void process(double[] input, DMatrixRMaj output) {
-			double x1 = input[0];
+//			double x1 = input[0];
 			double x2 = input[1];
 
 			output.data[0] = 1;

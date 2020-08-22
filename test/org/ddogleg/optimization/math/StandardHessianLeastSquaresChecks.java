@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 public abstract class StandardHessianLeastSquaresChecks extends StandardHessianMathChecks {
-	public StandardHessianLeastSquaresChecks(HessianMath alg) {
+	protected StandardHessianLeastSquaresChecks(HessianMath alg) {
 		super(alg);
 	}
 

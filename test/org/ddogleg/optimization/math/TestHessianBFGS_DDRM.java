@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -58,6 +58,7 @@ public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
 	 * Not supported yet
 	 */
 	@Test
+	@Override
 	public void divideRowsCols() {
 		assertThrows(RuntimeException.class, super::divideRowsCols);
 	}

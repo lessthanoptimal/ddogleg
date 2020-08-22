@@ -18,6 +18,8 @@
 
 package org.ddogleg.combinatorics;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -233,7 +235,7 @@ public class Combinations< T >
 	 * @param storage Optional storage.  If null a list is created.  clear() is automatically called.
 	 * @return List containing the bucket
 	 */
-	public List<T> getBucket(List<T> storage) {
+	public List<T> getBucket( @Nullable List<T> storage) {
 		if( storage == null )
 			storage = new ArrayList<T>();
 		else
@@ -253,7 +255,7 @@ public class Combinations< T >
 	 * @param storage Optional storage.  If null a list is created.  clear() is automatically called.
 	 * @return List containing the bucket
 	 */
-	public List<T> getOutside( List<T> storage )
+	public List<T> getOutside( @Nullable List<T> storage )
 	{
 		if( storage == null ) {
 			storage = new ArrayList<T>();

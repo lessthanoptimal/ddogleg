@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.GrowQueue_I32;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class TestKdTreeConstructor {
 
 	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
@@ -136,8 +138,6 @@ public class TestKdTreeConstructor {
 		assertTrue(tree.root.right.isLeaf());
 	}
 
-
-
 	public static List<double[]> createPoints( int dimen , double ...v ) {
 
 		List<double[]> ret = new ArrayList<double[]>();
@@ -178,7 +178,6 @@ public class TestKdTreeConstructor {
 			}
 		}
 
-
 		return new DummySplitter(-2,null,1,left,leftData,right,rightData);
 	}
 
@@ -192,9 +191,10 @@ public class TestKdTreeConstructor {
 		List<double[]> right;
 		GrowQueue_I32 rightIndex;
 
-		public DummySplitter(int splitIndex, double[] splitPoint, int splitAxis,
-							 List<double[]> left, GrowQueue_I32 leftIndex,
-							 List<double[]> right, GrowQueue_I32 rightIndex)
+		public DummySplitter(int splitIndex, double[] splitPoint,
+							 int splitAxis, List<double[]> left,
+							 GrowQueue_I32 leftIndex, List<double[]> right,
+							 GrowQueue_I32 rightIndex)
 		{
 			this.splitIndex = splitIndex;
 			this.splitPoint = splitPoint;
@@ -206,9 +206,9 @@ public class TestKdTreeConstructor {
 		}
 
 		@Override
-		public void splitData(List<double[]> points, GrowQueue_I32 data,
-							  List<double[]> left, GrowQueue_I32 leftData,
-							  List<double[]> right, GrowQueue_I32 rightData)
+		public void splitData(List<double[]> points, @Nullable GrowQueue_I32 data,
+							  List<double[]> left, @Nullable GrowQueue_I32 leftData,
+							  List<double[]> right, @Nullable GrowQueue_I32 rightData)
 		{
 			left.addAll(this.left);
 			right.addAll(this.right);

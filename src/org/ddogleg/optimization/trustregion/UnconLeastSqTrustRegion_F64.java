@@ -28,6 +28,7 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.SpecializedOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementations of {@link TrustRegionBase_F64 Trust Region} for {@link UnconstrainedLeastSquares}.
@@ -58,7 +59,7 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, FunctionNtoMxN<S> jacobian) {
+	public void setFunction(FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian) {
 		this.functionResiduals = function;
 
 		if( jacobian == null )

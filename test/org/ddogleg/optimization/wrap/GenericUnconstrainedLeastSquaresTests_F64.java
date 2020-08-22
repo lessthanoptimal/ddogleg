@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,7 +57,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 		double[] prev = new double[]{1,0.5};
 		int i;
 		for( i = 0; i < 200 && !alg.iterate(); i++ ) {
-			double found[] = alg.getParameters();
+			double[] found = alg.getParameters();
 
 			// check updated flag
 			if( alg.isUpdated() ) {
@@ -69,7 +69,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 				assertTrue(changed);
 			} else {
 				for( int j = 0; j < found.length; j++ ) {
-					assertTrue(found[j]==prev[j]);
+					assertEquals(prev[j], found[j]);
 				}
 			}
 
@@ -80,7 +80,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 		assertTrue(i != 200);
 		assertTrue(alg.isConverged());
 
-		double found[] = alg.getParameters();
+		double[] found = alg.getParameters();
 
 		assertEquals(a, found[0], UtilEjml.TEST_F64_SQ);
 		assertEquals(b, found[1], UtilEjml.TEST_F64_SQ);
@@ -104,17 +104,17 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
-		double expected[] = alg.getParameters().clone();
+		double[] expected = alg.getParameters().clone();
 
 		alg.setFunction(residual,null);
 		alg.initialize(new double[]{1,0.5},1e-10,1e-10);
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
-		double found[] = alg.getParameters().clone();
+		double[] found = alg.getParameters().clone();
 
 		for( int i = 0; i < found.length; i++ ) {
-			assertTrue(found[i]==expected[i]);
+			assertEquals(expected[i], found[i]);
 		}
 	}
 
@@ -132,18 +132,18 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
 
 		for( int i = 0; i < 200 && !alg.iterate(); i++ ) {}
 
-		double found[] = alg.getParameters().clone();
-		double expected[] = new double[]{1,2,3};
+		double[] found = alg.getParameters().clone();
+		double[] expected = new double[]{1,2,3};
 
 		for( int i = 0; i < found.length; i++ ) {
-			assertTrue(found[i]==expected[i]);
+			assertEquals(expected[i], found[i]);
 		}
 
 		// This will modify it on the first process().  Should make test more robust by having it modify it
 		// later on too
 	}
 
-	private class ModifyInputFunctions implements FunctionNtoM {
+	private static class ModifyInputFunctions implements FunctionNtoM {
 
 		@Override
 		public int getNumOfInputsN() {

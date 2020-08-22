@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -117,9 +117,9 @@ public class ExampleClustering {
 	public static class Gui extends JPanel implements MouseListener {
 		AssignCluster<double[]> assignment;
 		List<double[]> points;
-		Color colors[];
+		Color[] colors;
 
-		public Gui( List<double[]> points) {
+		public Gui(List<double[]> points) {
 
 			this.points = points;
 

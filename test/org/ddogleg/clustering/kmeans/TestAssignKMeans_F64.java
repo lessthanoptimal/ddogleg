@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,20 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class TestAssignKMeans_F64 {
 
 	@Test
 	public void serialize() {
 
-		List<double[]> clusters = new ArrayList<double[]>();
+		List<double[]> clusters = new ArrayList<>();
 
 		clusters.add( new double[]{10,0,0});
 		clusters.add( new double[]{0,0,10});
 
 		AssignKMeans_F64 alg = new AssignKMeans_F64(clusters);
-
-		byte[] encoded = save(alg);
-
+		save(alg);
+//		byte[] encoded = save(alg);
 //		AssignKMeans_F64 found = load( encoded );
 	}
 

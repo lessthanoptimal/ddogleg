@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,6 +22,7 @@ import org.ddogleg.solver.impl.FindRealRootsSturm;
 import org.ddogleg.solver.impl.RootFinderCompanion;
 import org.ddogleg.solver.impl.SturmSequence;
 import org.ddogleg.solver.impl.WrapRealRootsSturm;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Peter Abeles
@@ -41,7 +42,7 @@ public class PolynomialOps {
 		return -b/(2.0*a);
 	}
 
-	public static Polynomial derivative( Polynomial poly , Polynomial deriv ) {
+	public static Polynomial derivative( Polynomial poly , @Nullable Polynomial deriv ) {
 		if( deriv == null ) {
 			deriv = new Polynomial(poly.size-1);
 		} else {
@@ -147,7 +148,7 @@ public class PolynomialOps {
 	 *               If null a new instance is declared.
 	 * @return Results of the multiplication
 	 */
-	public static Polynomial multiply( Polynomial a , Polynomial b , Polynomial result ) {
+	public static Polynomial multiply( Polynomial a , Polynomial b , @Nullable Polynomial result ) {
 
 		int N = Math.max(0,a.size() + b.size() - 1);
 
@@ -181,7 +182,7 @@ public class PolynomialOps {
 	 *               its length must be the same as the largest polynomial 'a' or 'b'.
 	 * @return Polynomial 'a' and 'b' added together.
 	 */
-	public static Polynomial add( Polynomial a , Polynomial b , Polynomial results ) {
+	public static Polynomial add( Polynomial a , Polynomial b , @Nullable Polynomial results ) {
 		int N = Math.max(a.size,b.size);
 
 		if( results == null ) {

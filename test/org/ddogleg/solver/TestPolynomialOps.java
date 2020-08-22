@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -99,8 +99,8 @@ public class TestPolynomialOps {
 		Polynomial f = PolynomialOps.multiply(Polynomial.wrap(2,3),Polynomial.wrap(4,8),null);
 
 		assertTrue(Polynomial.wrap(6).isIdentical(a, 1e-8));
-		assertTrue(b.size == 0);
-		assertTrue(c.size == 0);
+		assertEquals(b.size, 0);
+		assertEquals(c.size, 0);
 		assertTrue(Polynomial.wrap(8, 12).isIdentical(d, 1e-8));
 		assertTrue(Polynomial.wrap(8, 12).isIdentical(e, 1e-8));
 		assertTrue(Polynomial.wrap(8, 28, 24).isIdentical(f, 1e-8));

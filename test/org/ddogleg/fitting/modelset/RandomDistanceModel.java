@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,6 +27,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings({"NullAway"})
 public class RandomDistanceModel implements DistanceFromModel<double[],Double> {
 	Random rand = new Random(234);
 
