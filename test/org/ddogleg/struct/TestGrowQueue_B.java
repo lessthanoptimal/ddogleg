@@ -164,4 +164,10 @@ public class TestGrowQueue_B {
 			assertEquals((20-i-1)%2==0,alg.getTail(i));
 		}
 	}
+
+	@Test
+	void forIdx() {
+		GrowQueue_B alg = GrowQueue_B.array(true,false,true,false,true);
+		alg.forIdx((idx,value)-> assertEquals(idx%2==0,value));
+	}
 }

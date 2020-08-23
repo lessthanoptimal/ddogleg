@@ -327,4 +327,10 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 			assertEquals(20-i-1,alg.getTail(i));
 		}
 	}
+
+	@Test
+	void forIdx() {
+		GrowQueue_F64 alg = GrowQueue_F64.array(1,2,3,4,5);
+		alg.forIdx((idx,value)-> assertEquals(idx+1,value, 1e-8));
+	}
 }

@@ -10,6 +10,7 @@ Date:     2020
 - GrowQueue
   * Added resize( size , defaultValue )
   * Added count( value )
+  * Added forIdx( idx, value )
 - FastArray
   * added remove(object)
   * added forEach(lambda)

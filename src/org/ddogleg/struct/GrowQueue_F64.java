@@ -356,4 +356,14 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	public void sort() {
 		Arrays.sort(data,0,size);
 	}
+
+	public void forIdx(FunctionEachIdx func) {
+		for (int i = 0; i < size; i++) {
+			func.process(i,data[i]);
+		}
+	}
+
+	public interface FunctionEachIdx {
+		void process( int index, double value );
+	}
 }

@@ -314,4 +314,14 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	public void sort() {
 		Arrays.sort(data,0,size);
 	}
+
+	public void forIdx(FunctionEachIdx func) {
+		for (int i = 0; i < size; i++) {
+			func.process(i,data[i]);
+		}
+	}
+
+	public interface FunctionEachIdx {
+		void process( int index, long value );
+	}
 }

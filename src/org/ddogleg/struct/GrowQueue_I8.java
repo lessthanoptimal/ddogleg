@@ -334,4 +334,14 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		Arrays.sort(data,0,size);
 	}
 
+	public void forIdx(FunctionEachIdx func) {
+		for (int i = 0; i < size; i++) {
+			func.process(i,data[i]);
+		}
+	}
+
+	public interface FunctionEachIdx {
+		void process( int index, byte value );
+	}
+
 }
