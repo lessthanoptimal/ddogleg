@@ -183,6 +183,14 @@ public class TestGrowQueue_F64 extends ChecksGrowQueue<GrowQueue_F64> {
 	}
 
 	@Test
+	void remove_swap() {
+		var alg = GrowQueue_F64.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals(i!=1?0.0:1.0, v, UtilEjml.TEST_F64));
+	}
+
+	@Test
 	void remove() {
 
 		GrowQueue_F64 alg = new GrowQueue_F64(10);

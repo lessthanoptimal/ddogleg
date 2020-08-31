@@ -170,6 +170,22 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		}
 	}
 
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public byte removeSwap( int index ) {
+		if( index < 0 || index >= size )
+			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+		byte ret = data[index];
+		size -= 1;
+		data[index] = data[size];
+		return ret;
+	}
+
 	public byte removeTail() {
 		if( size > 0 ) {
 			size--;

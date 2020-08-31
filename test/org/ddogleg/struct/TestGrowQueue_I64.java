@@ -220,6 +220,14 @@ public class TestGrowQueue_I64 extends ChecksGrowQueue<GrowQueue_I64> {
 		assertEquals(6,alg.get(1));
 	}
 
+	@Test
+	void remove_swap() {
+		var alg = GrowQueue_I64.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals(i!=1?0:1, v));
+	}
+
 	@Override
 	public GrowQueue_I64 declare(int maxsize) {
 		return new GrowQueue_I64(maxsize);

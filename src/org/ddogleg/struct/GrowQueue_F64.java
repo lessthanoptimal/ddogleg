@@ -177,6 +177,22 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		}
 	}
 
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public double removeSwap( int index ) {
+		if( index < 0 || index >= size )
+			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+		double ret = data[index];
+		size -= 1;
+		data[index] = data[size];
+		return ret;
+	}
+
 	public double removeTail() {
 		if( size > 0 ) {
 			size--;

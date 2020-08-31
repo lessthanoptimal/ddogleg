@@ -140,6 +140,14 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
+	void remove_swap() {
+		GrowQueue_B alg = GrowQueue_B.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals((i == 1), v));
+	}
+
+	@Test
 	void indexOf() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 

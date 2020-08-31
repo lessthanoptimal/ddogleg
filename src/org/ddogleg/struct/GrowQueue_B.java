@@ -151,6 +151,22 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		}
 	}
 
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public boolean removeSwap( int index ) {
+		if( index < 0 || index >= size )
+			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+		boolean ret = data[index];
+		size -= 1;
+		data[index] = data[size];
+		return ret;
+	}
+
 	public boolean removeTail() {
 		if( size > 0 ) {
 			size--;
@@ -159,7 +175,6 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 			throw new RuntimeException("Size zero, no tail");
 		}
 	}
-
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'

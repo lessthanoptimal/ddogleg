@@ -229,6 +229,22 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		size -= total;
 	}
 
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public int removeSwap( int index ) {
+		if( index < 0 || index >= size )
+			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+		int ret = data[index];
+		size -= 1;
+		data[index] = data[size];
+		return ret;
+	}
+
 	public int removeTail() {
 		if( size > 0 ) {
 			size--;

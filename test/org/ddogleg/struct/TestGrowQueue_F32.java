@@ -206,6 +206,14 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 	}
 
 	@Test
+	void remove_swap() {
+		var alg = GrowQueue_F32.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals(i!=1?0.0f:1.0f, v, UtilEjml.TEST_F32));
+	}
+
+	@Test
 	void remove() {
 		GrowQueue_F32 alg = new GrowQueue_F32(10);
 
