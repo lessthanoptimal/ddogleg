@@ -337,7 +337,17 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		}
 	}
 
+	public void forEach(FunctionEach func) {
+		for (int i = 0; i < size; i++) {
+			func.process(data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, long value );
+	}
+
+	public interface FunctionEach {
+		void process( long value );
 	}
 }

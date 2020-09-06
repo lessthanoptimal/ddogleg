@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import org.ddogleg.sorting.QuickSort_F64;
+
 import java.util.Arrays;
 
 /**
@@ -373,13 +375,30 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		Arrays.sort(data,0,size);
 	}
 
+	/**
+	 * Sort but with a re-usable sorter to avoid declaring new memory
+	 */
+	public void sort(QuickSort_F64 sorter) {
+		sorter.sort(data,size);
+	}
+
 	public void forIdx(FunctionEachIdx func) {
 		for (int i = 0; i < size; i++) {
 			func.process(i,data[i]);
 		}
 	}
 
+	public void forEach(FunctionEach func) {
+		for (int i = 0; i < size; i++) {
+			func.process(data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, double value );
+	}
+
+	public interface FunctionEach {
+		void process( double value );
 	}
 }

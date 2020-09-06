@@ -287,7 +287,17 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		}
 	}
 
+	public void forEach(FunctionEach func) {
+		for (int i = 0; i < size; i++) {
+			func.process(data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, boolean value );
+	}
+
+	public interface FunctionEach {
+		void process( boolean value );
 	}
 }

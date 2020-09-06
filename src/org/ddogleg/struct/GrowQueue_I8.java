@@ -355,9 +355,18 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 			func.process(i,data[i]);
 		}
 	}
+	
+	public void forEach(FunctionEach func) {
+		for (int i = 0; i < size; i++) {
+			func.process(data[i]);
+		}
+	}
 
 	public interface FunctionEachIdx {
 		void process( int index, byte value );
 	}
 
+	public interface FunctionEach {
+		void process( byte value );
+	}
 }
