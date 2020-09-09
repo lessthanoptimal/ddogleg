@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -49,7 +49,7 @@ public interface DistanceFromModel<Model, Point> {
 	 * @param pt Point being evaluated. Not modified.
 	 * @return Distance the point is from the model.
 	 */
-	double computeDistance(Point pt);
+	double distance(Point pt);
 
 	/**
 	 * Computes the distance a set of points is from the model and saves the results
@@ -58,7 +58,7 @@ public interface DistanceFromModel<Model, Point> {
 	 * @param points   Set of points which are to be evaluated.
 	 * @param distance Where model distance is stored.
 	 */
-	void computeDistance(List<Point> points, double distance[]);
+	void distances(List<Point> points, double[] distance);
 
 	/**
 	 * Returns a class for the input point object

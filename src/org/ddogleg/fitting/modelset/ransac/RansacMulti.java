@@ -227,7 +227,7 @@ public class RansacMulti<Point> implements ModelMatcherMulti<Point> {
 		for (int i = 0; i < dataSet.size(); i++) {
 			Point point = dataSet.get(i);
 
-			double distance = modelDistance.computeDistance(point);
+			double distance = modelDistance.distance(point);
 			if (distance < threshold) {
 				matchToInput[candidatePoints.size()] = i;
 				candidatePoints.add(point);

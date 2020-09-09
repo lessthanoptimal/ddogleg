@@ -83,7 +83,7 @@ public class FitByMedianStatistics<Model, Point> implements StatisticalFit<Model
 		int index = 0;
 		while( iter.hasNext() ) {
 			Point pt = iter.next().data;
-			errors[index++] = modelError.computeDistance(pt);
+			errors[index++] = modelError.distance(pt);
 		}
 
 		System.arraycopy(errors, 0, origErrors, 0, size);

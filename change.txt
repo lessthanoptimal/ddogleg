@@ -32,6 +32,8 @@ Date:     2020/May/15
   * added removeSwap()
 - ModelMatcher
   * Added reset() function to return it into its initial state
+- DistanceFromModel
+  * computeDistance() to distance() and distances() to make less verbose
 - GrowQueue
   * Added getTail()
 

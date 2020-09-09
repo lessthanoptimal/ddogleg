@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,7 +44,7 @@ public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
 	}
 
 	@Override
-	public double computeDistance(Point2D p) {
+	public double distance(Point2D p) {
 
 		// find the closest point on the line to the point
 		double t = slopeX * ( p.x - x0) + slopeY * ( p.y - y0);
@@ -65,9 +65,9 @@ public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
 	 * This is not one of them.
 	 */
 	@Override
-	public void computeDistance(List<Point2D> obs, double[] distance) {
+	public void distances(List<Point2D> obs, double[] distance) {
 		for( int i = 0; i < obs.size(); i++ ) {
-			distance[i] = computeDistance(obs.get(i));
+			distance[i] = distance(obs.get(i));
 		}
 	}
 

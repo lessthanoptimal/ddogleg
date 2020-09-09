@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class TestFastAccess {
 	@Test
-	void forEach() {
+	void forIdx() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		alg.grow();
 		alg.grow();
 		alg.grow();
 
-		alg.forEach((i,o)->o.value=i);
+		alg.forIdx((i, o)->o.value=i);
 
 		assertEquals(0,alg.get(0).value);
 		assertEquals(1,alg.get(1).value);
@@ -41,17 +41,49 @@ public class TestFastAccess {
 	}
 
 	@Test
-	void forEach_idx() {
+	void forIdx_range() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow();
 		}
 
-		alg.forEach(2,5,(i,o)->o.value=i);
+		alg.forIdx(2,5,(i, o)->o.value=i);
 
 		for (int i = 0; i < 10; i++) {
 			if( i >= 2 && i < 5 ) {
 				assertEquals(i,alg.get(i).value);
+			} else {
+				assertEquals(0,alg.get(i).value);
+			}
+		}
+	}
+
+	@Test
+	void forEach() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		alg.grow();
+		alg.grow();
+		alg.grow();
+
+		alg.forEach((o)->o.value=2);
+
+		assertEquals(2,alg.get(0).value);
+		assertEquals(2,alg.get(1).value);
+		assertEquals(2,alg.get(2).value);
+	}
+
+	@Test
+	void forEach_range() {
+		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		for (int i = 0; i < 10; i++) {
+			alg.grow();
+		}
+
+		alg.forEach(2,5,(o)->o.value=3);
+
+		for (int i = 0; i < 10; i++) {
+			if( i >= 2 && i < 5 ) {
+				assertEquals(3,alg.get(i).value);
 			} else {
 				assertEquals(0,alg.get(i).value);
 			}

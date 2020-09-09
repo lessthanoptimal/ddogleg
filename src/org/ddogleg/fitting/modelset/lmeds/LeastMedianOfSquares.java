@@ -168,7 +168,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 
 			if( generator.generate(smallSet, candidate) ) {
 				errorMetric.setModel(candidate);
-				errorMetric.computeDistance(_dataSet,errors);
+				errorMetric.distances(_dataSet,errors);
 
 				double median = QuickSelect.select(errors, (int)(N*errorFraction+0.5), N);
 
@@ -193,7 +193,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		if( inlierFrac > 0 && numPts > sampleSize ) {
 			inlierSet.clear();
 			errorMetric.setModel(bestParam);
-			errorMetric.computeDistance(dataSet,errors);
+			errorMetric.distances(dataSet,errors);
 
 			int []indexes = new int[n];
 			QuickSelect.selectIndex(errors,numPts, n,indexes);

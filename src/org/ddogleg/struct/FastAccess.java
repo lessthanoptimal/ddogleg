@@ -76,6 +76,11 @@ public abstract class FastAccess<T> implements Serializable {
 		return size;
 	}
 
+	/** True if the container has no elements */
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
 	/**
 	 * Returns a wrapper around FastQueue that allows it to act as a read only list.
 	 * There is little overhead in using this interface.
@@ -114,7 +119,7 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * The passed in function is called once for each element in the list
 	 */
-	public void forEach( FunctionEach<T> function ) {
+	public void forIdx(FunctionEachIdx<T> function ) {
 		for (int i = 0; i < size; i++) {
 			function.process(i,data[i]);
 		}
@@ -125,7 +130,7 @@ public abstract class FastAccess<T> implements Serializable {
 	 * @param idx0 lower extent, inclusive
 	 * @param idx1 upper extent, exclusive
 	 */
-	public void forEach( int idx0 , int idx1, FunctionEach<T> function ) {
+	public void forIdx(int idx0 , int idx1, FunctionEachIdx<T> function ) {
 		if( idx1 > size )
 			throw new IllegalArgumentException("idx1 is out of range");
 
@@ -134,7 +139,34 @@ public abstract class FastAccess<T> implements Serializable {
 		}
 	}
 
-	public interface FunctionEach<T> {
+	/**
+	 * The passed in function is called once for each element in the list
+	 */
+	public void forEach(FunctionEach<T> function ) {
+		for (int i = 0; i < size; i++) {
+			function.process(data[i]);
+		}
+	}
+
+	/**
+	 * For each with a range of values specified
+	 * @param idx0 lower extent, inclusive
+	 * @param idx1 upper extent, exclusive
+	 */
+	public void forEach(int idx0 , int idx1, FunctionEach<T> function ) {
+		if( idx1 > size )
+			throw new IllegalArgumentException("idx1 is out of range");
+
+		for (int i = idx0; i < idx1; i++) {
+			function.process(data[i]);
+		}
+	}
+
+	public interface FunctionEachIdx<T> {
 		void process( int index, T o );
+	}
+
+	public interface FunctionEach<T> {
+		void process( T value );
 	}
 }

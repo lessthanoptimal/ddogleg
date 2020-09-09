@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -78,4 +78,9 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	 * Sorts the data from smallest to largest
 	 */
 	void sort();
+
+	/** True if the container has no elements */
+	default boolean isEmpty() {
+		return size() == 0;
+	}
 }

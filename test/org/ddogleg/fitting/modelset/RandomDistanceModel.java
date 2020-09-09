@@ -44,14 +44,14 @@ public class RandomDistanceModel implements DistanceFromModel<double[],Double> {
 	}
 
 	@Override
-	public double computeDistance(Double pt) {
+	public double distance(Double pt) {
 		return rand.nextDouble()*errorMagnitude+errorMinimum;
 	}
 
 	@Override
-	public void computeDistance(List<Double> points, double[] distance) {
+	public void distances(List<Double> points, double[] distance) {
 		for (int i = 0; i < points.size(); i++) {
-			distance[i] = computeDistance(null);
+			distance[i] = distance(null);
 		}
 	}
 

@@ -175,12 +175,12 @@ public class TestRansac extends GenericModelMatcherTests {
 		}
 
 		@Override
-		public double computeDistance(Integer pt) {
+		public double distance(Integer pt) {
 			return Math.abs(pt - param[0]);
 		}
 
 		@Override
-		public void computeDistance(List<Integer> points, double[] distance) {
+		public void distances(List<Integer> points, double[] distance) {
 			throw new RuntimeException("Why was this called?");
 		}
 

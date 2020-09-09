@@ -72,7 +72,7 @@ public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,P
 			Point pt = iter.next().data;
 
 			// only prune points which are less accurate than the mean
-			if (modelError.computeDistance(pt) - meanError > thresh) {
+			if (modelError.distance(pt) - meanError > thresh) {
 				iter.remove();
 			}
 		}
@@ -93,7 +93,7 @@ public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,P
 		for (PointIndex<Point> inlier : allPoints) {
 			Point pt = inlier.data;
 
-			meanError += modelError.computeDistance(pt);
+			meanError += modelError.distance(pt);
 		}
 
 		meanError /= size;
@@ -106,7 +106,7 @@ public class FitByMeanStatistics<Model, Point> implements StatisticalFit<Model,P
 		for (PointIndex<Point> inlier : allPoints) {
 			Point pt = inlier.data;
 
-			double e = modelError.computeDistance(pt) - meanError;
+			double e = modelError.distance(pt) - meanError;
 			stdError += e * e;
 		}
 

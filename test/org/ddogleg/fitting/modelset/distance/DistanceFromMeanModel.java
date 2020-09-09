@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2016, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,12 +37,12 @@ public class DistanceFromMeanModel implements DistanceFromModel<double[],Double>
 	}
 
 	@Override
-	public double computeDistance(Double pt) {
+	public double distance(Double pt) {
 		return Math.abs(pt - mean);
 	}
 
 	@Override
-	public void computeDistance(List<Double> points, double[] distance) {
+	public void distances(List<Double> points, double[] distance) {
 		for (int i = 0; i < points.size(); i++) {
 			double d = points.get(i);
 
