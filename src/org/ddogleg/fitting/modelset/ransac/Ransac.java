@@ -61,10 +61,10 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	protected long randSeed;
 
 	// list of points which are a candidate for the best fit set
-	protected List<Point> candidatePoints = new ArrayList<Point>();
+	protected List<Point> candidatePoints = new ArrayList<>();
 
 	// list of samples from the best fit model
-	protected List<Point> bestFitPoints = new ArrayList<Point>();
+	protected List<Point> bestFitPoints = new ArrayList<>();
 
 	// the best model found so far
 	protected Model bestFitParam;
@@ -78,7 +78,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	protected List<Point> dataSet = new ArrayList<>();
 
 	// the set of points which were initially sampled
-	protected List<Point> initialSample = new ArrayList<Point>();
+	protected List<Point> initialSample = new ArrayList<>();
 
 	// list of indexes converting it from match set to input list
 	protected int []matchToInput = new int[1];
@@ -139,7 +139,8 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 			if( modelGenerator.generate(initialSample, candidateParam ) ) {
 
 				// see if it can find a model better than the current best one
-				selectMatchSet(_dataSet, thresholdFit, candidateParam);
+				if( !selectMatchSet(_dataSet, thresholdFit, candidateParam) )
+					continue;
 
 				// save this results
 				if (bestFitPoints.size() < candidatePoints.size()) {
@@ -194,20 +195,26 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 	 *
 	 * @param dataSet The points being considered
 	 */
-	@SuppressWarnings({"ForLoopReplaceableByForEach"})
-	protected void selectMatchSet(List<Point> dataSet, double threshold, Model param) {
+	protected boolean selectMatchSet(List<Point> dataSet, double threshold, Model param) {
 		candidatePoints.clear();
 		modelDistance.setModel(param);
 
-		for (int i = 0; i < dataSet.size(); i++) {
+		// If it fails more than this it can't possibly beat the best model and should stop
+		int maxFailures = dataSet.size()-bestFitPoints.size();
+
+		for (int i = 0; i < dataSet.size() && maxFailures >= 0; i++) {
 			Point point = dataSet.get(i);
 
 			double distance = modelDistance.distance(point);
 			if (distance < threshold) {
 				matchToInput[candidatePoints.size()] = i;
 				candidatePoints.add(point);
+			} else {
+				maxFailures--;
 			}
 		}
+
+		return maxFailures >= 0;
 	}
 
 	/**
@@ -218,7 +225,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		candidatePoints = bestFitPoints;
 		bestFitPoints = tempPts;
 
-		int tempIndex[] = matchToInput;
+		int[] tempIndex = matchToInput;
 		matchToInput = bestMatchToInput;
 		bestMatchToInput = tempIndex;
 

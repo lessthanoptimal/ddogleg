@@ -152,9 +152,37 @@ public class TestRansac extends GenericModelMatcherTests {
 		ransac.matchToInput = new int[ dataSet.size()];
 		double[] param = new double[]{modelVal};
 
-		ransac.selectMatchSet(dataSet, 4, param);
+		assertTrue(ransac.selectMatchSet(dataSet, 4, param));
 
 		assertEquals(ransac.candidatePoints.size(), 7);
+	}
+
+	/**
+	 * Checks to see if it will abort if it can't possibly beat the best model
+	 */
+	@Test
+	public void selectMatchSet_abort() {
+		double modelVal = 50;
+
+		List<Integer> dataSet = new ArrayList<>();
+
+		for (int i = 0; i < 200; i++) {
+			dataSet.add(i);
+		}
+
+		DebugModelStuff stuff = new DebugModelStuff((int) modelVal);
+		Ransac<double[],Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
+		ransac.setSampleSize(5);
+		// declare the array so it doesn't blow up when accessed
+		ransac.matchToInput = new int[ dataSet.size()];
+		double[] param = new double[]{modelVal};
+
+		// the match set will be must smaller than this
+		for (int i = 0; i < 150; i++) {
+			ransac.bestFitPoints.add(i);
+		}
+
+		assertFalse(ransac.selectMatchSet(dataSet, 4, param));
 	}
 
 	@SuppressWarnings({"NullAway"})
