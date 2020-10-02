@@ -37,6 +37,8 @@ import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
 public class HessianSchurComplement_DSCC
 	extends HessianSchurComplement_Base<DMatrixSparseCSC>
 {
+	DMatrixSparseCSC transposed = new DMatrixSparseCSC(1,1);
+
 	// Workspace variables
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
@@ -64,13 +66,16 @@ public class HessianSchurComplement_DSCC
 		B.reshape(jacLeft.numCols,jacRight.numCols,1);
 		D.reshape(jacRight.numCols,jacRight.numCols,1);
 
-		// take advantage of the inner product's symmetry when possible to reduce
-		// the number of calculations
-		CommonOps_DSCC.innerProductLower(jacLeft,tmp0,gw,gx);
-		CommonOps_DSCC.symmLowerToFull(tmp0,A,gw);
-		CommonOps_DSCC.multTransA(jacLeft,jacRight,B,gw,gx);
-		CommonOps_DSCC.innerProductLower(jacRight,tmp0,gw,gx);
-		CommonOps_DSCC.symmLowerToFull(tmp0,D,gw);
+		// A = L'*L
+		CommonOps_DSCC.transpose(jacLeft, transposed,gw);
+		CommonOps_DSCC.mult(transposed,jacLeft,A,gw,gx);
+
+		// B = L'*R
+		CommonOps_DSCC.mult(transposed,jacRight,B,gw,gx);
+
+		// D = R'*R
+		CommonOps_DSCC.transpose(jacRight, transposed,gw);
+		CommonOps_DSCC.mult(transposed,jacRight,D,gw,gx);
 	}
 
 	@Override
@@ -95,7 +100,8 @@ public class HessianSchurComplement_DSCC
 
 	@Override
 	protected void multTransA(DMatrixSparseCSC A, DMatrixSparseCSC B, DMatrixSparseCSC C){
-		CommonOps_DSCC.multTransA(A,B,C,gw,gx);
+		CommonOps_DSCC.transpose(A, transposed,gw);
+		CommonOps_DSCC.mult(transposed,B,C,gw,gx);
 	}
 
 	@Override

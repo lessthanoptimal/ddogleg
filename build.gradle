@@ -73,6 +73,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.10'
     testCompile project.sourceSets.main.compileClasspath
 
+    examplesImplementation project.sourceSets.main.compileClasspath
+    examplesImplementation project.sourceSets.main.runtimeClasspath
+
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
 

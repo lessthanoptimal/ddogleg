@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -60,7 +60,8 @@ public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 	public TestHessianSchurComplement_DSCC() {
 		super(new HessianSchurComplement_DSCC());
 		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
-		CommonOps_DSCC.multTransA(J,J,H,gw,gx);
+		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J,null,gw);
+		CommonOps_DSCC.mult(J_t,J,H,gw,gx);
 	}
 
 

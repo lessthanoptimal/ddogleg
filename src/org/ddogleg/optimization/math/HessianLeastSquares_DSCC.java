@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ public class HessianLeastSquares_DSCC extends HessianMath_DSCC
 {
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
-
+	DMatrixSparseCSC transpose = new DMatrixSparseCSC(1,1);
 	public HessianLeastSquares_DSCC() {
 	}
 
@@ -43,6 +43,7 @@ public class HessianLeastSquares_DSCC extends HessianMath_DSCC
 
 	@Override
 	public void updateHessian(DMatrixSparseCSC jacobian) {
-		CommonOps_DSCC.multTransA(jacobian,jacobian, hessian,gw,gx);
+		CommonOps_DSCC.transpose(jacobian,transpose,gw);
+		CommonOps_DSCC.mult(transpose,jacobian, hessian,gw,gx);
 	}
 }

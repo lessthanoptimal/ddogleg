@@ -17,6 +17,8 @@ Date:     2020
   * added forEach(lambda)
 - RANSAC
   * When selecting an inlier set it will abort if there's no possible way it can do better than the best set
+- SchurComplement
+  * Swapped out inefficient sparse matrix multiplication functions greatly increasing the speed
 
 ------------------------------------------------------
 Version:  0.18

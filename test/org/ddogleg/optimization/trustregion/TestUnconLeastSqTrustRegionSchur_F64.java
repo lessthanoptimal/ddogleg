@@ -66,7 +66,8 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 
 	public TestUnconLeastSqTrustRegionSchur_F64() {
 		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
-		CommonOps_DSCC.multTransA(J,J,H,gw,gx);
+		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J,null,gw);
+		CommonOps_DSCC.mult(J,J_t,H,gw,gx);
 
 		H.sortIndices(null);
 	}
