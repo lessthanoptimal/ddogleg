@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegConcurrency;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -25,8 +26,11 @@ import org.ejml.data.IGrowArray;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.CommonOps_MT_DSCC;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.ejml.sparse.csc.mult.MatrixVectorMult_DSCC;
+import org.ejml.sparse.csc.mult.Workspace_MT_DSCC;
+import pabeles.concurrency.GrowArray;
 
 /**
  * Implementation of {@link HessianSchurComplement_Base} for {@link DMatrixSparseCSC}
@@ -42,6 +46,7 @@ public class HessianSchurComplement_DSCC
 	// Workspace variables
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
+	GrowArray<Workspace_MT_DSCC> concurrentWork = new GrowArray<>(Workspace_MT_DSCC::new);
 
 	// Two solvers are created so that the structure can be saved and not recomputed each iteration
 	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solverA, solverD;
@@ -66,16 +71,29 @@ public class HessianSchurComplement_DSCC
 		B.reshape(jacLeft.numCols,jacRight.numCols,1);
 		D.reshape(jacRight.numCols,jacRight.numCols,1);
 
-		// A = L'*L
-		CommonOps_DSCC.transpose(jacLeft, transposed,gw);
-		CommonOps_DSCC.mult(transposed,jacLeft,A,gw,gx);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			// A = L'*L
+			CommonOps_DSCC.transpose(jacLeft, transposed, gw);
+			CommonOps_MT_DSCC.mult(transposed, jacLeft, A, concurrentWork);
 
-		// B = L'*R
-		CommonOps_DSCC.mult(transposed,jacRight,B,gw,gx);
+			// B = L'*R
+			CommonOps_MT_DSCC.mult(transposed, jacRight, B, concurrentWork);
 
-		// D = R'*R
-		CommonOps_DSCC.transpose(jacRight, transposed,gw);
-		CommonOps_DSCC.mult(transposed,jacRight,D,gw,gx);
+			// D = R'*R
+			CommonOps_DSCC.transpose(jacRight, transposed, gw);
+			CommonOps_MT_DSCC.mult(transposed, jacRight, D, concurrentWork);
+		} else {
+			// A = L'*L
+			CommonOps_DSCC.transpose(jacLeft, transposed, gw);
+			CommonOps_DSCC.mult(transposed, jacLeft, A, gw, gx);
+
+			// B = L'*R
+			CommonOps_DSCC.mult(transposed, jacRight, B, gw, gx);
+
+			// D = R'*R
+			CommonOps_DSCC.transpose(jacRight, transposed, gw);
+			CommonOps_DSCC.mult(transposed, jacRight, D, gw, gx);
+		}
 	}
 
 	@Override
@@ -101,7 +119,11 @@ public class HessianSchurComplement_DSCC
 	@Override
 	protected void multTransA(DMatrixSparseCSC A, DMatrixSparseCSC B, DMatrixSparseCSC C){
 		CommonOps_DSCC.transpose(A, transposed,gw);
-		CommonOps_DSCC.mult(transposed,B,C,gw,gx);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DSCC.mult(transposed, B, C, concurrentWork);
+		} else {
+			CommonOps_DSCC.mult(transposed, B, C, gw, gx);
+		}
 	}
 
 	@Override
@@ -111,7 +133,11 @@ public class HessianSchurComplement_DSCC
 
 	@Override
 	protected void add(double alpha, DMatrixSparseCSC A, double beta, DMatrixSparseCSC B, DMatrixSparseCSC C) {
-		CommonOps_DSCC.add(alpha,A,beta,B,C,gw,gx);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DSCC.add(alpha,A,beta,B,C,concurrentWork);
+		} else {
+			CommonOps_DSCC.add(alpha,A,beta,B,C,gw,gx);
+		}
 	}
 
 	@Override

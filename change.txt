@@ -7,6 +7,10 @@ Version:  0.19
 Date:     2020
 
 - Updated to Java 11 syntax but generates Java 8 byte code
+- Concurrency
+  * Added DDoglegConcurrency for controlling threads and turning it on and off
+  * Default is off
+  * Only HessianSchurComplement_DSCC is threaded at the moment
 - GrowQueue
   * Added resize( size , defaultValue )
   * Added count( value )
