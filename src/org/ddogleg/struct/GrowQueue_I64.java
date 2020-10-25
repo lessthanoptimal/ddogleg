@@ -161,6 +161,16 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		System.arraycopy(array,offset,data,0,length);
 	}
 
+	/**
+	 * Set's the value of this array to the passed in raw array.
+	 * @param src (Input) The input array
+	 * @return A reference to "this" to allow chaining of commands
+	 */
+	public GrowQueue_I64 setTo( long... src) {
+		setTo(src, 0, src.length);
+		return this;
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];

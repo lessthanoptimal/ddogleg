@@ -127,6 +127,27 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
+	/**
+	 * Sets this array to be equal to the array segment
+	 * @param array (Input) source array
+	 * @param offset first index
+	 * @param length number of elements to copy
+	 */
+	public void setTo( boolean[] array , int offset , int length ) {
+		resize(length);
+		System.arraycopy(array,offset,data,0,length);
+	}
+
+	/**
+	 * Set's the value of this array to the passed in raw array.
+	 * @param src (Input) The input array
+	 * @return A reference to "this" to allow chaining of commands
+	 */
+	public GrowQueue_B setTo( boolean... src ) {
+		setTo(src, 0, src.length);
+		return this;
+	}
+
 	public void fill( boolean value ) {
 		Arrays.fill(data, 0, size, value);
 	}

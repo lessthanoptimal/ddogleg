@@ -71,7 +71,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	}
 
 	/**
-	 * Counts the number of times the specified value occures in the list
+	 * Counts the number of times the specified value occurs in the list
 	 */
 	public int count( int value ) {
 		int total = 0;
@@ -89,7 +89,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	public void addAll( GrowQueue_I32 queue ) {
 		if( size+queue.size > data.length ) {
-			int temp[] = new int[ (size+queue.size) * 2];
+			int[] temp = new int[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -104,7 +104,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			int temp[] = new int[ (size+arraySize) * 2];
+			int[] temp = new int[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -118,7 +118,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			int temp[] = new int[ size * 2+5];
+			int[] temp = new int[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -174,6 +174,16 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		System.arraycopy(array,offset,data,0,length);
 	}
 
+	/**
+	 * Set's the value of this array to the passed in raw array.
+	 * @param src (Input) The input array
+	 * @return A reference to "this" to allow chaining of commands
+	 */
+	public GrowQueue_I32 setTo( int... src) {
+		setTo(src, 0, src.length);
+		return this;
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];
@@ -204,7 +214,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	 */
 	public void insert( int index , int value ) {
 		if( size == data.length ) {
-			int temp[] = new int[ size * 2+5];
+			int[] temp = new int[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);

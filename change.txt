@@ -12,6 +12,7 @@ Date:     2020
   * Added count( value )
   * Added forIdx( idx, value )
   * Added removeSwap( idx )
+  * added setTo(...)
 - FastArray
   * added remove(object)
   * added forEach(lambda)

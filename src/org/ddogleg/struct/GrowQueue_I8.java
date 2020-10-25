@@ -76,7 +76,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 
 	public void addAll( GrowQueue_I8 queue ) {
 		if( size+queue.size > data.length ) {
-			byte temp[] = new byte[ (size+queue.size) * 2];
+			byte[] temp = new byte[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -91,7 +91,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			byte temp[] = new byte[ (size+arraySize) * 2];
+			byte[] temp = new byte[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -105,7 +105,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			byte temp[] = new byte[ size * 2+5];
+			byte[] temp = new byte[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -151,11 +151,32 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 	}
 
 	/**
+	 * Sets this array to be equal to the array segment
+	 * @param array (Input) source array
+	 * @param offset first index
+	 * @param length number of elements to copy
+	 */
+	public void setTo( byte[] array , int offset , int length ) {
+		resize(length);
+		System.arraycopy(array,offset,data,0,length);
+	}
+
+	/**
+	 * Set's the value of this array to the passed in raw array.
+	 * @param src (Input) The input array
+	 * @return A reference to "this" to allow chaining of commands
+	 */
+	public GrowQueue_I8 setTo( byte... src) {
+		setTo(src, 0, src.length);
+		return this;
+	}
+
+	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */
 	public void insert( int index , int value ) {
 		if( size == data.length ) {
-			byte temp[] = new byte[ size * 2+5];
+			byte[] temp = new byte[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = (byte)value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -193,17 +214,6 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		} else {
 			throw new RuntimeException("Size zero, no tail");
 		}
-	}
-
-	/**
-	 * Sets this array to be equal to the array segment
-	 * @param array (Input) source array
-	 * @param offset first index
-	 * @param length number of elements to copy
-	 */
-	public void setTo( byte[] array , int offset , int length ) {
-		resize(length);
-		System.arraycopy(array,offset,data,0,length);
 	}
 
 	/**
@@ -321,7 +331,7 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 		message = message.replaceAll("\\]","");
 		message = message.replaceAll(" ","");
 
-		String words[] = message.split(",");
+		String[] words = message.split(",");
 
 		GrowQueue_I8 out = new GrowQueue_I8(words.length);
 		out.size = words.length;

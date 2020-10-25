@@ -118,6 +118,32 @@ public class TestGrowQueue_B {
 	}
 
 	@Test
+	void setTo_array_off() {
+		GrowQueue_B alg = new GrowQueue_B(10);
+
+		boolean[] foo = new boolean[]{true,true,false,true,false};
+		alg.setTo(foo,1,3);
+		assertEquals(3,alg.size);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i),foo[i+1]);
+		}
+	}
+
+	@Test
+	void setTo_array() {
+		GrowQueue_B alg = new GrowQueue_B(10);
+
+		boolean[] array = new boolean[]{true,true,false,true,false};
+
+		assertSame(alg,alg.setTo(array));
+		assertEquals(array.length,alg.size);
+
+		for (int i = 0; i < array.length; i++) {
+			assertEquals(alg.get(i),array[i]);
+		}
+	}
+
+	@Test
 	void remove_two() {
 		GrowQueue_B alg = new GrowQueue_B(10);
 

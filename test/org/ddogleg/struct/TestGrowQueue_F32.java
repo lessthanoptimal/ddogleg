@@ -21,8 +21,7 @@ package org.ddogleg.struct;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -172,7 +171,7 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 
 
 	@Test
-	void setTo_array() {
+	void setTo_array_off() {
 		GrowQueue_F32 alg = new GrowQueue_F32(10);
 
 		float[] foo = new float[]{1,3,4,5,7};
@@ -180,6 +179,20 @@ public class TestGrowQueue_F32 extends ChecksGrowQueue<GrowQueue_F32> {
 		assertEquals(3,alg.size);
 		for (int i = 0; i < 3; i++) {
 			assertEquals(alg.get(i),foo[i+1], UtilEjml.TEST_F64);
+		}
+	}
+
+	@Test
+	void setTo_array() {
+		GrowQueue_F32 alg = new GrowQueue_F32(10);
+
+		float[] array = new float[]{1,3,4,5,7};
+
+		assertSame(alg,alg.setTo(array));
+		assertEquals(array.length,alg.size);
+
+		for (int i = 0; i < array.length; i++) {
+			assertEquals(alg.get(i),array[i]);
 		}
 	}
 

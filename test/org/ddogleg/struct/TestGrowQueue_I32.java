@@ -20,8 +20,7 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -170,7 +169,7 @@ public class TestGrowQueue_I32 extends ChecksGrowQueue<GrowQueue_I32> {
 	}
 
 	@Test
-	void setTo_array() {
+	void setTo_array_off() {
 		GrowQueue_I32 alg = new GrowQueue_I32(10);
 
 		int[] foo = new int[]{1,3,4,5,7};
@@ -178,6 +177,20 @@ public class TestGrowQueue_I32 extends ChecksGrowQueue<GrowQueue_I32> {
 		assertEquals(3,alg.size);
 		for (int i = 0; i < 3; i++) {
 			assertEquals(alg.get(i),foo[i+1]);
+		}
+	}
+
+	@Test
+	void setTo_array() {
+		GrowQueue_I32 alg = new GrowQueue_I32(10);
+
+		int[] array = new int[]{1,3,4,5,7};
+
+		assertSame(alg,alg.setTo(array));
+		assertEquals(array.length,alg.size);
+
+		for (int i = 0; i < array.length; i++) {
+			assertEquals(alg.get(i),array[i]);
 		}
 	}
 	

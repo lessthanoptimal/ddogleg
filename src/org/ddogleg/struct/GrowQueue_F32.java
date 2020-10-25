@@ -133,6 +133,16 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	/**
+	 * Set's the value of this array to the passed in raw array.
+	 * @param src (Input) The input array
+	 * @return A reference to "this" to allow chaining of commands
+	 */
+	public GrowQueue_F32 setTo( float... src ) {
+		setTo(src, 0, src.length);
+		return this;
+	}
+
+	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
 	 * @param first First index you wish to remove. Inclusive.
 	 * @param last Last index you wish to remove. Inclusive.
