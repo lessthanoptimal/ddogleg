@@ -274,63 +274,6 @@ class TestFastQueue {
 		assertEquals(1,alg.size);
 	}
 
-	@Test
-	void reverse() {
-		FastQueue<DummyData> alg = new FastQueue<>(2,DummyData::new);
-
-		// 0 items
-		alg.reverse();
-		assertEquals(0, alg.size());
-
-		// 1 item
-		alg.grow().value = 1;
-		alg.reverse();
-
-		assertEquals(1, alg.get(0).value);
-
-		// 2 items
-		alg.grow().value = 2;
-		alg.reverse();
-
-		assertEquals(2, alg.get(0).value);
-		assertEquals(1, alg.get(1).value);
-
-		// 3 items (odd)
-		alg.reset();
-
-		alg.grow().value = 1;
-		alg.grow().value = 2;
-		alg.grow().value = 3;
-
-		alg.reverse();
-
-		assertEquals(3, alg.get(0).value);
-		assertEquals(2,alg.get(1).value);
-		assertEquals(1,alg.get(2).value);
-
-		// 4 items (even)
-		alg.reset();
-
-		alg.grow().value = 1;
-		alg.grow().value = 2;
-		alg.grow().value = 3;
-		alg.grow().value = 4;
-
-		alg.reverse();
-
-		assertEquals(4,alg.get(0).value);
-		assertEquals(3,alg.get(1).value);
-		assertEquals(2,alg.get(2).value);
-		assertEquals(1,alg.get(3).value);
-
-		// double reverse = original
-		alg.reverse();
-		assertEquals(1,alg.get(0).value);
-		assertEquals(2,alg.get(1).value);
-		assertEquals(3,alg.get(2).value);
-		assertEquals(4,alg.get(3).value);
-	}
-
 	/**
 	 * Checks to see if pop automatically grows correctly
 	 */
@@ -380,26 +323,6 @@ class TestFastQueue {
 		assertEquals(2,queue.indexOf(queue.get(2)), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	void flip() {
-		FastQueue<DummyData> queue = new FastQueue<>(DummyData::new);
-		queue.flip();
-
-		queue.grow().value = 1;
-		queue.flip();
-		assertEquals(1,queue.get(0).value);
-
-		queue.grow().value = 2;
-		queue.flip();
-		assertEquals(2,queue.get(0).value);
-		assertEquals(1,queue.get(1).value);
-
-		queue.grow().value = 3;
-		queue.flip();
-		assertEquals(3,queue.get(0).value);
-		assertEquals(1,queue.get(1).value);
-		assertEquals(2,queue.get(2).value);
-	}
 
 	@Test
 	void swap() {

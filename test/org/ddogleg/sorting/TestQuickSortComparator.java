@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,34 +20,25 @@ package org.ddogleg.sorting;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSortComparator_F64 {
+public class TestQuickSortComparator {
 	Random rand = new Random(0xfeed4);
 
-	Comparator<Double> comparator = new Comparator<Double>() {
-		@Override
-		public int compare(Double o1, Double o2) {
-			if( o1 > o2 )
-				return 1;
-			else if( o1 < o2 )
-				return -1;
-			else
-				return 0;
-		}
-	};
+	Comparator<Double> comparator = Double::compareTo;
 
-	@Test
-	public void testSortingRandom() {
+	@Test void sort_array() {
 		Double[] ret = createRandom(rand, 200);
 
 		double preTotal = sum(ret);
 
-		QuickSortComparator<Double> sorter = new QuickSortComparator<Double>(comparator);
+		QuickSortComparator<Double> sorter = new QuickSortComparator<>(comparator);
 
 		sorter.sort(ret, ret.length);
 
@@ -64,6 +55,31 @@ public class TestQuickSortComparator_F64 {
 		}
 	}
 
+	@Test void sort_list() {
+		List<Double> ret = new ArrayList<>();
+		for (int i = 0; i < 200; i++) {
+			ret.add((rand.nextDouble()-0.5)*2000.0);
+		}
+
+		double preTotal = sum(ret);
+
+		QuickSortComparator<Double> sorter = new QuickSortComparator<>(comparator);
+
+		sorter.sort(ret, ret.size());
+
+		double postTotal = sum(ret);
+
+		// make sure it didn't modify the list, in an unexpected way
+		assertEquals(preTotal,postTotal,1e-8);
+
+		double prev = ret.get(0);
+		for( int i = 1; i < ret.size(); i++ ) {
+			if( ret.get(i) < prev )
+				fail("Not ascending");
+			prev = ret.get(i);
+		}
+	}
+
 	@Test
 	public void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
@@ -72,7 +88,7 @@ public class TestQuickSortComparator_F64 {
 			Double[] withIndexes = normal.clone();
 			int[] indexes = new int[ normal.length ];
 
-			QuickSortComparator<Double> sorter = new QuickSortComparator<Double>(comparator);
+			QuickSortComparator<Double> sorter = new QuickSortComparator<>(comparator);
 
 			sorter.sort(normal,normal.length);
 			sorter.sort(withIndexes,normal.length,indexes);
@@ -90,6 +106,14 @@ public class TestQuickSortComparator_F64 {
 		double total = 0;
 		for (int i = 0; i < list.length; i++) {
 			total += list[i];
+		}
+		return total;
+	}
+
+	public static double sum( List<Double> list ) {
+		double total = 0;
+		for (int i = 0; i < list.size(); i++) {
+			total += list.get(i);
 		}
 		return total;
 	}

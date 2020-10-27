@@ -138,21 +138,6 @@ public class FastArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Returns the first index which equals() obj. -1 is there is no match
-	 *
-	 * @param obj The object being searched for
-	 * @return index or -1 if not found
-	 */
-	public int indexOf( T obj ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i].equals(obj) ) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 * Changes the size to the specified length. Equivalent to calling {@link #growArray} and this.size = N.
 	 * @param length The new size of the queue
 	 */
@@ -170,17 +155,6 @@ public class FastArray<T> extends FastAccess<T> {
 		this.size = length;
 	}
 
-	/**
-	 * Returns true if the object is contained inside the array
-	 */
-	public boolean contains(T o) {
-		for( int i = 0; i < size; i++ ) {
-			if( data[i].equals(o) )
-				return true;
-		}
-
-		return false;
-	}
 
 	public void addAll( FastAccess<T> list ) {
 		for( int i = 0; i < list.size; i++ ) {

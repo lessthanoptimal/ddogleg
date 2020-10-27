@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A double linked list.  Internal data structures are recycled to minimize creation of new memory.
@@ -302,11 +303,11 @@ public class DogLinkedList<T> {
 	 * Removes the last element from the list
 	 * @return The object which was contained in the last element
 	 */
-	public Object removeTail() {
+	public T removeTail() {
 		if( last == null )
 			throw new IllegalArgumentException("Empty list");
 
-		Object ret = last.getObject();
+		T ret = last.getObject();
 		Element<T> e = last;
 		available.add(last);
 
@@ -352,6 +353,16 @@ public class DogLinkedList<T> {
 	 */
 	public @Nullable Element<T> getTail() {
 		return last;
+	}
+
+	/** Returns the value in the head */
+	public T getFirst() {
+		return Objects.requireNonNull(first).object;
+	}
+
+	/** Returns the value in the trail */
+	public T getLast() {
+		return Objects.requireNonNull(last).object;
 	}
 
 	/**

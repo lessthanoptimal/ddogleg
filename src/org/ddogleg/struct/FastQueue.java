@@ -287,15 +287,6 @@ public class FastQueue<T> extends FastAccess<T> {
 		this.size = length;
 	}
 
-	public boolean contains(Object o) {
-		for( int i = 0; i < size; i++ ) {
-			if( data[i].equals(o) )
-				return true;
-		}
-
-		return false;
-	}
-
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {
 			int selected = rand.nextInt(size-i);
@@ -322,39 +313,6 @@ public class FastQueue<T> extends FastAccess<T> {
 			ret.add(data[i]);
 		}
 		return ret;
-	}
-
-	/**
-	 * Returns the first index which equals() obj. -1 is there is no match
-	 *
-	 * @param obj The object being searched for
-	 * @return index or -1 if not found
-	 */
-	public int indexOf( T obj ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i].equals(obj) ) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public void flip() {
-		if( size <= 1 )
-			return;
-
-		int D = size/2;
-		for (int i = 0,j=size-1; i < D; i++,j--) {
-			T tmp = data[i];
-			data[i] = data[j];
-			data[j] = tmp;
-		}
-	}
-
-	public void swap( int idx0 , int idx1 ) {
-		T tmp = data[idx0];
-		data[idx0] = data[idx1];
-		data[idx1] = tmp;
 	}
 
 	/**

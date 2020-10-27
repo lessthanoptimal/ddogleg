@@ -20,10 +20,17 @@ Date:     2020
 - FastArray
   * added remove(object)
   * added forEach(lambda)
+- FastAccess
+  * Moved functions into this that should have been here originally
 - RANSAC
   * When selecting an inlier set it will abort if there's no possible way it can do better than the best set
 - SchurComplement
   * Swapped out inefficient sparse matrix multiplication functions greatly increasing the speed
+- QuickSortComparator
+  * Added function to sort List
+- DogLinkedList
+  * Fixed generics issue
+  * Added functions for getting the value of first and last elements
 
 ------------------------------------------------------
 Version:  0.18

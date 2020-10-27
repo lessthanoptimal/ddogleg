@@ -106,6 +106,33 @@ public abstract class FastAccess<T> implements Serializable {
 	}
 
 	/**
+	 * Returns true if an object 'a' in the array returns true for 'a.equals(o)'
+	 */
+	public boolean contains(Object o) {
+		for( int i = 0; i < size; i++ ) {
+			if( data[i].equals(o) )
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the first index which equals() obj. -1 is there is no match
+	 *
+	 * @param obj The object being searched for
+	 * @return index or -1 if not found
+	 */
+	public int indexOf( T obj ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i].equals(obj) ) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 * Reverse the item order in this queue.
 	 */
 	public void reverse() {
@@ -114,6 +141,17 @@ public abstract class FastAccess<T> implements Serializable {
 			data[i] = data[size - i - 1];
 			data[size - i - 1] = tmp;
 		}
+	}
+
+	/**
+	 * Swaps the two elements in the array
+	 * @param i index
+	 * @param j index
+	 */
+	public void swap( int i, int j) {
+		T tmp = data[i];
+		data[i] = data[j];
+		data[j] = tmp;
 	}
 
 	/**

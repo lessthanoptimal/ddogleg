@@ -115,6 +115,63 @@ class TestFastArray {
 	}
 
 	@Test
+	void reverse() {
+		FastQueue<DummyData> alg = new FastQueue<>(2,DummyData::new);
+
+		// 0 items
+		alg.reverse();
+		assertEquals(0, alg.size());
+
+		// 1 item
+		alg.grow().value = 1;
+		alg.reverse();
+
+		assertEquals(1, alg.get(0).value);
+
+		// 2 items
+		alg.grow().value = 2;
+		alg.reverse();
+
+		assertEquals(2, alg.get(0).value);
+		assertEquals(1, alg.get(1).value);
+
+		// 3 items (odd)
+		alg.reset();
+
+		alg.grow().value = 1;
+		alg.grow().value = 2;
+		alg.grow().value = 3;
+
+		alg.reverse();
+
+		assertEquals(3, alg.get(0).value);
+		assertEquals(2,alg.get(1).value);
+		assertEquals(1,alg.get(2).value);
+
+		// 4 items (even)
+		alg.reset();
+
+		alg.grow().value = 1;
+		alg.grow().value = 2;
+		alg.grow().value = 3;
+		alg.grow().value = 4;
+
+		alg.reverse();
+
+		assertEquals(4,alg.get(0).value);
+		assertEquals(3,alg.get(1).value);
+		assertEquals(2,alg.get(2).value);
+		assertEquals(1,alg.get(3).value);
+
+		// double reverse = original
+		alg.reverse();
+		assertEquals(1,alg.get(0).value);
+		assertEquals(2,alg.get(1).value);
+		assertEquals(3,alg.get(2).value);
+		assertEquals(4,alg.get(3).value);
+	}
+
+	@Test
 	void add() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class);
 
