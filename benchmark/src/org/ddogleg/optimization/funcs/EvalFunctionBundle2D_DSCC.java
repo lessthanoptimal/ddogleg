@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ddogleg.optimization.wrap.SchurJacobian_to_NtoMxN;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.DMatrixSparseTriplet;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +102,8 @@ public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSpars
 				}
 			}
 
-			ConvertDMatrixStruct.convert(tripletLeft,left);
-			ConvertDMatrixStruct.convert(tripletRight,right);
+			DConvertMatrixStruct.convert(tripletLeft,left);
+			DConvertMatrixStruct.convert(tripletRight,right);
 		}
 
 		@Override

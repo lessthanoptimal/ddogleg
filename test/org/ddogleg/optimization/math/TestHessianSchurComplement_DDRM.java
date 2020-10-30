@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,7 +24,7 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +69,7 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		HessianSchurComplement_DSCC hm = (HessianSchurComplement_DSCC)alg;
 
 		DMatrixSparseCSC SH = new DMatrixSparseCSC(1,1);
-		ConvertDMatrixStruct.convert(H,SH);
+		DConvertMatrixStruct.convert(H,SH);
 
 		hm.A.reshape(M,M);
 		hm.B.reshape(M,N);

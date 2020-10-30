@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
@@ -33,6 +33,6 @@ public class TestHessianMath_DSCC extends StandardHessianMathChecks {
 
 	@Override
 	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
-		ConvertDMatrixStruct.convert(H, ((HessianMath_DSCC)alg).hessian);
+		DConvertMatrixStruct.convert(H, ((HessianMath_DSCC)alg).hessian);
 	}
 }

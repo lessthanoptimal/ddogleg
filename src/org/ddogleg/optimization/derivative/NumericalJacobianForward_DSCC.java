@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.DMatrixSparseTriplet;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 
 /**
  * Finite difference numerical gradient calculation using forward equation. Forward
@@ -106,7 +106,7 @@ public class NumericalJacobianForward_DSCC implements FunctionNtoMxN<DMatrixSpar
 			input[i] = x;
 		}
 
-		ConvertDMatrixStruct.convert(tmp,jacobian);
+		DConvertMatrixStruct.convert(tmp,jacobian);
 	}
 
 	@Override

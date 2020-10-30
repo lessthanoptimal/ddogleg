@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,7 +20,7 @@ package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 
 /**
  * @author Peter Abeles
@@ -33,14 +33,14 @@ public class TestMatrixMath_DSCC extends StandardMatrixMathChecks<DMatrixSparseC
 	@Override
 	public DMatrixSparseCSC convertA(DMatrixRMaj A) {
 		DMatrixSparseCSC out = new DMatrixSparseCSC(A.numRows,A.numCols,1);
-		ConvertDMatrixStruct.convert(A,out);
+		DConvertMatrixStruct.convert(A,out);
 		return out;
 	}
 
 	@Override
 	public DMatrixRMaj convertB(DMatrixSparseCSC A) {
 		DMatrixRMaj out = new DMatrixRMaj(A.numRows,A.numCols);
-		ConvertDMatrixStruct.convert(A,out);
+		DConvertMatrixStruct.convert(A,out);
 		return out;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,7 +21,7 @@ package org.ddogleg.optimization.math;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.ops.ConvertDMatrixStruct;
+import org.ejml.ops.DConvertMatrixStruct;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
@@ -38,12 +38,12 @@ public class TestHessianLeastSquares_DSCC extends StandardHessianLeastSquaresChe
 	@Override
 	protected DMatrix convert(DMatrixRMaj M) {
 		DMatrixSparseCSC out = new DMatrixSparseCSC(1,1);
-		ConvertDMatrixStruct.convert(M,out);
+		DConvertMatrixStruct.convert(M,out);
 		return out;
 	}
 
 	@Override
 	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
-		ConvertDMatrixStruct.convert(H,((HessianLeastSquares_DSCC)alg).hessian);
+		DConvertMatrixStruct.convert(H,((HessianLeastSquares_DSCC)alg).hessian);
 	}
 }
