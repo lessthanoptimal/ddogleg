@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -43,13 +43,13 @@ public class NumericalJacobianForward_DDRM implements FunctionNtoMxN<DMatrixRMaj
 	private final int M;
 	
 	// function being differentiated
-	private FunctionNtoM function;
+	private final FunctionNtoM function;
 
 	// scaling of the difference parameter
-	private double differenceScale;
+	private final double differenceScale;
 
-	private double output0[];
-	private double output1[];
+	private final double[] output0;
+	private final double[] output1;
 
 	public NumericalJacobianForward_DDRM(FunctionNtoM function, double differenceScale) {
 		this.function = function;

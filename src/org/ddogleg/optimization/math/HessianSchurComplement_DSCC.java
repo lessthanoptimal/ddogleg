@@ -128,7 +128,11 @@ public class HessianSchurComplement_DSCC
 
 	@Override
 	protected void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj C) {
-		CommonOps_DSCC.multTransA(A,B,C);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DSCC.multTransA(A, B, C);
+		} else {
+			CommonOps_DSCC.multTransA(A, B, C);
+		}
 	}
 
 	@Override

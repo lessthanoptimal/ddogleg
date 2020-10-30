@@ -45,13 +45,13 @@ public class NumericalJacobianForward_DSCC implements FunctionNtoMxN<DMatrixSpar
 	private final int M;
 
 	// function being differentiated
-	private FunctionNtoM function;
+	private final FunctionNtoM function;
 
 	// scaling of the difference parameter
-	private double differenceScale;
+	private final double differenceScale;
 
-	private double output0[];
-	private double output1[];
+	private final double[] output0;
+	private final double[] output1;
 
 	// used to decide if a variable is a zero
 	private double zeroTolerance = UtilEjml.EPS;
