@@ -48,9 +48,6 @@ public class HessianSchurComplement_DSCC
 	DGrowArray gx = new DGrowArray();
 	GrowArray<Workspace_MT_DSCC> concurrentWork = new GrowArray<>(Workspace_MT_DSCC::new);
 
-	// Two solvers are created so that the structure can be saved and not recomputed each iteration
-	protected LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solverA, solverD;
-
 	public HessianSchurComplement_DSCC() {
 		this( LinearSolverFactory_DSCC.cholesky(FillReducing.NONE),
 				LinearSolverFactory_DSCC.cholesky(FillReducing.NONE));
