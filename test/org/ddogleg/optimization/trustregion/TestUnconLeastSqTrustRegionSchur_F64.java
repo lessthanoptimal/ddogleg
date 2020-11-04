@@ -101,7 +101,7 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 		// Only the gradient is computed and returned. The hessian is saved internally
 
 		DMatrixRMaj exp_g = new DMatrixRMaj(N,1);
-		CommonOps_DSCC.multTransA(J,residuals,exp_g);
+		CommonOps_DSCC.multTransA(J,residuals,exp_g,gx);
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(exp_g,g,UtilEjml.TEST_F64));
 	}

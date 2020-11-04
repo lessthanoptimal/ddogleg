@@ -92,7 +92,7 @@ public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 
 		math.computeGradient(jacLeft,jacRight,residuals,found);
 
-		CommonOps_DSCC.multTransA(J,residuals,expected);
+		CommonOps_DSCC.multTransA(J,residuals,expected,gx);
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
 	}

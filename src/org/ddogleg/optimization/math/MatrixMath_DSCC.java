@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.sparse.csc.CommonOps_DSCC;
@@ -26,6 +27,8 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  * @author Peter Abeles
  */
 public class MatrixMath_DSCC implements MatrixMath<DMatrixSparseCSC> {
+	DGrowArray workArray = new DGrowArray();
+
 	@Override
 	public void divideColumns(DMatrixRMaj divisor, DMatrixSparseCSC A) {
 		CommonOps_DSCC.divideColumns(A,divisor.data,0);
@@ -33,7 +36,7 @@ public class MatrixMath_DSCC implements MatrixMath<DMatrixSparseCSC> {
 
 	@Override
 	public void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output) {
-		CommonOps_DSCC.multTransA(A,B,output);
+		CommonOps_DSCC.multTransA(A,B,output,workArray);
 	}
 
 	@Override

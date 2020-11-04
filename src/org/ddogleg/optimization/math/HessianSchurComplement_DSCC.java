@@ -47,6 +47,7 @@ public class HessianSchurComplement_DSCC
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
 	GrowArray<Workspace_MT_DSCC> concurrentWork = new GrowArray<>(Workspace_MT_DSCC::new);
+	GrowArray<DGrowArray> concurrentArrays = new GrowArray<>(DGrowArray::new);
 
 	public HessianSchurComplement_DSCC() {
 		this( LinearSolverFactory_DSCC.cholesky(FillReducing.NONE),
@@ -126,9 +127,9 @@ public class HessianSchurComplement_DSCC
 	@Override
 	protected void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj C) {
 		if (DDoglegConcurrency.isUseConcurrent()) {
-			CommonOps_MT_DSCC.multTransA(A, B, C);
+			CommonOps_MT_DSCC.multTransA(A, B, C, concurrentArrays);
 		} else {
-			CommonOps_DSCC.multTransA(A, B, C);
+			CommonOps_DSCC.multTransA(A, B, C, gx);
 		}
 	}
 
@@ -143,6 +144,10 @@ public class HessianSchurComplement_DSCC
 
 	@Override
 	protected void mult(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj C) {
-		CommonOps_DSCC.mult(A,B,C);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DSCC.mult(A, B, C, concurrentArrays);
+		} else {
+			CommonOps_DSCC.mult(A, B, C);
+		}
 	}
 }
