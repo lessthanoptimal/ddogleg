@@ -66,7 +66,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.40-SNAPSHOT'}
+        compile group: 'org.ejml', name: a, version: '0.40'}
 
     compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
     compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
