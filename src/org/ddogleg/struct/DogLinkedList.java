@@ -33,14 +33,14 @@ import java.util.Objects;
  */
 public class DogLinkedList<T> {
 	// first element in the list
-	@Nullable Element<T> first;
+	protected @Nullable Element<T> first;
 	// last element in the list
-	@Nullable Element<T> last;
+	protected @Nullable Element<T> last;
 	// total number of elements in the list
-	int size;
+	protected int size;
 
 	// recycled elements.  It is assumed that all elements inside of here have all parameters set to null already
-	final ArrayDeque<Element<T>> available = new ArrayDeque<>();
+	protected final ArrayDeque<Element<T>> available = new ArrayDeque<>();
 
 	/**
 	 * Puts the linked list back into its initial state.  Elements are saved for later use.
