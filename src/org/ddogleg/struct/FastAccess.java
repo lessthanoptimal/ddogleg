@@ -18,6 +18,8 @@
 
 package org.ddogleg.struct;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -154,6 +156,50 @@ public abstract class FastAccess<T> implements Serializable {
 		data[j] = tmp;
 	}
 
+	/** Returns the first instance's index which matches the function. -1 if no match is found*/
+	public int findIdx(FunctionMatches<T> function) {
+		for (int i = 0; i < size; i++) {
+			if (function.process(data[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/** Returns the first instance which matches the function. Null if no matches are found */
+	public @Nullable T find(FunctionMatches<T> function) {
+		int match = findIdx(function);
+		if (match<0)
+			return null;
+		return data[match];
+	}
+
+	/**
+	 * Finds the indexes of all elements which match. Returns true if at least one match was found
+	 */
+	public boolean findAllIdx(GrowQueue_I32 matches, FunctionMatches<T> function) {
+		matches.reset();
+		for (int i = 0; i < size; i++) {
+			if (function.process(data[i])) {
+				matches.add(i);
+			}
+		}
+		return !matches.isEmpty();
+	}
+
+	/**
+	 * Finds the indexes of all elements which match. Returns true if at least one match was found
+	 */
+	public boolean findAll(List<T> matches, FunctionMatches<T> function) {
+		matches.clear();
+		for (int i = 0; i < size; i++) {
+			if (function.process(data[i])) {
+				matches.add(data[i]);
+			}
+		}
+		return !matches.isEmpty();
+	}
+
 	/**
 	 * The passed in function is called once for each element in the list
 	 */
@@ -200,11 +246,18 @@ public abstract class FastAccess<T> implements Serializable {
 		}
 	}
 
+	@FunctionalInterface
 	public interface FunctionEachIdx<T> {
 		void process( int index, T o );
 	}
 
+	@FunctionalInterface
 	public interface FunctionEach<T> {
 		void process( T value );
+	}
+
+	@FunctionalInterface
+	public interface FunctionMatches<T> {
+		boolean process( T value );
 	}
 }

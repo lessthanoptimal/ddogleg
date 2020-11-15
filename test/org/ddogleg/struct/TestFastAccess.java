@@ -20,14 +20,80 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
  */
 public class TestFastAccess {
-	@Test
-	void forIdx() {
+	@Test void find() {
+		var alg = new FastQueue<>(DummyData::new);
+		assertNull(alg.find((a)->a.value==5));
+
+		alg.grow();
+		assertNull(alg.find((a)->a.value==5));
+
+		alg.grow().value = 5;
+		assertSame(alg.get(1),alg.find((a)->a.value==5));
+	}
+
+	@Test void findIdx() {
+		var alg = new FastQueue<>(DummyData::new);
+		assertEquals(-1,alg.findIdx((a)->a.value==5));
+
+		alg.grow();
+		assertEquals(-1,alg.findIdx((a)->a.value==5));
+
+		alg.grow().value = 5;
+		assertEquals(1,alg.findIdx((a)->a.value==5));
+	}
+
+	@Test void findAll() {
+		List<DummyData> found = new ArrayList<>();
+
+		var alg = new FastQueue<>(DummyData::new);
+		assertFalse(alg.findAll(found,(a)->a.value==5));
+		assertEquals(0, found.size());
+
+		alg.grow();
+		assertFalse(alg.findAll(found,(a)->a.value==5));
+		assertEquals(0, found.size());
+
+		alg.grow().value = 5;
+		assertTrue(alg.findAll(found,(a)->a.value==5));
+		assertEquals(1, found.size());
+
+		alg.grow().value = 5;
+		assertTrue(alg.findAll(found,(a)->a.value==5));
+		assertEquals(2, found.size());
+	}
+
+	@Test void findAllIdx() {
+		GrowQueue_I32 found = new GrowQueue_I32();
+
+		var alg = new FastQueue<>(DummyData::new);
+		assertFalse(alg.findAllIdx(found,(a)->a.value==5));
+		assertEquals(0, found.size());
+
+		alg.grow();
+		assertFalse(alg.findAllIdx(found,(a)->a.value==5));
+		assertEquals(0, found.size());
+
+		alg.grow().value = 5;
+		assertTrue(alg.findAllIdx(found,(a)->a.value==5));
+		assertEquals(1, found.size());
+
+		alg.grow().value = 5;
+		assertTrue(alg.findAllIdx(found,(a)->a.value==5));
+		assertEquals(2, found.size());
+		assertEquals(1, found.get(0));
+		assertEquals(2, found.get(1));
+	}
+
+	@Test void forIdx() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		alg.grow();
 		alg.grow();
@@ -40,8 +106,7 @@ public class TestFastAccess {
 		assertEquals(2,alg.get(2).value);
 	}
 
-	@Test
-	void forIdx_range() {
+	@Test void forIdx_range() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow();
@@ -58,8 +123,7 @@ public class TestFastAccess {
 		}
 	}
 
-	@Test
-	void forEach() {
+	@Test void forEach() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		alg.grow();
 		alg.grow();
@@ -72,8 +136,7 @@ public class TestFastAccess {
 		assertEquals(2,alg.get(2).value);
 	}
 
-	@Test
-	void forEach_range() {
+	@Test void forEach_range() {
 		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow();
