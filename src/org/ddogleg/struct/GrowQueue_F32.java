@@ -143,6 +143,15 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public float[] toArray() {
+		float[] out = new float[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
+	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
 	 * @param first First index you wish to remove. Inclusive.
 	 * @param last Last index you wish to remove. Inclusive.

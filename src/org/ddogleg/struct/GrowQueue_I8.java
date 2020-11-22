@@ -172,6 +172,15 @@ public class GrowQueue_I8 implements GrowQueue<GrowQueue_I8> {
 	}
 
 	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public byte[] toArray() {
+		byte[] out = new byte[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
+	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */
 	public void insert( int index , int value ) {

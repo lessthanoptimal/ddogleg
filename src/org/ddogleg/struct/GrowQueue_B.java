@@ -148,6 +148,15 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 		return this;
 	}
 
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public boolean[] toArray() {
+		boolean[] out = new boolean[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
 	public void fill( boolean value ) {
 		Arrays.fill(data, 0, size, value);
 	}

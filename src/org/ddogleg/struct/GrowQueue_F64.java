@@ -143,13 +143,21 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		return this;
 	}
 
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public double[] toArray() {
+		double[] out = new double[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];
 		}
 		size--;
 	}
-
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'

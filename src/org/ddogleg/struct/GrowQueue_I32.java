@@ -343,6 +343,15 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	}
 
 	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public int[] toArray() {
+		int[] out = new int[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
+	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
