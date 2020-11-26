@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_I32;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
@@ -36,7 +36,7 @@ import java.util.List;
 public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
 	StandardKMeans_F64 kmeans;
-	GrowQueue_I32 totals = new GrowQueue_I32();
+	DogArray_I32 totals = new DogArray_I32();
 
 	double dx[] = new double[1];
 	int N;
@@ -63,8 +63,8 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 		// initial cluster
 		kmeans.process(points,seeds.size());
 
-		GrowQueue_I32 labels = kmeans.getPointLabels();
-		FastQueue<double[]> means = kmeans.getClusterMeans();
+		DogArray_I32 labels = kmeans.getPointLabels();
+		DogArray<double[]> means = kmeans.getClusterMeans();
 
 		// compute mixture models
 		for (int i = 0; i < seeds.size(); i++) {

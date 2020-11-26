@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,14 +19,14 @@
 package org.ddogleg.stats;
 
 import org.ddogleg.sorting.QuickSelect;
-import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.DogArray_F64;
 
 /**
  * @author Peter Abeles
  */
-public class UtilStatisticsQueue {
+public class StatisticsDogArray {
 
-	public static double mean( GrowQueue_F64 list ) {
+	public static double mean( DogArray_F64 list ) {
 		double total = 0;
 		for (int i = 0; i < list.size(); i++) {
 			total += list.data[i];
@@ -35,7 +35,7 @@ public class UtilStatisticsQueue {
 		return total / list.size();
 	}
 
-	public static double variance( GrowQueue_F64 list , double mean ) {
+	public static double variance( DogArray_F64 list , double mean ) {
 		double total = 0;
 		for (int i = 0; i < list.size(); i++) {
 			double d = list.data[i] - mean;
@@ -45,11 +45,11 @@ public class UtilStatisticsQueue {
 		return total / (list.size()-1);
 	}
 
-	public static double stdev( GrowQueue_F64 list , double mean ) {
+	public static double stdev( DogArray_F64 list , double mean ) {
 		return Math.sqrt(variance(list,mean));
 	}
 
-	public static double fraction( GrowQueue_F64 list , double fraction ) {
+	public static double fraction( DogArray_F64 list , double fraction ) {
 		int k = (int)((list.size-1)*fraction+0.5);
 		return QuickSelect.select(list.data,k,list.size);
 	}

@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
-import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.DogArray_F64;
 
 import java.util.List;
 import java.util.Random;
@@ -43,7 +43,7 @@ public class InitializePlusPlus implements InitializeKMeans_F64{
 
 	Random rand;
 	// the distance of each point to the cluster it is closest to
-	GrowQueue_F64 distance = new GrowQueue_F64(1);
+	DogArray_F64 distance = new DogArray_F64(1);
 	double totalDistance;
 
 	@Override

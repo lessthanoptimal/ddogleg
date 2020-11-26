@@ -23,7 +23,7 @@ package org.ddogleg.struct;
  *
  * @author Peter Abeles
  */
-public interface GrowQueue<T extends GrowQueue<T>> {
+public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	/**
 	 * Sets the size to zero.

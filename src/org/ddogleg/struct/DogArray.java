@@ -28,24 +28,26 @@ import java.util.Random;
 
 
 /**
- * Growable array designed for fast access which creates, recycles and in general owns all of its elements.
+ * Growable array which automatically creates, recycles, and resets its elements. Access to internal variables
+ * is provided for high performant code. If a reset function is provided then when an object is created or recycled
+ * the reset function is called with the objective of giving the object a repeatable initial state.
  *
  * @author Peter Abeles
  */
 @SuppressWarnings({"unchecked","NullAway.Init"})
-public class FastQueue<T> extends FastAccess<T> {
+public class DogArray<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
 	// function that's called to reset a returned instance
 	private DProcess<T> reset;
 
 	// Wrapper around this class for lists
-	private final FastQueueList<T> list = new FastQueueList<>(this);
+	private final DogArrayList<T> list = new DogArrayList<>(this);
 
 	/**
 	 * Constructor which allows new instances to be created using a lambda
 	 */
-	public FastQueue(Class<T> type, Factory<T> factory ) {
+	public DogArray( Class<T> type, Factory<T> factory ) {
 		super(type);
 		init(10, factory);
 	}
@@ -54,7 +56,7 @@ public class FastQueue<T> extends FastAccess<T> {
 	 * Constructor which allows new instances to be created using a lambda and determines the class by
 	 * creating a new instance.
 	 */
-	public FastQueue( Factory<T> factory ) {
+	public DogArray( Factory<T> factory ) {
 		super((Class<T>)factory.newInstance().getClass());
 		init(10, factory);
 	}
@@ -64,7 +66,7 @@ public class FastQueue<T> extends FastAccess<T> {
 	 * @param factory Creates new instances
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 */
-	public FastQueue( Factory<T> factory , DProcess<T> reset ) {
+	public DogArray( Factory<T> factory , DProcess<T> reset ) {
 		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
 		init(10, factory);
@@ -73,7 +75,7 @@ public class FastQueue<T> extends FastAccess<T> {
 	/**
 	 * Constructor which allows new instances to be created using a lambda
 	 */
-	public FastQueue( int initialMaxSize, Factory<T> factory ) {
+	public DogArray( int initialMaxSize, Factory<T> factory ) {
 		super((Class<T>)factory.newInstance().getClass());
 		init(initialMaxSize, factory);
 	}
@@ -354,22 +356,5 @@ public class FastQueue<T> extends FastAccess<T> {
 
 	public interface Set<T> {
 		void set( T src , T dst );
-	}
-
-	public class FactoryClass implements Factory<T> {
-		Class<T> type;
-
-		public FactoryClass(Class<T> type) {
-			this.type = type;
-		}
-
-		@Override
-		public T newInstance() {
-			try {
-				return type.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 }

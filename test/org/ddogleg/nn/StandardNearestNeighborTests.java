@@ -20,9 +20,9 @@ package org.ddogleg.nn;
 
 import org.ddogleg.nn.alg.ExhaustiveNeighbor;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public abstract class StandardNearestNeighborTests {
 	private NearestNeighbor<double[]> alg;
 
 	private final NnData<double[]> found = new NnData<>();
-	private final FastQueue<NnData<double[]>> foundN = new FastQueue<>(NnData::new);
+	private final DogArray<NnData<double[]>> foundN = new DogArray<>(NnData::new);
 
 	public void setAlg(NearestNeighbor<double[]> alg) {
 		this.alg = alg;
@@ -292,8 +292,8 @@ public abstract class StandardNearestNeighborTests {
 	@Test
 	void findNearestN_compareToNaive() {
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		for( int i = 0; i < 200; i++ ) {
 			int numPoints = 8 + rand.nextInt(100);

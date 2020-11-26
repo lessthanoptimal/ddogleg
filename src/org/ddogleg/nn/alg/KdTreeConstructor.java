@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_I32;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -71,9 +71,9 @@ public class KdTreeConstructor<P> {
 	 */
 	public KdTree construct(List<P> points , boolean trackIndexes )
 	{
-		GrowQueue_I32 indexes = null;
+		DogArray_I32 indexes = null;
 		if( trackIndexes ) {
-			indexes = new GrowQueue_I32();
+			indexes = new DogArray_I32();
 			indexes.resize(points.size());
 			for (int i = 0; i < indexes.size; i++) {
 				indexes.data[i] = i;
@@ -97,18 +97,18 @@ public class KdTreeConstructor<P> {
 	 *
 	 * @return The node associated with this region
 	 */
-	protected KdTree.Node computeBranch(List<P> points, @Nullable GrowQueue_I32 indexes)
+	protected KdTree.Node computeBranch(List<P> points, @Nullable DogArray_I32 indexes)
 	{
 		// declare storage for the split data
 		List<P> left = new ArrayList<>(points.size()/2);
 		List<P> right = new ArrayList<>(points.size()/2);
-		GrowQueue_I32 leftIndexes,rightIndexes;
+		DogArray_I32 leftIndexes,rightIndexes;
 
 		if( indexes == null ) {
 			leftIndexes = null; rightIndexes = null;
 		} else {
-			leftIndexes = new GrowQueue_I32(points.size()/2);
-			rightIndexes = new GrowQueue_I32(points.size()/2);
+			leftIndexes = new DogArray_I32(points.size()/2);
+			rightIndexes = new DogArray_I32(points.size()/2);
 		}
 
 		// perform the splitting
@@ -133,7 +133,7 @@ public class KdTreeConstructor<P> {
 	/**
 	 * Creates a child by checking to see if it is a leaf or branch.
 	 */
-	protected @Nullable KdTree.Node computeChild(List<P> points , @Nullable GrowQueue_I32 indexes )
+	protected @Nullable KdTree.Node computeChild(List<P> points , @Nullable DogArray_I32 indexes )
 	{
 		if( points.size() == 0 )
 			return null;
@@ -147,7 +147,7 @@ public class KdTreeConstructor<P> {
 	/**
 	 * Convenient function for creating a leaf node
 	 */
-	private KdTree.Node createLeaf(List<P> points , @Nullable GrowQueue_I32 indexes ) {
+	private KdTree.Node createLeaf(List<P> points , @Nullable DogArray_I32 indexes ) {
 		int index = indexes == null ? -1 : indexes.get(0);
 		return memory.requestNode(points.get(0),index);
 	}

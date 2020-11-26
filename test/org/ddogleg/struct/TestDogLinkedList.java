@@ -122,13 +122,13 @@ public class TestDogLinkedList {
 		DogLinkedList.Element<Integer> e0 = alg.pushHead(1);
 		DogLinkedList.Element<Integer> e1 = alg.insertAfter(e0, 2);
 		assertSame(e0.next, e1);
-		assertSame(e1.previous, e0);
+		assertSame(e1.prev, e0);
 		assertEquals(2,alg.size);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.insertAfter(e1, 2);
 		assertSame(e1.next, e2);
-		assertSame(e2.previous, e1);
+		assertSame(e2.prev, e1);
 		assertSame(e2, alg.last);
 		assertEquals(3,alg.size);
 		checkList(alg);
@@ -140,13 +140,13 @@ public class TestDogLinkedList {
 
 		DogLinkedList.Element<Integer> e0 = alg.pushHead(1);
 		DogLinkedList.Element<Integer> e1 = alg.insertBefore(e0, 2);
-		assertSame(e0.previous, e1);
+		assertSame(e0.prev, e1);
 		assertSame(e1.next, e0);
 		assertEquals(2,alg.size);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.insertBefore(e1, 2);
-		assertSame(e1.previous, e2);
+		assertSame(e1.prev, e2);
 		assertSame(e2.next, e1);
 		assertSame(e2, alg.first);
 		assertEquals(3,alg.size);
@@ -390,7 +390,7 @@ public class TestDogLinkedList {
 	 */
 	protected void checkList( DogLinkedList<Integer> queue ) {
 		for( var e : queue.available ) {
-			assertNull(e.previous);
+			assertNull(e.prev);
 			assertNull(e.next);
 			assertNull(e.object);
 		}
@@ -413,7 +413,7 @@ public class TestDogLinkedList {
 			e = queue.last;
 			while( e != null ) {
 				backwards.add(e);
-				e = e.previous;
+				e = e.prev;
 				if( backwards.size() > queue.size() )
 					fail("too many elements in forward direction");
 			}

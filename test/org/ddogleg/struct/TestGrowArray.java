@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-class TestFastQueue {
+class TestGrowArray {
 
 	/**
 	 * makes sure reset function is called when the grow command is used
 	 */
 	@Test
 	void reset_grow() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new,(d)->d.value=2);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new,( d)->d.value=2);
 
 		for (int i = 0; i < 5; i++) {
 			DummyData d = alg.grow();
@@ -51,7 +51,7 @@ class TestFastQueue {
 	 */
 	@Test
 	void reset_resize() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new,(d)->d.value=2);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new,( d)->d.value=2);
 
 		alg.resize(3);
 		for (int i = 0; i < alg.size; i++) {
@@ -70,7 +70,7 @@ class TestFastQueue {
 
 	@Test
 	void checkDeclareInstance() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
 		assertTrue(alg.getMaxSize()>0);
 		assertNotNull(alg.data[0]);
@@ -78,7 +78,7 @@ class TestFastQueue {
 
 	@Test
 	void toList() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0,l.size());
@@ -96,7 +96,7 @@ class TestFastQueue {
 
 	@Test
 	void remove_indexes() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
@@ -121,7 +121,7 @@ class TestFastQueue {
 
 	@Test
 	void remove_indexes_RemoveNothing() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
@@ -132,7 +132,7 @@ class TestFastQueue {
 
 	@Test
 	void removeTail() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 
 		alg.grow();
 		assertEquals(1,alg.size);
@@ -148,7 +148,7 @@ class TestFastQueue {
 			d.value = i;
 			data.add(d);
 		}
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		alg.copyAll(data,(src, dst)-> dst.value=src.value);
 
 		for (int i = 0; i < 10; i++) {
@@ -159,7 +159,7 @@ class TestFastQueue {
 
 	@Test
 	void remove_index() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0,l.size());
@@ -191,7 +191,7 @@ class TestFastQueue {
 
 	@Test
 	void remove_object() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
 		alg.grow().value = 10;
 		alg.grow().value = 11;
@@ -207,7 +207,7 @@ class TestFastQueue {
 
 	@Test
 	void removeSwap() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0,l.size());
@@ -234,7 +234,7 @@ class TestFastQueue {
 
 	@Test
 	void getTail() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 
 		alg.grow();alg.grow();
 
@@ -243,7 +243,7 @@ class TestFastQueue {
 
 	@Test
 	void getTail_index() {
-		FastQueue<DummyData> alg = new FastQueue<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
 
 		alg.grow();alg.grow();
 
@@ -254,7 +254,7 @@ class TestFastQueue {
 
 	@Test
 	void get_pop() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
 		// test a failure case
 		try {
@@ -268,7 +268,7 @@ class TestFastQueue {
 
 	@Test
 	void size() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		assertEquals(0,alg.size);
 		alg.grow();
 		assertEquals(1,alg.size);
@@ -279,7 +279,7 @@ class TestFastQueue {
 	 */
 	@Test
 	void pop_grow() {
-		FastQueue<DummyData> alg = new FastQueue<>(1,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(1,DummyData::new);
 
 		int before = alg.getMaxSize();
 		for( int i = 0; i < 20; i++ ) {
@@ -292,7 +292,7 @@ class TestFastQueue {
 
 	@Test
 	void reserve() {
-		FastQueue<DummyData> alg = new FastQueue<>(1,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(1,DummyData::new);
 
 		alg.grow().value = 10;
 		int before = alg.getMaxSize();
@@ -302,7 +302,7 @@ class TestFastQueue {
 
 	@Test
 	void contains() {
-		FastQueue<DummyData> queue = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> queue = new DogArray<>(DummyData::new);
 		queue.grow();
 
 		assertFalse(queue.contains(new DummyData()));
@@ -312,7 +312,7 @@ class TestFastQueue {
 
 	@Test
 	void indexOf() {
-		FastQueue<DummyData> queue = new FastQueue<>(100,DummyData::new);
+		DogArray<DummyData> queue = new DogArray<>(100,DummyData::new);
 		queue.grow().value = 1;
 		queue.grow().value = 3;
 		queue.grow().value = 2;
@@ -326,7 +326,7 @@ class TestFastQueue {
 
 	@Test
 	void swap() {
-		FastQueue<DummyData> queue = new FastQueue<>(100,DummyData::new);
+		DogArray<DummyData> queue = new DogArray<>(100,DummyData::new);
 		queue.grow().value = 1;
 		queue.grow().value = 2;
 		queue.grow().value = 3;

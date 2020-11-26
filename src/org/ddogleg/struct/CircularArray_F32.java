@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,21 +23,21 @@ package org.ddogleg.struct;
  *
  * @author Peter Abeles
  */
-public class CircularQueue_I32 {
+public class CircularArray_F32 {
 	//
-	public int data[];
+	public float[] data;
 
 	// index which is the start of the queue
 	public int start;
 	// number of elements in the queue
 	public int size;
 
-	public CircularQueue_I32() {
+	public CircularArray_F32() {
 		this(10);
 	}
 
-	public CircularQueue_I32( int dataSize ) {
-		data = new int[dataSize];
+	public CircularArray_F32( int dataSize ) {
+		data = new float[dataSize];
 	}
 
 	public void reset() {
@@ -48,8 +48,8 @@ public class CircularQueue_I32 {
 	 * Returns and removes the first element from the queue.
 	 * @return first element in the queue
 	 */
-	public int popHead() {
-		int r = data[start];
+	public float popHead() {
+		float r = data[start];
 		removeHead();
 		return r;
 	}
@@ -58,8 +58,8 @@ public class CircularQueue_I32 {
 	 * Returns and removes the last element from the queue.
 	 * @return last element in the queue
 	 */
-	public int popTail() {
-		int r = tail();
+	public float popTail() {
+		float r = tail();
 		removeTail();
 		return r;
 	}
@@ -67,14 +67,14 @@ public class CircularQueue_I32 {
 	/**
 	 * Value of the first element in the queue
 	 */
-	public int head() {
+	public float head() {
 		return data[start];
 	}
 
 	/**
 	 * Value of the last element in the queue
 	 */
-	public int tail() {
+	public float tail() {
 		return data[(start+size-1)%data.length];
 	}
 
@@ -98,27 +98,8 @@ public class CircularQueue_I32 {
 	 * @param index Which element in the queue you wish to access
 	 * @return the element's value
 	 */
-	public int get( int index ) {
+	public float get( int index ) {
 		return data[(start+index)%data.length];
-	}
-
-	/**
-	 * Adds a new element to the queue.  If the queue isn't large enough to store this value then its internal data
-	 * array will grow
-	 * @param value Value which is to be added
-	 */
-	public void add( int value ) {
-		// see if it needs to grow the queue
-		if( size >= data.length) {
-			int a[] = new int[ nextDataSize() ];
-
-			System.arraycopy(data,start,a,0,data.length-start);
-			System.arraycopy(data,0,a,data.length-start,start);
-			start = 0;
-			data = a;
-		}
-		data[(start+size)%data.length] = value;
-		size++;
 	}
 
 	/**
@@ -126,7 +107,7 @@ public class CircularQueue_I32 {
 	 *
 	 * @param value Value which is to be added
 	 */
-	public void addW( int value ) {
+	public void add( float value ) {
 		// see if it needs to grow the queue
 		if( size >= data.length) {
 			data[start] = value;
@@ -137,13 +118,29 @@ public class CircularQueue_I32 {
 		}
 	}
 
-	private int nextDataSize() {
-		if( data.length < 1000 )
-			return data.length*2;
-		else if( data.length < 10000 )
-			return data.length*3/2;
-		else
-			return data.length*6/5;
+	public void set( CircularArray_F32 original ) {
+		if( this.data.length != original.data.length) {
+			this.data = new float[original.data.length];
+		}
+		System.arraycopy(original.data,0,this.data,0,this.data.length);
+		this.size = original.size;
+		this.start = original.start;
+	}
+
+	public CircularArray_F32 copy() {
+		CircularArray_F32 r = new CircularArray_F32();
+		r.set(this);
+		return r;
+	}
+
+	public void resizeQueue( int maxSize ) {
+		if( this.data.length != maxSize) {
+			this.data = new float[maxSize];
+		}
+	}
+
+	public int queueSize() {
+		return data.length;
 	}
 
 	public int size() {

@@ -18,7 +18,7 @@
 
 package org.ddogleg.graph;
 
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,5 +27,5 @@ import org.jetbrains.annotations.Nullable;
 public class Node<N,E>
 {
    @Nullable N data;
-   final FastQueue<Edge<N,E>> edges = new FastQueue<>(Edge::new);
+   final DogArray<Edge<N,E>> edges = new DogArray<>(Edge::new);
 }

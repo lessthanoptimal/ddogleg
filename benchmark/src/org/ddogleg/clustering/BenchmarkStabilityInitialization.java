@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering;
 
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_I32;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ public class BenchmarkStabilityInitialization {
 	Random rand = new Random(234);
 	List<double[]> points = new ArrayList<double[]>();
 	List<double[]> centers = new ArrayList<double[]>();
-	GrowQueue_I32 membership = new GrowQueue_I32();
-	GrowQueue_I32 clusterSize = new GrowQueue_I32();
+	DogArray_I32 membership = new DogArray_I32();
+	DogArray_I32 clusterSize = new DogArray_I32();
 	int totalClusters = 0;
 
 	public void addCluster( double x , double y , double sigmaX , double sigmaY , int N ) {

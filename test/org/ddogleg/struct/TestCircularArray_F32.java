@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestCircularQueue_F64 {
+public class TestCircularArray_F32 {
 
 	@Test
 	public void popHead() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -43,7 +43,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void popTail() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -56,7 +56,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void head() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
@@ -66,7 +66,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void head_offset() {
-		CircularQueue_F64 alg = new CircularQueue_F64(3);
+		CircularArray_F32 alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -79,7 +79,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void tail() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		assertEquals(1,alg.tail(), UtilEjml.TEST_F64);
@@ -89,7 +89,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void tail_offset() {
-		CircularQueue_F64 alg = new CircularQueue_F64(3);
+		CircularArray_F32 alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -102,7 +102,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void removeHead() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -116,7 +116,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void removeTail() {
-		CircularQueue_F64 alg = new CircularQueue_F64();
+		CircularArray_F32 alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -130,7 +130,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void get() {
-		CircularQueue_F64 alg = new CircularQueue_F64(2);
+		CircularArray_F32 alg = new CircularArray_F32(2);
 		assertEquals(2,alg.data.length);
 
 		// easy case
@@ -150,7 +150,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void add() {
-		CircularQueue_F64 alg = new CircularQueue_F64(3);
+		CircularArray_F32 alg = new CircularArray_F32(3);
 		assertEquals(3,alg.data.length);
 
 		alg.add(1);
@@ -174,7 +174,7 @@ public class TestCircularQueue_F64 {
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
-		alg.data = new  double[3];
+		alg.data = new  float[3];
 		alg.add(10);
 		assertEquals(10,alg.data[0], UtilEjml.TEST_F64);
 		assertEquals(3,alg.size);
@@ -182,7 +182,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void isEmpty() {
-		CircularQueue_F64 alg = new CircularQueue_F64(3);
+		CircularArray_F32 alg = new CircularArray_F32(3);
 
 		assertTrue(alg.isEmpty());
 		alg.add(5);
@@ -194,7 +194,7 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void reset() {
-		CircularQueue_F64 alg = new CircularQueue_F64(3);
+		CircularArray_F32 alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 5;
@@ -207,13 +207,13 @@ public class TestCircularQueue_F64 {
 
 	@Test
 	public void set_queue() {
-		CircularQueue_F64 a = new CircularQueue_F64(3);
+		CircularArray_F32 a = new CircularArray_F32(3);
 
 		for (int i = 0; i < 4; i++) {
 			a.add(i);
 		}
 
-		CircularQueue_F64 b = new CircularQueue_F64(10);
+		CircularArray_F32 b = new CircularArray_F32(10);
 		b.set(a);
 
 		assertEquals(3,b.queueSize());
@@ -224,4 +224,6 @@ public class TestCircularQueue_F64 {
 		assertEquals(a.start,b.start);
 
 	}
+
+
 }

@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestFastQueueList {
+public class TestGrowArrayList {
 
 	@Test
 	public void size() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 
 		List<Dummy> list = queue.toList();
 
@@ -46,7 +46,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void isEmpty() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 
 		List<Dummy> list = queue.toList();
 
@@ -59,7 +59,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void contains() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 		List<Dummy> list = queue.toList();
 
 		assertFalse(list.contains(new Dummy(1.0)));
@@ -71,7 +71,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void iterator() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
@@ -89,7 +89,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void toArray() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
@@ -108,7 +108,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void containsAll() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
@@ -125,7 +125,7 @@ public class TestFastQueueList {
 
 	@Test
 	public void get() {
-		FastQueue<Dummy> queue = new FastQueue<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 

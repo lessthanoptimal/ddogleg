@@ -20,8 +20,8 @@ package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_F64;
 import org.ejml.dense.row.CommonOps_DDRM;
 
 import java.util.List;
@@ -48,11 +48,11 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	InitializeGmm_F64 selectInitial;
 
 	// storage for mixture models
-	FastQueue<GaussianGmm_F64> mixture;
+	DogArray<GaussianGmm_F64> mixture;
 
 	// info for each points
 	@SuppressWarnings("NullAway")
-	FastQueue<PointInfo> info = new FastQueue<>(PointInfo::new,p->p.point=null);
+	DogArray<PointInfo> info = new DogArray<>(PointInfo::new, p->p.point=null);
 
 	// Maximum number of iterations
 	int maxIterations;
@@ -92,7 +92,7 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	@Override
 	public void init(final int pointDimension, long randomSeed) {
-		mixture = new FastQueue<>(()->new GaussianGmm_F64(pointDimension));
+		mixture = new DogArray<>(()->new GaussianGmm_F64(pointDimension));
 		selectInitial.init(pointDimension,randomSeed);
 
 		if( dx.length < pointDimension )
@@ -254,6 +254,6 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	public static class PointInfo
 	{
 		public double[] point; // reference to the original input point
-		public GrowQueue_F64 weights = new GrowQueue_F64();
+		public DogArray_F64 weights = new DogArray_F64();
 	}
 }

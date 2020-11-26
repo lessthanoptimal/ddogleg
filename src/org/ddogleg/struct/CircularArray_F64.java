@@ -23,21 +23,21 @@ package org.ddogleg.struct;
  *
  * @author Peter Abeles
  */
-public class CircularQueue_F32 {
+public class CircularArray_F64 {
 	//
-	public float[] data;
+	public double[] data;
 
 	// index which is the start of the queue
 	public int start;
 	// number of elements in the queue
 	public int size;
 
-	public CircularQueue_F32() {
+	public CircularArray_F64() {
 		this(10);
 	}
 
-	public CircularQueue_F32(int dataSize ) {
-		data = new float[dataSize];
+	public CircularArray_F64( int dataSize ) {
+		data = new double[dataSize];
 	}
 
 	public void reset() {
@@ -48,8 +48,8 @@ public class CircularQueue_F32 {
 	 * Returns and removes the first element from the queue.
 	 * @return first element in the queue
 	 */
-	public float popHead() {
-		float r = data[start];
+	public double popHead() {
+		double r = data[start];
 		removeHead();
 		return r;
 	}
@@ -58,8 +58,8 @@ public class CircularQueue_F32 {
 	 * Returns and removes the last element from the queue.
 	 * @return last element in the queue
 	 */
-	public float popTail() {
-		float r = tail();
+	public double popTail() {
+		double r = tail();
 		removeTail();
 		return r;
 	}
@@ -67,14 +67,14 @@ public class CircularQueue_F32 {
 	/**
 	 * Value of the first element in the queue
 	 */
-	public float head() {
+	public double head() {
 		return data[start];
 	}
 
 	/**
 	 * Value of the last element in the queue
 	 */
-	public float tail() {
+	public double tail() {
 		return data[(start+size-1)%data.length];
 	}
 
@@ -98,7 +98,7 @@ public class CircularQueue_F32 {
 	 * @param index Which element in the queue you wish to access
 	 * @return the element's value
 	 */
-	public float get( int index ) {
+	public double get( int index ) {
 		return data[(start+index)%data.length];
 	}
 
@@ -107,7 +107,7 @@ public class CircularQueue_F32 {
 	 *
 	 * @param value Value which is to be added
 	 */
-	public void add( float value ) {
+	public void add( double value ) {
 		// see if it needs to grow the queue
 		if( size >= data.length) {
 			data[start] = value;
@@ -118,24 +118,24 @@ public class CircularQueue_F32 {
 		}
 	}
 
-	public void set( CircularQueue_F32 original ) {
+	public void set( CircularArray_F64 original ) {
 		if( this.data.length != original.data.length) {
-			this.data = new float[original.data.length];
+			this.data = new double[original.data.length];
 		}
 		System.arraycopy(original.data,0,this.data,0,this.data.length);
 		this.size = original.size;
 		this.start = original.start;
 	}
 
-	public CircularQueue_F32 copy() {
-		CircularQueue_F32 r = new CircularQueue_F32();
+	public CircularArray_F64 copy() {
+		CircularArray_F64 r = new CircularArray_F64();
 		r.set(this);
 		return r;
 	}
 
 	public void resizeQueue( int maxSize ) {
 		if( this.data.length != maxSize) {
-			this.data = new float[maxSize];
+			this.data = new double[maxSize];
 		}
 	}
 

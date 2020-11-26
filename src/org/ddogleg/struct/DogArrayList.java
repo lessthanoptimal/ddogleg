@@ -29,26 +29,26 @@ import java.util.ListIterator;
  *
  * @author Peter Abeles
  */
-public class FastQueueList<T> implements List<T> , Serializable {
-	FastQueue<T> queue;
+public class DogArrayList<T> implements List<T> , Serializable {
+	DogArray<T> array;
 
-	public FastQueueList(FastQueue<T> queue) {
-		this.queue = queue;
+	public DogArrayList( DogArray<T> array ) {
+		this.array = array;
 	}
 
 	@Override
 	public int size() {
-		return queue.size;
+		return array.size;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return queue.size() == 0;
+		return array.size() == 0;
 	}
 
 	@Override
 	public boolean contains(Object o) {
-		return queue.contains(o);
+		return array.contains(o);
 	}
 
 	@Override
@@ -58,16 +58,16 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public Object[] toArray() {
-		Object[] ret = new Object[queue.size];
+		Object[] ret = new Object[array.size];
 
-		System.arraycopy(queue.data,0,ret,0,queue.size);
+		System.arraycopy(array.data,0,ret,0, array.size);
 
 		return ret;
 	}
 
 	@Override
 	public <A> A[] toArray(A[] a) {
-		System.arraycopy(queue.data,0,a,0,queue.size);
+		System.arraycopy(array.data,0,a,0, array.size);
 		return a;
 	}
 
@@ -112,12 +112,12 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public void clear() {
-		queue.reset();
+		array.reset();
 	}
 
 	@Override
 	public T get(int index) {
-		return queue.data[index];
+		return array.data[index];
 	}
 
 	@Override
@@ -137,13 +137,13 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 	@Override
 	public int indexOf(Object o) {
-		return queue.indexOf((T)o);
+		return array.indexOf((T)o);
 	}
 
 	@Override
 	public int lastIndexOf(Object o) {
-		for( int i = queue.size-1; i >= 0; i-- ) {
-			if( queue.data[i].equals(o) )
+		for(int i = array.size-1; i >= 0; i-- ) {
+			if( array.data[i].equals(o) )
 				return i;
 		}
 		return -1;
@@ -170,12 +170,12 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 		@Override
 		public boolean hasNext() {
-			return index < queue.size;
+			return index < array.size;
 		}
 
 		@Override
 		public T next() {
-			return queue.data[index++];
+			return array.data[index++];
 		}
 
 		@Override
@@ -185,7 +185,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 		@Override
 		public T previous() {
-			return queue.data[--index];
+			return array.data[--index];
 		}
 
 		@Override
@@ -205,7 +205,7 @@ public class FastQueueList<T> implements List<T> , Serializable {
 
 		@Override
 		public void set(T t) {
-			queue.data[index-1] = t;
+			array.data[index-1] = t;
 		}
 
 		@Override
@@ -214,11 +214,11 @@ public class FastQueueList<T> implements List<T> , Serializable {
 		}
 	}
 
-	public FastQueue<T> getQueue() {
-		return queue;
+	public DogArray<T> getArray() {
+		return array;
 	}
 
-	public void setQueue(FastQueue<T> queue) {
-		this.queue = queue;
+	public void setArray( DogArray<T> array ) {
+		this.array = array;
 	}
 }

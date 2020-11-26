@@ -19,8 +19,6 @@
 package org.ddogleg.struct;
 
 
-import org.ddogleg.sorting.QuickSort_F32;
-
 import java.util.Arrays;
 
 /**
@@ -28,31 +26,31 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
+public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 
-	public float[] data;
+	public long[] data;
 	public int size;
 
-	public GrowQueue_F32( int maxSize ) {
-		data = new float[ maxSize ];
+	public DogArray_I64( int maxSize) {
+		data = new long[ maxSize ];
 		this.size = 0;
 	}
 
-	public GrowQueue_F32() {
+	public DogArray_I64() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
-	public static GrowQueue_F32 zeros( int length ) {
-		GrowQueue_F32 out = new GrowQueue_F32(length);
+	public static DogArray_I64 zeros( int length ) {
+		DogArray_I64 out = new DogArray_I64(length);
 		out.size = length;
 		return out;
 	}
 
-	public static GrowQueue_F32 array( float ...values ) {
-		GrowQueue_F32 out = zeros(values.length);
+	public static DogArray_I64 array( long ...values ) {
+		DogArray_I64 out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i];
 		}
@@ -62,7 +60,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	/**
 	 * Counts the number of times the specified value occures in the list
 	 */
-	public int count( float value ) {
+	public int count( long value ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
@@ -76,9 +74,9 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		size = 0;
 	}
 
-	public void addAll( GrowQueue_F32 queue ) {
+	public void addAll( DogArray_I64 queue ) {
 		if( size+queue.size > data.length ) {
-			float temp[] = new float[ (size+queue.size) * 2];
+			long temp[] = new long[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -86,14 +84,14 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		size += queue.size;
 	}
 
-	public void addAll( float[] array , int startIndex , int endIndex ) {
+	public void addAll( long[] array , int startIndex , int endIndex ) {
 		if( endIndex > array.length )
 			throw new IllegalAccessError("endIndex is larger than input array");
 
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			float temp[] = new float[ (size+arraySize) * 2];
+			long temp[] = new long[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -101,24 +99,55 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		size += arraySize;
 	}
 
-	public void add( float val ) {
-		push(val);
+	public void add(long value) {
+		push(value);
 	}
 
-	public void push( float val ) {
+	public void push( long val ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2+5];
+			long temp[] = new long[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
-    }
+	}
 
-	public void remove( int index ) {
-		for( int i = index+1; i < size; i++ ) {
-			data[i-1] = data[i];
-		}
-		size--;
+	public long get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public long getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
+	}
+
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public long getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
+	public long unsafe_get( int index ) {
+		return data[index];
+	}
+
+	public void set( int index , long value ) {
+		data[index] = value;
+	}
+
+	@Override
+	public void setTo( DogArray_I64 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
 	/**
@@ -127,7 +156,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( float[] array , int offset , int length ) {
+	public void setTo( long[] array , int offset , int length ) {
 		resize(length);
 		System.arraycopy(array,offset,data,0,length);
 	}
@@ -137,19 +166,18 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public GrowQueue_F32 setTo( float... src ) {
+	public DogArray_I64 setTo( long... src) {
 		setTo(src, 0, src.length);
 		return this;
 	}
 
-	/**
-	 * Creates a new primitive array which is a copy.
-	 */
-	public float[] toArray() {
-		float[] out = new float[size];
-		System.arraycopy(data,0,out,0,size);
-		return out;
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
 	}
+
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
@@ -172,9 +200,9 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */
-	public void insert( int index , float value ) {
+	public void insert( int index , long value ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2+5];
+			long temp[] = new long[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -196,16 +224,16 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
-	public float removeSwap( int index ) {
+	public long removeSwap( int index ) {
 		if( index < 0 || index >= size )
 			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
-		float ret = data[index];
+		long ret = data[index];
 		size -= 1;
 		data[index] = data[size];
 		return ret;
 	}
 
-	public float removeTail() {
+	public long removeTail() {
 		if( size > 0 ) {
 			size--;
 			return data[size];
@@ -214,60 +242,10 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		}
 	}
 
-	public float get( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[index];
-	}
-
-	/**
-	 * Returns an element starting from the end of the list. 0 = size -1
-	 */
-	public float getTail( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[size-index-1];
-	}
-
-	/**
-	 * Gets the value at the index which corresponds to the specified fraction
-	 * @param fraction 0 to 1 inclusive
-	 * @return value at fraction
-	 */
-	public float getFraction( double fraction ) {
-		return get( (int)((size-1)*fraction) );
-	}
-
-	public float unsafe_get( int index ) {
-		return data[index];
-	}
-
-	public void set( int index, float value  ) {
-		data[index] = value;
-	}
-
-	@Override
-	public void setTo( GrowQueue_F32 original ) {
-		resize(original.size);
-		System.arraycopy(original.data, 0, data, 0, size());
-	}
-
-	public void fill( float value ) {
-		Arrays.fill(data, 0, size, value);
-	}
-
-	public boolean contains( float value ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i] == value )
-				return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
-			data = new float[size];
+			data = new long[size];
 		}
 		this.size = size;
 	}
@@ -277,7 +255,7 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size , float value ) {
+	public void resize( int size , long value ) {
 		resize(size);
 		fill(value);
 	}
@@ -285,11 +263,23 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {
-			float []tmp = new float[size];
+			long []tmp = new long[size];
 			System.arraycopy(data,0,tmp,0,this.size);
 			data = tmp;
 		}
 		this.size = size;
+	}
+
+	public void fill( long value ) {
+		Arrays.fill(data, 0, size, value);
+	}
+
+	public boolean contains( long value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -304,14 +294,18 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		return size;
 	}
 
+	public long pop() {
+		return data[--size];
+	}
+
 	@Override
 	public void zero() {
 		Arrays.fill(data,0,size,0);
 	}
 
 	@Override
-	public GrowQueue_F32 copy() {
-		GrowQueue_F32 ret = new GrowQueue_F32(size);
+	public DogArray_I64 copy() {
+		DogArray_I64 ret = new DogArray_I64(size);
 		ret.setTo(this);
 		return ret;
 	}
@@ -323,22 +317,18 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 
 		int D = size/2;
 		for (int i = 0,j=size-1; i < D; i++,j--) {
-			float tmp = data[i];
+			long tmp = data[i];
 			data[i] = data[j];
 			data[j] = tmp;
 		}
 	}
-
-	public float pop() {
-        return data[--size];
-    }
 
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
 	 */
-	public int indexOf( float value ) {
+	public int indexOf( long value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
 				return i;
@@ -346,50 +336,9 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 		return -1;
 	}
 
-	public int indexOfGreatest() {
-		if( size <=- 0 )
-			return -1;
-
-		int selected = 0;
-		float best = data[0];
-
-		for (int i = 1; i < size; i++) {
-			if( data[i] > best ) {
-				best = data[i];
-				selected = i;
-			}
-		}
-
-		return selected	;
-	}
-
-	public int indexOfLeast() {
-		if( size <=- 0 )
-			return -1;
-
-		int selected = 0;
-		float best = data[0];
-
-		for (int i = 1; i < size; i++) {
-			if( data[i] < best ) {
-				best = data[i];
-				selected = i;
-			}
-		}
-
-		return selected;
-	}
-
 	@Override
 	public void sort() {
 		Arrays.sort(data,0,size);
-	}
-
-	/**
-	 * Sort but with a re-usable sorter to avoid declaring new memory
-	 */
-	public void sort(QuickSort_F32 sorter) {
-		sorter.sort(data,size);
 	}
 
 	public void forIdx(FunctionEachIdx func) {
@@ -405,10 +354,10 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	public interface FunctionEachIdx {
-		void process( int index, float value );
+		void process( int index, long value );
 	}
 
 	public interface FunctionEach {
-		void process( float value );
+		void process( long value );
 	}
 }

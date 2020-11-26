@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.stats;
 
-import org.ddogleg.struct.GrowQueue_F64;
+import org.ddogleg.struct.DogArray_F64;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,43 +26,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestUtilStatisticsQueue {
+public class TestStatisticsDogArray {
 	@Test
 	public void mean_F64() {
-		GrowQueue_F64 l = new GrowQueue_F64();
+		DogArray_F64 l = new DogArray_F64();
 		l.add(0);
 		l.add(1);
 		l.add(2);
 		l.add(3);
 		l.add(4);
 
-		double found = UtilStatisticsQueue.mean(l);
+		double found = StatisticsDogArray.mean(l);
 		assertEquals(2,found,1e-8);
 	}
 
 	@Test
 	public void variance_F64() {
-		GrowQueue_F64 l = new GrowQueue_F64();
+		DogArray_F64 l = new DogArray_F64();
 		l.add(0);
 		l.add(1);
 		l.add(2);
 		l.add(3);
 		l.add(4);
 
-		double found = UtilStatisticsQueue.variance(l,2);
+		double found = StatisticsDogArray.variance(l,2);
 		assertEquals(2.5,found,1e-8);
 	}
 
 	@Test
 	public void fraction_F64() {
 
-		GrowQueue_F64 l = new GrowQueue_F64();
+		DogArray_F64 l = new DogArray_F64();
 		for (int i = 0; i < 100; i++) {
 			l.add(i);
 		}
 
-		assertEquals(50,UtilStatisticsQueue.fraction(l,0.5),1e-8);
-		assertEquals(0,UtilStatisticsQueue.fraction(l,0),1e-8);
-		assertEquals(99,UtilStatisticsQueue.fraction(l,1.0),1e-8);
+		assertEquals(50, StatisticsDogArray.fraction(l,0.5),1e-8);
+		assertEquals(0, StatisticsDogArray.fraction(l,0),1e-8);
+		assertEquals(99, StatisticsDogArray.fraction(l,1.0),1e-8);
 	}
 }

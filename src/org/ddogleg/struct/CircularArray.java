@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,9 +25,9 @@ import java.lang.reflect.Array;
  *
  * @author Peter Abeles
  */
-public class CircularQueue<T> {
+public class CircularArray<T> {
 	// inner data array
-	public T data[];
+	public T[] data;
 
 	// index which is the start of the queue
 	public int start;
@@ -36,11 +36,11 @@ public class CircularQueue<T> {
 
 	Class<T> type;
 
-	public CircularQueue( Class<T> type ) {
+	public CircularArray( Class<T> type ) {
 		this(type,10);
 	}
 
-	public CircularQueue( Class<T> type , int maxSize) {
+	public CircularArray( Class<T> type , int maxSize) {
 		this.type = type;
 		data = (T[])Array.newInstance(type,maxSize);
 	}
@@ -163,7 +163,7 @@ public class CircularQueue<T> {
 	}
 
 	private void growInnerArray() {
-		T a[] = (T[]) Array.newInstance(type, nextDataSize());
+		T[] a = (T[]) Array.newInstance(type, nextDataSize());
 
 		System.arraycopy(data,start,a,0,data.length-start);
 		System.arraycopy(data,0,a,data.length-start,start);

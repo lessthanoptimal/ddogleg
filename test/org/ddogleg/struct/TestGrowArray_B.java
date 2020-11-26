@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowQueue_B {
+public class TestGrowArray_B {
 
 	@Test
 	void auto_grow() {
-		GrowQueue_B alg = new GrowQueue_B(3);
+		DogArray_B alg = new DogArray_B(3);
 
 		assertEquals(3,alg.data.length);
 
@@ -44,7 +44,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void count() {
-		GrowQueue_B alg = GrowQueue_B.array(0,0,1,1,1);
+		DogArray_B alg = DogArray_B.array(0,0,1,1,1);
 
 		assertEquals(2,alg.count(false));
 		assertEquals(3,alg.count(true));
@@ -52,7 +52,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void reset() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
 		alg.push(false);
@@ -68,7 +68,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void resize() {
-		GrowQueue_B alg = new GrowQueue_B(2);
+		DogArray_B alg = new DogArray_B(2);
 		assertEquals(0,alg.size);
 		alg.resize(12);
 		assertTrue(alg.data.length >= 12);
@@ -83,7 +83,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void resize_default() {
-		GrowQueue_B alg = new GrowQueue_B(2);
+		DogArray_B alg = new DogArray_B(2);
 		assertEquals(0,alg.size);
 		alg.resize(12, true);
 		assertTrue(alg.data.length >= 12);
@@ -106,7 +106,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void push_pop() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(false);
 		alg.push(true);
@@ -119,7 +119,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void setTo_array_off() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		boolean[] foo = new boolean[]{true,true,false,true,false};
 		alg.setTo(foo,1,3);
@@ -131,7 +131,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void setTo_array() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		boolean[] array = new boolean[]{true,true,false,true,false};
 
@@ -145,7 +145,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void remove_two() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
 		alg.push(true);
@@ -167,7 +167,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void remove_swap() {
-		GrowQueue_B alg = GrowQueue_B.array(0,0,0,0,1);
+		DogArray_B alg = DogArray_B.array(0,0,0,0,1);
 		alg.removeSwap(1);
 		assertEquals(4,alg.size);
 		alg.forIdx((i,v)-> assertEquals((i == 1), v));
@@ -175,7 +175,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void indexOf() {
-		GrowQueue_B alg = new GrowQueue_B(10);
+		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
 		alg.push(false);
@@ -188,7 +188,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void getTail() {
-		GrowQueue_B alg = new GrowQueue_B(20);
+		DogArray_B alg = new DogArray_B(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i%2==0);
@@ -201,7 +201,7 @@ public class TestGrowQueue_B {
 
 	@Test
 	void forIdx() {
-		GrowQueue_B alg = GrowQueue_B.array(true,false,true,false,true);
+		DogArray_B alg = DogArray_B.array(true,false,true,false,true);
 		alg.forIdx((idx,value)-> assertEquals(idx%2==0,value));
 	}
 }

@@ -19,8 +19,8 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.sorting.QuickSelect;
-import org.ddogleg.struct.GrowQueue_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.DogArray_I32;
 
 import java.util.List;
 
@@ -38,9 +38,9 @@ public class ExhaustiveNeighbor<P> {
 	// the distance to the closest node found so far
 	double bestDistance;
 
-	final GrowQueue_F64 distances = new GrowQueue_F64();
-	final GrowQueue_I32 indexes = new GrowQueue_I32();
-	final GrowQueue_I32 indexesSort = new GrowQueue_I32();
+	final DogArray_F64 distances = new DogArray_F64();
+	final DogArray_I32 indexes = new DogArray_I32();
+	final DogArray_I32 indexesSort = new DogArray_I32();
 
 	KdTreeDistance<P> distance;
 
@@ -94,8 +94,8 @@ public class ExhaustiveNeighbor<P> {
 	 * @param outputDistance Storage for the distance of the closest elements
 	 */
 	public void findClosestN( P p , double maxDistance , int numNeighbors ,
-							  GrowQueue_I32 outputIndex ,
-							  GrowQueue_F64 outputDistance ) {
+							  DogArray_I32 outputIndex ,
+							  DogArray_F64 outputDistance ) {
 
 		// Compute the distance of each point and save the ones within range
 		distances.reset();

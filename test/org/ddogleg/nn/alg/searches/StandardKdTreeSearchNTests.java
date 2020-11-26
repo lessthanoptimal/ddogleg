@@ -22,9 +22,9 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.sorting.QuickSelect;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class StandardKdTreeSearchNTests {
 
 	public int N = 2;
-	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult::new);
+	DogArray<KdTreeResult> found = new DogArray<>(KdTreeResult::new);
 
 	Random rand = new Random(234);
 
@@ -268,8 +268,8 @@ public abstract class StandardKdTreeSearchNTests {
 		List<double[]> ret = new ArrayList<>();
 
 		List<double[]> found = new ArrayList<>();
-		GrowQueue_F64 distances = new GrowQueue_F64();
-		GrowQueue_I32 indexes = new GrowQueue_I32();
+		DogArray_F64 distances = new DogArray_F64();
+		DogArray_I32 indexes = new DogArray_I32();
 
 
 		for( int i = 0; i < data.size(); i++ ) {

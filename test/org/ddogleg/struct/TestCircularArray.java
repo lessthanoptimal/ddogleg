@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestCircularQueue {
+public class TestCircularArray {
 
 	@Test
 	public void popHead() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -42,7 +42,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void popTail() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -55,7 +55,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void head() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		assertEquals(1, alg.head().value);
@@ -65,7 +65,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void head_offset() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -78,7 +78,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void tail() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		assertEquals(1,alg.tail().value);
@@ -88,7 +88,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void tail_offset() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -101,7 +101,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void removeHead() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -115,7 +115,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void removeTail() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class);
+		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -129,7 +129,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void get() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,2);
+		CircularArray<A> alg = new CircularArray<A>(A.class,2);
 		assertEquals(2,alg.data.length);
 
 		// easy case
@@ -149,7 +149,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void add() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 		assertEquals(3,alg.data.length);
 
 		alg.add( new A(1));
@@ -193,7 +193,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void addW() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 		assertEquals(3,alg.data.length);
 
 		alg.addW(new A(1));
@@ -225,7 +225,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void isEmpty() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 
 		assertTrue(alg.isEmpty());
 		alg.add(new A(5));
@@ -237,7 +237,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void reset() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 
 		alg.start = 2;
 		alg.size = 5;
@@ -250,7 +250,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void grow() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 
 		alg.grow().value = 1;
 		assertEquals(1,alg.size);
@@ -263,7 +263,7 @@ public class TestCircularQueue {
 		assertTrue(alg.data.length >= 4);
 
 		// wrap around case
-		alg = new CircularQueue<A>(A.class,3);
+		alg = new CircularArray<A>(A.class,3);
 		alg.size = 2;
 		alg.start = 1;
 		alg.grow().value = 1;
@@ -275,7 +275,7 @@ public class TestCircularQueue {
 
 	@Test
 	public void growW() {
-		CircularQueue<A> alg = new CircularQueue<A>(A.class,3);
+		CircularArray<A> alg = new CircularArray<A>(A.class,3);
 
 		alg.growW().value = 1;
 		assertEquals(1,alg.size);

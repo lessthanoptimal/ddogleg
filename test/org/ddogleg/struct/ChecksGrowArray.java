@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
+public abstract class ChecksGrowArray<T extends DogArrayPrimitive<T>> {
 
 	public abstract T declare( int maxsize );
 

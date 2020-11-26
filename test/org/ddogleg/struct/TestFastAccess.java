@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TestFastAccess {
 	@Test void find() {
-		var alg = new FastQueue<>(DummyData::new);
+		var alg = new DogArray<>(DummyData::new);
 		assertNull(alg.find((a)->a.value==5));
 
 		alg.grow();
@@ -41,7 +41,7 @@ public class TestFastAccess {
 	}
 
 	@Test void findIdx() {
-		var alg = new FastQueue<>(DummyData::new);
+		var alg = new DogArray<>(DummyData::new);
 		assertEquals(-1,alg.findIdx((a)->a.value==5));
 
 		alg.grow();
@@ -54,7 +54,7 @@ public class TestFastAccess {
 	@Test void findAll() {
 		List<DummyData> found = new ArrayList<>();
 
-		var alg = new FastQueue<>(DummyData::new);
+		var alg = new DogArray<>(DummyData::new);
 		assertFalse(alg.findAll(found,(a)->a.value==5));
 		assertEquals(0, found.size());
 
@@ -72,9 +72,9 @@ public class TestFastAccess {
 	}
 
 	@Test void findAllIdx() {
-		GrowQueue_I32 found = new GrowQueue_I32();
+		DogArray_I32 found = new DogArray_I32();
 
-		var alg = new FastQueue<>(DummyData::new);
+		var alg = new DogArray<>(DummyData::new);
 		assertFalse(alg.findAllIdx(found,(a)->a.value==5));
 		assertEquals(0, found.size());
 
@@ -94,7 +94,7 @@ public class TestFastAccess {
 	}
 
 	@Test void forIdx() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		alg.grow();
 		alg.grow();
 		alg.grow();
@@ -107,7 +107,7 @@ public class TestFastAccess {
 	}
 
 	@Test void forIdx_range() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow();
 		}
@@ -124,7 +124,7 @@ public class TestFastAccess {
 	}
 
 	@Test void forEach() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		alg.grow();
 		alg.grow();
 		alg.grow();
@@ -137,7 +137,7 @@ public class TestFastAccess {
 	}
 
 	@Test void forEach_range() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow();
 		}

@@ -22,7 +22,7 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearchN;
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -80,7 +80,7 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 	 * @param results Storage for the found neighbors
 	 */
 	@Override
-	public void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results) {
+	public void findNeighbor(P target, int searchN, DogArray<KdTreeResult> results) {
 		if( searchN <= 0 )
 			throw new IllegalArgumentException("I'm sorry, but I refuse to search for less than or equal to 0 neighbors.");
 
@@ -102,7 +102,7 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 	/**
 	 * Recursive step for finding the closest point
 	 */
-	private void stepClosest(@Nullable KdTree.Node node , FastQueue<KdTreeResult> neighbors ) {
+	private void stepClosest(@Nullable KdTree.Node node , DogArray<KdTreeResult> neighbors ) {
 
 		if( node == null )
 			return;
@@ -142,7 +142,7 @@ public class KdTreeSearchNStandard<P> implements KdTreeSearchN<P> {
 	/**
 	 * See if the node being considered is a new nearest-neighbor
 	 */
-	private void checkBestDistance(KdTree.Node node, FastQueue<KdTreeResult> neighbors) {
+	private void checkBestDistance(KdTree.Node node, DogArray<KdTreeResult> neighbors) {
 		double distSq = distance.distance((P)node.point,target);
 		// <= because multiple nodes could be at the bestDistanceSq
 		if( distSq <= mostDistantNeighborSq) {

@@ -19,59 +19,46 @@
 package org.ddogleg.struct;
 
 
-import org.ddogleg.sorting.QuickSort_S32;
-
 import java.util.Arrays;
 
 /**
- * This is a queue that is composed of integers.  Elements are added and removed from the tail
+ * This is a queue that is composed of bytes.  Elements are added and removed from the tail
  *
  * @author Peter Abeles
  */
-public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
+public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 
-	public int[] data;
+	public byte[] data;
 	public int size;
 
-	public GrowQueue_I32( int maxSize ) {
-		data = new int[ maxSize ];
+	public DogArray_I8( int maxSize) {
+		data = new byte[ maxSize ];
 		this.size = 0;
 	}
 
-	public GrowQueue_I32() {
+	public DogArray_I8() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
-	public static GrowQueue_I32 zeros( int length ) {
-		GrowQueue_I32 out = new GrowQueue_I32(length);
+	public static DogArray_I8 zeros( int length ) {
+		DogArray_I8 out = new DogArray_I8(length);
 		out.size = length;
 		return out;
 	}
 
-	public static GrowQueue_I32 array( int ...values ) {
-		GrowQueue_I32 out = zeros(values.length);
+	public static DogArray_I8 array( int ...values ) {
+		DogArray_I8 out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
-			out.data[i] = values[i];
+			out.data[i] = (byte)values[i];
 		}
 		return out;
 	}
 
 	/**
-	 * Creates a new array initialized with values from min to max, exclusive.
-	 */
-	public static GrowQueue_I32 range( int min , int max ) {
-		GrowQueue_I32 out = zeros(max-min);
-		for (int i = min; i < max; i++) {
-			out.data[i-min] = i;
-		}
-		return out;
-	}
-
-	/**
-	 * Counts the number of times the specified value occurs in the list
+	 * Counts the number of times the specified value occures in the list
 	 */
 	public int count( int value ) {
 		int total = 0;
@@ -87,9 +74,9 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		size = 0;
 	}
 
-	public void addAll( GrowQueue_I32 queue ) {
+	public void addAll( DogArray_I8 queue ) {
 		if( size+queue.size > data.length ) {
-			int[] temp = new int[ (size+queue.size) * 2];
+			byte[] temp = new byte[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -97,14 +84,14 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		size += queue.size;
 	}
 
-	public void addAll( int[] array , int startIndex , int endIndex ) {
+	public void addAll( byte[] array , int startIndex , int endIndex ) {
 		if( endIndex > array.length )
 			throw new IllegalAccessError("endIndex is larger than input array");
 
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			int[] temp = new int[ (size+arraySize) * 2];
+			byte[] temp = new byte[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -118,11 +105,11 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			int[] temp = new int[ size * 2+5];
+			byte[] temp = new byte[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
-		data[size++] = val;
+		data[size++] = (byte)val;
 	}
 
 	public int get( int index ) {
@@ -154,11 +141,11 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	}
 
 	public void set( int index , int value ) {
-		data[index] = value;
+		data[index] = (byte)value;
 	}
 
 	@Override
-	public void setTo( GrowQueue_I32 original ) {
+	public void setTo( DogArray_I8 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
@@ -169,7 +156,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( int[] array , int offset , int length ) {
+	public void setTo( byte[] array , int offset , int length ) {
 		resize(length);
 		System.arraycopy(array,offset,data,0,length);
 	}
@@ -179,16 +166,63 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public GrowQueue_I32 setTo( int... src) {
+	public DogArray_I8 setTo( byte... src) {
 		setTo(src, 0, src.length);
 		return this;
 	}
 
-	public void remove( int index ) {
-		for( int i = index+1; i < size; i++ ) {
-			data[i-1] = data[i];
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public byte[] toArray() {
+		byte[] out = new byte[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
+	/**
+	 * Inserts the value at the specified index and shifts all the other values down.
+	 */
+	public void insert( int index , int value ) {
+		if( size == data.length ) {
+			byte[] temp = new byte[ size * 2+5];
+			System.arraycopy(data,0,temp,0,index);
+			temp[index] = (byte)value;
+			System.arraycopy(data,index,temp,index+1,size-index);
+			this.data = temp;
+			size++;
+		} else {
+			size++;
+			for( int i = size-1; i > index; i-- ) {
+				data[i] = data[i-1];
+			}
+			data[index] = (byte)value;
 		}
-		size--;
+	}
+
+	/**
+	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
+	 * but has a runtime of O(1).
+	 *
+	 * @param index The index to be removed.
+	 * @return The removed object
+	 */
+	public byte removeSwap( int index ) {
+		if( index < 0 || index >= size )
+			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+		byte ret = data[index];
+		size -= 1;
+		data[index] = data[size];
+		return ret;
+	}
+
+	public byte removeTail() {
+		if( size > 0 ) {
+			size--;
+			return data[size];
+		} else {
+			throw new RuntimeException("Size zero, no tail");
+		}
 	}
 
 	/**
@@ -209,72 +243,32 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		size -= delta;
 	}
 
-	/**
-	 * Inserts the value at the specified index and shifts all the other values down.
-	 */
-	public void insert( int index , int value ) {
-		if( size == data.length ) {
-			int[] temp = new int[ size * 2+5];
-			System.arraycopy(data,0,temp,0,index);
-			temp[index] = value;
-			System.arraycopy(data,index,temp,index+1,size-index);
-			this.data = temp;
-			size++;
-		} else {
-			size++;
-			for( int i = size-1; i > index; i-- ) {
-				data[i] = data[i-1];
-			}
-			data[index] = value;
-		}
+	public void fill( byte value ) {
+		Arrays.fill(data, 0, size, value);
 	}
 
-	/**
-	 * Removes the first 'total' elements from the queue. Element 'total' will be the new start of the queue
-	 *
-	 * @param total Number of elements to remove from the head of the queue
-	 */
-	public void removeHead( int total ) {
-		for( int j = total; j < size; j++ ) {
-			data[j-total] = data[j];
+	public boolean contains( byte value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
 		}
-		size -= total;
-	}
-
-	/**
-	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
-	 * but has a runtime of O(1).
-	 *
-	 * @param index The index to be removed.
-	 * @return The removed object
-	 */
-	public int removeSwap( int index ) {
-		if( index < 0 || index >= size )
-			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
-		int ret = data[index];
-		size -= 1;
-		data[index] = data[size];
-		return ret;
-	}
-
-	public int removeTail() {
-		if( size > 0 ) {
-			size--;
-			return data[size];
-		} else {
-			throw new RuntimeException("Size zero, no tail");
-		}
+		return false;
 	}
 
 	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
-			data = new int[size];
+			data = new byte[size];
 		}
 		this.size = size;
 	}
 
-	public void resize( int size , int value ) {
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , byte value ) {
 		resize(size);
 		fill(value);
 	}
@@ -282,7 +276,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {
-			int []tmp = new int[size];
+			byte []tmp = new byte[size];
 			System.arraycopy(data,0,tmp,0,this.size);
 			data = tmp;
 		}
@@ -296,18 +290,6 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		extend(amount-size);
 	}
 
-	public void fill( int value ) {
-		Arrays.fill(data,0,size,value);
-	}
-
-	public boolean contains( int value ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i] == value )
-				return true;
-		}
-		return false;
-	}
-
 	@Override
 	public int size() {
 		return size;
@@ -319,12 +301,12 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 	@Override
 	public void zero() {
-		Arrays.fill(data,0,size,0);
+		Arrays.fill(data,0,size,(byte)0);
 	}
 
 	@Override
-	public GrowQueue_I32 copy() {
-		GrowQueue_I32 ret = new GrowQueue_I32(size);
+	public DogArray_I8 copy() {
+		DogArray_I8 ret = new DogArray_I8(size);
 		ret.setTo(this);
 		return ret;
 	}
@@ -336,18 +318,36 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 
 		int D = size/2;
 		for (int i = 0,j=size-1; i < D; i++,j--) {
-			int tmp = data[i];
+			byte tmp = data[i];
 			data[i] = data[j];
 			data[j] = tmp;
 		}
 	}
 
 	/**
-	 * Creates a new primitive array which is a copy.
+	 * Prints the queue to stdout as a hex array
 	 */
-	public int[] toArray() {
-		int[] out = new int[size];
-		System.arraycopy(data,0,out,0,size);
+	public void printHex() {
+		System.out.print("[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.printf("0x%02X ",data[i]);
+		}
+		System.out.print("]");
+	}
+
+	public static DogArray_I8 parseHex( String message ) {
+		message = message.replaceAll("\\[","");
+		message = message.replaceAll("\\]","");
+		message = message.replaceAll(" ","");
+
+		String[] words = message.split(",");
+
+		DogArray_I8 out = new DogArray_I8(words.length);
+		out.size = words.length;
+
+		for (int i = 0; i < words.length; i++) {
+			out.data[i] = Integer.decode(words[i]).byteValue();
+		}
 		return out;
 	}
 
@@ -356,7 +356,7 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
 	 */
-	public int indexOf( int value ) {
+	public int indexOf( byte value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
 				return i;
@@ -369,19 +369,12 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 		Arrays.sort(data,0,size);
 	}
 
-	/**
-	 * Sort but with a re-usable sorter to avoid declaring new memory
-	 */
-	public void sort(QuickSort_S32 sorter) {
-		sorter.sort(data,size);
-	}
-
 	public void forIdx(FunctionEachIdx func) {
 		for (int i = 0; i < size; i++) {
 			func.process(i,data[i]);
 		}
 	}
-
+	
 	public void forEach(FunctionEach func) {
 		for (int i = 0; i < size; i++) {
 			func.process(data[i]);
@@ -389,10 +382,10 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	}
 
 	public interface FunctionEachIdx {
-		void process( int index, int value );
+		void process( int index, byte value );
 	}
 
 	public interface FunctionEach {
-		void process( int value );
+		void process( byte value );
 	}
 }

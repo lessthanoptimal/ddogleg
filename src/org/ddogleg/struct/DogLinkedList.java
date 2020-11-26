@@ -89,7 +89,7 @@ public class DogLinkedList<T> {
 			for( int i = 0; i < index; i++ ) {
 				if( e == null )
 					throw new IllegalArgumentException("Element "+i+" is null");
-				e = e.previous;
+				e = e.prev;
 			}
 			return e;
 		}
@@ -109,7 +109,7 @@ public class DogLinkedList<T> {
 			first = last = e;
 		} else {
 			e.next = first;
-			first.previous = e;
+			first.prev = e;
 			first = e;
 		}
 		size++;
@@ -130,7 +130,7 @@ public class DogLinkedList<T> {
 		if( last == null ) {
 			first = last = e;
 		} else {
-			e.previous = last;
+			e.prev = last;
 			last.next = e;
 			last = e;
 		}
@@ -149,10 +149,10 @@ public class DogLinkedList<T> {
 	public Element<T> insertAfter( Element<T> previous , T object ) {
 		Element<T> e = requestNew();
 		e.object = object;
-		e.previous = previous;
+		e.prev = previous;
 		e.next = previous.next;
 		if( e.next != null ) {
-			e.next.previous = e;
+			e.next.prev = e;
 		} else {
 			last = e;
 		}
@@ -171,15 +171,15 @@ public class DogLinkedList<T> {
 	public Element<T> insertBefore( Element<T> next , T object ) {
 		Element<T> e = requestNew();
 		e.object = object;
-		e.previous = next.previous;
+		e.prev = next.prev;
 		e.next = next;
 
-		if( e.previous != null ) {
-			e.previous.next = e;
+		if( e.prev != null ) {
+			e.prev.next = e;
 		} else {
 			first = e;
 		}
-		next.previous = e;
+		next.prev = e;
 		size++;
 		return e;
 	}
@@ -192,32 +192,32 @@ public class DogLinkedList<T> {
 	 */
 	public void swap( Element<T> a , Element<T> b ) {
 		if (a.next == b) {
-			if( a.previous != null ) {
-				a.previous.next = b;
+			if( a.prev != null ) {
+				a.prev.next = b;
 			}
 			if( b.next != null ) {
-				b.next.previous = a;
+				b.next.prev = a;
 			}
-			Element<T> tmp = a.previous;
-			a.previous = b;
+			Element<T> tmp = a.prev;
+			a.prev = b;
 			a.next = b.next;
-			b.previous = tmp;
+			b.prev = tmp;
 			b.next = a;
 			if( first == a )
 				first = b;
 			if( last == b )
 				last = a;
-		} else if (a.previous == b) {
+		} else if (a.prev == b) {
 			if( a.next != null ) {
-				a.next.previous = b;
+				a.next.prev = b;
 			}
-			if( b.previous != null ) {
-				b.previous.next = a;
+			if( b.prev != null ) {
+				b.prev.next = a;
 			}
 			Element<T> tmp = a.next;
 			a.next = b;
-			a.previous = b.previous;
-			b.previous = a;
+			a.prev = b.prev;
+			b.prev = a;
 			b.next = tmp;
 
 			if( first == b )
@@ -226,31 +226,31 @@ public class DogLinkedList<T> {
 				last = b;
 		} else {
 			if (a.next != null) {
-				a.next.previous = b;
+				a.next.prev = b;
 			}
-			if (a.previous != null) {
-				a.previous.next = b;
+			if (a.prev != null) {
+				a.prev.next = b;
 			}
 			if (b.next != null) {
-				b.next.previous = a;
+				b.next.prev = a;
 			}
-			if (b.previous != null) {
-				b.previous.next = a;
+			if (b.prev != null) {
+				b.prev.next = a;
 			}
 			Element<T> tempNext = b.next;
-			Element<T> tempPrev = b.previous;
+			Element<T> tempPrev = b.prev;
 			b.next = a.next;
-			b.previous = a.previous;
+			b.prev = a.prev;
 			a.next = tempNext;
-			a.previous = tempPrev;
+			a.prev = tempPrev;
 
 			if (a.next == null)
 				last = a;
 			else if (b.next == null)
 				last = b;
-			if (a.previous == null)
+			if (a.prev == null)
 				first = a;
-			else if (b.previous == null)
+			else if (b.prev == null)
 				first = b;
 		}
 	}
@@ -261,14 +261,14 @@ public class DogLinkedList<T> {
 	 */
 	public void remove( Element<T> element ) {
 		if( element.next == null ) {
-			last = element.previous;
+			last = element.prev;
 		} else {
-			element.next.previous = element.previous;
+			element.next.prev = element.prev;
 		}
-		if( element.previous == null ) {
+		if( element.prev == null ) {
 			first = element.next;
 		} else {
-			element.previous.next = element.next;
+			element.prev.next = element.next;
 		}
 		size--;
 		element.clear();
@@ -288,7 +288,7 @@ public class DogLinkedList<T> {
 		available.push(first);
 
 		if( first.next != null ) {
-			first.next.previous = null;
+			first.next.prev = null;
 			first = first.next;
 		} else {
 			// there's only one element in the list
@@ -311,9 +311,9 @@ public class DogLinkedList<T> {
 		Element<T> e = last;
 		available.add(last);
 
-		if( last.previous != null ) {
-			last.previous.next = null;
-			last = last.previous;
+		if( last.prev != null ) {
+			last.prev.next = null;
+			last = last.prev;
 		} else {
 			// there's only one element in the list
 			first = last = null;
@@ -380,7 +380,7 @@ public class DogLinkedList<T> {
 			first = a;
 		} else if( last != null ) {
 			last.next = a;
-			a.previous = last;
+			a.prev = last;
 		}
 
 		for (int i = 1; i < list.size(); i++) {
@@ -388,7 +388,7 @@ public class DogLinkedList<T> {
 			b.object = list.get(i);
 
 			a.next = b;
-			b.previous = a;
+			b.prev = a;
 			a = b;
 		}
 
@@ -413,7 +413,7 @@ public class DogLinkedList<T> {
 			this.first = a;
 		} else if( last != null ) {
 			last.next = a;
-			a.previous = last;
+			a.prev = last;
 		}
 
 		for (int i = 1; i < length; i++) {
@@ -421,7 +421,7 @@ public class DogLinkedList<T> {
 			b.object =  array[first+i];
 
 			a.next = b;
-			b.previous = a;
+			b.prev = a;
 			a = b;
 		}
 
@@ -453,12 +453,12 @@ public class DogLinkedList<T> {
 	public static class Element<T>
 	{
 		public @Nullable @Getter @Setter Element<T> next;
-		public @Nullable @Getter @Setter Element<T> previous;
+		public @Nullable @Getter @Setter Element<T> prev;
 		public @Getter @Setter T object;
 
 		public void clear() {
 			next = null;
-			previous = null;
+			prev = null;
 			object = null;
 		}
 	}

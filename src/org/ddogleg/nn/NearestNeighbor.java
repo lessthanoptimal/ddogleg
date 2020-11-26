@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn;
 
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 
 import java.util.List;
 
@@ -90,6 +90,6 @@ public interface NearestNeighbor<P> {
 		 * @param numNeighbors (Input) The number of neighbors it will search for.
 		 * @param results (Output) Storage for the result. Reset() is called.
 		 */
-		void findNearest( P point , double maxDistance , int numNeighbors , FastQueue<NnData<P>> results );
+		void findNearest( P point , double maxDistance , int numNeighbors , DogArray<NnData<P>> results );
 	}
 }

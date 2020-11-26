@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
+public class TestGrowArray_I8 extends ChecksGrowArray<DogArray_I8> {
 
 	@Test
 	void count() {
-		GrowQueue_I8 alg = GrowQueue_I8.array(0,0,1,1,1);
+		DogArray_I8 alg = DogArray_I8.array(0,0,1,1,1);
 
 		assertEquals(2,alg.count(0));
 		assertEquals(3,alg.count(1));
@@ -38,8 +38,8 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void addAll_queue() {
-		GrowQueue_I8 queue0 = new GrowQueue_I8(2);
-		GrowQueue_I8 queue1 = new GrowQueue_I8(3);
+		DogArray_I8 queue0 = new DogArray_I8(2);
+		DogArray_I8 queue1 = new DogArray_I8(3);
 
 		queue0.add(1);
 		queue0.add(2);
@@ -65,7 +65,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void addAll_array() {
-		GrowQueue_I8 queue0 = new GrowQueue_I8(2);
+		DogArray_I8 queue0 = new DogArray_I8(2);
 		byte[] array = new byte[]{3,4,5};
 
 		queue0.add(1);
@@ -88,7 +88,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void auto_grow() {
-		GrowQueue_I8 alg = new GrowQueue_I8(3);
+		DogArray_I8 alg = new DogArray_I8(3);
 
 		assertEquals(3,alg.data.length);
 
@@ -103,7 +103,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void reset() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -119,7 +119,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void resize() {
-		GrowQueue_I8 alg = new GrowQueue_I8(2);
+		DogArray_I8 alg = new DogArray_I8(2);
 		assertEquals(0,alg.size);
 		alg.resize(12);
 		assertTrue(alg.data.length >= 12);
@@ -134,7 +134,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void resize_default() {
-		GrowQueue_I8 alg = new GrowQueue_I8(2);
+		DogArray_I8 alg = new DogArray_I8(2);
 		assertEquals(0,alg.size);
 		alg.resize(12, (byte)1);
 		assertTrue(alg.data.length >= 12);
@@ -157,7 +157,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void push_pop() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -170,7 +170,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void setTo_array_off() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		byte[] foo = new byte[]{1,3,4,5,7};
 		alg.setTo(foo,1,3);
@@ -182,7 +182,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void setTo_array() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		byte[] array = new byte[]{1,3,4,5,7};
 
@@ -196,7 +196,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void remove_two() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -218,35 +218,35 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void remove_swap() {
-		var alg = GrowQueue_I8.array(0,0,0,0,1);
+		var alg = DogArray_I8.array(0,0,0,0,1);
 		alg.removeSwap(1);
 		assertEquals(4,alg.size);
 		alg.forIdx((i,v)-> assertEquals(i!=1?0:1, v));
 	}
 
 	@Override
-	public GrowQueue_I8 declare(int maxsize) {
-		return new GrowQueue_I8(maxsize);
+	public DogArray_I8 declare( int maxsize) {
+		return new DogArray_I8(maxsize);
 	}
 
 	@Override
-	public void push(GrowQueue_I8 queue, double value) {
+	public void push( DogArray_I8 queue, double value) {
 		queue.push((int)value);
 	}
 
 	@Override
-	public void insert(GrowQueue_I8 queue, int index, double value) {
+	public void insert( DogArray_I8 queue, int index, double value) {
 		queue.insert(index,(int)value);
 	}
 
 	@Override
-	public void check(GrowQueue_I8 queue, int index, double value) {
+	public void check( DogArray_I8 queue, int index, double value) {
 		assertEquals((int)value,queue.get(index));
 	}
 
 	@Test
 	void indexOf() {
-		GrowQueue_I8 alg = new GrowQueue_I8(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -259,7 +259,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void sort() {
-		GrowQueue_I8 alg = new GrowQueue_I8(6);
+		DogArray_I8 alg = new DogArray_I8(6);
 
 		alg.push(8);
 		alg.push(2);
@@ -279,7 +279,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void getFraction() {
-		GrowQueue_I8 alg = new GrowQueue_I8(20);
+		DogArray_I8 alg = new DogArray_I8(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -296,7 +296,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void getTail() {
-		GrowQueue_I8 alg = new GrowQueue_I8(20);
+		DogArray_I8 alg = new DogArray_I8(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -309,7 +309,7 @@ public class TestGrowQueue_I8 extends ChecksGrowQueue<GrowQueue_I8> {
 
 	@Test
 	void forIdx() {
-		GrowQueue_I8 alg = GrowQueue_I8.array(1,2,3,4,5);
+		DogArray_I8 alg = DogArray_I8.array(1,2,3,4,5);
 		alg.forIdx((idx,value)-> assertEquals(idx+1,value));
 	}
 }

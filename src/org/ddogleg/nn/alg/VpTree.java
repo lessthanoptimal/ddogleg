@@ -20,9 +20,9 @@ package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_I32;
 import org.ddogleg.struct.FastArray;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_I32;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,7 +53,7 @@ import java.util.Random;
  */
 @SuppressWarnings("NullAway.Init")
 public class VpTree implements NearestNeighbor<double[]> {
-	GrowQueue_I32 indexes;
+	DogArray_I32 indexes;
 	private double[][] items;
 	private @Nullable Node root;
 	private final Random random;
@@ -72,7 +72,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 	public void setPoints(List<double[]> points, boolean trackIndicies) {
 		// Make a copy because we mutate the lists
 		this.items = points.toArray(new double[0][]);
-		this.indexes = new GrowQueue_I32();
+		this.indexes = new DogArray_I32();
 		indexes.resize(points.size());
 		for (int i = 0; i < points.size(); i++) {
 			indexes.data[i] = i;
@@ -174,7 +174,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 		list[b] = tmp;
 	}
 
-	private void listSwap(GrowQueue_I32 list, int a, int b) {
+	private void listSwap( DogArray_I32 list, int a, int b) {
 		int tmp = list.get(a);
 		list.data[a] = list.data[b];
 		list.data[b] = tmp;
@@ -196,7 +196,7 @@ public class VpTree implements NearestNeighbor<double[]> {
 
 		@Override
 		public void findNearest(double[] target, double maxDistance,
-								int numNeighbors, FastQueue<NnData<double[]>> results)
+								int numNeighbors, DogArray<NnData<double[]>> results)
 		{
 			results.reset();
 			PriorityQueue<HeapItem> heap = search(target, maxDistance < 0 ? Double.POSITIVE_INFINITY : Math.sqrt(maxDistance), numNeighbors);

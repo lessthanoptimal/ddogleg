@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Base class for {@link FastArray} and {@link FastQueue}. Provides access to the data but does not provide
+ * Base class for {@link FastArray} and {@link DogArray}. Provides access to the data but does not provide
  * methods which add or grow the internal data structure.
  *
  * @author Peter Abeles
@@ -177,7 +177,7 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * Finds the indexes of all elements which match. Returns true if at least one match was found
 	 */
-	public boolean findAllIdx(GrowQueue_I32 matches, FunctionMatches<T> function) {
+	public boolean findAllIdx( DogArray_I32 matches, FunctionMatches<T> function) {
 		matches.reset();
 		for (int i = 0; i < size; i++) {
 			if (function.process(data[i])) {

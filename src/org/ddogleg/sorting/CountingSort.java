@@ -18,8 +18,8 @@
 
 package org.ddogleg.sorting;
 
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_I32;
 
 /**
  * A O(N) sorting routine for integer valued elements with a known upper and lower bound.   This performance can
@@ -29,9 +29,9 @@ import org.ddogleg.struct.GrowQueue_I32;
  */
 public class CountingSort {
 
-	GrowQueue_I32 histogram = new GrowQueue_I32();
+	DogArray_I32 histogram = new DogArray_I32();
 
-	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<>(GrowQueue_I32::new);
+	DogArray<DogArray_I32> histIndexes = new DogArray<>(DogArray_I32::new);
 
 	int minValue,maxValue;
 
@@ -129,7 +129,7 @@ public class CountingSort {
 		// over wrist the input data with sorted elements
 		int index = 0;
 		for( int i = 0; i < histIndexes.size; i++ ) {
-			GrowQueue_I32 matches = histIndexes.get(i);
+			DogArray_I32 matches = histIndexes.get(i);
 			for( int j = 0; j < matches.size; j++ ) {
 				indexes[index++] = matches.data[j];
 			}

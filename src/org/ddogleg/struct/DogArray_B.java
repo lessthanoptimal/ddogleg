@@ -26,31 +26,31 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
+public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 
 	public boolean[] data;
 	public int size;
 
-	public GrowQueue_B(int maxSize) {
+	public DogArray_B( int maxSize) {
 		data = new boolean[ maxSize ];
 		this.size = 0;
 	}
 
-	public GrowQueue_B() {
+	public DogArray_B() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with false
 	 */
-	public static GrowQueue_B zeros( int length ) {
-		GrowQueue_B out = new GrowQueue_B(length);
+	public static DogArray_B zeros( int length ) {
+		DogArray_B out = new DogArray_B(length);
 		out.size = length;
 		return out;
 	}
 
-	public static GrowQueue_B array( boolean ...values ) {
-		GrowQueue_B out = zeros(values.length);
+	public static DogArray_B array( boolean ...values ) {
+		DogArray_B out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i];
 		}
@@ -60,8 +60,8 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	/**
 	 * Non-zero values are set to true
 	 */
-	public static GrowQueue_B array( int ...values ) {
-		GrowQueue_B out = zeros(values.length);
+	public static DogArray_B array( int ...values ) {
+		DogArray_B out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i] != 0;
 		}
@@ -122,7 +122,7 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	}
 
 	@Override
-	public void setTo( GrowQueue_B original ) {
+	public void setTo( DogArray_B original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
@@ -143,7 +143,7 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public GrowQueue_B setTo( boolean... src ) {
+	public DogArray_B setTo( boolean... src ) {
 		setTo(src, 0, src.length);
 		return this;
 	}
@@ -270,8 +270,8 @@ public class GrowQueue_B implements GrowQueue<GrowQueue_B> {
 	}
 
 	@Override
-	public GrowQueue_B copy() {
-		GrowQueue_B ret = new GrowQueue_B(size);
+	public DogArray_B copy() {
+		DogArray_B ret = new DogArray_B(size);
 		ret.setTo(this);
 		return ret;
 	}

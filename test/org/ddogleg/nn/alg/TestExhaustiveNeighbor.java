@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
-import org.ddogleg.struct.GrowQueue_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -83,8 +83,8 @@ public class TestExhaustiveNeighbor {
 		ExhaustiveNeighbor<double[]>  alg = new ExhaustiveNeighbor<>(distance);
 		alg.setPoints(list);
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		alg.findClosestN(new double[]{1, 2}, 10, 5, outputIndex, outputDistance);
 
@@ -102,8 +102,8 @@ public class TestExhaustiveNeighbor {
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
 		alg.setPoints(list);
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		alg.findClosestN(new double[]{1, 2}, 10, 5, outputIndex, outputDistance);
 
@@ -124,8 +124,8 @@ public class TestExhaustiveNeighbor {
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
 		alg.setPoints(list);
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		alg.findClosestN(new double[]{1, 2}, 0.1, 5, outputIndex, outputDistance);
 
@@ -143,8 +143,8 @@ public class TestExhaustiveNeighbor {
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
 		alg.setPoints(list);
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		alg.findClosestN(new double[]{4.1, 4.9}, 10, 3, outputIndex, outputDistance);
 
@@ -166,8 +166,8 @@ public class TestExhaustiveNeighbor {
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
 		alg.setPoints(list);
 
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		alg.findClosestN(new double[]{4.1, 4.9}, 10, 3, outputIndex, outputDistance);
 
@@ -184,7 +184,7 @@ public class TestExhaustiveNeighbor {
 		checkContains(3,outputIndex);
 	}
 
-	private void checkContains( int  value , GrowQueue_I32 list ) {
+	private void checkContains( int  value , DogArray_I32 list ) {
 		for( int i = 0; i < list.size; i++ ) {
 			if( list.data[i] == value ) {
 				return;

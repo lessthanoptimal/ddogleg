@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 import org.ejml.LinearSolverSafe;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -38,7 +38,7 @@ public class GaussianLikelihoodManager {
 	// Set of Gaussians which describe the mixture
 	List<GaussianGmm_F64> mixtures;
 	// Storage for precomputed likelihood functions
-	FastQueue<Likelihood> precomputes;
+	DogArray<Likelihood> precomputes;
 
 	// used to compute likelihood
 	LinearSolverDense<DMatrixRMaj> solver;
@@ -53,7 +53,7 @@ public class GaussianLikelihoodManager {
 		solver = LinearSolverFactory_DDRM.symmPosDef(pointDimension);
 		solver = new LinearSolverSafe<>(solver);
 
-		precomputes = new FastQueue<>(()->new Likelihood(pointDimension));
+		precomputes = new DogArray<>(()->new Likelihood(pointDimension));
 
 		diff = new DMatrixRMaj(pointDimension,1);
 	}

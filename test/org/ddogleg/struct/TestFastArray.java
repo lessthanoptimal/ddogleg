@@ -116,7 +116,7 @@ class TestFastArray {
 
 	@Test
 	void reverse() {
-		FastQueue<DummyData> alg = new FastQueue<>(2,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(2,DummyData::new);
 
 		// 0 items
 		alg.reverse();
@@ -182,7 +182,7 @@ class TestFastArray {
 
 	@Test
 	void addAll() {
-		FastQueue<DummyData> alg = new FastQueue<>(DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		alg.grow();
 		alg.grow();
 

@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
-import org.ddogleg.struct.GrowQueue_B;
+import org.ddogleg.struct.DogArray_B;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class InitializeStandard_F64 implements InitializeKMeans_F64 {
 	Random rand;
 
 	// used to ensure that the same point isn't returned twice
-	GrowQueue_B marked = new GrowQueue_B();
+	DogArray_B marked = new DogArray_B();
 	List<double[]> unused = new ArrayList<double[]>();
 
 	@Override

@@ -24,7 +24,7 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearch1;
 import org.ddogleg.nn.alg.KdTreeSearchN;
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 
 /**
  * @author Peter Abeles
@@ -34,7 +34,7 @@ public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<
 	KdTreeSearchN<P> searchN;
 
 	// storage for multiple results
-	FastQueue<KdTreeResult> found = new FastQueue<>(KdTreeResult::new);
+	DogArray<KdTreeResult> found = new DogArray<>(KdTreeResult::new);
 
 	KdTreeInternalSearch( KdTreeSearch1<P> search1, KdTreeSearchN<P> searchN )
 	{
@@ -66,7 +66,7 @@ public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<
 	}
 
 	@Override
-	public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
+	public void findNearest(P point, double maxDistance, int numNeighbors, DogArray<NnData<P>> results) {
 		setTree();
 		results.reset();
 		if( maxDistance <= 0 )

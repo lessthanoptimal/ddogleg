@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 
 /**
  * Interface for searching a single tree for the N nearest-neighbors.
@@ -48,7 +48,7 @@ public interface KdTreeSearchN<P> {
 	 * @param searchN Number of closest points it will find.  Must be {@code >=} 1
 	 * @param results Storage for the found neighbors.
 	 */
-	void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results);
+	void findNeighbor(P target, int searchN, DogArray<KdTreeResult> results);
 
 	/**
 	 * Creates a copy of this search with the same configuration. workspace isn't copied

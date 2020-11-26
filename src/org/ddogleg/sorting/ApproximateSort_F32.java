@@ -18,9 +18,9 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_I32;
 import org.ddogleg.struct.FastArray;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_I32;
 
 /**
  * Counting sort for floating point numbers.  Sorting accuracy will be to within range/numBins.
@@ -29,7 +29,7 @@ import org.ddogleg.struct.GrowQueue_I32;
  */
 public class ApproximateSort_F32 {
 
-	FastQueue<GrowQueue_I32> histIndexes = new FastQueue<>(GrowQueue_I32::new);
+	DogArray<DogArray_I32> histIndexes = new DogArray<>(DogArray_I32::new);
 	FastArray<SortableParameter_F32>[] histObjs = new FastArray[0];
 
 	double minValue,maxValue,divisor;
@@ -139,7 +139,7 @@ public class ApproximateSort_F32 {
 		// over wrist the input data with sorted elements
 		int index = 0;
 		for( int i = 0; i < histIndexes.size; i++ ) {
-			GrowQueue_I32 matches = histIndexes.get(i);
+			DogArray_I32 matches = histIndexes.get(i);
 			for( int j = 0; j < matches.size; j++ ) {
 				indexes[index++] = matches.data[j];
 			}

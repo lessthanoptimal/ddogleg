@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 
+import org.ddogleg.sorting.QuickSort_S32;
+
 import java.util.Arrays;
 
 /**
@@ -26,31 +28,31 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
+public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
-	public long[] data;
+	public int[] data;
 	public int size;
 
-	public GrowQueue_I64(int maxSize) {
-		data = new long[ maxSize ];
+	public DogArray_I32( int maxSize ) {
+		data = new int[ maxSize ];
 		this.size = 0;
 	}
 
-	public GrowQueue_I64() {
+	public DogArray_I32() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
-	public static GrowQueue_I64 zeros( int length ) {
-		GrowQueue_I64 out = new GrowQueue_I64(length);
+	public static DogArray_I32 zeros( int length ) {
+		DogArray_I32 out = new DogArray_I32(length);
 		out.size = length;
 		return out;
 	}
 
-	public static GrowQueue_I64 array( long ...values ) {
-		GrowQueue_I64 out = zeros(values.length);
+	public static DogArray_I32 array( int ...values ) {
+		DogArray_I32 out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i];
 		}
@@ -58,9 +60,20 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	}
 
 	/**
-	 * Counts the number of times the specified value occures in the list
+	 * Creates a new array initialized with values from min to max, exclusive.
 	 */
-	public int count( long value ) {
+	public static DogArray_I32 range( int min , int max ) {
+		DogArray_I32 out = zeros(max-min);
+		for (int i = min; i < max; i++) {
+			out.data[i-min] = i;
+		}
+		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occurs in the list
+	 */
+	public int count( int value ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
@@ -74,9 +87,9 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		size = 0;
 	}
 
-	public void addAll( GrowQueue_I64 queue ) {
+	public void addAll( DogArray_I32 queue ) {
 		if( size+queue.size > data.length ) {
-			long temp[] = new long[ (size+queue.size) * 2];
+			int[] temp = new int[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -84,14 +97,14 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		size += queue.size;
 	}
 
-	public void addAll( long[] array , int startIndex , int endIndex ) {
+	public void addAll( int[] array , int startIndex , int endIndex ) {
 		if( endIndex > array.length )
 			throw new IllegalAccessError("endIndex is larger than input array");
 
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			long temp[] = new long[ (size+arraySize) * 2];
+			int[] temp = new int[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -99,20 +112,20 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		size += arraySize;
 	}
 
-	public void add(long value) {
+	public void add(int value) {
 		push(value);
 	}
 
-	public void push( long val ) {
+	public void push( int val ) {
 		if( size == data.length ) {
-			long temp[] = new long[ size * 2+5];
+			int[] temp = new int[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
 	}
 
-	public long get( int index ) {
+	public int get( int index ) {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[index];
@@ -121,7 +134,7 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	/**
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
-	public long getTail( int index ) {
+	public int getTail( int index ) {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[size-index-1];
@@ -132,20 +145,20 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	 * @param fraction 0 to 1 inclusive
 	 * @return value at fraction
 	 */
-	public long getFraction( double fraction ) {
+	public int getFraction( double fraction ) {
 		return get( (int)((size-1)*fraction) );
 	}
 
-	public long unsafe_get( int index ) {
+	public int unsafe_get( int index ) {
 		return data[index];
 	}
 
-	public void set( int index , long value ) {
+	public void set( int index , int value ) {
 		data[index] = value;
 	}
 
 	@Override
-	public void setTo( GrowQueue_I64 original ) {
+	public void setTo( DogArray_I32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
@@ -156,7 +169,7 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( long[] array , int offset , int length ) {
+	public void setTo( int[] array , int offset , int length ) {
 		resize(length);
 		System.arraycopy(array,offset,data,0,length);
 	}
@@ -166,7 +179,7 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public GrowQueue_I64 setTo( long... src) {
+	public DogArray_I32 setTo( int... src) {
 		setTo(src, 0, src.length);
 		return this;
 	}
@@ -177,7 +190,6 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		}
 		size--;
 	}
-
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
@@ -200,9 +212,9 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */
-	public void insert( int index , long value ) {
+	public void insert( int index , int value ) {
 		if( size == data.length ) {
-			long temp[] = new long[ size * 2+5];
+			int[] temp = new int[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -218,22 +230,34 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	}
 
 	/**
+	 * Removes the first 'total' elements from the queue. Element 'total' will be the new start of the queue
+	 *
+	 * @param total Number of elements to remove from the head of the queue
+	 */
+	public void removeHead( int total ) {
+		for( int j = total; j < size; j++ ) {
+			data[j-total] = data[j];
+		}
+		size -= total;
+	}
+
+	/**
 	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
 	 * but has a runtime of O(1).
 	 *
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
-	public long removeSwap( int index ) {
+	public int removeSwap( int index ) {
 		if( index < 0 || index >= size )
 			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
-		long ret = data[index];
+		int ret = data[index];
 		size -= 1;
 		data[index] = data[size];
 		return ret;
 	}
 
-	public long removeTail() {
+	public int removeTail() {
 		if( size > 0 ) {
 			size--;
 			return data[size];
@@ -245,17 +269,12 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
-			data = new long[size];
+			data = new int[size];
 		}
 		this.size = size;
 	}
 
-	/**
-	 * Resizes the array and assigns the default value to every element.
-	 * @param size New size
-	 * @param value Default value
-	 */
-	public void resize( int size , long value ) {
+	public void resize( int size , int value ) {
 		resize(size);
 		fill(value);
 	}
@@ -263,23 +282,11 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {
-			long []tmp = new long[size];
+			int []tmp = new int[size];
 			System.arraycopy(data,0,tmp,0,this.size);
 			data = tmp;
 		}
 		this.size = size;
-	}
-
-	public void fill( long value ) {
-		Arrays.fill(data, 0, size, value);
-	}
-
-	public boolean contains( long value ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i] == value )
-				return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -289,12 +296,24 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 		extend(amount-size);
 	}
 
+	public void fill( int value ) {
+		Arrays.fill(data,0,size,value);
+	}
+
+	public boolean contains( int value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
+	}
+
 	@Override
 	public int size() {
 		return size;
 	}
 
-	public long pop() {
+	public int pop() {
 		return data[--size];
 	}
 
@@ -304,8 +323,8 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	}
 
 	@Override
-	public GrowQueue_I64 copy() {
-		GrowQueue_I64 ret = new GrowQueue_I64(size);
+	public DogArray_I32 copy() {
+		DogArray_I32 ret = new DogArray_I32(size);
 		ret.setTo(this);
 		return ret;
 	}
@@ -317,10 +336,19 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 
 		int D = size/2;
 		for (int i = 0,j=size-1; i < D; i++,j--) {
-			long tmp = data[i];
+			int tmp = data[i];
 			data[i] = data[j];
 			data[j] = tmp;
 		}
+	}
+
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public int[] toArray() {
+		int[] out = new int[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
 	}
 
 	/**
@@ -328,7 +356,7 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
 	 */
-	public int indexOf( long value ) {
+	public int indexOf( int value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
 				return i;
@@ -339,6 +367,13 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	@Override
 	public void sort() {
 		Arrays.sort(data,0,size);
+	}
+
+	/**
+	 * Sort but with a re-usable sorter to avoid declaring new memory
+	 */
+	public void sort(QuickSort_S32 sorter) {
+		sorter.sort(data,size);
 	}
 
 	public void forIdx(FunctionEachIdx func) {
@@ -354,10 +389,10 @@ public class GrowQueue_I64 implements GrowQueue<GrowQueue_I64> {
 	}
 
 	public interface FunctionEachIdx {
-		void process( int index, long value );
+		void process( int index, int value );
 	}
 
 	public interface FunctionEach {
-		void process( long value );
+		void process( int value );
 	}
 }

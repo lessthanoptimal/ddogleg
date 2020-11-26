@@ -19,7 +19,7 @@
 package org.ddogleg.struct;
 
 
-import org.ddogleg.sorting.QuickSort_F64;
+import org.ddogleg.sorting.QuickSort_F32;
 
 import java.util.Arrays;
 
@@ -28,31 +28,31 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
+public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
-	public double[] data;
+	public float[] data;
 	public int size;
 
-	public GrowQueue_F64( int maxSize ) {
-		data = new double[ maxSize ];
+	public DogArray_F32( int maxSize ) {
+		data = new float[ maxSize ];
 		this.size = 0;
 	}
 
-	public GrowQueue_F64() {
+	public DogArray_F32() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
-	public static GrowQueue_F64 zeros( int length ) {
-		GrowQueue_F64 out = new GrowQueue_F64(length);
+	public static DogArray_F32 zeros( int length ) {
+		DogArray_F32 out = new DogArray_F32(length);
 		out.size = length;
 		return out;
 	}
 
-	public static GrowQueue_F64 array( double ...values ) {
-		GrowQueue_F64 out = zeros(values.length);
+	public static DogArray_F32 array( float ...values ) {
+		DogArray_F32 out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i];
 		}
@@ -62,7 +62,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	/**
 	 * Counts the number of times the specified value occures in the list
 	 */
-	public int count( double value ) {
+	public int count( float value ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
@@ -76,9 +76,9 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		size = 0;
 	}
 
-	public void addAll( GrowQueue_F64 queue ) {
+	public void addAll( DogArray_F32 queue ) {
 		if( size+queue.size > data.length ) {
-			double temp[] = new double[ (size+queue.size) * 2];
+			float temp[] = new float[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -86,14 +86,14 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		size += queue.size;
 	}
 
-	public void addAll( double[] array , int startIndex , int endIndex ) {
+	public void addAll( float[] array , int startIndex , int endIndex ) {
 		if( endIndex > array.length )
 			throw new IllegalAccessError("endIndex is larger than input array");
 
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			double temp[] = new double[ (size+arraySize) * 2];
+			float temp[] = new float[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -101,25 +101,24 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		size += arraySize;
 	}
 
-	public void add( double val ) {
+	public void add( float val ) {
 		push(val);
 	}
 
-	public void push( double val ) {
+	public void push( float val ) {
 		if( size == data.length ) {
-			double temp[];
-			try {
-				temp = new double[ size * 2+5];
-			} catch( OutOfMemoryError e ) {
-				System.gc();
-//				System.out.println("Memory on size "+size+" or "+(size*8/1024/1024)+" MB");
-//				System.out.println("Trying smaller increment");
-				temp = new double[ 3*size/2];
-			}
+			float temp[] = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
+    }
+
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
 	}
 
 	/**
@@ -128,7 +127,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( double[] array , int offset , int length ) {
+	public void setTo( float[] array , int offset , int length ) {
 		resize(length);
 		System.arraycopy(array,offset,data,0,length);
 	}
@@ -138,7 +137,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public GrowQueue_F64 setTo( double... src) {
+	public DogArray_F32 setTo( float... src ) {
 		setTo(src, 0, src.length);
 		return this;
 	}
@@ -146,17 +145,10 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	/**
 	 * Creates a new primitive array which is a copy.
 	 */
-	public double[] toArray() {
-		double[] out = new double[size];
+	public float[] toArray() {
+		float[] out = new float[size];
 		System.arraycopy(data,0,out,0,size);
 		return out;
-	}
-
-	public void remove( int index ) {
-		for( int i = index+1; i < size; i++ ) {
-			data[i-1] = data[i];
-		}
-		size--;
 	}
 
 	/**
@@ -180,9 +172,9 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */
-	public void insert( int index , double value ) {
+	public void insert( int index , float value ) {
 		if( size == data.length ) {
-			double temp[] = new double[ size * 2+5];
+			float temp[] = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -204,16 +196,16 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
-	public double removeSwap( int index ) {
+	public float removeSwap( int index ) {
 		if( index < 0 || index >= size )
 			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
-		double ret = data[index];
+		float ret = data[index];
 		size -= 1;
 		data[index] = data[size];
 		return ret;
 	}
 
-	public double removeTail() {
+	public float removeTail() {
 		if( size > 0 ) {
 			size--;
 			return data[size];
@@ -222,7 +214,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 		}
 	}
 
-	public double get( int index ) {
+	public float get( int index ) {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[index];
@@ -231,7 +223,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	/**
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
-	public double getTail( int index ) {
+	public float getTail( int index ) {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[size-index-1];
@@ -242,28 +234,40 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param fraction 0 to 1 inclusive
 	 * @return value at fraction
 	 */
-	public double getFraction( double fraction ) {
+	public float getFraction( double fraction ) {
 		return get( (int)((size-1)*fraction) );
 	}
 
-	public double unsafe_get( int index ) {
+	public float unsafe_get( int index ) {
 		return data[index];
 	}
 
-	public void set( int index , double value ) {
+	public void set( int index, float value  ) {
 		data[index] = value;
 	}
 
 	@Override
-	public void setTo( GrowQueue_F64 original ) {
+	public void setTo( DogArray_F32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
+	public void fill( float value ) {
+		Arrays.fill(data, 0, size, value);
+	}
+
+	public boolean contains( float value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
 	}
 
 	@Override
 	public void resize( int size ) {
 		if( data.length < size ) {
-			data = new double[size];
+			data = new float[size];
 		}
 		this.size = size;
 	}
@@ -273,7 +277,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size , double value ) {
+	public void resize( int size , float value ) {
 		resize(size);
 		fill(value);
 	}
@@ -281,23 +285,11 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	@Override
 	public void extend( int size ) {
 		if( data.length < size ) {
-			double []tmp = new double[size];
+			float []tmp = new float[size];
 			System.arraycopy(data,0,tmp,0,this.size);
 			data = tmp;
 		}
 		this.size = size;
-	}
-
-	public void fill( double value ) {
-		Arrays.fill(data, 0, size, value);
-	}
-
-	public boolean contains( double value ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i] == value )
-				return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -318,8 +310,8 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	}
 
 	@Override
-	public GrowQueue_F64 copy() {
-		GrowQueue_F64 ret = new GrowQueue_F64(size);
+	public DogArray_F32 copy() {
+		DogArray_F32 ret = new DogArray_F32(size);
 		ret.setTo(this);
 		return ret;
 	}
@@ -331,13 +323,13 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 
 		int D = size/2;
 		for (int i = 0,j=size-1; i < D; i++,j--) {
-			double tmp = data[i];
+			float tmp = data[i];
 			data[i] = data[j];
 			data[j] = tmp;
 		}
 	}
 
-	public double pop() {
+	public float pop() {
         return data[--size];
     }
 
@@ -346,7 +338,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
 	 */
-	public int indexOf( double value ) {
+	public int indexOf( float value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
 				return i;
@@ -359,7 +351,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 			return -1;
 
 		int selected = 0;
-		double best = data[0];
+		float best = data[0];
 
 		for (int i = 1; i < size; i++) {
 			if( data[i] > best ) {
@@ -376,7 +368,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 			return -1;
 
 		int selected = 0;
-		double best = data[0];
+		float best = data[0];
 
 		for (int i = 1; i < size; i++) {
 			if( data[i] < best ) {
@@ -396,7 +388,7 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	/**
 	 * Sort but with a re-usable sorter to avoid declaring new memory
 	 */
-	public void sort(QuickSort_F64 sorter) {
+	public void sort(QuickSort_F32 sorter) {
 		sorter.sort(data,size);
 	}
 
@@ -413,10 +405,10 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	}
 
 	public interface FunctionEachIdx {
-		void process( int index, double value );
+		void process( int index, float value );
 	}
 
 	public interface FunctionEach {
-		void process( double value );
+		void process( float value );
 	}
 }

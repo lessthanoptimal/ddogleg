@@ -19,7 +19,7 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_I32;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +72,7 @@ public class TestKdTreeConstructor {
 
 		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),splitter);
 
-		KdTree.Node n = alg.computeBranch(new ArrayList<>(),new GrowQueue_I32());
+		KdTree.Node n = alg.computeBranch(new ArrayList<>(),new DogArray_I32());
 
 		assertSame(n.point, splitter.splitPoint);
 		assertEquals(n.split, splitter.splitAxis);
@@ -90,7 +90,7 @@ public class TestKdTreeConstructor {
 		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(distance);
 
 		List<double[]> points = new ArrayList<>();
-		GrowQueue_I32 data = new GrowQueue_I32();
+		DogArray_I32 data = new DogArray_I32();
 
 		// empty lists should be null
 		KdTree.Node n = new KdTree.Node();
@@ -156,8 +156,8 @@ public class TestKdTreeConstructor {
 	private DummySplitter createSplitter( int numLeft , int numRight , boolean withData) {
 		List<double[]> left = new ArrayList<>();
 		List<double[]> right = new ArrayList<>();
-		GrowQueue_I32 leftData = null;
-		GrowQueue_I32 rightData = null;
+		DogArray_I32 leftData = null;
+		DogArray_I32 rightData = null;
 
 		for( int i = 0; i < numLeft; i++ ) {
 			left.add( new double[2] );
@@ -167,8 +167,8 @@ public class TestKdTreeConstructor {
 		}
 
 		if( withData ) {
-			leftData = new GrowQueue_I32();
-			rightData = new GrowQueue_I32();
+			leftData = new DogArray_I32();
+			rightData = new DogArray_I32();
 
 			for( int i = 0; i < numLeft; i++ ) {
 				leftData.add( i );
@@ -187,14 +187,14 @@ public class TestKdTreeConstructor {
 		double[] splitPoint;
 		int splitAxis;
 		List<double[]> left;
-		GrowQueue_I32 leftIndex;
+		DogArray_I32 leftIndex;
 		List<double[]> right;
-		GrowQueue_I32 rightIndex;
+		DogArray_I32 rightIndex;
 
-		public DummySplitter(int splitIndex, double[] splitPoint,
-							 int splitAxis, List<double[]> left,
-							 GrowQueue_I32 leftIndex, List<double[]> right,
-							 GrowQueue_I32 rightIndex)
+		public DummySplitter( int splitIndex, double[] splitPoint,
+							  int splitAxis, List<double[]> left,
+							  DogArray_I32 leftIndex, List<double[]> right,
+							  DogArray_I32 rightIndex)
 		{
 			this.splitIndex = splitIndex;
 			this.splitPoint = splitPoint;
@@ -206,9 +206,9 @@ public class TestKdTreeConstructor {
 		}
 
 		@Override
-		public void splitData(List<double[]> points, @Nullable GrowQueue_I32 data,
-							  List<double[]> left, @Nullable GrowQueue_I32 leftData,
-							  List<double[]> right, @Nullable GrowQueue_I32 rightData)
+		public void splitData(List<double[]> points, @Nullable DogArray_I32 data,
+							  List<double[]> left, @Nullable DogArray_I32 leftData,
+							  List<double[]> right, @Nullable DogArray_I32 rightData)
 		{
 			left.addAll(this.left);
 			right.addAll(this.right);

@@ -20,8 +20,8 @@ package org.ddogleg.clustering.kmeans;
 
 import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_I32;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,22 +74,22 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	// selects the initial locations of each seed
 	InitializeKMeans_F64 seedSelector;
 	// Storage for the seeds
-	FastQueue<double[]> clusters;
+	DogArray<double[]> clusters;
 
 	// labels for all the points
-	final GrowQueue_I32 labels = new GrowQueue_I32();
+	final DogArray_I32 labels = new DogArray_I32();
 
 	// work space for computing the new cluster centers.  The sum for points in a cluster is computed on the fly
 	// instead of labeling each point and computing it later.  Should save memory and maybe slightly faster.
-	FastQueue<double[]> workClusters;
-	final GrowQueue_I32 memberCount = new GrowQueue_I32();
+	DogArray<double[]> workClusters;
+	final DogArray_I32 memberCount = new DogArray_I32();
 
 	// distance of the best match to the point
 	double bestDistance;
 	// sum of distances for all the points
 	double sumDistance;
 	// the best cluster centers
-	FastQueue<double[]> bestClusters;
+	DogArray<double[]> bestClusters;
 	double bestClusterScore;
 
 	/**
@@ -119,8 +119,8 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 		memberCount.resize(pointDimension);
 	}
 
-	private FastQueue<double[]> createQueue( final int pointDimension ) {
-		return new FastQueue<>(() -> new double[pointDimension]);
+	private DogArray<double[]> createQueue( final int pointDimension ) {
+		return new DogArray<>(() -> new double[pointDimension]);
 	}
 
 	@Override
@@ -260,14 +260,14 @@ public class StandardKMeans_F64 implements ComputeClusters<double[]> {
 	/**
 	 * Returns the labels assigned to each point
 	 */
-	public GrowQueue_I32 getPointLabels() {
+	public DogArray_I32 getPointLabels() {
 		return labels;
 	}
 
 	/**
 	 * Returns the mean of each cluster
 	 */
-	public FastQueue<double[]> getClusterMeans() {
+	public DogArray<double[]> getClusterMeans() {
 		return bestClusters;
 	}
 

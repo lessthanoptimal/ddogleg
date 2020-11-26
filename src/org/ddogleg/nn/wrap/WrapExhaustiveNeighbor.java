@@ -22,9 +22,9 @@ import org.ddogleg.nn.NearestNeighbor;
 import org.ddogleg.nn.NnData;
 import org.ddogleg.nn.alg.ExhaustiveNeighbor;
 import org.ddogleg.nn.alg.KdTreeDistance;
-import org.ddogleg.struct.FastQueue;
-import org.ddogleg.struct.GrowQueue_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.DogArray_I32;
 
 import java.util.List;
 
@@ -55,8 +55,8 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 
 	private class InternalSearch implements Search<P> {
 		ExhaustiveNeighbor<P> alg;
-		GrowQueue_I32 outputIndex = new GrowQueue_I32();
-		GrowQueue_F64 outputDistance = new GrowQueue_F64();
+		DogArray_I32 outputIndex = new DogArray_I32();
+		DogArray_F64 outputDistance = new DogArray_F64();
 
 		InternalSearch(KdTreeDistance<P> distance) {
 			alg = new ExhaustiveNeighbor<>(distance);
@@ -82,7 +82,7 @@ public class WrapExhaustiveNeighbor<P> implements NearestNeighbor<P> {
 		}
 
 		@Override
-		public void findNearest(P point, double maxDistance, int numNeighbors, FastQueue<NnData<P>> results) {
+		public void findNearest(P point, double maxDistance, int numNeighbors, DogArray<NnData<P>> results) {
 			results.reset();
 
 			if (maxDistance < 0)

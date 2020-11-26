@@ -19,7 +19,7 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +37,8 @@ public class TestAxisSplitterMedian {
 
 	List<double[]> left = new ArrayList<>();
 	List<double[]> right = new ArrayList<>();
-	GrowQueue_I32 leftData = new GrowQueue_I32();
-	GrowQueue_I32 rightData = new GrowQueue_I32();
+	DogArray_I32 leftData = new DogArray_I32();
+	DogArray_I32 rightData = new DogArray_I32();
 
 	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
 
@@ -109,7 +109,7 @@ public class TestAxisSplitterMedian {
 	@Test
 	public void splitData_withData() {
 		List<double[]> points = createPoints(2, 1,2 , 3,5 , -3,4);
-		GrowQueue_I32 data = new GrowQueue_I32();
+		DogArray_I32 data = new DogArray_I32();
 		for( int i = 0; i < points.size(); i++ )
 			data.add(i);
 

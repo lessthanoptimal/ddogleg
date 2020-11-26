@@ -22,7 +22,7 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeDistance;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearchN;
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.DogArray;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	private int searchN;
 
 	// storage for found results nodes
-	private FastQueue<KdTreeResult> neighbors;
+	private DogArray<KdTreeResult> neighbors;
 
 	/**
 	 * Configures the search
@@ -60,7 +60,7 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 	}
 
 	@Override
-	public void findNeighbor(P target, int searchN, FastQueue<KdTreeResult> results) {
+	public void findNeighbor(P target, int searchN, DogArray<KdTreeResult> results) {
 
 		this.searchN = searchN;
 		this.neighbors = results;

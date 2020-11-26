@@ -19,7 +19,7 @@
 package org.ddogleg.nn.alg;
 
 import org.ddogleg.sorting.QuickSelect;
-import org.ddogleg.struct.GrowQueue_I32;
+import org.ddogleg.struct.DogArray_I32;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -77,9 +77,9 @@ public class AxisSplitterMedian<P> implements AxisSplitter<P> {
 	}
 
 	@Override
-	public void splitData(List<P> points, @Nullable GrowQueue_I32 indexes,
-						  List<P> left, @Nullable GrowQueue_I32 leftIndexes,
-						  List<P> right, @Nullable GrowQueue_I32 rightIndexes) {
+	public void splitData(List<P> points, @Nullable DogArray_I32 indexes,
+						  List<P> left, @Nullable DogArray_I32 leftIndexes,
+						  List<P> right, @Nullable DogArray_I32 rightIndexes) {
 		computeAxisVariance(points);
 		for (int i = 0; i < N; i++) {
 			if( Double.isNaN(var[i])) {
