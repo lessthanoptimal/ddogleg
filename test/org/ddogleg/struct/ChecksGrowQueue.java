@@ -33,9 +33,7 @@ public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
 	public abstract void insert( T queue , int index, double value );
 	public abstract void check( T queue , int index , double value );
 
-
-	@Test
-	public void insert() {
+	@Test void insert() {
 		T alg = declare(10);
 
 		// insert with no array resize
@@ -71,8 +69,7 @@ public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
 		check(alg,4,5);
 	}
 
-	@Test
-	public void extend() {
+	@Test void extend() {
 		T alg = declare(2);
 		push(alg, 1);
 		push(alg, 3);
@@ -83,8 +80,7 @@ public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
 		assertEquals(4,alg.size());
 	}
 
-	@Test
-	public void flip() {
+	@Test void flip() {
 		T alg = declare(10);
 
 		alg.flip();
@@ -107,5 +103,21 @@ public abstract class ChecksGrowQueue<T extends GrowQueue<T>> {
 		check(alg,0,3);
 		check(alg,1,1);
 		check(alg,2,2);
+	}
+
+	@Test void reserve() {
+		T alg = declare(2);
+		assertEquals(0, alg.size());
+		push(alg, 3);
+		push(alg, 4);
+		assertEquals(2, alg.size());
+
+		// Change the reserve, which should leave the current values alone
+		alg.reserve(4);
+		check(alg,0,3);
+		check(alg,1,4);
+		assertEquals(2, alg.size());
+		push(alg, 5);
+		assertEquals(3, alg.size());
 	}
 }

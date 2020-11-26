@@ -290,10 +290,10 @@ public class GrowQueue_I32 implements GrowQueue<GrowQueue_I32> {
 	}
 
 	@Override
-	public void setMaxSize( int size ) {
-		if( data.length < size ) {
-			data = new int[size];
-		}
+	public void reserve(int amount ) {
+		if (data.length >= amount)
+			return;
+		extend(amount-size);
 	}
 
 	public void fill( int value ) {

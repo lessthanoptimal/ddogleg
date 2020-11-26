@@ -301,10 +301,10 @@ public class GrowQueue_F64 implements GrowQueue<GrowQueue_F64>{
 	}
 
 	@Override
-	public void setMaxSize( int size ) {
-		if( data.length < size ) {
-			data = new double[size];
-		}
+	public void reserve(int amount ) {
+		if (data.length >= amount)
+			return;
+		extend(amount-size);
 	}
 
 	@Override

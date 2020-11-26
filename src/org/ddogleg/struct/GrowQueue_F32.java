@@ -293,10 +293,10 @@ public class GrowQueue_F32 implements GrowQueue<GrowQueue_F32> {
 	}
 
 	@Override
-	public void setMaxSize( int size ) {
-		if( data.length < size ) {
-			data = new float[size];
-		}
+	public void reserve(int amount ) {
+		if (data.length >= amount)
+			return;
+		extend(amount-size);
 	}
 
 	@Override

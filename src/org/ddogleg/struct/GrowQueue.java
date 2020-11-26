@@ -51,10 +51,12 @@ public interface GrowQueue<T extends GrowQueue<T>> {
 	void extend( int size );
 
 	/**
-	 * Ensures that the internal array's length is at least this size. Size is left unchanged
-	 * @param size minimum size of internal array
+	 * Ensures that the internal array's length is at least this size. Size is left unchanged. If the array
+	 * is not empty and it needs to grow then the existing array is copied into the new array.
+	 *
+	 * @param amount minimum size of internal array
 	 */
-	void setMaxSize( int size );
+	void reserve(int amount);
 
 	/**
 	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.
