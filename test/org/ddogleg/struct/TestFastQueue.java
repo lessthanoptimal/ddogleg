@@ -291,12 +291,12 @@ class TestFastQueue {
 	}
 
 	@Test
-	void growArray() {
+	void reserve() {
 		FastQueue<DummyData> alg = new FastQueue<>(1,DummyData::new);
 
 		alg.grow().value = 10;
 		int before = alg.getMaxSize();
-		alg.growArray(before+5);
+		alg.reserve(before+5);
 		assertEquals(10,alg.get(0).value);
 	}
 

@@ -187,7 +187,7 @@ public class FastQueue<T> extends FastAccess<T> {
 			reset.process(ret);
 			return ret;
 		} else {
-			growArray((data.length+1)*2);
+			reserve((data.length+1)*2);
 			return data[size++];
 		}
 	}
@@ -196,7 +196,7 @@ public class FastQueue<T> extends FastAccess<T> {
 	 * Grows the array and adds all the items in list. Values are copied using the provided function
 	 */
 	public void copyAll(List<T> list , Set<T> setter ) {
-		growArray(size()+list.size());
+		reserve(size()+list.size());
 		for (int i = 0; i < list.size(); i++) {
 			T dst = grow();
 			setter.set(list.get(i),dst);
@@ -253,13 +253,13 @@ public class FastQueue<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Increases the size of the internal array without changing the shape's size. If the array
-	 * is already larger than the specified length then nothing is done.  Elements previously
-	 * stored in the array are copied over is a new internal array is declared.
+	 * Ensures that the internal array has at least `length` elements. If it does not then a new internal array
+	 * is created with the specified length and elements from the old are copied into the new. The `size` does
+	 * not change.
 	 *
-	 * @param length Requested size of internal array.
+	 * @param length Requested minimum internal array length
 	 */
-	public void growArray( int length) {
+	public void reserve( int length) {
 		// now need to grow since it is already larger
 		if( this.data.length >= length)
 			return;
@@ -276,11 +276,11 @@ public class FastQueue<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Changes the size to the specified length. Equivalent to calling {@link #growArray} and this.size = N.
+	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
 	 * @param length The new size of the queue
 	 */
 	public void resize(int length) {
-		growArray(length);
+		reserve(length);
 		for (int i = size; i < length; i++) {
 			reset.process(data[i]);
 		}
