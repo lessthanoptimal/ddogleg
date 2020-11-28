@@ -247,6 +247,10 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	public void fill( int idx0, int idx1, byte value ) {
+		Arrays.fill(data, idx0, idx1, value);
+	}
+
 	public boolean contains( byte value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )

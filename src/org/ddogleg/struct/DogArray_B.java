@@ -161,6 +161,10 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	public void fill( int idx0, int idx1, boolean value ) {
+		Arrays.fill(data, idx0, idx1, value);
+	}
+
 	/**
 	 * Inserts the value at the specified index and shifts all the other values down.
 	 */

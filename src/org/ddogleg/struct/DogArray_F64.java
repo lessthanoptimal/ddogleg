@@ -292,6 +292,10 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		Arrays.fill(data, 0, size, value);
 	}
 
+	public void fill( int idx0, int idx1, double value ) {
+		Arrays.fill(data, idx0, idx1, value);
+	}
+
 	public boolean contains( double value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )

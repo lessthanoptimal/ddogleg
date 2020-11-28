@@ -300,6 +300,10 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		Arrays.fill(data,0,size,value);
 	}
 
+	public void fill( int idx0, int idx1, int value ) {
+		Arrays.fill(data, idx0, idx1, value);
+	}
+
 	public boolean contains( int value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
