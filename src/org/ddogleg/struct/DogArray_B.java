@@ -246,21 +246,17 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		fill(value);
 	}
 
-	@Override
-	public void extend( int size ) {
-		if( data.length < size ) {
-			boolean []tmp = new boolean[size];
-			System.arraycopy(data,0,tmp,0,this.size);
-			data = tmp;
-		}
+	@Override public void extend( int size ) {
+		reserve(size);
 		this.size = size;
 	}
 
-	@Override
-	public void reserve(int amount ) {
+	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		extend(amount-size);
+		boolean []tmp = new boolean[amount];
+		System.arraycopy(data,0,tmp,0,this.size);
+		data = tmp;
 	}
 
 	@Override

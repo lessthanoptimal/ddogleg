@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowArrayList {
+public class TestDogArrayList {
 
 	@Test
 	public void size() {

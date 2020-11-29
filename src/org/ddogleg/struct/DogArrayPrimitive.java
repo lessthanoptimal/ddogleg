@@ -44,8 +44,9 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	void resize( int size );
 
 	/**
-	 * Ensures that the internal array this size. If a new array needs to be declared the old data
-	 * is saved
+	 * Changes the array to the specified size. If there is not enough storage, a new internal array is created
+	 * and the elements copied over. This is the same as: a.reserve(size);a.size = size;
+	 *
 	 * @param size desired new size
 	 */
 	void extend( int size );

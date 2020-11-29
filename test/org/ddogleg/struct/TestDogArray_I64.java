@@ -18,7 +18,6 @@
 
 package org.ddogleg.struct;
 
-import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,20 +26,20 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
+public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 
 	@Test
 	void count() {
-		DogArray_F64 alg = DogArray_F64.array(0.0,0.0,1.0,1.0,1.0);
+		DogArray_I64 alg = DogArray_I64.array(0,0,1,1,1);
 
-		assertEquals(2,alg.count(0.0));
-		assertEquals(3,alg.count(1.0));
+		assertEquals(2,alg.count(0));
+		assertEquals(3,alg.count(1));
 	}
 
 	@Test
 	void addAll_queue() {
-		DogArray_F64 queue0 = new DogArray_F64(2);
-		DogArray_F64 queue1 = new DogArray_F64(3);
+		DogArray_I64 queue0 = new DogArray_I64(2);
+		DogArray_I64 queue1 = new DogArray_I64(3);
 
 		queue0.add(1);
 		queue0.add(2);
@@ -53,21 +52,21 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 		queue0.addAll(queue1);
 		assertEquals(5,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+1,1e-8);
+			assertEquals(queue0.get(i),i+1);
 		}
 
 		queue0.reset();
 		queue0.addAll(queue1);
 		assertEquals(3,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+3,1e-8);
+			assertEquals(queue0.get(i),i+3);
 		}
 	}
 
 	@Test
 	void addAll_array() {
-		DogArray_F64 queue0 = new DogArray_F64(2);
-		double[] array = new double[]{3,4,5};
+		DogArray_I64 queue0 = new DogArray_I64(2);
+		long[] array = new long[]{3,4,5};
 
 		queue0.add(1);
 		queue0.add(2);
@@ -89,7 +88,7 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void auto_grow() {
-		DogArray_F64 alg = new DogArray_F64(3);
+		DogArray_I64 alg = new DogArray_I64(3);
 
 		assertEquals(3,alg.data.length);
 
@@ -104,7 +103,7 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void reset() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -120,7 +119,7 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void resize() {
-		DogArray_F64 alg = new DogArray_F64(2);
+		DogArray_I64 alg = new DogArray_I64(2);
 		assertEquals(0,alg.size);
 		alg.resize(12);
 		assertTrue(alg.data.length >= 12);
@@ -135,30 +134,30 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void resize_default() {
-		DogArray_F64 alg = new DogArray_F64(2);
+		DogArray_I64 alg = new DogArray_I64(2);
 		assertEquals(0,alg.size);
-		alg.resize(12, 1.0);
+		alg.resize(12, 1);
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12,alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(1.0,alg.get(i));
+			assertEquals(1,alg.get(i));
 		}
 		// The array isn't redeclared but the value should still change
-		alg.resize(10,2.0);
+		alg.resize(10,2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10,alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(2.f,alg.get(i));
+			assertEquals(2,alg.get(i));
 		}
 		// it shouldn't change the entire array's value since that's wasteful
 		for (int i = alg.size; i < alg.data.length; i++) {
-			assertEquals(1.0,alg.data[i]);
+			assertEquals(1,alg.data[i]);
 		}
 	}
 
 	@Test
 	void push_pop() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -171,21 +170,21 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void setTo_array_off() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
-		double[] foo = new double[]{1,3,4,5,7};
+		long[] foo = new long[]{1,3,4,5,7};
 		alg.setTo(foo,1,3);
 		assertEquals(3,alg.size);
 		for (int i = 0; i < 3; i++) {
-			assertEquals(alg.get(i),foo[i+1], UtilEjml.TEST_F64);
+			assertEquals(alg.get(i),foo[i+1]);
 		}
 	}
 
 	@Test
 	void setTo_array() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
-		double[] array = new double[]{1,3,4,5,7};
+		long[] array = new long[]{1,3,4,5,7};
 
 		assertSame(alg,alg.setTo(array));
 		assertEquals(array.length,alg.size);
@@ -196,17 +195,9 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 	}
 
 	@Test
-	void remove_swap() {
-		var alg = DogArray_F64.array(0,0,0,0,1);
-		alg.removeSwap(1);
-		assertEquals(4,alg.size);
-		alg.forIdx((i,v)-> assertEquals(i!=1?0.0:1.0, v, UtilEjml.TEST_F64));
-	}
+	void remove_one() {
 
-	@Test
-	void remove() {
-
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -215,14 +206,14 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 		alg.remove(1);
 		assertEquals(3,alg.size);
-		assertEquals(1,alg.get(0),1e-8);
-		assertEquals(4,alg.get(1),1e-8);
-		assertEquals(5,alg.get(2),1e-8);
+		assertEquals(1,alg.get(0));
+		assertEquals(4,alg.get(1));
+		assertEquals(5,alg.get(2));
 	}
 
 	@Test
 	void remove_two() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -232,39 +223,47 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 		alg.remove(1,1);
 		assertEquals(4,alg.size);
-		assertEquals(1,alg.get(0), UtilEjml.TEST_F64);
-		assertEquals(4,alg.get(1), UtilEjml.TEST_F64);
-		assertEquals(5,alg.get(2), UtilEjml.TEST_F64);
-		assertEquals(6,alg.get(3), UtilEjml.TEST_F64);
+		assertEquals(1,alg.get(0));
+		assertEquals(4,alg.get(1));
+		assertEquals(5,alg.get(2));
+		assertEquals(6,alg.get(3));
 		alg.remove(0,1);
 		assertEquals(2,alg.size);
-		assertEquals(5,alg.get(0), UtilEjml.TEST_F64);
-		assertEquals(6,alg.get(1), UtilEjml.TEST_F64);
+		assertEquals(5,alg.get(0));
+		assertEquals(6,alg.get(1));
+	}
+
+	@Test
+	void remove_swap() {
+		var alg = DogArray_I64.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals(i!=1?0:1, v));
 	}
 
 	@Override
-	public DogArray_F64 declare( int maxsize) {
-		return new DogArray_F64(maxsize);
+	public DogArray_I64 declare( int maxsize) {
+		return new DogArray_I64(maxsize);
 	}
 
 	@Override
-	public void push( DogArray_F64 queue, double value) {
-		queue.push(value);
+	public void push( DogArray_I64 queue, double value) {
+		queue.push((long)value);
 	}
 
 	@Override
-	public void insert( DogArray_F64 queue, int index, double value) {
-		queue.insert(index,value);
+	public void insert( DogArray_I64 queue, int index, double value) {
+		queue.insert(index,(long)value);
 	}
 
 	@Override
-	public void check( DogArray_F64 queue, int index, double value) {
-		assertEquals(value,queue.get(index),1e-8);
+	public void check( DogArray_I64 queue, int index, double value) {
+		assertEquals((long)value,queue.get(index));
 	}
 
 	@Test
 	void indexOf() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		DogArray_I64 alg = new DogArray_I64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -277,7 +276,7 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void sort() {
-		DogArray_F64 alg = new DogArray_F64(6);
+		DogArray_I64 alg = new DogArray_I64(6);
 
 		alg.push(8);
 		alg.push(2);
@@ -287,58 +286,32 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 		alg.sort();
 
 		assertEquals(4,alg.size);
-		assertEquals(2,alg.get(0),1e-8);
-		assertEquals(3,alg.get(1),1e-8);
-		assertEquals(4,alg.get(2),1e-8);
-		assertEquals(8,alg.get(3),1e-8);
+		assertEquals(2,alg.get(0));
+		assertEquals(3,alg.get(1));
+		assertEquals(4,alg.get(2));
+		assertEquals(8,alg.get(3));
 	}
 
 	@Test
 	void getFraction() {
-		DogArray_F64 alg = new DogArray_F64(20);
+		DogArray_I64 alg = new DogArray_I64(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
 		}
 
-		assertEquals(0,alg.getFraction(0.0), UtilEjml.TEST_F64);
-		assertEquals(0,alg.getFraction(0.02), UtilEjml.TEST_F64);
-		assertEquals(0,alg.getFraction(0.03), UtilEjml.TEST_F64);
-		assertEquals(1,alg.getFraction(1.0/19.0), UtilEjml.TEST_F64);
-		assertEquals(1,alg.getFraction(1.7/19.0), UtilEjml.TEST_F64);
-		assertEquals(19/2,alg.getFraction(0.5), UtilEjml.TEST_F64);
-		assertEquals(19,alg.getFraction(1.0), UtilEjml.TEST_F64);
-	}
-
-	@Test
-	void indexOfGreatest() {
-		DogArray_F64 alg = new DogArray_F64(20);
-
-		assertEquals(-1,alg.indexOfGreatest());
-
-		alg.add(-3);
-		alg.add(-2);
-		alg.add(-1);
-
-		assertEquals(2, alg.indexOfGreatest());
-	}
-
-	@Test
-	void indexOfLeast() {
-		DogArray_F64 alg = new DogArray_F64(20);
-
-		assertEquals(-1,alg.indexOfLeast());
-
-		alg.add(-3);
-		alg.add(-2);
-		alg.add(-4);
-
-		assertEquals(2, alg.indexOfLeast());
+		assertEquals(0,alg.getFraction(0.0));
+		assertEquals(0,alg.getFraction(0.02));
+		assertEquals(0,alg.getFraction(0.03));
+		assertEquals(1,alg.getFraction(1.0/19.0));
+		assertEquals(1,alg.getFraction(1.7/19.0));
+		assertEquals(19/2,alg.getFraction(0.5));
+		assertEquals(19,alg.getFraction(1.0));
 	}
 
 	@Test
 	void getTail() {
-		DogArray_F64 alg = new DogArray_F64(20);
+		DogArray_I64 alg = new DogArray_I64(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -351,7 +324,7 @@ public class TestGrowArray_F64 extends ChecksGrowArray<DogArray_F64> {
 
 	@Test
 	void forIdx() {
-		DogArray_F64 alg = DogArray_F64.array(1,2,3,4,5);
-		alg.forIdx((idx,value)-> assertEquals(idx+1,value, 1e-8));
+		DogArray_I64 alg = DogArray_I64.array(1,2,3,4,5);
+		alg.forIdx((idx,value)-> assertEquals(idx+1,value));
 	}
 }

@@ -278,16 +278,6 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		fill(value);
 	}
 
-	@Override
-	public void extend( int size ) {
-		if( data.length < size ) {
-			double []tmp = new double[size];
-			System.arraycopy(data,0,tmp,0,this.size);
-			data = tmp;
-		}
-		this.size = size;
-	}
-
 	public void fill( double value ) {
 		Arrays.fill(data, 0, size, value);
 	}
@@ -304,11 +294,17 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		return false;
 	}
 
-	@Override
-	public void reserve(int amount ) {
+	@Override public void extend( int size ) {
+		reserve(size);
+		this.size = size;
+	}
+
+	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		extend(amount-size);
+		double []tmp = new double[amount];
+		System.arraycopy(data,0,tmp,0,this.size);
+		data = tmp;
 	}
 
 	@Override

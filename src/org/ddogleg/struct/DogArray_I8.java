@@ -277,21 +277,17 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		fill(value);
 	}
 
-	@Override
-	public void extend( int size ) {
-		if( data.length < size ) {
-			byte []tmp = new byte[size];
-			System.arraycopy(data,0,tmp,0,this.size);
-			data = tmp;
-		}
+	@Override public void extend( int size ) {
+		reserve(size);
 		this.size = size;
 	}
 
-	@Override
-	public void reserve(int amount ) {
+	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		extend(amount-size);
+		byte []tmp = new byte[amount];
+		System.arraycopy(data,0,tmp,0,this.size);
+		data = tmp;
 	}
 
 	@Override

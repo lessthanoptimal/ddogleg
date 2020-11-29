@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowArray_B {
+public class TestDogArray_B {
 
 	@Test
 	void auto_grow() {

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public abstract class ChecksGrowArray<T extends DogArrayPrimitive<T>> {
+public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	public abstract T declare( int maxsize );
 
@@ -78,6 +78,9 @@ public abstract class ChecksGrowArray<T extends DogArrayPrimitive<T>> {
 		check(alg,0,1);
 		check(alg,1,3);
 		assertEquals(4,alg.size());
+
+		alg.extend(2);
+		assertEquals(2,alg.size());
 	}
 
 	@Test void flip() {
@@ -118,6 +121,9 @@ public abstract class ChecksGrowArray<T extends DogArrayPrimitive<T>> {
 		check(alg,1,4);
 		assertEquals(2, alg.size());
 		push(alg, 5);
+		assertEquals(3, alg.size());
+
+		alg.reserve(1);
 		assertEquals(3, alg.size());
 	}
 }

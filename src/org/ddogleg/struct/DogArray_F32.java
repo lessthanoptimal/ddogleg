@@ -286,21 +286,17 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		fill(value);
 	}
 
-	@Override
-	public void extend( int size ) {
-		if( data.length < size ) {
-			float []tmp = new float[size];
-			System.arraycopy(data,0,tmp,0,this.size);
-			data = tmp;
-		}
+	@Override public void extend( int size ) {
+		reserve(size);
 		this.size = size;
 	}
 
-	@Override
-	public void reserve(int amount ) {
+	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		extend(amount-size);
+		float []tmp = new float[amount];
+		System.arraycopy(data,0,tmp,0,this.size);
+		data = tmp;
 	}
 
 	@Override

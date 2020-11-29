@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
+public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 
 	@Test
 	void count() {
-		DogArray_I32 alg = DogArray_I32.array(0,0,1,1,1);
+		DogArray_I8 alg = DogArray_I8.array(0,0,1,1,1);
 
 		assertEquals(2,alg.count(0));
 		assertEquals(3,alg.count(1));
@@ -38,8 +38,8 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void addAll_queue() {
-		DogArray_I32 queue0 = new DogArray_I32(2);
-		DogArray_I32 queue1 = new DogArray_I32(3);
+		DogArray_I8 queue0 = new DogArray_I8(2);
+		DogArray_I8 queue1 = new DogArray_I8(3);
 
 		queue0.add(1);
 		queue0.add(2);
@@ -65,8 +65,8 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void addAll_array() {
-		DogArray_I32 queue0 = new DogArray_I32(2);
-		int[] array = new int[]{3,4,5};
+		DogArray_I8 queue0 = new DogArray_I8(2);
+		byte[] array = new byte[]{3,4,5};
 
 		queue0.add(1);
 		queue0.add(2);
@@ -88,7 +88,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void auto_grow() {
-		DogArray_I32 alg = new DogArray_I32(3);
+		DogArray_I8 alg = new DogArray_I8(3);
 
 		assertEquals(3,alg.data.length);
 
@@ -103,7 +103,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void reset() {
-		DogArray_I32 alg = new DogArray_I32(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -119,7 +119,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void resize() {
-		DogArray_I32 alg = new DogArray_I32(2);
+		DogArray_I8 alg = new DogArray_I8(2);
 		assertEquals(0,alg.size);
 		alg.resize(12);
 		assertTrue(alg.data.length >= 12);
@@ -134,16 +134,16 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void resize_default() {
-		DogArray_I32 alg = new DogArray_I32(2);
+		DogArray_I8 alg = new DogArray_I8(2);
 		assertEquals(0,alg.size);
-		alg.resize(12, 1);
+		alg.resize(12, (byte)1);
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12,alg.size);
 		for (int i = 0; i < alg.size; i++) {
 			assertEquals(1,alg.get(i));
 		}
 		// The array isn't redeclared but the value should still change
-		alg.resize(10,2);
+		alg.resize(10,(byte)2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10,alg.size);
 		for (int i = 0; i < alg.size; i++) {
@@ -157,7 +157,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void push_pop() {
-		DogArray_I32 alg = new DogArray_I32(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -170,9 +170,9 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void setTo_array_off() {
-		DogArray_I32 alg = new DogArray_I32(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
-		int[] foo = new int[]{1,3,4,5,7};
+		byte[] foo = new byte[]{1,3,4,5,7};
 		alg.setTo(foo,1,3);
 		assertEquals(3,alg.size);
 		for (int i = 0; i < 3; i++) {
@@ -182,9 +182,9 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void setTo_array() {
-		DogArray_I32 alg = new DogArray_I32(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
-		int[] array = new int[]{1,3,4,5,7};
+		byte[] array = new byte[]{1,3,4,5,7};
 
 		assertSame(alg,alg.setTo(array));
 		assertEquals(array.length,alg.size);
@@ -193,27 +193,10 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 			assertEquals(alg.get(i),array[i]);
 		}
 	}
-	
-	@Test
-	void remove_one() {
-
-		DogArray_I32 alg = new DogArray_I32(10);
-
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(5);
-
-		alg.remove(1);
-		assertEquals(3,alg.size);
-		assertEquals(1,alg.get(0));
-		assertEquals(4,alg.get(1));
-		assertEquals(5,alg.get(2));
-	}
 
 	@Test
 	void remove_two() {
-		DogArray_I32 alg = new DogArray_I32(10);
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -235,85 +218,68 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void remove_swap() {
-		var alg = DogArray_I32.array(0,0,0,0,1);
+		var alg = DogArray_I8.array(0,0,0,0,1);
 		alg.removeSwap(1);
 		assertEquals(4,alg.size);
 		alg.forIdx((i,v)-> assertEquals(i!=1?0:1, v));
 	}
 
 	@Override
-	public DogArray_I32 declare( int maxsize) {
-		return new DogArray_I32(maxsize);
+	public DogArray_I8 declare( int maxsize) {
+		return new DogArray_I8(maxsize);
 	}
 
 	@Override
-	public void push( DogArray_I32 queue, double value) {
+	public void push( DogArray_I8 queue, double value) {
 		queue.push((int)value);
 	}
 
 	@Override
-	public void insert( DogArray_I32 queue, int index, double value) {
+	public void insert( DogArray_I8 queue, int index, double value) {
 		queue.insert(index,(int)value);
 	}
 
 	@Override
-	public void check( DogArray_I32 queue, int index, double value) {
+	public void check( DogArray_I8 queue, int index, double value) {
 		assertEquals((int)value,queue.get(index));
 	}
 
 	@Test
-	void removeHead() {
-
-		DogArray_I32 alg = new DogArray_I32(10);
+	void indexOf() {
+		DogArray_I8 alg = new DogArray_I8(10);
 
 		alg.push(1);
 		alg.push(3);
 		alg.push(4);
 		alg.push(5);
 
-		alg.removeHead(0);
-		assertEquals(4,alg.size);
-		assertEquals(1,alg.get(0));
-
-		alg.removeHead(2);
-		assertEquals(2,alg.size);
-		assertEquals(4,alg.get(0));
-	}
-
-	@Test
-	void indexOf() {
-		DogArray_I32 alg = new DogArray_I32(10);
-
-		alg.push(1);
-		alg.push(3);
-		alg.push(4);
-		alg.push(3);
-
-		assertEquals(1,alg.indexOf(3));
-		assertEquals(-1,alg.indexOf(8));
+		assertEquals(1,alg.indexOf((byte)3));
+		assertEquals(-1,alg.indexOf((byte)8));
 	}
 
 	@Test
 	void sort() {
-		DogArray_I32 alg = new DogArray_I32(6);
+		DogArray_I8 alg = new DogArray_I8(6);
 
 		alg.push(8);
 		alg.push(2);
 		alg.push(4);
 		alg.push(3);
+		alg.push(-1);
 
 		alg.sort();
 
-		assertEquals(4,alg.size);
-		assertEquals(2,alg.get(0));
-		assertEquals(3,alg.get(1));
-		assertEquals(4,alg.get(2));
-		assertEquals(8,alg.get(3));
+		assertEquals(5,alg.size);
+		assertEquals(-1,alg.get(0));
+		assertEquals(2,alg.get(1));
+		assertEquals(3,alg.get(2));
+		assertEquals(4,alg.get(3));
+		assertEquals(8,alg.get(4));
 	}
 
 	@Test
 	void getFraction() {
-		DogArray_I32 alg = new DogArray_I32(20);
+		DogArray_I8 alg = new DogArray_I8(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -330,7 +296,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void getTail() {
-		DogArray_I32 alg = new DogArray_I32(20);
+		DogArray_I8 alg = new DogArray_I8(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -343,7 +309,7 @@ public class TestGrowArray_I32 extends ChecksGrowArray<DogArray_I32> {
 
 	@Test
 	void forIdx() {
-		DogArray_I32 alg = DogArray_I32.array(1,2,3,4,5);
+		DogArray_I8 alg = DogArray_I8.array(1,2,3,4,5);
 		alg.forIdx((idx,value)-> assertEquals(idx+1,value));
 	}
 }

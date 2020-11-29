@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-class TestGrowArray {
+class TestDogArray {
 
 	/**
 	 * makes sure reset function is called when the grow command is used
