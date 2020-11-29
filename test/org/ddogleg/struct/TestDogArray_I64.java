@@ -37,6 +37,14 @@ public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 	}
 
 	@Test
+	void isEquals() {
+		DogArray_I64 alg = DogArray_I64.array(0,0,1,1,4);
+		assertTrue(alg.isEquals(0L,0L,1L,1L,4L));
+		assertFalse(alg.isEquals(0L,0L,1L,1L));
+		assertFalse(alg.isEquals(0L,0L,1L,2L,4L));
+	}
+
+	@Test
 	void addAll_queue() {
 		DogArray_I64 queue0 = new DogArray_I64(2);
 		DogArray_I64 queue1 = new DogArray_I64(3);

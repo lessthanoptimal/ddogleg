@@ -18,6 +18,7 @@ Date:     2020
   * Added removeSwap( idx )
   * Added setTo(...)
   * Added toArray()
+  * Added isEquals(...)
   * Renamed setMaxSize() to reserve(). This matches more commonly used terms and tweaked behavior to match.
 - FastArray
   * added remove(object)

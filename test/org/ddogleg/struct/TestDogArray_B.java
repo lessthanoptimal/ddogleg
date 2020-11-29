@@ -28,6 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestDogArray_B {
 
 	@Test
+	void isEquals() {
+		DogArray_B alg = DogArray_B.array(0,0,1,1,0);
+		assertTrue(alg.isEquals(0,0,1,1,0));
+		assertFalse(alg.isEquals(0,0,1,1));
+		assertFalse(alg.isEquals(0,0,1,0,0));
+	}
+
+	@Test
 	void auto_grow() {
 		DogArray_B alg = new DogArray_B(3);
 

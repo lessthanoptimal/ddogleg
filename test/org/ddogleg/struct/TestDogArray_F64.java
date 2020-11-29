@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestTestGrowArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
+public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 
 	@Test
 	void count() {
@@ -35,6 +35,14 @@ public class TestTestGrowArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64>
 
 		assertEquals(2,alg.count(0.0));
 		assertEquals(3,alg.count(1.0));
+	}
+
+	@Test
+	void isEquals() {
+		DogArray_F64 alg = DogArray_F64.array(0,0,1,1,4);
+		assertTrue(alg.isEquals(0,0,1,1,4));
+		assertFalse(alg.isEquals(0,0,1,1));
+		assertFalse(alg.isEquals(0,0,1,2,4));
 	}
 
 	@Test

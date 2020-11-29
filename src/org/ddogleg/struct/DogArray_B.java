@@ -80,6 +80,23 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		return total;
 	}
 
+	/**
+	 * Sees is the primitive array is equal to the values in this array
+	 *
+	 * @param values primitive array
+	 * @return true if equal or false if not
+	 */
+	public boolean isEquals( int... values ) {
+		if (size!=values.length)
+			return false;
+		for (int i = 0; i < size; i++) {
+			boolean v = values[i]!=0;
+			if (data[i] != v)
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
