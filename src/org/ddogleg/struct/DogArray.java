@@ -34,7 +34,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-@SuppressWarnings({"unchecked","NullAway.Init"})
+@SuppressWarnings({"unchecked", "NullAway.Init", "ForLoopReplaceableByForEach", "ManualArrayToCollectionCopy"})
 public class DogArray<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private Factory<T> factory;
@@ -197,7 +197,7 @@ public class DogArray<T> extends FastAccess<T> {
 	/**
 	 * Grows the array and adds all the items in list. Values are copied using the provided function
 	 */
-	public void copyAll(List<T> list , Set<T> setter ) {
+	public <S> void copyAll(List<S> list , Set<S,T> setter ) {
 		reserve(size()+list.size());
 		for (int i = 0; i < list.size(); i++) {
 			T dst = grow();
@@ -354,7 +354,7 @@ public class DogArray<T> extends FastAccess<T> {
 		return type;
 	}
 
-	public interface Set<T> {
-		void set( T src , T dst );
+	public interface Set<S,D> {
+		void set( S src , D dst );
 	}
 }
