@@ -19,10 +19,7 @@
 package org.ddogleg.fitting.modelset.lmeds;
 
 
-import org.ddogleg.fitting.modelset.DistanceFromModel;
-import org.ddogleg.fitting.modelset.ModelGenerator;
-import org.ddogleg.fitting.modelset.ModelManager;
-import org.ddogleg.fitting.modelset.ModelMatcher;
+import org.ddogleg.fitting.modelset.*;
 import org.ddogleg.fitting.modelset.ransac.Ransac;
 import org.ddogleg.sorting.QuickSelect;
 
@@ -33,16 +30,17 @@ import java.util.Random;
 
 /**
  * <p>
- * Another technique similar to RANSAC known as Least Median of Squares (LMedS).  For each iteration a small number N points are selected. A model
- * is fit to these points and then the error is computed for the whole set.  The model which minimizes the
- * median is selected as the final model.  No pruning or formal selection of inlier set is done.
+ * Another technique similar to RANSAC known as Least Median of Squares (LMedS).  For each iteration a small
+ * number N points are selected. A model is fit to these points and then the error is computed for the whole
+ * set.  The model which minimizes the median is selected as the final model.  No pruning or formal
+ * selection of inlier set is done.
  * </p>
  * @author Peter Abeles
  */
 // TODO Better algorithm for selecting the inlier set.
 // Maybe revert this back to the way it was before and just have it be a separate alg entirely.
 @SuppressWarnings("NullAway.Init")
-public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, Point> {
+public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, Point>, InlierFraction {
 	// random number generator for selecting points
 	private Random rand;
 	private long randSeed;
@@ -88,7 +86,8 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	 * @param randSeed Random seed used internally.
 	 * @param totalCycles Number of random draws it will make when estimating model parameters.
 	 * @param maxMedianError If the best median error is larger than this it is considered a failure.
-	 * @param inlierFraction Data which is this fraction or lower is considered an inlier and used to recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
+	 * @param inlierFraction Data which is this fraction or lower is considered an inlier and used to
+	 *                          recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
 	 * @param generator Creates a list of model hypotheses from a small set of points.
 	 * @param errorMetric Computes the error between a point and a model
 	 */
@@ -207,10 +206,12 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		}
 	}
 
+	@Override
 	public double getErrorFraction() {
 		return errorFraction;
 	}
 
+	@Override
 	public void setErrorFraction(double errorFraction) {
 		this.errorFraction = errorFraction;
 	}
@@ -238,7 +239,6 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 
 	/**
 	 * Value of the best median error.
-	 * @return
 	 */
 	@Override
 	public double getFitQuality() {

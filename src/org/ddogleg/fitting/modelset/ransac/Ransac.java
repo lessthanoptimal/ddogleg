@@ -18,10 +18,7 @@
 
 package org.ddogleg.fitting.modelset.ransac;
 
-import org.ddogleg.fitting.modelset.DistanceFromModel;
-import org.ddogleg.fitting.modelset.ModelGenerator;
-import org.ddogleg.fitting.modelset.ModelManager;
-import org.ddogleg.fitting.modelset.ModelMatcher;
+import org.ddogleg.fitting.modelset.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +41,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
+public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierThreshold {
 	// how many points are drawn to generate the model
 	protected int sampleSize;
 
@@ -282,10 +279,12 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
 		this.sampleSize = sampleSize;
 	}
 
+	@Override
 	public double getThresholdFit() {
 		return thresholdFit;
 	}
 
+	@Override
 	public void setThresholdFit(double thresholdFit) {
 		this.thresholdFit = thresholdFit;
 	}
