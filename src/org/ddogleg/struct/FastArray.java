@@ -51,7 +51,7 @@ public class FastArray<T> extends FastAccess<T> {
 
 	public void add( T value ) {
 		if( size >= data.length ) {
-			growArray((data.length+1)*2);
+			reserve((data.length+1)*2);
 		}
 		data[size++] = value;
 	}
@@ -116,33 +116,33 @@ public class FastArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Increases the size of the internal array without changing the shape's size. If the array
-	 * is already larger than the specified length then nothing is done.  Elements previously
-	 * stored in the array are copied over is a new internal array is declared.
+	 * Ensures that the internal array has at least `length` elements. If it does not then a new internal array
+	 * is created with the specified length and elements from the old are copied into the new. The `size` does
+	 * not change.
 	 *
-	 * @param length Requested size of internal array.
+	 * @param length Requested minimum internal array length
 	 */
-	public void growArray( int length) {
-		growArray(length,true);
+	public void reserve(int length ) {
+		reserve(length,true);
 	}
 
-	public void growArray( int length, boolean copy) {
+	public void reserve(int length, boolean copy ) {
 		// now need to grow since it is already larger
-		if( this.data.length >= length)
+		if (this.data.length >= length)
 			return;
 
 		T []data = (T[])Array.newInstance(type, length);
-		if( copy )
+		if (copy)
 			System.arraycopy(this.data,0,data,0,size);
 		this.data = data;
 	}
 
 	/**
-	 * Changes the size to the specified length. Equivalent to calling {@link #growArray} and this.size = N.
+	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
 	 * @param length The new size of the queue
 	 */
 	public void resize(int length) {
-		growArray(length);
+		reserve(length);
 		this.size = length;
 	}
 
@@ -150,7 +150,7 @@ public class FastArray<T> extends FastAccess<T> {
 	 * Changes the size and fills each element with this value
 	 */
 	public void resize(int length, T value) {
-		growArray(length,false);
+		reserve(length,false);
 		Arrays.fill(data,0,length,value);
 		this.size = length;
 	}

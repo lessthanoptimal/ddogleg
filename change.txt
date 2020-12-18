@@ -23,6 +23,7 @@ Date:     2020
 - FastArray
   * added remove(object)
   * added forEach(lambda)
+  * Renamed growArray() to reserve()
 - FastAccess
   * Moved functions into this that should have been here originally
   * Added find(), findIdx(), findAll(), findAllIdx()
