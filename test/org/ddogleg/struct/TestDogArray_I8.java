@@ -313,9 +313,9 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
-	@Test void apply() {
+	@Test void applyIdx() {
 		DogArray_I8 alg = DogArray_I8.array(1,2,3,4,5);
-		alg.apply((idx,value)->(value<3)?0:value);
+		alg.applyIdx((idx, value)->(value<3)?0:value);
 		for (int i = 0; i < 2; i++) {
 			assertEquals(0,alg.get(i));
 		}

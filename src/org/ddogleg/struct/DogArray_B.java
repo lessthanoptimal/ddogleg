@@ -340,21 +340,24 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		}
 	}
 
-	public void apply(FunctionApply func) {
+	public void applyIdx(FunctionApplyIdx func) {
 		for (int i = 0; i < size; i++) {
 			data[i] = func.process(i, data[i]);
 		}
 	}
 
+	@FunctionalInterface
 	public interface FunctionEachIdx {
 		void process( int index, boolean value );
 	}
 
+	@FunctionalInterface
 	public interface FunctionEach {
 		void process( boolean value );
 	}
 
-	public interface FunctionApply {
+	@FunctionalInterface
+	public interface FunctionApplyIdx {
 		boolean process( int index, boolean value );
 	}
 }

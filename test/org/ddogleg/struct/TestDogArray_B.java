@@ -209,9 +209,9 @@ public class TestDogArray_B {
 		}
 	}
 
-	@Test void apply() {
+	@Test void applyIdx() {
 		DogArray_B alg = DogArray_B.array(true,false,true,false,true);
-		alg.apply((idx,value)->false);
+		alg.applyIdx((idx, value)->false);
 		for (int i = 0; i < alg.size; i++) {
 			assertFalse(alg.get(i));
 		}

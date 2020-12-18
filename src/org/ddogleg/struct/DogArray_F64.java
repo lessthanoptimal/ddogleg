@@ -428,21 +428,24 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		}
 	}
 
-	public void apply(FunctionApply func) {
+	public void applyIdx(FunctionApplyIdx func) {
 		for (int i = 0; i < size; i++) {
 			data[i] = func.process(i, data[i]);
 		}
 	}
 
+	@FunctionalInterface
 	public interface FunctionEachIdx {
 		void process( int index, double value );
 	}
 
+	@FunctionalInterface
 	public interface FunctionEach {
 		void process( double value );
 	}
 
-	public interface FunctionApply {
+	@FunctionalInterface
+	public interface FunctionApplyIdx {
 		double process( int index, double value );
 	}
 }
