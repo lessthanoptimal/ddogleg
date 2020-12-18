@@ -1,14 +1,15 @@
 import net.ltgt.gradle.errorprone.CheckSeverity
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id "com.peterabeles.gversion" version "1.8.3"
+    id "com.peterabeles.gversion" version "1.9"
     id "net.ltgt.errorprone" version "1.2.1"
 }
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java-library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
@@ -19,17 +20,18 @@ gversion {
     srcDir       = "src"
     classPackage = "org.ddogleg"
     className    = "DDoglegVersion"
+    annotate     = true
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
 }
 
 // Creates Java 8 byte code
-compileJava {
-    options.compilerArgs = [ "--release", "8" ]
-}
+tasks.withType(JavaCompile).all { options.compilerArgs = ["--release", "8",] }
 
 repositories {
     mavenCentral()
@@ -143,80 +145,67 @@ javadoc {
 }
 
 test {
-    ignoreFailures true
+    useJUnitPlatform()
+    reports.html.enabled = false
+    // Make the error logging verbose to make debugging on CI easier
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat TestExceptionFormat.FULL
+    testLogging.showCauses true
+    testLogging.showExceptions true
+    testLogging.showStackTraces true
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-// Creates Java 8 byte code on Java 9+
-if(JavaVersion.current() != JavaVersion.VERSION_1_8) {
-    compileJava {
-        options.compilerArgs = ["--release", "8"]
-    }
-}
-
+// Force the release build to fail if it depends on a SNAPSHOT
+jar.dependsOn checkDependsOnSNAPSHOT
 // Force uploadArchives to fail if trying to upload a stable release and git is dirty
 uploadArchives.dependsOn failDirtyNotSnapshot
 
-// if Maven central isn't setup in gradle.properties skip all of this
-if( project.hasProperty('ossrhUsername') ) {
-    signing {
-        sign configurations.archives
+// if Maven central isn't setup in ~/.gradle/gradle.properties fill in these variables to make it happy
+if( !project.hasProperty('ossrhUsername') ) {
+    ext.ossrhUsername = "dummy"
+    ext.ossrhPassword = "dummy"
+} else {
+    signing { sign configurations.archives }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+                name = 'DDogleg'
+                description = 'DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.'
+                url = 'http://ddogleg.org'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'pabeles'
+                        name = 'Peter Abeles'
+                        email = 'peter.abeles@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/lessthanoptimal/ddogleg.git'
+                    developerConnection = 'scm:git:git://github.com/lessthanoptimal/ddogleg.git'
+                    url = 'https://github.com/lessthanoptimal/ddogleg'
+                }
+            }
+        }
     }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                pom.project {
-                    name 'DDogleg'
-                    packaging 'pom'
-                    // optionally artifactId can be defined here
-                    description 'DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.'
-                    url 'http://ddogleg.org'
-
-                    scm {
-                        connection 'scm:git:git@github.com:lessthanoptimal/ddogleg.git'
-                        developerConnection 'scm:git:git@github.com:lessthanoptimal/ddogleg.git'
-                        url 'https://github.com/lessthanoptimal/ddogleg'
-                    }
-
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id 'pabeles'
-                            name 'Peter Abeles'
-                            email 'peter.abeles@gmail.com'
-                        }
-                    }
-                }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
             }
         }
     }
