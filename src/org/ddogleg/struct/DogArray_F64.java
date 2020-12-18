@@ -94,7 +94,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 
 	public void addAll( DogArray_F64 queue ) {
 		if( size+queue.size > data.length ) {
-			double temp[] = new double[ (size+queue.size) * 2];
+			double[] temp = new double[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -109,7 +109,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			double temp[] = new double[ (size+arraySize) * 2];
+			double[] temp = new double[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -123,7 +123,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 
 	public void push( double val ) {
 		if( size == data.length ) {
-			double temp[];
+			double[] temp;
 			try {
 				temp = new double[ size * 2+5];
 			} catch( OutOfMemoryError e ) {
@@ -198,7 +198,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 */
 	public void insert( int index , double value ) {
 		if( size == data.length ) {
-			double temp[] = new double[ size * 2+5];
+			double[] temp = new double[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -428,11 +428,21 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		}
 	}
 
+	public void apply(FunctionApply func) {
+		for (int i = 0; i < size; i++) {
+			data[i] = func.process(i, data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, double value );
 	}
 
 	public interface FunctionEach {
 		void process( double value );
+	}
+
+	public interface FunctionApply {
+		double process( int index, double value );
 	}
 }

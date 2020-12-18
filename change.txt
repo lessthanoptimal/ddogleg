@@ -15,6 +15,7 @@ Date:     2020
   * Added resize( size , defaultValue )
   * Added count( value )
   * Added forIdx( idx, value )
+  * Added apply( idx, value ) -> value
   * Added removeSwap( idx )
   * Added setTo(...)
   * Added toArray()

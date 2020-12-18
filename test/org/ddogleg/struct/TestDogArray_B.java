@@ -27,16 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TestDogArray_B {
 
-	@Test
-	void isEquals() {
+	@Test void isEquals() {
 		DogArray_B alg = DogArray_B.array(0,0,1,1,0);
 		assertTrue(alg.isEquals(0,0,1,1,0));
 		assertFalse(alg.isEquals(0,0,1,1));
 		assertFalse(alg.isEquals(0,0,1,0,0));
 	}
 
-	@Test
-	void auto_grow() {
+	@Test void auto_grow() {
 		DogArray_B alg = new DogArray_B(3);
 
 		assertEquals(3,alg.data.length);
@@ -50,16 +48,14 @@ public class TestDogArray_B {
 			assertEquals((i%2)==0,alg.get(i));
 	}
 
-	@Test
-	void count() {
+	@Test void count() {
 		DogArray_B alg = DogArray_B.array(0,0,1,1,1);
 
 		assertEquals(2,alg.count(false));
 		assertEquals(3,alg.count(true));
 	}
 
-	@Test
-	void reset() {
+	@Test void reset() {
 		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
@@ -74,8 +70,7 @@ public class TestDogArray_B {
 		assertEquals(0, alg.size);
 	}
 
-	@Test
-	void resize() {
+	@Test void resize() {
 		DogArray_B alg = new DogArray_B(2);
 		assertEquals(0,alg.size);
 		alg.resize(12);
@@ -89,8 +84,7 @@ public class TestDogArray_B {
 		assertTrue(alg.get(2));
 	}
 
-	@Test
-	void resize_default() {
+	@Test void resize_default() {
 		DogArray_B alg = new DogArray_B(2);
 		assertEquals(0,alg.size);
 		alg.resize(12, true);
@@ -112,8 +106,7 @@ public class TestDogArray_B {
 		}
 	}
 
-	@Test
-	void push_pop() {
+	@Test void push_pop() {
 		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(false);
@@ -125,8 +118,7 @@ public class TestDogArray_B {
 		assertEquals(0, alg.size);
 	}
 
-	@Test
-	void setTo_array_off() {
+	@Test void setTo_array_off() {
 		DogArray_B alg = new DogArray_B(10);
 
 		boolean[] foo = new boolean[]{true,true,false,true,false};
@@ -137,8 +129,7 @@ public class TestDogArray_B {
 		}
 	}
 
-	@Test
-	void setTo_array() {
+	@Test void setTo_array() {
 		DogArray_B alg = new DogArray_B(10);
 
 		boolean[] array = new boolean[]{true,true,false,true,false};
@@ -151,8 +142,7 @@ public class TestDogArray_B {
 		}
 	}
 
-	@Test
-	void remove_two() {
+	@Test void remove_two() {
 		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
@@ -173,16 +163,14 @@ public class TestDogArray_B {
 		assertFalse(alg.get(1));
 	}
 
-	@Test
-	void remove_swap() {
+	@Test void remove_swap() {
 		DogArray_B alg = DogArray_B.array(0,0,0,0,1);
 		alg.removeSwap(1);
 		assertEquals(4,alg.size);
 		alg.forIdx((i,v)-> assertEquals((i == 1), v));
 	}
 
-	@Test
-	void indexOf() {
+	@Test void indexOf() {
 		DogArray_B alg = new DogArray_B(10);
 
 		alg.push(true);
@@ -194,8 +182,7 @@ public class TestDogArray_B {
 		assertEquals(1,alg.indexOf(false));
 	}
 
-	@Test
-	void getTail() {
+	@Test void getTail() {
 		DogArray_B alg = new DogArray_B(20);
 
 		for (int i = 0; i < 20; i++) {
@@ -207,9 +194,26 @@ public class TestDogArray_B {
 		}
 	}
 
-	@Test
-	void forIdx() {
+	@Test void forIdx() {
 		DogArray_B alg = DogArray_B.array(true,false,true,false,true);
 		alg.forIdx((idx,value)-> assertEquals(idx%2==0,value));
+	}
+
+	@Test void forEach() {
+		DogArray_B alg = DogArray_B.array(true,false,true,false,true);
+		DogArray_B cpy = new DogArray_B(alg.size);
+		alg.forEach(cpy::add);
+		assertEquals(alg.size, cpy.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(alg.get(i), cpy.get(i));
+		}
+	}
+
+	@Test void apply() {
+		DogArray_B alg = DogArray_B.array(true,false,true,false,true);
+		alg.apply((idx,value)->false);
+		for (int i = 0; i < alg.size; i++) {
+			assertFalse(alg.get(i));
+		}
 	}
 }

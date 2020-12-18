@@ -94,7 +94,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	public void addAll( DogArray_F32 queue ) {
 		if( size+queue.size > data.length ) {
-			float temp[] = new float[ (size+queue.size) * 2];
+			float[] temp = new float[ (size+queue.size) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -109,7 +109,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		int arraySize = endIndex-startIndex;
 
 		if( size+arraySize > data.length ) {
-			float temp[] = new float[ (size+arraySize) * 2];
+			float[] temp = new float[ (size+arraySize) * 2];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -123,7 +123,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	public void push( float val ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2+5];
+			float[] temp = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
@@ -190,7 +190,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	 */
 	public void insert( int index , float value ) {
 		if( size == data.length ) {
-			float temp[] = new float[ size * 2+5];
+			float[] temp = new float[ size * 2+5];
 			System.arraycopy(data,0,temp,0,index);
 			temp[index] = value;
 			System.arraycopy(data,index,temp,index+1,size-index);
@@ -420,11 +420,21 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		}
 	}
 
+	public void apply(FunctionApply func) {
+		for (int i = 0; i < size; i++) {
+			data[i] = func.process(i, data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, float value );
 	}
 
 	public interface FunctionEach {
 		void process( float value );
+	}
+
+	public interface FunctionApply {
+		float process( int index, float value );
 	}
 }

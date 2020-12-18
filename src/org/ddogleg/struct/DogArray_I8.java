@@ -397,11 +397,21 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
+	public void apply(FunctionApply func) {
+		for (int i = 0; i < size; i++) {
+			data[i] = func.process(i, data[i]);
+		}
+	}
+
 	public interface FunctionEachIdx {
 		void process( int index, byte value );
 	}
 
 	public interface FunctionEach {
 		void process( byte value );
+	}
+
+	public interface FunctionApply {
+		byte process( int index, byte value );
 	}
 }
