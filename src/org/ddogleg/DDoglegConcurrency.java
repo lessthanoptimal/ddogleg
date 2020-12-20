@@ -35,7 +35,7 @@ public class DDoglegConcurrency extends ConcurrencyOps {
 	 * version of code will be called. Otherwise USE_CONCURRENT will be true and the max threads in the pool
 	 * set to the specified number.
 	 *
-	 * @param maxThreads Maximum number of threads. &le 1 means it will not be threaded.
+	 * @param maxThreads Maximum number of threads. &le; 1 means it will not be threaded.
 	 */
 	public static void setMaxThreads( int maxThreads ) {
 		ConcurrencyOps.setMaxThreads(maxThreads);

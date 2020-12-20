@@ -142,6 +142,11 @@ javadoc {
         failOnError = false
         enabled = !project.version.contains("SNAPSHOT") // disable to stop it from spamming stdout
     }
+
+    // https://github.com/gradle/gradle/issues/11182 Error introduced in JDK 11
+    if (JavaVersion.current().compareTo(JavaVersion.VERSION_1_9) >= 0) {
+        options.addStringOption("-release", "8");
+    }
 }
 
 test {
