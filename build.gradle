@@ -147,6 +147,10 @@ javadoc {
     if (JavaVersion.current().compareTo(JavaVersion.VERSION_1_9) >= 0) {
         options.addStringOption("-release", "8");
     }
+
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 test {
@@ -169,8 +173,6 @@ uploadArchives.dependsOn failDirtyNotSnapshot
 if( !project.hasProperty('ossrhUsername') ) {
     ext.ossrhUsername = "dummy"
     ext.ossrhPassword = "dummy"
-} else {
-    signing { sign configurations.archives }
 }
 
 publishing {
@@ -216,6 +218,10 @@ publishing {
     }
 }
 
+if( project.hasProperty('ossrhUsername') ) {
+    signing { sign publishing.publications.mavenJava }
+}
+
 // Creates a directory with all the compiled jars and the dependencies
 task createLibraryDirectory( dependsOn: ['jar','sourcesJar'] ) {
     doLast {
@@ -250,6 +256,8 @@ task alljavadoc(type: Javadoc) {
 
     // Hack for Java 8u121 and beyond. Comment out if running an earlier version of Java
     options.addBooleanOption("-allow-script-in-comments", true)
+
+    // Flag is no longer around in later versions of Java but required before
     if (JavaVersion.current().ordinal() < JavaVersion.VERSION_13.ordinal()) {
         options.addBooleanOption("-no-module-directories", true)
     }
@@ -270,5 +278,5 @@ project.compileJava.dependsOn(createVersionFile)
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = '6.4.1'
+    gradleVersion = '6.7.1'
 }
