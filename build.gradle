@@ -166,8 +166,9 @@ test {
 
 // Force the release build to fail if it depends on a SNAPSHOT
 jar.dependsOn checkDependsOnSNAPSHOT
-// Force uploadArchives to fail if trying to upload a stable release and git is dirty
-uploadArchives.dependsOn failDirtyNotSnapshot
+
+// Force publish to fail if trying to upload a stable release and git is dirty
+publish.dependsOn failDirtyNotSnapshot
 
 // if Maven central isn't setup in ~/.gradle/gradle.properties fill in these variables to make it happy
 if( !project.hasProperty('ossrhUsername') ) {
