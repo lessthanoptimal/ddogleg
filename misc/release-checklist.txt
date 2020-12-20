@@ -10,7 +10,7 @@
 - update version in build.gradle
 - update change.txt
 - ./gradlew test
-- ./gradlew install
+- ./gradlew PublishToMavenLocal
 - Creating Files for Source Forge
   git clone git@github.com:lessthanoptimal/ddogleg.git
   VERSION=v0.15

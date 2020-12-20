@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.19
-Date:     2020
+Date:     2020-12-19
 
 - Updated to Java 11 syntax but generates Java 8 byte code
 - Concurrency
