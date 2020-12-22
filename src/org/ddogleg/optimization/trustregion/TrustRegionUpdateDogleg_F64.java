@@ -157,7 +157,7 @@ public class TrustRegionUpdateDogleg_F64<S extends DMatrix>
 	}
 
 	protected void gaussNewtonStep(DMatrixRMaj step) {
-		step.set(stepGN);
+		step.setTo(stepGN);
 		predictedReduction = owner.computePredictedReduction(stepGN);
 		stepLength = distanceGN;
 	}

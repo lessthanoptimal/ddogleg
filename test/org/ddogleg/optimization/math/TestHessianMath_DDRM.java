@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,6 +31,6 @@ public class TestHessianMath_DDRM extends StandardHessianMathChecks {
 
 	@Override
 	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
-		((HessianMath_DDRM)alg).hessian.set(H);
+		((HessianMath_DDRM)alg).hessian.setTo(H);
 	}
 }

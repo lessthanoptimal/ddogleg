@@ -160,7 +160,7 @@ public class QuasiNewtonBFGS
 	 * @param Hinverse Initial hessian approximation
 	 */
 	public void setInitialHInv( DMatrixRMaj Hinverse) {
-		B.set(Hinverse);
+		B.setTo(Hinverse);
 	}
 
 	public void initialize(double[] initial) {

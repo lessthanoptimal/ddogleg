@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,7 +36,7 @@ public class TestHessianLeastSquares_DDRM extends StandardHessianLeastSquaresChe
 	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
 		HessianLeastSquares_DDRM a = (HessianLeastSquares_DDRM)alg;
 
-		a.hessian.set(H);
+		a.hessian.setTo(H);
 	}
 
 	@Override
