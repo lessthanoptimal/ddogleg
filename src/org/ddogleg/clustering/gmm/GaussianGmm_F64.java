@@ -96,8 +96,8 @@ public class GaussianGmm_F64 implements Serializable {
 	public GaussianGmm_F64 copy() {
 		GaussianGmm_F64 out = new GaussianGmm_F64(mean.getNumElements());
 
-		out.mean.set(mean);
-		out.covariance.set(covariance);
+		out.mean.setTo(mean);
+		out.covariance.setTo(covariance);
 		out.weight = weight;
 
 		return out;

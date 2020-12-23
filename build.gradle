@@ -2,7 +2,7 @@ import net.ltgt.gradle.errorprone.CheckSeverity
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id "com.peterabeles.gversion" version "1.9"
+    id "com.peterabeles.gversion" version "1.10"
     id "net.ltgt.errorprone" version "1.2.1"
 }
 
@@ -13,7 +13,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.19'
+version = '0.20-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 gversion {
@@ -31,7 +31,7 @@ java {
 }
 
 // Creates Java 8 byte code
-tasks.withType(JavaCompile).all { options.compilerArgs = ["--release", "8",] }
+tasks.withType(JavaCompile).all { options.compilerArgs = ["--release", "8"] }
 
 repositories {
     mavenCentral()
@@ -68,7 +68,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.40'}
+        compile group: 'org.ejml', name: a, version: '0.41-SNAPSHOT'}
 
     compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
     compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
@@ -210,7 +210,6 @@ publishing {
             def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
                 username ossrhUsername
                 password ossrhPassword

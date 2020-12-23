@@ -41,7 +41,7 @@ public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
 	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
 		HessianBFGS_DDRM a = (HessianBFGS_DDRM)alg;
 
-		a.hessian.set(H);
+		a.hessian.setTo(H);
 		CommonOps_DDRM.invert(H,a.hessianInverse);
 	}
 

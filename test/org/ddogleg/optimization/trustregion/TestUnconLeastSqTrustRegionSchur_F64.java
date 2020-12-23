@@ -128,8 +128,8 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 
 		@Override
 		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
-			left.set(jacLeft);
-			right.set(jacRight);
+			left.setTo(jacLeft);
+			right.setTo(jacRight);
 		}
 
 		@Override

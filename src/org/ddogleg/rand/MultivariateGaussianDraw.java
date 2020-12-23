@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -92,7 +92,7 @@ public class MultivariateGaussianDraw {
 		for( int i = 0; i < r.numRows; i++ ) {
 			r.set(i,0,rand.nextGaussian());
 		}
-		x.set(mean);
+		x.setTo(mean);
 
 		multAdd(A,r,x);
 

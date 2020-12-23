@@ -117,14 +117,14 @@ public class UnconMinTrustRegionBFGS_F64
 				// Note: there is some duplication in math between Wolfe, update(), and inverseUpdate()
 				hessian.update(s,y);
 
-				gradientPrevious.set(gradient);
-				xPrevious.set(x);
+				gradientPrevious.setTo(gradient);
+				xPrevious.setTo(x);
 				f_prev = fx;
 			}
 		} else {
 			firstIteration = false;
-			gradientPrevious.set(gradient);
-			xPrevious.set(x);
+			gradientPrevious.setTo(gradient);
+			xPrevious.setTo(x);
 			f_prev = fx;
 		}
 	}

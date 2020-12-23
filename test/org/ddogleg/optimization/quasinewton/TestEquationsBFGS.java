@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -85,7 +85,7 @@ public class TestEquationsBFGS {
 		SimpleMatrix SS = _s.mult(_s.transpose()).scale(p);
 		SimpleMatrix M = A1.mult(B).mult(A2).plus(SS);
 
-		H.set(M.getMatrix());
+		H.setTo(M.getMatrix());
 	}
 
 	@Test
