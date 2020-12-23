@@ -27,7 +27,7 @@
 Releasing code to Maven Central
 
 To post a SNAPSHOT:
-./gradlew uploadArchives
+./gradlew publish
 
 To post a full release:
 ./gradlew assemble;./gradlew publish -Dorg.gradle.parallel=false
