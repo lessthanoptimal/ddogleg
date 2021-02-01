@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,7 @@
 
 package org.ddogleg.clustering;
 
-import java.util.List;
+import org.ddogleg.struct.LArrayAccessor;
 
 /**
  * Given a set of points in N-dimensional space, compute a set of unique assignment for each point to a cluster.
@@ -27,15 +27,14 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public interface ComputeClusters<D> {
+public interface ComputeClusters<P> {
 
 	/**
 	 * Must be called first to initializes internal data structures.  Only needs to be called once.
 	 *
-	 * @param pointDimension Number of degrees of freedom in each point.
 	 * @param randomSeed Seed for any random number generators used internally.
 	 */
-	public void init( int pointDimension , long randomSeed );
+	void initialize(long randomSeed);
 
 	/**
 	 * Computes a set of clusters which segment the points into numCluster sets.
@@ -43,7 +42,7 @@ public interface ComputeClusters<D> {
 	 * @param points Set of points which are to be clustered. Not modified.
 	 * @param numCluster Number of clusters it will use to split the points.
 	 */
-	public void process( List<D> points , int numCluster );
+	void process( LArrayAccessor<P> points, int numCluster);
 
 	/**
 	 * <p>Returns a class which is used to assign a point to a cluster.  Only invoked after
@@ -56,7 +55,7 @@ public interface ComputeClusters<D> {
 	 *
 	 * @return Instance of {@link org.ddogleg.clustering.AssignCluster}.
 	 */
-	public AssignCluster<D> getAssignment();
+	AssignCluster<P> getAssignment();
 
 	/**
 	 * <p>
@@ -69,11 +68,17 @@ public interface ComputeClusters<D> {
 	 *
 	 * @return sum of distance between each point and their respective clusters.
 	 */
-	public double getDistanceMeasure();
+	double getDistanceMeasure();
 
 	/**
 	 * If set to true then information about status will be printed to standard out.  By default verbose is off
 	 * @param verbose true for versbose mode.  False for quite mode.
 	 */
-	public void setVerbose( boolean verbose );
+	void setVerbose(boolean verbose);
+
+	/**
+	 * Creates a new instance which has the same configuration and can be run in parallel. Some components
+	 * can be shared as long as they are read only and thread safe.
+	 */
+	ComputeClusters<P> newInstanceThread();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,8 @@
 
 package org.ddogleg.clustering.gmm;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ddogleg.clustering.AssignCluster;
 
 import java.util.ArrayList;
@@ -30,8 +32,8 @@ import java.util.List;
  */
 public class AssignGmm_F64 implements AssignCluster<double[]> {
 
-	protected List<GaussianGmm_F64> mixture;
-	volatile GaussianLikelihoodManager glm;
+	protected @Getter @Setter List<GaussianGmm_F64> mixture;
+	protected GaussianLikelihoodManager glm;
 
 	/**
 	 * Use reference to provided mixtures
@@ -47,7 +49,7 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 	 * Copy constructor
 	 */
 	public AssignGmm_F64( AssignGmm_F64 original ) {
-		mixture = new ArrayList<GaussianGmm_F64>();
+		mixture = new ArrayList<>();
 
 		for (int i = 0; i < original.mixture.size(); i++) {
 			GaussianGmm_F64 o = original.mixture.get(i);
@@ -90,18 +92,5 @@ public class AssignGmm_F64 implements AssignCluster<double[]> {
 	@Override
 	public int getNumberOfClusters() {
 		return mixture.size();
-	}
-
-	@Override
-	public AssignCluster<double[]> copy() {
-		return new AssignGmm_F64(this);
-	}
-
-	public List<GaussianGmm_F64> getMixture() {
-		return mixture;
-	}
-
-	public void setMixture(List<GaussianGmm_F64> mixture) {
-		this.mixture = mixture;
 	}
 }

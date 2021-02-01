@@ -16,14 +16,34 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.clustering.misc;
+
+import org.ddogleg.clustering.PointDistance;
 
 /**
+ * Returns Euclidean distance squared for double[] points.
+ *
  * @author Peter Abeles
  */
-public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
+public class EuclideanSqArrayF64 implements PointDistance<double[]> {
+	// Number of elements in the array
+	final int arrayLength;
+
+	public EuclideanSqArrayF64(int arrayLength ) {
+		this.arrayLength = arrayLength;
+	}
+
 	@Override
-	public InitializeKMeans<double[]> createAlg(int dof) {
-		return new InitializeStandard<>();
+	public double distance(double[] a, double[] b) {
+		double sum = 0.0;
+		for (int i = 0; i < arrayLength; i++) {
+			double d = a[i]-b[i];
+			sum += d*d;
+		}
+		return sum;
+	}
+
+	@Override public PointDistance<double[]> newInstanceThread() {
+		return this;
 	}
 }

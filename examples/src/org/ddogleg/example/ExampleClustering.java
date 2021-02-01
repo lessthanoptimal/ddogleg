@@ -21,6 +21,7 @@ package org.ddogleg.example;
 import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.FactoryClustering;
+import org.ddogleg.clustering.misc.ListAccessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +36,7 @@ import java.util.Random;
  * Demonstration of how to cluster a N-dimensional points into clusters.  The high level interface provides
  * the capability to do hard and soft assignments.  Hard assignments select a single best match for a point
  * and soft assignments compute a weight for each cluster, high weights mean better matches.
- *
+ * <p>
  * Results are visualized in a window.  Points in different clusters are assigned different colors.  If you
  * click the inside of the window the algorithm is run again and a new set of clusters is shown.
  *
@@ -50,59 +51,64 @@ public class ExampleClustering {
 	public static boolean clicked = false;
 
 	public static void main(String[] args) {
-		List<double[]> points = new ArrayList<double[]>();
+		int dof = 2; // degree of freedom of the 2D point
+		List<double[]> points = new ArrayList<>();
+
+		// Accessor is used instead of a list directly because it becomes more efficient in very large datasets
+		ListAccessor<double[]> accessor = new ListAccessor<>(points,
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof));
 
 		// create 3 clusters drawn from a uniform square distribution
-		points.addAll( createCluster(5,7,2,100) );
-		points.addAll( createCluster(1,2,1,120) );
-		points.addAll( createCluster(4,5,1.5,300) );
+		points.addAll(createCluster(5, 7, 2, 100));
+		points.addAll(createCluster(1, 2, 1, 120));
+		points.addAll(createCluster(4, 5, 1.5, 300));
 
 		// remove any structure from the point's ordering
 		Collections.shuffle(points);
 
-		ComputeClusters<double[]> cluster = FactoryClustering.kMeans_F64(null,1000,100, 1e-8);
-		// ComputeClusters<double[]> cluster = FactoryClustering.gaussianMixtureModelEM_F64(1000, 1e-8);
+		ComputeClusters<double[]> cluster = FactoryClustering.kMeans(null, dof, double[].class);
+//		ComputeClusters<double[]> cluster = FactoryClustering.gaussianMixtureModelEM_F64(1000, 500, 1e-8, dof);
 
-		cluster.init(2, rand.nextLong());
+		cluster.initialize(rand.nextLong());
 
 		// visualization stuff
 		Gui gui = new Gui(points);
 
 		JFrame frame = new JFrame();
-		frame.add(gui,BorderLayout.CENTER);
+		frame.add(gui, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		// Run the cluster algorithm again each time the user clicks the window
 		// This allows you to see how stable the clusters are
-		while( true ) {
-
-			cluster.process(points, 3);
+		while (true) {
+			int numClusters = 3;
+			cluster.process(accessor, numClusters);
 
 			AssignCluster<double[]> assignment = cluster.getAssignment();
 			gui.update(assignment);
 
-			while( !clicked ) {
+			while (!clicked) {
 				Thread.yield();
 			}
 			clicked = false;
 		}
 	}
 
-	public static List<double[]> createCluster( double x , double y , double width , int N ) {
+	public static List<double[]> createCluster(double x, double y, double width, int N) {
 
-		List<double[]> points = new ArrayList<double[]>();
+		List<double[]> points = new ArrayList<>();
 
 		for (int i = 0; i < N; i++) {
 			double[] p = new double[2];
 
-			if ( gaussian ) {
-				p[0] = rand.nextGaussian()*width/3+x;
-				p[1] = rand.nextGaussian()*width/3+y;
+			if (gaussian) {
+				p[0] = rand.nextGaussian() * width / 3 + x;
+				p[1] = rand.nextGaussian() * width / 3 + y;
 			} else {
-				p[0] = rand.nextDouble()*width-width/2+x;
-				p[1] = rand.nextDouble()*width-width/2+y;
+				p[0] = rand.nextDouble() * width - width / 2 + x;
+				p[1] = rand.nextDouble() * width - width / 2 + y;
 			}
 
 			points.add(p);
@@ -123,15 +129,15 @@ public class ExampleClustering {
 
 			this.points = points;
 
-			setPreferredSize(new Dimension(300,300));
+			setPreferredSize(new Dimension(300, 300));
 			setBackground(Color.WHITE);
 
 			addMouseListener(this);
 		}
 
-		public synchronized void update( AssignCluster<double[]> assignment ) {
+		public synchronized void update(AssignCluster<double[]> assignment) {
 			this.assignment = assignment;
-			colors = new Color[ assignment.getNumberOfClusters() ];
+			colors = new Color[assignment.getNumberOfClusters()];
 			for (int i = 0; i < colors.length; i++) {
 				colors[i] = new Color(rand.nextInt() | 0x080808);
 			}
@@ -140,24 +146,23 @@ public class ExampleClustering {
 
 		@Override
 		public synchronized void paintComponent(Graphics g) {
-			if( assignment == null )
+			if (assignment == null)
 				return;
 
 			super.paintComponent(g);
 
-			Graphics2D g2 = (Graphics2D)g;
+			Graphics2D g2 = (Graphics2D) g;
 
-			double scaleX = getWidth()/10.0;
-			double scaleY = getHeight()/10.0;
-
+			double scaleX = getWidth() / 10.0;
+			double scaleY = getHeight() / 10.0;
 
 			for (int i = 0; i < points.size(); i++) {
 				double[] p = points.get(i);
-				int x = (int)(p[0]*scaleX+0.5);
-				int y = (int)(p[1]*scaleY+0.5);
+				int x = (int) (p[0] * scaleX + 0.5);
+				int y = (int) (p[1] * scaleY + 0.5);
 
 				g2.setColor(colors[assignment.assign(p)]);
-				g2.fillOval(x-2,y-2,5,5);
+				g2.fillOval(x - 2, y - 2, 5, 5);
 			}
 		}
 
@@ -166,9 +171,20 @@ public class ExampleClustering {
 			clicked = true;
 		}
 
-		@Override public void mousePressed(MouseEvent e) {}
-		@Override public void mouseReleased(MouseEvent e) {}
-		@Override public void mouseEntered(MouseEvent e) {}
-		@Override public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 }

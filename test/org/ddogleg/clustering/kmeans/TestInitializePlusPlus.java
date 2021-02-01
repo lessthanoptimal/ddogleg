@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,14 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
+import org.ddogleg.clustering.misc.ListAccessor;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.DogArray_F64;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,33 +33,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestInitializePlusPlus extends StandardInitializeKMeansChecks{
-
-	Random rand = new Random(234);
-
+public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 	/**
 	 * In this situation there are not enough unique points which can act as unique seeds.
-	 *
+	 * <p>
 	 * This is a stricter version of generic test
 	 */
-	@Test
-	public void notEnoughUniquePoints_strict() {
-		int DOF = 20;
+	@Test void notEnoughUniquePoints_strict() {
+		int DOF = 18;
+		int NUM_SEEDS = 20;
 
-		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,30,true);
+		List<double[]> points = TestStandardKMeans.createPoints(DOF, 30, true);
+
 		for (int i = 1; i < points.size(); i += 2) {
-			System.arraycopy(points.get(i-1),0,points.get(i),0,DOF);
+			System.arraycopy(points.get(i - 1), 0, points.get(i), 0, DOF);
 		}
-		List<double[]> seeds = TestStandardKMeans_F64.createPoints(DOF,20,false);
+		var seeds = new DogArray<>(() -> new double[DOF]);
 
-		InitializeKMeans_F64 alg = createAlg();
-		alg.init(DOF,0xBEEF);
+		performClustering(DOF, NUM_SEEDS, points, seeds);
+		assertEquals(NUM_SEEDS, seeds.size);
 
-		alg.selectSeeds(points, seeds);
-
-		int hits[] = new int[15];
-		for( double[] a : seeds ) {
-			int match = findMatch( a , points )/2;
+		var hits = new int[15];
+		for (double[] a : seeds.toList()) {
+			int match = findMatch(a, points)/2;
 			hits[match]++;
 		}
 
@@ -69,59 +68,46 @@ public class TestInitializePlusPlus extends StandardInitializeKMeansChecks{
 	/**
 	 * Test seed selection by seeing if it has the expected distribution.
 	 */
-	@Test
-	public void selectNextSeed() {
-		InitializePlusPlus alg = new InitializePlusPlus();
-		alg.init(1,123);
+	@Test void selectPointForNextSeed() {
+		final int DOF = 1;
+		var alg = new InitializePlusPlus<double[]>();
+		alg.initialize(new EuclideanSqArrayF64(DOF), 123);
 
-		alg.distance.resize(3);
-		alg.distance.data = new double[]{3,6,1};
-		alg.totalDistance = 10.0;
+		alg.distances = DogArray_F64.array(3, 6, 1);
+		alg.sumDistances = 10.0;
 
-		List<double[]> points = new ArrayList<double[]>();
-		for (int i = 0; i < 3; i++) {
-			points.add(new double[1]);
-		}
-
-		double histogram[] = new double[3];
+		var histogram = new double[3];
 
 		for (int i = 0; i < 1000; i++) {
-			double[] seed = alg.selectNextSeed(points,rand.nextDouble());
-			int which = -1;
-			for (int j = 0; j < points.size(); j++) {
-				if( points.get(j) == seed ) {
-					which = j;
-					break;
-				}
-			}
-			histogram[which]++;
+			histogram[alg.selectPointForNextSeed(rand.nextDouble())]++;
 		}
-		assertEquals(0.3,histogram[0]/1000.0,0.02);
-		assertEquals(0.6,histogram[1]/1000.0,0.02);
-		assertEquals(0.1,histogram[2]/1000.0,0.02);
+		assertEquals(0.3, histogram[0]/1000.0, 0.02);
+		assertEquals(0.6, histogram[1]/1000.0, 0.02);
+		assertEquals(0.1, histogram[2]/1000.0, 0.02);
 	}
 
-	@Test
-	public void updateDistances() {
-		InitializePlusPlus alg = new InitializePlusPlus();
-		alg.init(1,123);
+	@Test void updateDistanceWithNewSeed() {
+		final int DOF = 1;
+		var alg = new InitializePlusPlus<double[]>();
+		alg.initialize(new EuclideanSqArrayF64(DOF), 123);
 
-		alg.distance.resize(3);
-		alg.distance.data = new double[]{3,6,1};
-		List<double[]> points = new ArrayList<double[]>();
+		alg.distances = DogArray_F64.array(3, 6, 1);
+		alg.sumDistances = Double.NaN; // if not reset this will mess it up
+		var points = new ArrayList<double[]>();
 		for (int i = 0; i < 3; i++) {
 			points.add(new double[]{i*i});
 		}
-		alg.updateDistances(points, new double[]{-1});
-		assertEquals(1,alg.distance.get(0),1e-8);
-		assertEquals(4,alg.distance.get(1),1e-8);
-		assertEquals(1,alg.distance.get(2),1e-8);
-		assertEquals(6,alg.totalDistance,1e-8);
+		var accessor = new ListAccessor<>(points, ( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF));
 
+		alg.updateDistanceWithNewSeed(accessor, new double[]{-1});
+		assertEquals(1, alg.distances.get(0), 1e-8);
+		assertEquals(4, alg.distances.get(1), 1e-8);
+		assertEquals(1, alg.distances.get(2), 1e-8);
+		assertEquals(6, alg.sumDistances, 1e-8);
 	}
 
 	@Override
-	public InitializeKMeans_F64 createAlg() {
-		return new InitializePlusPlus();
+	public InitializeKMeans<double[]> createAlg( int DOF ) {
+		return new InitializePlusPlus<>();
 	}
 }

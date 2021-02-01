@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,11 +18,13 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ddogleg.clustering.AssignCluster;
+import org.ddogleg.clustering.PointDistance;
+import org.ddogleg.struct.FastAccess;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Implementation of {@link org.ddogleg.clustering.AssignCluster} for K-Means.  Euclidean distance squared is
@@ -31,29 +33,26 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class AssignKMeans_F64 implements AssignCluster<double[]> {
+public class AssignKMeans<P> implements AssignCluster<P> {
 
-	List<double[]> clusters;
+	/** Each point is the mean of a cluster */
+	@Getter @Setter FastAccess<P> clusters;
 
-	public AssignKMeans_F64( List<double[]> clusters ) {
+	/** Computes the distance two points are apart */
+	@Getter @Setter PointDistance<P> distancer;
+
+	public AssignKMeans(FastAccess<P> clusters, PointDistance<P> distancer) {
 		this.clusters = clusters;
-	}
-
-	public AssignKMeans_F64( AssignKMeans_F64 original ) {
-		clusters = new ArrayList<double[]>();
-		for (int i = 0; i < original.clusters.size(); i++) {
-			clusters.add( original.clusters.get(i).clone());
-		}
+		this.distancer = distancer;
 	}
 
 	@Override
-	public int assign(double[] point) {
-
+	public int assign(P point) {
 		int best = -1;
 		double bestScore = Double.MAX_VALUE;
 
 		for (int i = 0; i < clusters.size(); i++) {
-			double score = StandardKMeans_F64.distanceSq(point,clusters.get(i));
+			double score = distancer.distance(point,clusters.get(i));
 			if( score < bestScore ) {
 				bestScore = score;
 				best = i;
@@ -77,13 +76,13 @@ public class AssignKMeans_F64 implements AssignCluster<double[]> {
 	 * </p>
 	 */
 	@Override
-	public void assign(double[] point, double[] fit) {
+	public void assign(P point, double[] fit) {
 		Arrays.fill(fit,0);
 
 		// compute and save distance to each cluster
 		double max = 0;
 		for (int i = 0; i < clusters.size(); i++) {
-			double d = StandardKMeans_F64.distanceSq(point,clusters.get(i));
+			double d = distancer.distance(point,clusters.get(i));
 			fit[i] = d;
 			if( d > max ) {
 				max = d;
@@ -112,18 +111,5 @@ public class AssignKMeans_F64 implements AssignCluster<double[]> {
 	@Override
 	public int getNumberOfClusters() {
 		return clusters.size();
-	}
-
-	@Override
-	public AssignCluster<double[]> copy() {
-		return new AssignKMeans_F64(this);
-	}
-
-	public List<double[]> getClusters() {
-		return clusters;
-	}
-
-	public void setClusters(List<double[]> clusters) {
-		this.clusters = clusters;
 	}
 }

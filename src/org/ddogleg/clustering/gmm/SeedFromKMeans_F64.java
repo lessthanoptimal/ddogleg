@@ -18,9 +18,10 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.StandardKMeans;
 import org.ddogleg.struct.DogArray;
 import org.ddogleg.struct.DogArray_I32;
+import org.ddogleg.struct.LArrayAccessor;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 
@@ -35,36 +36,35 @@ import java.util.List;
  */
 public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
-	StandardKMeans_F64 kmeans;
+	StandardKMeans<double[]> kmeans;
 	DogArray_I32 totals = new DogArray_I32();
 
-	double dx[] = new double[1];
-	int N;
+	double[] dx = new double[1];
+	// degrees-of-freedom in the points
+	int dof;
 
-	public SeedFromKMeans_F64(StandardKMeans_F64 kmeans) {
+	public SeedFromKMeans_F64(StandardKMeans<double[]> kmeans) {
 		this.kmeans = kmeans;
 	}
 
 	@Override
 	public void init(int pointDimension, long randomSeed) {
-		this.N = pointDimension;
-		kmeans.init(N,randomSeed);
-		if( dx.length < N ) {
-			dx = new double[N];
+		this.dof = pointDimension;
+		kmeans.initialize(randomSeed);
+		if( dx.length < dof) {
+			dx = new double[dof];
 		}
 	}
 
 	@Override
-	public void selectSeeds(List<double[]> points, List<GaussianGmm_F64> seeds) {
-
-		totals.resize(seeds.size());
-		totals.fill(0);
+	public void selectSeeds( LArrayAccessor<double[]> points, List<GaussianGmm_F64> seeds) {
+		totals.resize(seeds.size(), 0);
 
 		// initial cluster
 		kmeans.process(points,seeds.size());
 
-		DogArray_I32 labels = kmeans.getPointLabels();
-		DogArray<double[]> means = kmeans.getClusterMeans();
+		DogArray_I32 labels = kmeans.getAssignments();
+		DogArray<double[]> means = kmeans.getBestClusters();
 
 		// compute mixture models
 		for (int i = 0; i < seeds.size(); i++) {
@@ -76,23 +76,23 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 		// Perform the summation part of the covariance calculation and tally how many points are
 		// in each cluster
 		for (int i = 0; i < points.size(); i++) {
-			double[] p = points.get(i);
+			double[] point = points.getTemp(i);
 			int label = labels.get(i);
 
 			totals.data[label]++;
 			double[] m = means.get(label);
 
 			// compute the difference between the mean and the point
-			for (int j = 0; j < N; j++) {
-				dx[j] = m[j]-p[j];
+			for (int j = 0; j < dof; j++) {
+				dx[j] = m[j]-point[j];
 			}
 
 			// add to the covariance while taking advantage of symmetry
 			DMatrixRMaj cov = seeds.get(label).covariance;
 
-			for (int j = 0; j < N; j++) {
-				for (int k = j; k < N; k++) {
-					cov.data[k*N+j] += dx[j]*dx[k];
+			for (int j = 0; j < dof; j++) {
+				for (int k = j; k < dof; k++) {
+					cov.data[k*dof +j] += dx[j]*dx[k];
 				}
 			}
 		}
@@ -100,9 +100,9 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 		// fill in the lower half
 		for (int i = 0; i < seeds.size(); i++) {
 			DMatrixRMaj cov = seeds.get(i).covariance;
-			for (int j = 0; j < N; j++) {
+			for (int j = 0; j < dof; j++) {
 				for (int k = 0; k < j; k++) {
-					cov.data[k*N+j] = cov.data[j*N+k];
+					cov.data[k*dof +j] = cov.data[j*dof +k];
 				}
 			}
 		}

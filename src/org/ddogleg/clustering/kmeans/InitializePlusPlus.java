@@ -18,9 +18,11 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.clustering.PointDistance;
+import org.ddogleg.struct.DogArray;
 import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.LArrayAccessor;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -39,90 +41,88 @@ import java.util.Random;
  * @author Peter Abeles
  */
 @SuppressWarnings("NullAway.Init")
-public class InitializePlusPlus implements InitializeKMeans_F64{
-
+public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 	Random rand;
-	// the distance of each point to the cluster it is closest to
-	DogArray_F64 distance = new DogArray_F64(1);
-	double totalDistance;
+
+	PointDistance<P> computeDistance;
+
+	DogArray_F64 distances = new DogArray_F64();
+
+	double sumDistances;
 
 	@Override
-	public void init(int pointDimension, long randomSeed) {
+	public void initialize( PointDistance<P> distance, long randomSeed ) {
+		this.computeDistance = distance;
 		rand = new Random(randomSeed);
 	}
 
 	@Override
-	public void selectSeeds(List<double[]> points, List<double[]> seeds) {
-		if( seeds.size() > points.size() )
+	public void selectSeeds( LArrayAccessor<P> points, int totalSeeds, DogArray<P> selectedSeeds ) {
+		if (totalSeeds > points.size())
 			throw new IllegalArgumentException("More seeds requested than points!");
 
-		distance.resize(points.size());
+		// Pre-allocate memory and reset the output
+		selectedSeeds.reserve(totalSeeds);
+		selectedSeeds.reset();
 
 		// the first seed is randomly selected from the list of points
-		double[] seed = points.get( rand.nextInt(points.size()) );
-		copyInto(seed,seeds.get(0));
-		// compute the distance each points is from the seed
-		totalDistance = 0;
-		for (int i = 0; i < points.size(); i++) {
-			double[] p = points.get(i);
-			double d = StandardKMeans_F64.distanceSq(p,seed);
-			distance.data[i] = d;
-			totalDistance += d;
-		}
+		points.getCopy(rand.nextInt(points.size()), selectedSeeds.grow());
 
-		// iteratively select the next seed and update the list of point distances
-		for (int i = 1; i < seeds.size(); i++) {
-			if( totalDistance == 0 ) {
-				// if the total distance is zero that means there are duplicate points and that
-				// all the unique points have already been added as seeds.  just select a point
-				// and copy it into rest of the seeds
-				copyInto(seed, seeds.get(i));
-			} else {
-				double target = rand.nextDouble();
-				copyInto(selectNextSeed(points, target), seeds.get(i));
-				updateDistances(points, seeds.get(i));
-			}
+		// Initialize the sum of distance from seeds to 0
+		distances.resize(points.size(), Double.MAX_VALUE);
+
+		// Update with information from the first seed
+		updateDistanceWithNewSeed(points, selectedSeeds.get(0));
+
+		// Select the remaining seeds probabilistically based on distance from prior seeds
+		for (int seedIdx = 1; seedIdx < totalSeeds; seedIdx++) {
+			int selected = selectPointForNextSeed(rand.nextDouble());
+			P seed = selectedSeeds.grow();
+			points.getCopy(selected, seed);
+			updateDistanceWithNewSeed(points, seed);
+		}
+	}
+
+	@Override public InitializeKMeans<P> newInstanceThread() {
+		return new InitializePlusPlus<>();
+	}
+
+	/**
+	 * A new seed has been added and the distance from the seeds needs to be updated
+	 */
+	protected void updateDistanceWithNewSeed( LArrayAccessor<P> points, P seed ) {
+		sumDistances = 0;
+		for (int pointIdx = 0; pointIdx < points.size(); pointIdx++) {
+			P point = points.getTemp(pointIdx);
+
+			// Find distance of closest seed
+			distances.data[pointIdx] = Math.min(distances.data[pointIdx], computeDistance.distance(point, seed));
+
+			sumDistances += distances.data[pointIdx];
 		}
 	}
 
 	/**
 	 * Randomly selects the next seed.  The chance of a seed is based upon its distance
 	 * from the closest cluster.  Larger distances mean more likely.
-	 * @param points List of all the points
-	 * @param target Number from 0 to 1, inclusive
+	 *
+	 * @param targetFraction Number from 0 to 1, inclusive
 	 * @return Index of the selected seed
 	 */
-	protected final double[] selectNextSeed( List<double[]> points , double target ) {
+	protected int selectPointForNextSeed( double targetFraction ) {
 		// this won't select previously selected points because the distance will be zero
 		// If the distance is zero it will simply skip over it
 		double sum = 0;
-		for (int i = 0; i < distance.size(); i++) {
-			sum += distance.get(i);
-			double fraction = sum/totalDistance;
-			if( fraction >= target )
-				return points.get(i);
+		double targetValue = sumDistances*targetFraction;
+		for (int pointIdx = 0; pointIdx < distances.size(); pointIdx++) {
+			double d = distances.get(pointIdx);
+			sum += d;
+			if (sum >= targetValue && d != 0.0)
+				return pointIdx;
 		}
-		throw new RuntimeException("This shouldn't happen");
-	}
 
-	/**
-	 * Updates the list of distances from a point to the closest cluster.  Update list of total distances
-	 */
-	protected final void updateDistances( List<double[]> points , double []clusterNew ) {
-		totalDistance = 0;
-		for (int i = 0; i < distance.size(); i++) {
-			double dOld = distance.get(i);
-			double dNew = StandardKMeans_F64.distanceSq(points.get(i),clusterNew);
-			if( dNew < dOld ) {
-				distance.data[i] = dNew;
-				totalDistance += dNew;
-			} else {
-				totalDistance += dOld;
-			}
-		}
-	}
-
-	private static void copyInto( double[] src, double[] dst) {
-		System.arraycopy(src,0,dst,0,src.length);
+		// If every single point has already been matched to a seed then they will all have zero distance
+		// In this situation we will just select a random point.
+		return rand.nextInt(distances.size);
 	}
 }
