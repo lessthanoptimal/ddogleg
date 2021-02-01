@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,9 +37,8 @@ public class TestGaussianGmm_F64 {
 
 	Random rand = new Random(234);
 
-	@Test
-	public void zero() {
-		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+	@Test void zero() {
+		var g = new GaussianGmm_F64(3);
 
 		CommonOps_DDRM.fill(g.mean,1);
 		CommonOps_DDRM.fill(g.covariance,2);
@@ -47,14 +46,13 @@ public class TestGaussianGmm_F64 {
 
 		g.zero();
 
-		assertTrue(CommonOps_DDRM.elementSumAbs(g.mean)==0);
-		assertTrue(CommonOps_DDRM.elementSumAbs(g.covariance)==0);
-		assertTrue(g.weight == 0);
+		assertEquals(CommonOps_DDRM.elementSumAbs(g.mean), 0);
+		assertEquals(CommonOps_DDRM.elementSumAbs(g.covariance), 0);
+		assertEquals(g.weight, 0);
 	}
 
-	@Test
-	public void addMean() {
-		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+	@Test void addMean() {
+		var g = new GaussianGmm_F64(3);
 		g.addMean(new double[]{2,3,-1},0.7);
 		g.addMean(new double[]{4,1,0.5},1.2);
 
@@ -65,13 +63,11 @@ public class TestGaussianGmm_F64 {
 		assertEquals(0.7 + 1.2, g.weight, 1e-8);
 	}
 
-	@Test
-	public void addCovariance() {
-
-		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+	@Test void addCovariance() {
+		var g = new GaussianGmm_F64(3);
 		g.setMean(new double[]{4,3,6});
 
-		Equation eq = new Equation();
+		var eq = new Equation();
 		eq.process("Q = zeros(3,3)");
 		for (int i = 0; i < 5; i++) {
 			DMatrixRMaj x = RandomMatrices_DDRM.rectangle(3,1,rand);
@@ -85,9 +81,8 @@ public class TestGaussianGmm_F64 {
 		assertTrue(MatrixFeatures_DDRM.isIdentical(Q, g.covariance, 1e-8));
 	}
 
-	@Test
-	public void setMean() {
-		GaussianGmm_F64 g = new GaussianGmm_F64(3);
+	@Test void setMean() {
+		var g = new GaussianGmm_F64(3);
 
 		g.setMean(new double[]{1,2,3});
 

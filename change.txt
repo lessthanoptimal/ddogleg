@@ -7,6 +7,9 @@ Version:  0.20
 Date:     2021
 
 - Updated for changes in EJML's API
+- K-Means
+  * Updated to be data type agnostic
+  * Designed to handle potentially very large sets of data
 
 ------------------------------------------------------
 Version:  0.19

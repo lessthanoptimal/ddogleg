@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,21 +18,23 @@
 
 package org.ddogleg.clustering.kmeans;
 
-import java.util.List;
+import org.ddogleg.clustering.PointDistance;
+import org.ddogleg.struct.DogArray;
+import org.ddogleg.struct.LArrayAccessor;
 
 /**
  * Selects the initial cluster positions for k-means
  *
  * @author Peter Abeles
  */
-public interface InitializeKMeans_F64 {
+public interface InitializeKMeans<P> {
 
 	/**
 	 * Initializes internal data structures.  Must be called first.
-	 * @param pointDimension NUmber of degrees of freedom in each point.
+	 * @param distance Distance function between two points
 	 * @param randomSeed Seed for any random number generators used internally.
 	 */
-	void init( int pointDimension, long randomSeed );
+	void initialize(PointDistance<P> distance, long randomSeed );
 
 	/**
 	 * <p>Given the set of points select reasonable seeds.</p>
@@ -43,8 +45,14 @@ public interface InitializeKMeans_F64 {
 	 *
 	 *
 	 * @param points (Input) Set of points which is to be clustered.
-	 * @param seeds (Output) List full of points which will act as the initial seed for k-means.  Results
-	 *              are copied into this set.  Must be filled initially.
+	 * @param totalSeeds (Input) Number of seeds it will select
+	 * @param selectedSeeds (Output) Storage for selected seeds. They will be copied into it.
 	 */
-	void selectSeeds( List<double[]> points, List<double[]> seeds );
+	void selectSeeds( LArrayAccessor<P> points, int totalSeeds, DogArray<P> selectedSeeds);
+
+	/**
+	 * Creates a new instance which has the same configuration and can be run in parallel. Some components
+	 * can be shared as long as they are read only and thread safe.
+	 */
+	InitializeKMeans<P> newInstanceThread();
 }

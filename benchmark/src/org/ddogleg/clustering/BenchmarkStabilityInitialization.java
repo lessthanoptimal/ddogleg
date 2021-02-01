@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering;
 
+import org.ddogleg.clustering.misc.ListAccessor;
 import org.ddogleg.struct.DogArray_I32;
 
 import java.util.ArrayList;
@@ -29,9 +30,10 @@ import java.util.Random;
  */
 public class BenchmarkStabilityInitialization {
 
+	int DOF = 2;
 	Random rand = new Random(234);
-	List<double[]> points = new ArrayList<double[]>();
-	List<double[]> centers = new ArrayList<double[]>();
+	List<double[]> points = new ArrayList<>();
+	List<double[]> centers = new ArrayList<>();
 	DogArray_I32 membership = new DogArray_I32();
 	DogArray_I32 clusterSize = new DogArray_I32();
 	int totalClusters = 0;
@@ -40,7 +42,7 @@ public class BenchmarkStabilityInitialization {
 		centers.add( new double[]{x,y});
 
 		for (int i = 0; i < N; i++) {
-			double p[] = new double[2];
+			double[] p = new double[2];
 
 			p[0] = x + rand.nextGaussian()*sigmaX;
 			p[1] = y + rand.nextGaussian()*sigmaY;
@@ -57,22 +59,32 @@ public class BenchmarkStabilityInitialization {
 		addCluster(-1,5,0.5,0.2,500);
 		addCluster(5,7,0.3,0.3,100);
 
+		ConfigKMeans config = new ConfigKMeans();
+		config.maxConverge = 1000;
+		config.maxIterations = 1000;
+		config.convergeTol = 1e-8;
+
 		System.out.println("Lower errors the better....\n");
-		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.STANDARD, 1000,1000, 1e-8));
-		evaluate(FactoryClustering.kMeans_F64(KMeansInitializers.PLUS_PLUS,1000,1000, 1e-8));
-		evaluate(FactoryClustering.gaussianMixtureModelEM_F64(1000,1000,1e-8));
+		config.initializer = KMeansInitializers.STANDARD;
+		evaluate(FactoryClustering.kMeans(config,DOF, double[].class));
+		config.initializer = KMeansInitializers.PLUS_PLUS;
+		evaluate(FactoryClustering.kMeans(config,DOF, double[].class));
+		evaluate(FactoryClustering.gaussianMixtureModelEM_F64(1000,1000,1e-8,DOF));
 	}
 
 	public void evaluate( ComputeClusters<double[]> clusterer ) {
-		clusterer.init(2,32454325);
+		clusterer.initialize(32454325);
+
+		ListAccessor<double[]> accessor = new ListAccessor<>(points,
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, DOF));
 
 		int numTrials = 500;
 		double totalSizeError = 0;
 		for (int i = 0; i < numTrials; i++) {
-			clusterer.process(points,3);
+			clusterer.process(accessor,3);
 			AssignCluster<double[]> assign = clusterer.getAssignment();
 
-			int counts[] = new int[totalClusters];
+			int[] counts = new int[totalClusters];
 
 			for (int j = 0; j < points.size(); j++) {
 				int found = assign.assign(points.get(j));
@@ -85,7 +97,7 @@ public class BenchmarkStabilityInitialization {
 		System.out.println("average size error = "+(totalSizeError/numTrials));
 	}
 
-	private double computeSizeError( AssignCluster<double[]> assign , int counts[] ) {
+	private double computeSizeError(AssignCluster<double[]> assign , int[] counts) {
 		double error = 0;
 		for (int i = 0; i < totalClusters; i++) {
 			int closest = assign.assign(centers.get(i));

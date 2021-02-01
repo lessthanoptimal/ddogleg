@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,8 @@
 
 package org.ddogleg.clustering;
 
-import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.TestStandardKMeans;
+import org.ddogleg.clustering.misc.ListAccessor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -33,14 +34,14 @@ public abstract class GenericClusterChecks_F64 {
 	/**
 	 * If hint is true then the first 3 elements are good initial seeds for clustering
 	 */
-	public abstract ComputeClusters<double[]> createClustersAlg(boolean seedHint);
+	public abstract ComputeClusters<double[]> createClustersAlg(boolean seedHint, int dof);
 
 	/**
 	 * Very simple and obvious clustering problem
 	 */
-	@Test
-	public void simpleCluster() {
-		List<double[]> points = new ArrayList<double[]>();
+	@Test void simpleCluster() {
+		List<double[]> points = new ArrayList<>();
+		ListAccessor<double[]> accessor = new ListAccessor<>(points, (src,dst)->System.arraycopy(src,0,dst,0,1));
 
 		for (int i = 0; i < 20; i++) {
 			points.add( new double[]{    i});
@@ -48,11 +49,11 @@ public abstract class GenericClusterChecks_F64 {
 			points.add( new double[]{200+i});
 		}
 
-		ComputeClusters<double[]> alg = createClustersAlg(true);
+		ComputeClusters<double[]> alg = createClustersAlg(true,1);
 
-		alg.init(1,243234);
+		alg.initialize(243234);
 
-		alg.process(points,3);
+		alg.process(accessor,3);
 
 		AssignCluster<double[]> ass = alg.getAssignment();
 
@@ -75,19 +76,20 @@ public abstract class GenericClusterChecks_F64 {
 		}
 	}
 
-	@Test
-	public void computeDistance() {
+	@Test void computeDistance() {
 		int DOF = 5;
 
-		List<double[]> points = TestStandardKMeans_F64.createPoints(DOF,200,true);
+		List<double[]> points = TestStandardKMeans.createPoints(DOF,200,true);
+		ListAccessor<double[]> accessor = new ListAccessor<>(points,
+				(src,dst)->System.arraycopy(src,0,dst,0,src.length));
 
-		ComputeClusters<double[]> alg = createClustersAlg(false);
+		ComputeClusters<double[]> alg = createClustersAlg(false,5);
 
-		alg.init(DOF,243234);
+		alg.initialize(243234);
 
-		alg.process(points,3);
+		alg.process(accessor,3);
 		double first = alg.getDistanceMeasure();
-		alg.process(points,10);
+		alg.process(accessor,10);
 		double second = alg.getDistanceMeasure();
 
 		// it's actually difficult to come up with meaningful tests for distance which don't make

@@ -16,14 +16,19 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.struct;
 
 /**
+ * Common lambdas used in DDogleg
+ *
  * @author Peter Abeles
  */
-public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
-	@Override
-	public InitializeKMeans<double[]> createAlg(int dof) {
-		return new InitializeStandard<>();
+public interface DogLambdas {
+	@FunctionalInterface interface NewInstance<P> {
+		P newInstance();
+	}
+
+	@FunctionalInterface interface Copy<P> {
+		void copy(P src, P dst);
 	}
 }

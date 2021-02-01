@@ -20,10 +20,13 @@ package org.ddogleg.clustering;
 
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64;
 import org.ddogleg.clustering.gmm.SeedFromKMeans_F64;
-import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
+import org.ddogleg.clustering.kmeans.InitializeKMeans;
 import org.ddogleg.clustering.kmeans.InitializePlusPlus;
-import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
-import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.InitializeStandard;
+import org.ddogleg.clustering.kmeans.StandardKMeans;
+import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
+import org.ddogleg.clustering.misc.MeanArrayF64;
+import org.ddogleg.struct.DogLambdas;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -42,49 +45,76 @@ public class FactoryClustering {
 	 * <p>WARNING: DEVELOPMENTAL AND IS LIKELY TO FAIL HORRIBLY</p>
 	 *
 	 * @param maxIterations Maximum number of iterations it will perform.
-	 * @param maxConverge Maximum iterations allowed before convergence.  Re-seeded if it doesn't converge.
-	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
+	 * @param maxConverge   Maximum iterations allowed before convergence.  Re-seeded if it doesn't converge.
+	 * @param convergeTol   Distance based convergence tolerance.  Try 1e-8
 	 * @return ExpectationMaximizationGmm_F64
 	 */
 	public static ExpectationMaximizationGmm_F64 gaussianMixtureModelEM_F64(
-			int maxIterations, int maxConverge , double convergeTol) {
+			int maxIterations, int maxConverge, double convergeTol, int pointDimension) {
 
-		StandardKMeans_F64 kmeans = kMeans_F64(null,maxIterations,maxConverge,convergeTol);
+		ConfigKMeans configKMeans = new ConfigKMeans();
+		configKMeans.maxConverge = maxConverge;
+		configKMeans.maxIterations = maxIterations;
+		configKMeans.convergeTol = convergeTol;
+
+		StandardKMeans<double[]> kmeans = kMeans(configKMeans, pointDimension, double[].class);
 		SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
 
-		return new ExpectationMaximizationGmm_F64(maxIterations,convergeTol,seeds);
+		return new ExpectationMaximizationGmm_F64(maxIterations, convergeTol, pointDimension, seeds);
+	}
+
+	/**
+	 * K-Means using a primitive array, e.g. double[].
+	 *
+	 * @param pointDimension Length of the array
+	 * @param dataType Specifies the data type, e.g. double[].class
+	 */
+	public static <T>StandardKMeans<T> kMeans(@Nullable ConfigKMeans config, int pointDimension, Class<T> dataType) {
+		if (dataType!=double[].class)
+			throw new IllegalArgumentException("Only double[] supported at this time.");
+
+		return (StandardKMeans)kMeans(config,
+				new MeanArrayF64(pointDimension),
+				new EuclideanSqArrayF64(pointDimension),
+				() -> new double[pointDimension]);
 	}
 
 	/**
 	 * High level interface for creating k-means cluster.  If more flexibility is needed (e.g. custom seeds)
-	 * then create and instance of {@link org.ddogleg.clustering.kmeans.StandardKMeans_F64} directly
+	 * then create and instance of {@link StandardKMeans} directly
 	 *
-	 * @param initializer Specify which method should be used to select the initial seeds for the clusters.  null means default.
-	 * @param maxIterations Maximum number of iterations it will perform.
-	 * @param maxConverge Maximum iterations allowed before convergence.  Re-seeded if it doesn't converge.
-	 * @param convergeTol Distance based convergence tolerance.  Try 1e-8
+	 * @param config      Configuration for tuning parameters
+	 * @param updateMeans Used to compute the means given point assignments
+	 * @param factory     Creates a new instance of a point
 	 * @return StandardKMeans_F64
 	 */
-	public static StandardKMeans_F64 kMeans_F64( @Nullable KMeansInitializers initializer,
-												 int maxIterations, int maxConverge , double convergeTol) {
-		InitializeKMeans_F64 seed;
+	public static <P> StandardKMeans<P> kMeans(@Nullable ConfigKMeans config,
+											   ComputeMeanClusters<P> updateMeans,
+											   PointDistance<P> pointDistance,
+											   DogLambdas.NewInstance<P> factory) {
+		if (config == null)
+			config = new ConfigKMeans();
 
-		if( initializer == null ) {
-			seed = new InitializePlusPlus();
-		} else {
-			switch (initializer) {
-				case PLUS_PLUS:
-					seed = new InitializePlusPlus();
-					break;
+		InitializeKMeans<P> seed;
 
-				case STANDARD:
-					seed = new InitializeStandard_F64();
-					break;
+		switch (config.initializer) {
+			case PLUS_PLUS:
+				seed = new InitializePlusPlus<>();
+				break;
 
-				default:
-					throw new RuntimeException("Unknown initializer " + initializer);
-			}
+			case STANDARD:
+				seed = new InitializeStandard<>();
+				break;
+
+			default:
+				throw new RuntimeException("Unknown initializer " + config.initializer);
 		}
-		return new StandardKMeans_F64(maxIterations,maxConverge,convergeTol,seed);
+
+		StandardKMeans<P> alg = new StandardKMeans<>(updateMeans, seed, pointDistance, factory);
+		alg.convergeTol = config.convergeTol;
+		alg.maxIterations = config.maxIterations;
+		alg.maxConverge = config.maxConverge;
+
+		return alg;
 	}
 }

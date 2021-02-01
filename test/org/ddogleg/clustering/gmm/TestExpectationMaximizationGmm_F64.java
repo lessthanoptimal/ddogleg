@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,11 +19,12 @@
 package org.ddogleg.clustering.gmm;
 
 import org.ddogleg.clustering.ComputeClusters;
+import org.ddogleg.clustering.ConfigKMeans;
+import org.ddogleg.clustering.FactoryClustering;
 import org.ddogleg.clustering.GenericClusterChecks_F64;
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
-import org.ddogleg.clustering.kmeans.InitializeStandard_F64;
-import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
-import org.ddogleg.clustering.kmeans.TestStandardKMeans_F64;
+import org.ddogleg.clustering.kmeans.StandardKMeans;
+import org.ddogleg.clustering.kmeans.TestStandardKMeans;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
@@ -43,22 +44,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64 {
 
 	Random rand = new Random(234);
-
-	StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1000,1e-8,new TestStandardKMeans_F64.FixedSeeds());;
-	SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
-
+	
 	/**
 	 * Computes the expectation for several points and a variable number of Gaussians.  Sees if points which
 	 * are at the mean of the Gaussians have a peak at the expected location
 	 */
-	@Test
-	public void expectation() {
-
+	@Test void expectation() {
 		int DOF = 3;
 
-		ExpectationMaximizationGmm_F64 alg = new ExpectationMaximizationGmm_F64(100,1e-8,seeds);
-
-		alg.init(DOF,34535);
+		var alg = new ExpectationMaximizationGmm_F64(100,1e-8,DOF,createSeeds(DOF));
+		alg.initialize(34535);
 
 		// randomly create a few points
 		for (int i = 0; i < 20; i++) {
@@ -106,12 +101,11 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		}
 	}
 
-	@Test
-	public void maximization() {
+	@Test void maximization() {
 		int DOF = 2;
 
-		ExpectationMaximizationGmm_F64 alg = new ExpectationMaximizationGmm_F64(100,1e-8,seeds);
-		alg.init(DOF,34535);
+		ExpectationMaximizationGmm_F64 alg = new ExpectationMaximizationGmm_F64(100,1e-8,DOF,createSeeds(DOF));
+		alg.initialize(34535);
 
 		GaussianGmm_F64 a = alg.mixture.grow();
 		a.setMean(new double[]{1,0.5});
@@ -172,7 +166,6 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 	}
 
 	private GaussianGmm_F64 computeGaussian( int which , List<PointInfo> points ) {
-
 		int N = points.get(0).point.length;
 		GaussianGmm_F64 out = new GaussianGmm_F64(N);
 
@@ -205,15 +198,22 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 	}
 
 	@Override
-	public ComputeClusters<double[]> createClustersAlg( boolean hint ) {
-
+	public ComputeClusters<double[]> createClustersAlg( boolean hint, int dof ) {
 		if( hint ) {
-			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
+			return new ExpectationMaximizationGmm_F64(1000, 1e-8, dof, createSeeds(dof));
 		} else {
-			InitializeStandard_F64 kseeds = new InitializeStandard_F64();
-			StandardKMeans_F64 kmeans = new StandardKMeans_F64(1000,1000,1e-8,kseeds);
-			SeedFromKMeans_F64 seeds = new SeedFromKMeans_F64(kmeans);
-			return new ExpectationMaximizationGmm_F64(1000, 1e-8, seeds);
+			return FactoryClustering.gaussianMixtureModelEM_F64(1000,1000,1e-8,dof);
 		}
+	}
+
+	private SeedFromKMeans_F64 createSeeds(int DOF) {
+		ConfigKMeans config = new ConfigKMeans();
+		config.convergeTol = 1e-8;
+		config.maxIterations = 1000;
+		config.maxConverge = 1000;
+
+		StandardKMeans<double[]> kmeans = FactoryClustering.kMeans(config,DOF, double[].class);
+		kmeans.seedSelector = new TestStandardKMeans.FixedSeeds();
+		return new SeedFromKMeans_F64(kmeans);
 	}
 }

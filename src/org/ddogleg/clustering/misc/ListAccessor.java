@@ -16,35 +16,41 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.gmm;
+package org.ddogleg.clustering.misc;
 
+import org.ddogleg.struct.DogLambdas;
 import org.ddogleg.struct.LArrayAccessor;
 
 import java.util.List;
 
 /**
- * Selects initial Gaussians for EM algorithm.
+ * Wrapper around {@link List} for {@link LArrayAccessor}.
  *
  * @author Peter Abeles
  */
-public interface InitializeGmm_F64 {
+public class ListAccessor<P> implements LArrayAccessor<P> {
+	List<P> list;
+	DogLambdas.Copy<P> copier;
 
-	/**
-	 * Initializes internal data structures.  Must be called first.
-	 * @param pointDimension Number of degrees of freedom in each point.
-	 * @param randomSeed Seed for any random number generators used internally.
-	 */
-	void init(int pointDimension, long randomSeed);
+	public ListAccessor(List<P> list, DogLambdas.Copy<P> copier) {
+		this.list = list;
+		this.copier = copier;
+	}
 
-	/**
-	 *
-	 * @param points (input) Set of points which is to be clustered.
-	 * @param seeds (output) List containing storage for the initial Gaussians.
-	 */
-	void selectSeeds( LArrayAccessor<double[]> points, List<GaussianGmm_F64> seeds);
+	@Override public P getTemp( int index ) {
+		return list.get(index);
+	}
 
-	/**
-	 * Turn on verbose output to standard out
-	 */
-	void setVerbose( boolean verbose );
+	@Override public void getCopy( int index, P dst ) {
+		copier.copy(list.get(index), dst);
+	}
+
+	@Override public void copy( P src, P dst ) {
+		copier.copy(src, dst);
+	}
+
+	@Override
+	public int size() {
+		return list.size();
+	}
 }

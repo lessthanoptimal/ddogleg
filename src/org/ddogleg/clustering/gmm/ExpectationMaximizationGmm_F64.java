@@ -22,9 +22,8 @@ import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.struct.DogArray;
 import org.ddogleg.struct.DogArray_F64;
+import org.ddogleg.struct.LArrayAccessor;
 import org.ejml.dense.row.CommonOps_DDRM;
-
-import java.util.List;
 
 /**
  * Standard expectation maximization based approach to fitting mixture-of-Gaussian models to a set of data.
@@ -52,10 +51,13 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 	// info for each points
 	@SuppressWarnings("NullAway")
-	DogArray<PointInfo> info = new DogArray<>(PointInfo::new, p->p.point=null);
+	DogArray<PointInfo> info;
 
 	// Maximum number of iterations
 	int maxIterations;
+
+	// Number of elements in a point
+	int pointDimension;
 
 	// If the fractional change in score is less or equal to this value then it has converged.
 	// ||prev-curr||/prev
@@ -82,18 +84,22 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	 */
 	public ExpectationMaximizationGmm_F64(int maxIterations,
 										  double convergeTol,
+										  int pointDimension,
 										  InitializeGmm_F64 selectInitial) {
 		this.maxIterations = maxIterations;
 		this.convergeTol = convergeTol;
 		this.selectInitial = selectInitial;
+		this.pointDimension = pointDimension;
+
+		info = new DogArray<>(()->new PointInfo(pointDimension));
+		mixture = new DogArray<>(()->new GaussianGmm_F64(pointDimension));
 
 		System.err.println("WARNING:  GMM-EM is a work in progress!  Might not work in your situation");
 	}
 
 	@Override
-	public void init(final int pointDimension, long randomSeed) {
-		mixture = new DogArray<>(()->new GaussianGmm_F64(pointDimension));
-		selectInitial.init(pointDimension,randomSeed);
+	public void initialize(long randomSeed) {
+		selectInitial.init(pointDimension, randomSeed);
 
 		if( dx.length < pointDimension )
 			dx = new double[pointDimension];
@@ -101,16 +107,19 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 	}
 
 	@Override
-	public void process(List<double[]> points, int numCluster) {
+	public void process( LArrayAccessor<double[]> points, int numCluster) {
 		// setup data structures
 		mixture.resize(numCluster);
+		info.resize(points.size());
+
 		for (int i = 0; i < points.size(); i++) {
-			PointInfo p = info.grow();
-			p.point = points.get(i);
+			PointInfo p = info.get(i);
+			points.getCopy(i,p.point);
 			p.weights.resize(numCluster);
 		}
 
 		if( verbose ) System.out.println("GMM-EM: Selecting initial seeds");
+
 		// Select initial distributions
 		selectInitial.selectSeeds(points,mixture.toList());
 		likelihoodManager.precomputeAll();
@@ -251,9 +260,17 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 		this.verbose = verbose;
 	}
 
+	@Override public ComputeClusters<double[]> newInstanceThread() {
+		throw new RuntimeException("Not yet implemented");
+	}
+
 	public static class PointInfo
 	{
-		public double[] point; // reference to the original input point
+		public double[] point;
 		public DogArray_F64 weights = new DogArray_F64();
+
+		public PointInfo(int pointDimension) {
+			point = new double[pointDimension];
+		}
 	}
 }

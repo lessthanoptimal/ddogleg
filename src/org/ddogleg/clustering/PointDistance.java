@@ -16,14 +16,25 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.clustering;
 
 /**
+ * Computes the distance between two points. Each point is a tuple.
+ *
  * @author Peter Abeles
  */
-public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
-	@Override
-	public InitializeKMeans<double[]> createAlg(int dof) {
-		return new InitializeStandard<>();
-	}
+public interface PointDistance<P> {
+	/**
+	 * Computes the distance between the two input points
+	 * @param a point
+	 * @param b point
+	 * @return distance
+	 */
+	double distance(P a , P b );
+
+	/**
+	 * Creates a new instance which has the same configuration and can be run in parallel. Some components
+	 * can be shared as long as they are read only and thread safe.
+	 */
+	PointDistance<P> newInstanceThread();
 }

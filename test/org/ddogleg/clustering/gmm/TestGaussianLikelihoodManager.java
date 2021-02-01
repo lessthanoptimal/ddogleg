@@ -29,10 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Peter Abeles
  */
 public class TestGaussianLikelihoodManager {
-
-	@Test
-	public void likelihood() {
-
+	@Test void likelihood() {
 		int DOF = 3;
 
 		GaussianGmm_F64 a = new GaussianGmm_F64(DOF);
@@ -48,7 +45,6 @@ public class TestGaussianLikelihoodManager {
 		b.covariance.set(0,0,20);
 		b.covariance.set(1,1,30);
 		b.covariance.set(2,2,25);
-
 
 		FastArray<GaussianGmm_F64> mixtures = new FastArray<>(GaussianGmm_F64.class);
 		mixtures.add(a);
@@ -75,7 +71,6 @@ public class TestGaussianLikelihoodManager {
 		// check chi-sq first
 		assertEquals(computeChiSq(a,p),chiSqA,1e-8);
 		assertEquals(computeChiSq(b,p),chiSqB,1e-8);
-
 
 		// look at the ratio of the two
 		// the found will be off by a scale factor from the actual likelihood

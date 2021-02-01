@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,8 +18,10 @@
 
 package org.ddogleg.clustering.gmm;
 
-import org.ddogleg.clustering.kmeans.InitializeKMeans_F64;
-import org.ddogleg.clustering.kmeans.StandardKMeans_F64;
+import org.ddogleg.clustering.FactoryClustering;
+import org.ddogleg.clustering.kmeans.StandardKMeans;
+import org.ddogleg.clustering.kmeans.TestStandardKMeans;
+import org.ddogleg.clustering.misc.ListAccessor;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
@@ -42,7 +44,7 @@ public class TestSeedFromKMeans_F64 {
 
 	@Test
 	public void selectSeeds() {
-
+		int dof = 2;
 		// first 2 points will act as the initial seed for K-Means
 		// rest will be in a known Gaussian distribution
 		double sigmaX = 1;
@@ -65,14 +67,16 @@ public class TestSeedFromKMeans_F64 {
 		}
 
 		// recompute original distributions
-		SeedFromKMeans_F64 alg = new SeedFromKMeans_F64(createKMeans());
+		SeedFromKMeans_F64 alg = new SeedFromKMeans_F64(createKMeans(dof));
 		alg.init(2,234234);
 
 		List<GaussianGmm_F64> seeds = new ArrayList<GaussianGmm_F64>();
 		seeds.add( new GaussianGmm_F64(2));
 		seeds.add( new GaussianGmm_F64(2));
+		ListAccessor<double[]> accessor = new ListAccessor<>(points,
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof));
 
-		alg.selectSeeds(points,seeds);
+		alg.selectSeeds(accessor,seeds);
 
 		GaussianGmm_F64 a = seeds.get(0);
 		GaussianGmm_F64 b = seeds.get(1);
@@ -115,21 +119,13 @@ public class TestSeedFromKMeans_F64 {
 		return out;
 	}
 
-	private StandardKMeans_F64 createKMeans() {
-		return new StandardKMeans_F64(200,200,1e-6,new FixedSeeds());
+	private StandardKMeans<double[]> createKMeans(int dof) {
+		var alg = FactoryClustering.kMeans(null,dof, double[].class);
+		alg.maxIterations = 200;
+		alg.maxConverge = 200;
+		alg.convergeTol = 1e-6;
+		alg.seedSelector = new TestStandardKMeans.FixedSeeds();
+		return alg;
 	}
 
-	public static class FixedSeeds implements InitializeKMeans_F64 {
-
-		@Override
-		public void init(int pointDimension, long randomSeed) {}
-
-		@Override
-		public void selectSeeds(List<double[]> points, List<double[]> seeds) {
-			int N = seeds.get(0).length;
-			for (int i = 0; i < 2; i++) {
-				System.arraycopy(points.get(i), 0, seeds.get(i), 0, N);
-			}
-		}
-	}
 }

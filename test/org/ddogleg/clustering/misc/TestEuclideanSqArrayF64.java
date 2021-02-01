@@ -16,14 +16,25 @@
  * limitations under the License.
  */
 
-package org.ddogleg.clustering.kmeans;
+package org.ddogleg.clustering.misc;
+
+import org.ejml.UtilEjml;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Peter Abeles
  */
-public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
-	@Override
-	public InitializeKMeans<double[]> createAlg(int dof) {
-		return new InitializeStandard<>();
+class TestEuclideanSqArrayF64 {
+	@Test void distance() {
+		var alg = new EuclideanSqArrayF64(5);
+
+		var a = new double[]{1, 2, 3, 4, 5};
+		var b = new double[]{1, 2, 3, 4, 5};
+
+		assertEquals(0.0, alg.distance(a, b), UtilEjml.TEST_F64);
+		b[4] = 10;
+		assertEquals(25.0, alg.distance(a, b), UtilEjml.TEST_F64);
 	}
 }
