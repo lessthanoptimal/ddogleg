@@ -168,6 +168,12 @@ public class FastArray<T> extends FastAccess<T> {
 		}
 	}
 
+	public void setTail( int index, T value ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		data[size-index-1] = value;
+	}
+
 	public void addAll( final List<T> list ) {
 		final int originalSize = this.size;
 		resize(this.size+list.size());
