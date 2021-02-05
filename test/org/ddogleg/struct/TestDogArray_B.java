@@ -183,7 +183,16 @@ public class TestDogArray_B {
 	}
 
 	@Test void getTail() {
-		DogArray_B alg = new DogArray_B(20);
+		var alg = new DogArray_B(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i%2==0);
+			assertEquals(alg.getTail(),alg.data[i]);
+		}
+	}
+
+	@Test void getTail_idx() {
+		var alg = new DogArray_B(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i%2==0);
@@ -191,6 +200,21 @@ public class TestDogArray_B {
 
 		for (int i = 0; i < 20; i++) {
 			assertEquals((20-i-1)%2==0,alg.getTail(i));
+		}
+	}
+
+	@Test void setTail() {
+		var alg = new DogArray_B(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i%2==0);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			alg.setTail(i, i%2==1);
+		}
+		for (int i = 0; i < 20; i++) {
+			assertEquals(i%2==1, alg.getTail(i));
 		}
 	}
 

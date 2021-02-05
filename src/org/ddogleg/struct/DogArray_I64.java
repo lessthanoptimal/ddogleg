@@ -134,6 +134,12 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		return data[index];
 	}
 
+	public long getTail() {
+		if (size==0)
+			throw new IndexOutOfBoundsException("Array is empty");
+		return data[size-1];
+	}
+
 	/**
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
@@ -141,6 +147,12 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		if( index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
 		return data[size-index-1];
+	}
+
+	public void setTail( int index, long value ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		data[size-index-1] = value;
 	}
 
 	/**

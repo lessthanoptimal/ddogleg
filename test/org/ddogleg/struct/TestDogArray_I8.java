@@ -287,7 +287,16 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 	}
 
 	@Test void getTail() {
-		DogArray_I8 alg = new DogArray_I8(20);
+		var alg = new DogArray_I8(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+			assertEquals(alg.getTail(),alg.data[i]);
+		}
+	}
+
+	@Test void getTail_idx() {
+		var alg = new DogArray_I8(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -295,6 +304,21 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 
 		for (int i = 0; i < 20; i++) {
 			assertEquals(20-i-1,alg.getTail(i));
+		}
+	}
+
+	@Test void setTail() {
+		var alg = new DogArray_I8(20);
+
+		for (int i = 0; i < 20; i++) {
+			alg.add(i);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			alg.setTail(i, (byte)-i);
+		}
+		for (int i = 0; i < 20; i++) {
+			assertEquals(-i, alg.getTail(i));
 		}
 	}
 
