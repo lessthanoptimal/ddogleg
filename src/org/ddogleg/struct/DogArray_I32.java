@@ -114,7 +114,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	public void addAll( int[] array , int startIndex , int endIndex ) {
 		if( endIndex > array.length )
-			throw new IllegalAccessError("endIndex is larger than input array");
+			throw new IllegalAccessError("endIndex is larger than input array. "+endIndex+" > "+array.length);
 
 		int arraySize = endIndex-startIndex;
 
@@ -225,9 +225,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 */
 	public void remove( int first , int last ) {
 		if( last < first )
-			throw new IllegalArgumentException("first <= last");
+			throw new IllegalArgumentException("first <= last. first="+first+" last="+last );
 		if( last >= size )
-			throw new IllegalArgumentException("last must be less than the max size");
+			throw new IllegalArgumentException("last must be less than the max size. last="+last+" size="+size);
 
 		int delta = last-first+1;
 		for( int i = last+1; i < size; i++ ) {
