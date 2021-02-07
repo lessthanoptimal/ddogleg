@@ -12,6 +12,8 @@ Date:     2021
   * Designed to handle potentially very large sets of data
 - DogArray_**
   * getTail(), setTail(idx,value)
+- DogArray<T>
+  * Added an initializer function
 
 ------------------------------------------------------
 Version:  0.19

@@ -18,6 +18,8 @@
 
 package org.ddogleg.struct;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -37,9 +39,11 @@ import java.util.Random;
 @SuppressWarnings({"unchecked", "NullAway.Init", "ForLoopReplaceableByForEach", "ManualArrayToCollectionCopy"})
 public class DogArray<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
-	private Factory<T> factory;
+	private @Getter Factory<T> factory;
 	// function that's called to reset a returned instance
-	private DProcess<T> reset;
+	private @Getter  @Setter DProcess<T> reset;
+	// function that's called to initialize a new instance
+	private @Getter @Setter DProcess<T> initialize = new DProcess.DoNothing<>();
 
 	// Wrapper around this class for lists
 	private final DogArrayList<T> list = new DogArrayList<>(this);
@@ -63,12 +67,27 @@ public class DogArray<T> extends FastAccess<T> {
 
 	/**
 	 * User provided factory function and reset function.
+	 *
 	 * @param factory Creates new instances
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 */
 	public DogArray( Factory<T> factory , DProcess<T> reset ) {
 		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
+		init(10, factory);
+	}
+
+	/**
+	 * User provided factory function and reset function.
+	 *
+	 * @param factory Creates new instances
+	 * @param reset Called whenever an element is recycled and needs to be reset
+	 * @param initialize Called after a new instance is created
+	 */
+	public DogArray( Factory<T> factory , DProcess<T> reset, DProcess<T> initialize ) {
+		super((Class<T>)factory.newInstance().getClass());
+		this.reset = reset;
+		this.initialize = initialize;
 		init(10, factory);
 	}
 
@@ -299,11 +318,11 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * This function will be removed eventually and the factory used directly. DO NOT USE IN NEW CODE
+	 * Creates a new instance of elements stored in this array
 	 */
-	@Deprecated
 	protected T createInstance() {
 		T instance = factory.newInstance();
+		initialize.process(instance);
 		reset.process(instance);
 		return instance;
 	}
