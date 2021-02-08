@@ -76,7 +76,7 @@ public class BenchmarkStabilityInitialization {
 		clusterer.initialize(32454325);
 
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				(src, dst) -> System.arraycopy(src, 0, dst, 0, DOF));
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 
 		int numTrials = 500;
 		double totalSizeError = 0;

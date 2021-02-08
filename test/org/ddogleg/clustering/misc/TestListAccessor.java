@@ -36,7 +36,7 @@ class TestListAccessor {
 		var list = new ArrayList<Foo>();
 		list.add(new Foo(1));
 		list.add(new Foo(-1));
-		var alg = new ListAccessor<>(list, (a,b)->a.a=b.a);
+		var alg = new ListAccessor<>(list, (a,b)->a.a=b.a, Foo.class);
 
 		assertEquals(2, alg.size());
 

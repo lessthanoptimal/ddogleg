@@ -97,7 +97,8 @@ public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 		for (int i = 0; i < 3; i++) {
 			points.add(new double[]{i*i});
 		}
-		var accessor = new ListAccessor<>(points, ( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF));
+		var accessor = new ListAccessor<>(points,
+				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 
 		alg.updateDistanceWithNewSeed(accessor, new double[]{-1});
 		assertEquals(1, alg.distances.get(0), 1e-8);

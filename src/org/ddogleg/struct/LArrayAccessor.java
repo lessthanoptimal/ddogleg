@@ -42,4 +42,9 @@ public interface LArrayAccessor<P> {
 
 	/** Number of elements in the set */
 	int size();
+
+	/**
+	 * Data type of element
+	 */
+	Class<P> getElementType();
 }

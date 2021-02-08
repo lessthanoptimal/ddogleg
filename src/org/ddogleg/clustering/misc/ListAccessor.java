@@ -31,10 +31,12 @@ import java.util.List;
 public class ListAccessor<P> implements LArrayAccessor<P> {
 	List<P> list;
 	DogLambdas.Copy<P> copier;
+	Class<P> type;
 
-	public ListAccessor(List<P> list, DogLambdas.Copy<P> copier) {
+	public ListAccessor(List<P> list, DogLambdas.Copy<P> copier, Class<P> type ) {
 		this.list = list;
 		this.copier = copier;
+		this.type = type;
 	}
 
 	@Override public P getTemp( int index ) {
@@ -52,5 +54,9 @@ public class ListAccessor<P> implements LArrayAccessor<P> {
 	@Override
 	public int size() {
 		return list.size();
+	}
+
+	@Override public Class<P> getElementType() {
+		return type;
 	}
 }

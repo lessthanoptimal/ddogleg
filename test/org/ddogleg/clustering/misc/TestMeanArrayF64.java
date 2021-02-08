@@ -46,7 +46,8 @@ class TestMeanArrayF64 {
 			// only the first element will be assigned to 0, all the others are 1
 			assignments.add(i==0?0:1);
 		}
-		var accessor = new ListAccessor<>(list, (src, dst) -> System.arraycopy(src, 0, dst, 0, dof));
+		var accessor = new ListAccessor<>(list,
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof), double[].class);
 
 		var means = new DogArray<>(()->new double[dof]);
 		means.resize(2);

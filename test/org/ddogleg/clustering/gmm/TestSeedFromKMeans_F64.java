@@ -74,7 +74,7 @@ public class TestSeedFromKMeans_F64 {
 		seeds.add( new GaussianGmm_F64(2));
 		seeds.add( new GaussianGmm_F64(2));
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof));
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof), double[].class);
 
 		alg.selectSeeds(accessor,seeds);
 

@@ -56,7 +56,7 @@ public class ExampleClustering {
 
 		// Accessor is used instead of a list directly because it becomes more efficient in very large datasets
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof));
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof), double[].class);
 
 		// create 3 clusters drawn from a uniform square distribution
 		points.addAll(createCluster(5, 7, 2, 100));

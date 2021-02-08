@@ -140,7 +140,8 @@ public abstract class StandardInitializeKMeansChecks {
 		// 4 points and 4 seeds.  Each point must be a seed
 		List<double[]> points = TestStandardKMeans.createPoints(DOF, numPoints, true);
 		var seeds = new DogArray<>(() -> new double[DOF]);
-		var accessor = new ListAccessor<>(points, ( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF));
+		var accessor = new ListAccessor<>(points,
+				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 
 		for (int i = 0; i < 30; i++) {
 			alg.selectSeeds(accessor, numSeeds, seeds);
@@ -173,7 +174,8 @@ public abstract class StandardInitializeKMeansChecks {
 	}
 
 	protected void performClustering(int DOF, int NUM_SEEDS, List<double[]> points, DogArray<double[]> seeds) {
-		var accessor = new ListAccessor<>(points, (src, dst) -> System.arraycopy(src, 0, dst, 0, DOF));
+		var accessor = new ListAccessor<>(points,
+				(src, dst) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 		InitializeKMeans<double[]> alg = createAlg(DOF);
 		EuclideanSqArrayF64 distance = new EuclideanSqArrayF64(DOF);
 		alg.initialize(distance, 0xBEEF);

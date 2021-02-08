@@ -59,7 +59,7 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 		points.add(new double[]{0, 0, 22, 0});
 
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF));
+				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 
 		alg.matchPointsToClusters(accessor);
 

@@ -41,7 +41,8 @@ public abstract class GenericClusterChecks_F64 {
 	 */
 	@Test void simpleCluster() {
 		List<double[]> points = new ArrayList<>();
-		ListAccessor<double[]> accessor = new ListAccessor<>(points, (src,dst)->System.arraycopy(src,0,dst,0,1));
+		ListAccessor<double[]> accessor = new ListAccessor<>(points,
+				(src,dst)->System.arraycopy(src,0,dst,0,1), double[].class);
 
 		for (int i = 0; i < 20; i++) {
 			points.add( new double[]{    i});
@@ -81,7 +82,7 @@ public abstract class GenericClusterChecks_F64 {
 
 		List<double[]> points = TestStandardKMeans.createPoints(DOF,200,true);
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				(src,dst)->System.arraycopy(src,0,dst,0,src.length));
+				(src,dst)->System.arraycopy(src,0,dst,0,src.length), double[].class);
 
 		ComputeClusters<double[]> alg = createClustersAlg(false,5);
 
