@@ -28,10 +28,13 @@ public class ConfigKMeans {
 	public KMeansInitializers initializer = KMeansInitializers.PLUS_PLUS;
 
 	/** Maximum number of iterations, across all seeds combined */
-	public int maxIterations = 1000;
+	public int maxIterations = 500;
 
 	/** If it doesn't converge within this many iterations a new seed is created */
-	public int maxConverge = 50;
+	public int reseedAfterIterations = 50;
+
+	/** Maximum number of times it will reseed before stopping. If %le; then there is no limit. */
+	public int maxReSeed = 10;
 
 	/** Change in distance criteria when testing for convergence */
 	public double convergeTol = 1e-8;
@@ -39,14 +42,15 @@ public class ConfigKMeans {
 	public void setTo( ConfigKMeans src ) {
 		this.initializer = src.initializer;
 		this.maxIterations = src.maxIterations;
-		this.maxConverge = src.maxConverge;
+		this.reseedAfterIterations = src.reseedAfterIterations;
+		this.maxReSeed = src.maxReSeed;
 		this.convergeTol = src.convergeTol;
 	}
 
 	public void checkValidity() {
 		if (maxIterations < 0)
 			throw new IllegalArgumentException("maxIterations can't be negative");
-		if (maxConverge < 0)
+		if (reseedAfterIterations < 0)
 			throw new IllegalArgumentException("maxConverge can't be negative");
 		if (convergeTol < 0.0)
 			throw new IllegalArgumentException("convergeTol can't be negative");

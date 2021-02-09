@@ -122,7 +122,7 @@ public class TestSeedFromKMeans_F64 {
 	private StandardKMeans<double[]> createKMeans(int dof) {
 		var alg = FactoryClustering.kMeans(null,dof, double[].class);
 		alg.maxIterations = 200;
-		alg.maxConverge = 200;
+		alg.reseedAfterIterations = 200;
 		alg.convergeTol = 1e-6;
 		alg.seedSelector = new TestStandardKMeans.FixedSeeds();
 		return alg;

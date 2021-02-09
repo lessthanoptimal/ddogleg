@@ -74,12 +74,13 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 
 	private StandardKMeans<double[]> createAlg( int DOF ) {
 		ComputeMeanClusters<double[]> updateMeans = new MeanArrayF64(DOF);
-		InitializeKMeans<double[]> seedSelector = new InitializeStandard<>();
+		InitializeKMeans<double[]> seedSelector = new InitializePlusPlus<>();
 		PointDistance<double[]> distancer = new EuclideanSqArrayF64(DOF);
 		StandardKMeans<double[]> alg = new StandardKMeans<>(updateMeans, seedSelector, distancer,
 				() -> new double[DOF]);
-		alg.maxConverge = 100;
+		alg.reseedAfterIterations = 100;
 		alg.maxIterations = 100;
+		alg.maxReSeed = 0;
 		alg.convergeTol = 1e-8;
 
 		alg.initialize(123);
