@@ -64,8 +64,10 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 	/** maximum number of iterations */
 	public @Getter @Setter int maxIterations = 100;
-	/** max iterations before convergence */
-	public @Getter @Setter int maxConverge = 20;
+	/** max iterations before it will reseed */
+	public @Getter @Setter int reseedAfterIterations = 20;
+	/** max number of times it will re-seed */
+	public @Getter @Setter int maxReSeed = 5;
 
 	/** It is considered to be converged when the change in sum score is <= than this amount. */
 	public @Getter @Setter double convergeTol = 1e-8;
@@ -135,49 +137,38 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		// select the initial seeds
 		seedSelector.selectSeeds(points, numCluster, clusters);
 
-		// Sanity check on results. Maybe this should be == and not >
-		if (clusters.size > numCluster)
-			throw new RuntimeException("BUG: Too many clusters selected");
-
 		// un standard k-means
 		bestClusterScore = Double.MAX_VALUE;
+		sumDistance = Double.MAX_VALUE;
 		double previousSum = Double.MAX_VALUE;
 		int lastConverge = 0;
-		for (int iteration = 0; iteration < maxIterations; iteration++) {
 
+		// Abort if it re-seeded many times.
+		int numReSeeded = 0;
+		int maxReSeed = this.maxReSeed <= 0 ? Integer.MAX_VALUE : this.maxReSeed;
+		for (int iteration = 0; iteration < maxIterations && numReSeeded < maxReSeed; iteration++) {
 			// match points to the means
 			matchPointsToClusters(points);
 
-			// see if a better solution has been found and save it
-			if (sumDistance < bestClusterScore) {
-				bestClusterScore = sumDistance;
-
-				// copy current cluster into best cluster
-				bestClusters.reserve(clusters.size);
-				bestClusters.reset();
-				for (int i = 0; i < clusters.size; i++) {
-					points.copy(clusters.get(i), bestClusters.grow());
-				}
-				bestMemberCount.setTo(memberCount);
-
-				if (verbose)
-					System.out.println(iteration + " better clusters score: " + bestClusterScore);
-			}
-
 			// see if its taking too long
-			boolean reseed = iteration - lastConverge >= maxConverge;
+			boolean reseed = iteration - lastConverge >= reseedAfterIterations;
 
 			// check for convergence
 			double fractionalChange = 1.0 - sumDistance/previousSum;
 			reseed |= fractionalChange >= 0 && fractionalChange <= convergeTol;
 
 			if (reseed) {
+				// see if a better solution has been found and save it
+				if (sumDistance < bestClusterScore) {
+					saveBestCluster(points);
+				}
 				if (verbose)
 					System.out.println(iteration + "  Reseeding, distance = " + sumDistance);
 				// try from a new random seed
 				seedSelector.selectSeeds(points, numCluster, clusters);
 				previousSum = Double.MAX_VALUE;
 				lastConverge = iteration;
+				numReSeeded++;
 			} else {
 				if (verbose && previousSum == Double.MAX_VALUE) {
 					System.out.println(iteration + "  first iteration: " + sumDistance);
@@ -189,11 +180,34 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 			}
 		}
 
+		// see if a better solution has been found and save it
+		if (sumDistance < bestClusterScore) {
+			saveBestCluster(points);
+		}
+
 		// copy the best into the output member count
 		memberCount.setTo(bestMemberCount);
 
 		if (verbose)
 			System.out.println("EXIT standard kmeans process");
+	}
+
+	/**
+	 * Copies the current cluster into the best cluster
+	 */
+	private void saveBestCluster( LArrayAccessor<P> points ) {
+		bestClusterScore = sumDistance;
+
+		// copy current cluster into best cluster
+		bestClusters.reserve(clusters.size);
+		bestClusters.reset();
+		for (int i = 0; i < clusters.size; i++) {
+			points.copy(clusters.get(i), bestClusters.grow());
+		}
+		bestMemberCount.setTo(memberCount);
+
+		if (verbose)
+			System.out.println(" better clusters score: " + bestClusterScore);
 	}
 
 	@Override
@@ -211,6 +225,10 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 		// updated inside the call to findBestMatch
 		sumDistance = 0;
+
+		// NOTE: This is a good candidate for optimizing
+		// Maybe reverse loop order by having outer loop go through clusters
+		// instead of doing points.getTemp() compute the distance directly on the internal array
 
 		// Assign each point a single cluster
 		assignments.resize(points.size());
@@ -264,7 +282,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 		spawn.convergeTol = convergeTol;
 		spawn.maxIterations = maxIterations;
-		spawn.maxConverge = maxConverge;
+		spawn.reseedAfterIterations = reseedAfterIterations;
 		spawn.verbose = verbose;
 
 		return spawn;

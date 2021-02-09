@@ -210,7 +210,7 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		ConfigKMeans config = new ConfigKMeans();
 		config.convergeTol = 1e-8;
 		config.maxIterations = 1000;
-		config.maxConverge = 1000;
+		config.reseedAfterIterations = 1000;
 
 		StandardKMeans<double[]> kmeans = FactoryClustering.kMeans(config,DOF, double[].class);
 		kmeans.seedSelector = new TestStandardKMeans.FixedSeeds();

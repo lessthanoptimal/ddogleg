@@ -60,7 +60,7 @@ public class BenchmarkStabilityInitialization {
 		addCluster(5,7,0.3,0.3,100);
 
 		ConfigKMeans config = new ConfigKMeans();
-		config.maxConverge = 1000;
+		config.reseedAfterIterations = 1000;
 		config.maxIterations = 1000;
 		config.convergeTol = 1e-8;
 

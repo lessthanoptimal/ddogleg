@@ -95,10 +95,15 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 		for (int pointIdx = 0; pointIdx < points.size(); pointIdx++) {
 			P point = points.getTemp(pointIdx);
 
-			// Find distance of closest seed
-			distances.data[pointIdx] = Math.min(distances.data[pointIdx], computeDistance.distance(point, seed));
-
-			sumDistances += distances.data[pointIdx];
+			// Set the distance ot be the distance of th closest seed
+			double d = computeDistance.distance(point, seed);
+			double prevD = distances.data[pointIdx];
+			if (d < prevD) {
+				distances.data[pointIdx] = d;
+				sumDistances += d;
+			} else {
+				sumDistances += prevD;
+			}
 		}
 	}
 
