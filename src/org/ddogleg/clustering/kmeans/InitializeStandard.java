@@ -43,40 +43,48 @@ public class InitializeStandard<P> implements InitializeKMeans<P> {
 	protected Set<Integer> used = new HashSet<>();
 
 	@Override
-	public void initialize(PointDistance<P> distance, long randomSeed) {
+	public void initialize( PointDistance<P> distance, long randomSeed ) {
 		rand = new Random(randomSeed);
 	}
 
 	@Override
-	public void selectSeeds( LArrayAccessor<P> points, int totalSeeds, DogArray<P> selectedSeeds) {
+	public void selectSeeds( LArrayAccessor<P> points, int requestedSeeds, DogArray<P> selectedSeeds ) {
+		selectedSeeds.reserve(requestedSeeds);
+		selectedSeeds.resize(0);
 
-		if( totalSeeds > points.size() )
-			throw new IllegalArgumentException("More seeds requested than points!");
+		// Handle edge cases here. There is nothing that can be done.
+		if (points.size() == 0 || requestedSeeds == 0)
+			return;
 
-		selectedSeeds.resize(totalSeeds);
-
-		if( totalSeeds*2 > points.size() ) {
-			// The number of seeds is small relative to points, then keep then do an opt-out strategy
+		// use different sampling approaches depending on the number of points/probability of selecting a valid seed
+		if (points.size() <= requestedSeeds) {
+			// Every point will be a seed in this situation. If there are duplicate points then there will be
+			// duplicate seeds
+			for (int i = 0; i < points.size(); i++) {
+				points.getCopy(i, selectedSeeds.grow());
+			}
+		} else if (requestedSeeds*2 > points.size()) {
+			// The number of seeds is small relative to points, then select the seeds with an opt-out strategy
 			unused.resize(points.size());
 			for (int i = 0; i < points.size(); i++) {
-				unused.set(i,i);
+				unused.set(i, i);
 			}
 
-			for (int i = 0; i < totalSeeds; i++) {
+			for (int i = 0; i < requestedSeeds; i++) {
 				int index = unused.removeSwap(rand.nextInt(unused.size));
-				points.getCopy(index, selectedSeeds.get(i));
+				points.getCopy(index, selectedSeeds.grow());
 			}
 		} else {
 			// clear the used list since nothing is used yet
 			used.clear();
 
 			// randomly select indexes until the desired number have been selected
-			while (used.size() < totalSeeds) {
+			while (selectedSeeds.size() < requestedSeeds) {
 				int index = rand.nextInt(points.size());
 				if (used.contains(index))
 					continue;
 				// copy the point into the output set
-				points.getCopy(index, selectedSeeds.get(used.size()));
+				points.getCopy(index, selectedSeeds.grow());
 
 				// mark this index as being used
 				used.add(index);

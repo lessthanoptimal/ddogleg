@@ -31,12 +31,64 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class StandardInitializeKMeansChecks {
 	protected Random rand = new Random(234);
 
-	public abstract InitializeKMeans<double[]> createAlg(int dof);
+	public abstract InitializeKMeans<double[]> createAlg( int dof );
 
 	/**
-	 * In this situation there are not enough unique points which can act as unique seeds
+	 * Zero seeds have been requested. It should reset the output and return nothing
 	 */
-	@Test void notEnoughUniquePoints() {
+	@Test void zeroSeeds() {
+		int DOF = 20;
+		var seeds = new DogArray<>(() -> new double[DOF]);
+		List<double[]> points = TestStandardKMeans.createPoints(DOF, 30, true);
+
+		// make the input not zero to ensure it has been reset
+		seeds.grow();
+		performClustering(DOF, 0, points, seeds);
+		assertEquals(0, seeds.size);
+	}
+
+	/**
+	 * No points have been passed in. It shouldn't select any seeds in this situation.
+	 */
+	@Test void zeroPoints() {
+		int DOF = 20;
+		var seeds = new DogArray<>(() -> new double[DOF]);
+		List<double[]> points = TestStandardKMeans.createPoints(DOF, 0, true);
+
+		// make the input not zero to ensure it has been reset
+		seeds.grow();
+		performClustering(DOF, 5, points, seeds);
+		assertEquals(0, seeds.size);
+	}
+
+	/**
+	 * The number of seeds is greater than the number of points. It should at most select one seed for each point
+	 */
+	@Test void fewerPointsThanSeeds() {
+		int DOF = 20;
+		var seeds = new DogArray<>(() -> new double[DOF]);
+		List<double[]> points = TestStandardKMeans.createPoints(DOF, 5, true);
+
+		performClustering(DOF, 10, points, seeds);
+		assertEquals(5, seeds.size);
+
+		// The points are all unique so each seed should match a point
+		for (double[] p : points) {
+			assertNotEquals(-1,seeds.findIdx(( a ) -> {
+				for (int i = 0; i < DOF; i++) {
+					if (a[i] != p[i])
+						return false;
+				}
+				return true;
+			}));
+		}
+	}
+
+	/**
+	 * In this situation there are not enough unique points which can act as unique seeds. Generic test
+	 * to see if it meets the abstract classes contract. A specific implementation can be more strict.
+	 */
+	@Test void notEnoughUniquePoints_generic() {
 		int DOF = 20;
 		int NUM_SEEDS = 20;
 
@@ -55,7 +107,7 @@ public abstract class StandardInitializeKMeansChecks {
 		}
 	}
 
-	public static int findMatch(double[] a, List<double[]> list) {
+	public static int findMatch( double[] a, List<double[]> list ) {
 		for (int i = 0; i < list.size(); i++) {
 			double[] b = list.get(i);
 			boolean match = true;
@@ -93,28 +145,8 @@ public abstract class StandardInitializeKMeansChecks {
 
 			// make sure it wasn't swapped with one of the points
 			for (int j = 0; j < points.size(); j++) {
-				assertTrue(points.get(j) != s);
+				assertNotSame(points.get(j), s);
 			}
-		}
-	}
-
-	/**
-	 * Request more seeds than there are points.  This is impossible to do and ensure the seeds are
-	 * unique.
-	 */
-	@Test void impossible() {
-		try {
-			int DOF = 20;
-			int NUM_SEEDS = 4;
-
-			// fewer points than seeds
-			List<double[]> points = TestStandardKMeans.createPoints(DOF, NUM_SEEDS - 1, true);
-			var seeds = new DogArray<>(() -> new double[DOF]);
-
-			performClustering(DOF, NUM_SEEDS, points, seeds);
-
-			fail("Should have thrown an exception!");
-		} catch (Exception ignored) {
 		}
 	}
 
@@ -129,7 +161,7 @@ public abstract class StandardInitializeKMeansChecks {
 		uniqueSeeds(10, 4);
 	}
 
-	public void uniqueSeeds(int numPoints, int numSeeds) {
+	public void uniqueSeeds( int numPoints, int numSeeds ) {
 		int DOF = 20;
 
 		InitializeKMeans<double[]> alg = createAlg(DOF);
@@ -173,9 +205,9 @@ public abstract class StandardInitializeKMeansChecks {
 		}
 	}
 
-	protected void performClustering(int DOF, int NUM_SEEDS, List<double[]> points, DogArray<double[]> seeds) {
+	protected void performClustering( int DOF, int NUM_SEEDS, List<double[]> points, DogArray<double[]> seeds ) {
 		var accessor = new ListAccessor<>(points,
-				(src, dst) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
+				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 		InitializeKMeans<double[]> alg = createAlg(DOF);
 		EuclideanSqArrayF64 distance = new EuclideanSqArrayF64(DOF);
 		alg.initialize(distance, 0xBEEF);

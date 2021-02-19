@@ -28,16 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Peter Abeles
  */
 public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 	/**
-	 * In this situation there are not enough unique points which can act as unique seeds.
-	 * <p>
-	 * This is a stricter version of generic test
+	 * Every point has a duplicate and even though there are more points than seeds it should only
+	 * select 1/2 the points as seeds
 	 */
 	@Test void notEnoughUniquePoints_strict() {
 		int DOF = 18;
@@ -51,7 +49,7 @@ public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 		var seeds = new DogArray<>(() -> new double[DOF]);
 
 		performClustering(DOF, NUM_SEEDS, points, seeds);
-		assertEquals(NUM_SEEDS, seeds.size);
+		assertEquals(15, seeds.size);
 
 		var hits = new int[15];
 		for (double[] a : seeds.toList()) {
@@ -61,7 +59,7 @@ public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 
 		// make sure each one was selected at least once
 		for (int i = 0; i < hits.length; i++) {
-			assertTrue(hits[i] > 0);
+			assertEquals(hits[i], 1);
 		}
 	}
 

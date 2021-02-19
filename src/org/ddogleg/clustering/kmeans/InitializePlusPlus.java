@@ -57,13 +57,14 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 	}
 
 	@Override
-	public void selectSeeds( LArrayAccessor<P> points, int totalSeeds, DogArray<P> selectedSeeds ) {
-		if (totalSeeds > points.size())
-			throw new IllegalArgumentException("More seeds requested than points!");
-
+	public void selectSeeds( LArrayAccessor<P> points, int requestedSeeds, DogArray<P> selectedSeeds ) {
 		// Pre-allocate memory and reset the output
-		selectedSeeds.reserve(totalSeeds);
+		selectedSeeds.reserve(requestedSeeds);
 		selectedSeeds.reset();
+
+		// Handle edge cases here. There is nothing that can be done.
+		if (points.size() == 0 || requestedSeeds == 0)
+			return;
 
 		// the first seed is randomly selected from the list of points
 		points.getCopy(rand.nextInt(points.size()), selectedSeeds.grow());
@@ -75,8 +76,10 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 		updateDistanceWithNewSeed(points, selectedSeeds.get(0));
 
 		// Select the remaining seeds probabilistically based on distance from prior seeds
-		for (int seedIdx = 1; seedIdx < totalSeeds; seedIdx++) {
+		for (int seedIdx = 1; seedIdx < requestedSeeds; seedIdx++) {
 			int selected = selectPointForNextSeed(rand.nextDouble());
+			if (selected == -1)
+				break;
 			P seed = selectedSeeds.grow();
 			points.getCopy(selected, seed);
 			updateDistanceWithNewSeed(points, seed);
@@ -112,7 +115,7 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 	 * from the closest cluster.  Larger distances mean more likely.
 	 *
 	 * @param targetFraction Number from 0 to 1, inclusive
-	 * @return Index of the selected seed
+	 * @return Index of the selected seed. Return -1 is no valid seeds left
 	 */
 	protected int selectPointForNextSeed( double targetFraction ) {
 		// this won't select previously selected points because the distance will be zero
@@ -127,7 +130,6 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 		}
 
 		// If every single point has already been matched to a seed then they will all have zero distance
-		// In this situation we will just select a random point.
-		return rand.nextInt(distances.size);
+		return -1;
 	}
 }

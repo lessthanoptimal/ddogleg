@@ -116,9 +116,9 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 		public void initialize( PointDistance<double[]> distance, long randomSeed ) {}
 
 		@Override
-		public void selectSeeds( LArrayAccessor<double[]> points, int totalSeeds, DogArray<double[]> selectedSeeds ) {
+		public void selectSeeds( LArrayAccessor<double[]> points, int requestedSeeds, DogArray<double[]> selectedSeeds ) {
 			selectedSeeds.reset();
-			for (int i = 0; i < totalSeeds; i++) {
+			for (int i = 0; i < requestedSeeds; i++) {
 				points.getCopy(i, selectedSeeds.grow());
 			}
 		}
