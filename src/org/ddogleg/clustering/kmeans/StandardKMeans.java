@@ -77,7 +77,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 	// selects the initial locations of each seed
 	public InitializeKMeans<P> seedSelector;
 	// Storage for the seeds
-	DogArray<P> clusters;
+	DogArray<P> workClusters;
 
 	// Computes the distance between two points
 	PointDistance<P> distancer;
@@ -115,7 +115,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		this.distancer = distancer;
 		this.factory = factory;
 
-		clusters = new DogArray<>(factory::newInstance);
+		workClusters = new DogArray<>(factory::newInstance);
 		bestClusters = new DogArray<>(factory::newInstance);
 	}
 
@@ -131,11 +131,11 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		if (verbose)
 			System.out.println("ENTER standard kmeans process");
 		// declare data
-		clusters.resize(numCluster);
+		workClusters.resize(numCluster);
 		bestClusters.resize(numCluster);
 
 		// select the initial seeds
-		seedSelector.selectSeeds(points, numCluster, clusters);
+		seedSelector.selectSeeds(points, numCluster, workClusters);
 
 		// un standard k-means
 		bestClusterScore = Double.MAX_VALUE;
@@ -148,7 +148,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		int maxReSeed = this.maxReSeed <= 0 ? Integer.MAX_VALUE : this.maxReSeed;
 		for (int iteration = 0; iteration < maxIterations && numReSeeded < maxReSeed; iteration++) {
 			// match points to the means
-			matchPointsToClusters(points);
+			matchPointsToClusters(points, workClusters);
 
 			// see if its taking too long
 			boolean reseed = iteration - lastConverge >= reseedAfterIterations;
@@ -165,7 +165,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 				if (verbose)
 					System.out.println(iteration + "  Reseeding, distance = " + sumDistance);
 				// try from a new random seed
-				seedSelector.selectSeeds(points, numCluster, clusters);
+				seedSelector.selectSeeds(points, numCluster, workClusters);
 				previousSum = Double.MAX_VALUE;
 				lastConverge = iteration;
 				numReSeeded++;
@@ -176,7 +176,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 				previousSum = sumDistance;
 
 				// Given the current assignments, update the cluster centers
-				updateMeans.process(points, assignments, clusters);
+				updateMeans.process(points, assignments, workClusters);
 			}
 		}
 
@@ -184,6 +184,9 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		if (sumDistance < bestClusterScore) {
 			saveBestCluster(points);
 		}
+
+		// Make sure the points are assigned to the best cluster
+		matchPointsToClusters(points, bestClusters);
 
 		// copy the best into the output member count
 		memberCount.setTo(bestMemberCount);
@@ -199,10 +202,10 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 		bestClusterScore = sumDistance;
 
 		// copy current cluster into best cluster
-		bestClusters.reserve(clusters.size);
+		bestClusters.reserve(workClusters.size);
 		bestClusters.reset();
-		for (int i = 0; i < clusters.size; i++) {
-			points.copy(clusters.get(i), bestClusters.grow());
+		for (int i = 0; i < workClusters.size; i++) {
+			points.copy(workClusters.get(i), bestClusters.grow());
 		}
 		bestMemberCount.setTo(memberCount);
 
@@ -212,14 +215,14 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 	@Override
 	public AssignCluster<P> getAssignment() {
-		return new AssignKMeans<>(clusters, distancer);
+		return new AssignKMeans<>(bestClusters, distancer);
 	}
 
 	/**
 	 * Finds the cluster which is the closest to each point.  The point is the added to the sum for the cluster
 	 * and its member count incremented
 	 */
-	protected void matchPointsToClusters( LArrayAccessor<P> points ) {
+	protected void matchPointsToClusters( LArrayAccessor<P> points, DogArray<P> clusters ) {
 		// reset the member counts to zero for each cluster
 		memberCount.resize(clusters.size, 0);
 
@@ -236,7 +239,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 			P point = points.getTemp(i);
 
 			// find the cluster which is closest to the point
-			int assignment = findBestMatch(point);
+			int assignment = findBestMatch(point, clusters);
 			assignments.set(i, assignment);
 			// increment the number of points assigned to this cluster
 			memberCount.data[assignment]++;
@@ -246,7 +249,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 	/**
 	 * Searches for this cluster which is the closest to p
 	 */
-	protected int findBestMatch( P p ) {
+	protected int findBestMatch( final P p, final DogArray<P> clusters ) {
 		int bestCluster = -1;
 		double bestDistance = Double.MAX_VALUE;
 

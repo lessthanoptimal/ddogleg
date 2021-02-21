@@ -24,6 +24,7 @@ import org.ddogleg.DDoglegConcurrency;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.ComputeMeanClusters;
 import org.ddogleg.clustering.PointDistance;
+import org.ddogleg.struct.DogArray;
 import org.ddogleg.struct.DogArray_I32;
 import org.ddogleg.struct.DogLambdas;
 import org.ddogleg.struct.LArrayAccessor;
@@ -43,6 +44,7 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 	 * thread version. By default this is zero since the optimal value is use case specific.
 	 */
 	@Getter @Setter int minimumForConcurrent = 0;
+
 	/**
 	 * Configures k-means parameters
 	 *
@@ -61,10 +63,10 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 	 * Finds the cluster which is the closest to each point.  The point is the added to the sum for the cluster
 	 * and its member count incremented
 	 */
-	@Override protected void matchPointsToClusters( LArrayAccessor<P> points ) {
+	@Override protected void matchPointsToClusters( LArrayAccessor<P> points, DogArray<P> clusters ) {
 		// see if it should run the single thread version instead
 		if (points.size() < minimumForConcurrent) {
-			super.matchPointsToClusters(points);
+			super.matchPointsToClusters(points, clusters);
 			return;
 		}
 		assignments.resize(points.size());
@@ -81,7 +83,7 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 				points.getCopy(i, point);
 
 				// find the cluster which is closest to the point
-				int assignment = findBestMatch(point, work);
+				int assignment = findBestMatch(point, clusters, work);
 				assignments.set(i, assignment); // threads won't modify the same elements
 				// increment the number of points assigned to this cluster
 				memberCount.data[assignment]++;
@@ -104,7 +106,7 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 	/**
 	 * Searches for this cluster which is the closest to p
 	 */
-	protected int findBestMatch( P p, MatchData match ) {
+	protected int findBestMatch( P p, DogArray<P> clusters, MatchData match ) {
 		int bestCluster = -1;
 		double bestDistance = Double.MAX_VALUE;
 

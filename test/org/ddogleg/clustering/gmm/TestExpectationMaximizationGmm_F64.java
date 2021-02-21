@@ -206,6 +206,20 @@ public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64
 		}
 	}
 
+	@Override protected int selectBestCluster( ComputeClusters<double[]> alg, double[] p ) {
+		ExpectationMaximizationGmm_F64 kmeans = (ExpectationMaximizationGmm_F64)alg;
+		double bestDistance = 0;
+		int best = -1;
+		for (int i = 0; i < kmeans.mixture.size; i++) {
+			double d = kmeans.likelihoodManager.getLikelihood(i).likelihood(p);
+			if (d > bestDistance) {
+				bestDistance = d;
+				best = i;
+			}
+		}
+		return best;
+	}
+
 	private SeedFromKMeans_F64 createSeeds(int DOF) {
 		ConfigKMeans config = new ConfigKMeans();
 		config.convergeTol = 1e-8;

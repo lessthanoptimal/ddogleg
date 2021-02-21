@@ -46,12 +46,14 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 	@Test void matchPointsToClusters() {
 		StandardKMeans<double[]> alg = createAlg(DOF);
 
-		alg.clusters.resize(3);
+		// Don't use internal clusters, use this new one to make sure it's referencing the correct one
+		DogArray<double[]> clusters = new DogArray<>(() -> new double[DOF]);
+		clusters.resize(3);
 		alg.memberCount.resize(3);
 
-		alg.clusters.data[0] = new double[]{20, 0, 0, 0};
-		alg.clusters.data[1] = new double[]{0, 20, 0, 0};
-		alg.clusters.data[2] = new double[]{0, 0, 20, 0};
+		clusters.data[0] = new double[]{20, 0, 0, 0};
+		clusters.data[1] = new double[]{0, 20, 0, 0};
+		clusters.data[2] = new double[]{0, 0, 20, 0};
 
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{20, 5, 0, 0});
@@ -61,7 +63,7 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 		ListAccessor<double[]> accessor = new ListAccessor<>(points,
 				( src, dst ) -> System.arraycopy(src, 0, dst, 0, DOF), double[].class);
 
-		alg.matchPointsToClusters(accessor);
+		alg.matchPointsToClusters(accessor, clusters);
 
 		assertEquals(2, alg.memberCount.get(0));
 		assertEquals(0, alg.memberCount.get(1));
@@ -109,6 +111,20 @@ public class TestStandardKMeans extends GenericClusterChecks_F64 {
 	@Override
 	public ComputeClusters<double[]> createClustersAlg( boolean seedHint, int dof ) {
 		return createAlg(dof);
+	}
+
+	@Override protected int selectBestCluster( ComputeClusters<double[]> alg, double[] p ) {
+		StandardKMeans<double[]> kmeans = (StandardKMeans<double[]>)alg;
+		double bestDistance = Double.MAX_VALUE;
+		int best = -1;
+		for (int i = 0; i < kmeans.bestClusters.size; i++) {
+			double d = kmeans.distancer.distance(p, kmeans.bestClusters.get(i));
+			if (d < bestDistance) {
+				bestDistance = d;
+				best = i;
+			}
+		}
+		return best;
 	}
 
 	public static class FixedSeeds implements InitializeKMeans<double[]> {
