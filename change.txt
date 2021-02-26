@@ -14,6 +14,8 @@ Date:     2021
   * getTail(), setTail(idx,value)
 - DogArray<T>
   * Added an initializer function
+- PrimitiveArrays
+  * Added minIdx(), maxIdx()
 
 ------------------------------------------------------
 Version:  0.19

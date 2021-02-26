@@ -30,98 +30,98 @@ public class PrimitiveArrays {
 	/**
 	 * Sets each element within range to a number counting up
 	 */
-	public static void fillCounting(int[] array , int offset, int length ) {
+	public static void fillCounting( int[] array, int offset, int length ) {
 		for (int i = 0; i < length; i++) {
-			array[i+offset] = i;
+			array[i + offset] = i;
 		}
 	}
 
-	public static int[] fillCounting(int length ) {
+	public static int[] fillCounting( int length ) {
 		int[] array = new int[length];
-		fillCounting(array,0,length);
+		fillCounting(array, 0, length);
 		return array;
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( byte []array , int offset , int length , Random rand ) {
+	public static void shuffle( byte[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			byte tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			byte tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( short []array , int offset , int length , Random rand ) {
+	public static void shuffle( short[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			short tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			short tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( int []array , int offset , int length , Random rand ) {
+	public static void shuffle( int[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			int tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			int tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( long []array , int offset , int length , Random rand ) {
+	public static void shuffle( long[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			long tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			long tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( float []array , int offset , int length , Random rand ) {
+	public static void shuffle( float[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			float tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			float tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Randomly shuffle the array
 	 */
-	public static void shuffle( double []array , int offset , int length , Random rand ) {
+	public static void shuffle( double[] array, int offset, int length, Random rand ) {
 		for (int i = 0; i < length; i++) {
-			int src = rand.nextInt(length-i);
-			double tmp = array[offset+src+i];
-			array[offset+src+i]=array[offset+i];
-			array[offset+i] = tmp;
+			int src = rand.nextInt(length - i);
+			double tmp = array[offset + src + i];
+			array[offset + src + i] = array[offset + i];
+			array[offset + i] = tmp;
 		}
 	}
 
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static int min( byte []array , int offset , int length ) {
+	public static int min( byte[] array, int offset, int length ) {
 		int min = Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp < min ) {
+			int tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -131,11 +131,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static int min( short []array , int offset , int length ) {
+	public static int min( short[] array, int offset, int length ) {
 		int min = Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp < min ) {
+			int tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -145,11 +145,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static int min( int []array , int offset , int length ) {
+	public static int min( int[] array, int offset, int length ) {
 		int min = Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp < min ) {
+			int tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -159,11 +159,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static long min( long []array , int offset , int length ) {
+	public static long min( long[] array, int offset, int length ) {
 		long min = Long.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			long tmp = array[offset+i];
-			if( tmp < min ) {
+			long tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -173,11 +173,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static float min( float []array , int offset , int length ) {
+	public static float min( float[] array, int offset, int length ) {
 		float min = Float.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			float tmp = array[offset+i];
-			if( tmp < min ) {
+			float tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -187,11 +187,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the minimum value
 	 */
-	public static double min( double []array , int offset , int length ) {
+	public static double min( double[] array, int offset, int length ) {
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			double tmp = array[offset+i];
-			if( tmp < min ) {
+			double tmp = array[offset + i];
+			if (tmp < min) {
 				min = tmp;
 			}
 		}
@@ -199,13 +199,77 @@ public class PrimitiveArrays {
 	}
 
 	/**
+	 * Returns the index of the element with the minimum value
+	 */
+	public static int minIdx( byte[] array, int offset, int length ) {
+		int min = Integer.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset + i];
+			if (tmp < min) {
+				min = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the index of the element with the minimum value
+	 */
+	public static int minIdx( int[] array, int offset, int length ) {
+		int min = Integer.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset + i];
+			if (tmp < min) {
+				min = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the index of the element with the minimum value
+	 */
+	public static int minIdx( float[] array, int offset, int length ) {
+		float min = Float.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			float tmp = array[offset + i];
+			if (tmp < min) {
+				min = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the index of the element with the minimum value
+	 */
+	public static int minIdx( double[] array, int offset, int length ) {
+		double min = Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			double tmp = array[offset + i];
+			if (tmp < min) {
+				min = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static int max( byte []array , int offset , int length ) {
+	public static int max( byte[] array, int offset, int length ) {
 		int max = -Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp > max ) {
+			int tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
@@ -215,11 +279,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static int max( short []array , int offset , int length ) {
+	public static int max( short[] array, int offset, int length ) {
 		int max = -Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp > max ) {
+			int tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
@@ -229,11 +293,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static int max( int []array , int offset , int length ) {
+	public static int max( int[] array, int offset, int length ) {
 		int max = -Integer.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			int tmp = array[offset+i];
-			if( tmp > max ) {
+			int tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
@@ -243,11 +307,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static long max( long []array , int offset , int length ) {
+	public static long max( long[] array, int offset, int length ) {
 		long max = -Long.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			long tmp = array[offset+i];
-			if( tmp > max ) {
+			long tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
@@ -257,11 +321,11 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static float max( float []array , int offset , int length ) {
+	public static float max( float[] array, int offset, int length ) {
 		float max = -Float.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			float tmp = array[offset+i];
-			if( tmp > max ) {
+			float tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
@@ -271,33 +335,98 @@ public class PrimitiveArrays {
 	/**
 	 * Returns the value of the element with the maximum value
 	 */
-	public static double max( double []array , int offset , int length ) {
+	public static double max( double[] array, int offset, int length ) {
 		double max = -Double.MAX_VALUE;
 		for (int i = 0; i < length; i++) {
-			double tmp = array[offset+i];
-			if( tmp > max ) {
+			double tmp = array[offset + i];
+			if (tmp > max) {
 				max = tmp;
 			}
 		}
 		return max;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int maxIdx( byte[] array, int offset, int length ) {
+		int max = -Integer.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset + i];
+			if (tmp > max) {
+				max = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int maxIdx( int[] array, int offset, int length ) {
+		int max = -Integer.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			int tmp = array[offset + i];
+			if (tmp > max) {
+				max = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int maxIdx( float[] array, int offset, int length ) {
+		float max = -Float.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			float tmp = array[offset + i];
+			if (tmp > max) {
+				max = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
+	}
+
+	/**
+	 * Returns the value of the element with the maximum value
+	 */
+	public static int maxIdx( double[] array, int offset, int length ) {
+		double max = -Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < length; i++) {
+			double tmp = array[offset + i];
+			if (tmp > max) {
+				max = tmp;
+				index = i;
+			}
+		}
+		return offset + index;
 	}
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBound( byte[] array, int offset , int length , int val ) {
+	public static int lowerBound( byte[] array, int offset, int length, int val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( array[idx] < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if (array[idx] < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
@@ -307,21 +436,22 @@ public class PrimitiveArrays {
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param array unsigned byte array
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBoundU( byte[] array, int offset , int length , int val ) {
+	public static int lowerBoundU( byte[] array, int offset, int length, int val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( (array[idx]&0xFF) < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if ((array[idx] & 0xFF) < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
@@ -331,20 +461,21 @@ public class PrimitiveArrays {
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBound( short[] array, int offset , int length , int val ) {
+	public static int lowerBound( short[] array, int offset, int length, int val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( array[idx] < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if (array[idx] < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
@@ -354,20 +485,21 @@ public class PrimitiveArrays {
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBound( int[] array, int offset , int length , int val ) {
+	public static int lowerBound( int[] array, int offset, int length, int val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( array[idx] < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if (array[idx] < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
@@ -377,20 +509,21 @@ public class PrimitiveArrays {
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBound( float[] array, int offset , int length , float val ) {
+	public static int lowerBound( float[] array, int offset, int length, float val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( array[idx] < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if (array[idx] < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
@@ -400,20 +533,21 @@ public class PrimitiveArrays {
 
 	/**
 	 * Finds the first index in 'array' for which val is not &le; val
+	 *
 	 * @param offset First index in the array
 	 * @param length Number of elements in the array
 	 * @param val The value for which the lower bound is being searched for.
 	 * @return lower bound index
 	 */
-	public static int lowerBound( double[] array, int offset , int length , double val ) {
+	public static int lowerBound( double[] array, int offset, int length, double val ) {
 		int count = length;
 		int first = offset;
-		while( count > 0 ) {
+		while (count > 0) {
 			int step = count/2;
-			int idx = first+step;
-			if( array[idx] < val ) {
-				first = idx+1;
-				count -= step+1;
+			int idx = first + step;
+			if (array[idx] < val) {
+				first = idx + 1;
+				count -= step + 1;
 			} else {
 				count = step;
 			}
