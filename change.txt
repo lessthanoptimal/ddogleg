@@ -14,6 +14,10 @@ Date:     2021
   * getTail(), setTail(idx,value)
 - DogArray<T>
   * Added an initializer function
+- BigDogArray_**
+  * For when a regular dog isn't sufficient
+  * Does not use a single very large array internally
+  * This scales much better as array size gets very very large
 - PrimitiveArrays
   * Added minIdx(), maxIdx()
 
