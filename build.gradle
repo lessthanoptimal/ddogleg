@@ -81,6 +81,7 @@ dependencies {
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
 
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6' // for auto code generation
     testCompile project.sourceSets.benchmark.output
 
     benchmarkCompile project.sourceSets.main.output
