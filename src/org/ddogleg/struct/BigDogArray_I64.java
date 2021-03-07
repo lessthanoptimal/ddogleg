@@ -73,7 +73,7 @@ public class BigDogArray_I64 extends BigDogArray<long[]> {
 	 * @param initialValue The value of new elements
 	 */
 	public void resize( int desiredSize, long initialValue ) {
-		reserve(desiredSize, true);
+		allocate(desiredSize, true, false);
 		int originalSize = size;
 		this.size = desiredSize;
 		fill(originalSize, desiredSize, initialValue);

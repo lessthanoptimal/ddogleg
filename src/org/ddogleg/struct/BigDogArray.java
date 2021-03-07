@@ -26,6 +26,9 @@ import lombok.Getter;
  * While more complex and in some classes slightly slower, the approach employed here is much more memory and
  * speed efficient while growing. See {@link Growth} for a description of different growth strategies.
  *
+ * When operations are used which add/append to the end of the array then extra room is typically added, if a grow
+ * strategy is employed. This is done to avoid excessive amount of memory copy operations.
+ *
  * @author Peter Abeles
  */
 public abstract class BigDogArray<Array> {
@@ -94,19 +97,22 @@ public abstract class BigDogArray<Array> {
 
 	/**
 	 * Ensures that the internal data can store up to this number of elements before needing to allocate more memory.
+	 * No extra data is added and this function is only recommended when the array has a known max size.
 	 */
 	public void reserve( int desiredSize ) {
-		reserve(desiredSize, false);
+		allocate(desiredSize, false, false);
 	}
 
 	/**
 	 * Allocate more memory so that an array of the specified desiredSize can be stored. Optionally copy old
 	 * values into new arrays when growing
 	 *
-	 * @param desiredSize New size of internal array
+	 * @param desiredSize New size of internal array, not just a single block.
 	 * @param saveValues If old values should be copied.
+	 * @param addExtra If using a grow strategy, is this a case where it should add extra elements or do the
+	 * exact request?
 	 */
-	protected void reserve( int desiredSize, boolean saveValues ) {
+	protected void allocate( int desiredSize, boolean saveValues, boolean addExtra ) {
 		int desiredNumBlocks = getDesiredBlocks(desiredSize);
 
 		// See if the current allocation in blocks is larger than what's requested
@@ -125,7 +131,7 @@ public abstract class BigDogArray<Array> {
 			if (arrayLength(old) != blockSize) {
 				Array replacement = newArrayInstance(blockSize);
 				if (saveValues)
-					System.arraycopy(old,0,replacement,0, arrayLength(old));
+					System.arraycopy(old, 0, replacement, 0, arrayLength(old));
 				blocks.data[priorNumBlocks - 1] = replacement;
 			}
 		}
@@ -136,19 +142,26 @@ public abstract class BigDogArray<Array> {
 		}
 
 		// The last block might not be a full block
-		int desiredLastBlockSize = computeLastBlockSize(desiredSize, 0, desiredNumBlocks);
+		int desiredLastBlockSize = computeLastBlockSize(desiredSize, desiredNumBlocks);
+
 		if (priorNumBlocks == desiredNumBlocks && priorNumBlocks > 0) {
+			// If requested/allowed, increase the size the last array. This will effectively double its size.
+			// Adding a bit of extra when growing significantly reduces number of array copies
 			Array old = blocks.data[priorNumBlocks - 1];
+			if (addExtra)
+				desiredLastBlockSize =
+						Math.min(blockSize, initialBlockSize + arrayLength(old)*2 + desiredLastBlockSize);
+
 			if (arrayLength(old) < desiredLastBlockSize) {
-				// this will approximately double the size of the block's array so that it doesn't need to constantly
-				// add more elements
-				int adjustedSize = Math.min(blockSize, arrayLength(old)+desiredSize);
-				Array replacement = newArrayInstance(adjustedSize);
+				Array replacement = newArrayInstance(desiredLastBlockSize);
 				if (saveValues)
-					System.arraycopy(old,0,replacement,0, arrayLength(old));
+					System.arraycopy(old, 0, replacement, 0, arrayLength(old));
 				blocks.data[desiredNumBlocks - 1] = replacement;
 			}
 		} else if (priorNumBlocks < desiredNumBlocks) {
+			if (addExtra)
+				desiredLastBlockSize = Math.min(blockSize, initialBlockSize + 2*desiredLastBlockSize);
+
 			blocks.data[desiredNumBlocks - 1] = newArrayInstance(desiredLastBlockSize);
 		}
 	}
@@ -157,16 +170,13 @@ public abstract class BigDogArray<Array> {
 	 * Declare an array for the last block
 	 *
 	 * @param desiredSize (Input) The new desired size of this array
-	 * @param extraSpace (Input) How much extra space it should append to the end
 	 * @return A new array
 	 */
-	private int computeLastBlockSize( int desiredSize, int extraSpace, int numBlocks ) {
+	private int computeLastBlockSize( int desiredSize, int numBlocks ) {
 		if (growth == BigDogArray.Growth.FIXED || (numBlocks > 1 && growth == BigDogArray.Growth.GROW_FIRST)) {
 			return blockSize;
 		} else {
-			// add a bit of extra space to avoid needing to constantly allocate more
-			int minimumInBlock = desiredSize%blockSize == 0 ? blockSize : desiredSize%blockSize;
-			return Math.min(blockSize, minimumInBlock + extraSpace);
+			return desiredSize%blockSize == 0 ? blockSize : desiredSize%blockSize;
 		}
 	}
 
@@ -177,7 +187,7 @@ public abstract class BigDogArray<Array> {
 	 * @param desiredSize (Input) New array size
 	 */
 	public void resize( int desiredSize ) {
-		reserve(desiredSize, true);
+		allocate(desiredSize, true, false);
 		this.size = desiredSize;
 	}
 
@@ -190,7 +200,8 @@ public abstract class BigDogArray<Array> {
 	 */
 	public void append( Array array, int offset, int length ) {
 		// make sure enough memory has been allocated
-		resize(this.size + length);
+		allocate(this.size + length, true, true);
+		this.size = this.size + length;
 		setArray(this.size - length, array, offset, length);
 	}
 
@@ -200,12 +211,12 @@ public abstract class BigDogArray<Array> {
 			// Is there a block in the queue it can recycle?
 			if (blocks.size <= blockIdx) {
 				// Nope, need to add a new block
-				int desiredBlockSize = computeLastBlockSize(size + 1, initialBlockSize, blocks.size + 1);
+				int desiredBlockSize = computeLastBlockSize(size + 1, blocks.size + 1);
+				desiredBlockSize = Math.min(blockSize, desiredBlockSize + initialBlockSize);
 				blocks.add(newArrayInstance(desiredBlockSize));
 			} else {
-				// there is, let's see if we need to adjust its size
-				int newSpace = Math.min(blockSize, 1 + initialBlockSize);
-				growLastBlock(newSpace);
+				// there is an existing block, but we need to make it bigger
+				growLastBlock(1);
 			}
 		} else if (indexInBlock >= arrayLength(blocks.data[blockIdx])) {
 			growLastBlock(1);
@@ -316,7 +327,7 @@ public abstract class BigDogArray<Array> {
 
 		// Need to declare a larger block to hold everything. Let's add some extra room
 		// to avoid doing this process too often
-		int desired = Math.min(blockSize, arrayLength(block)*2 + requiredNewSpace);
+		int desired = Math.min(blockSize, arrayLength(block)*2 + requiredNewSpace + initialBlockSize);
 
 		// declare the new array and copy the old array into it
 		Array work = newArrayInstance(desired);
@@ -381,6 +392,14 @@ public abstract class BigDogArray<Array> {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns the number of elements which have been allocated. This array size has to be less than
+	 * or equal to this number\
+	 */
+	public int getTotalAllocation() {
+		return (blocks.size-1)*blockSize + arrayLength(blocks.data[blocks.size-1]);
 	}
 
 	protected int blockArrayLength( int block ) {

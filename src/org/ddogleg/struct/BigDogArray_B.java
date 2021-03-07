@@ -73,7 +73,7 @@ public class BigDogArray_B extends BigDogArray<boolean[]> {
 	 * @param initialValue The value of new elements
 	 */
 	public void resize( int desiredSize, boolean initialValue ) {
-		reserve(desiredSize, true);
+		allocate(desiredSize, true, false);
 		int originalSize = size;
 		this.size = desiredSize;
 		fill(originalSize, desiredSize, initialValue);
