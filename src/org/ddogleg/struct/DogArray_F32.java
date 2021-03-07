@@ -123,18 +123,17 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	public void push( float val ) {
 		if( size == data.length ) {
-			float[] temp = new float[ size * 2+5];
+			float[] temp;
+			try {
+				temp = new float[ size * 2+5];
+			} catch( OutOfMemoryError e ) {
+				System.gc();
+				temp = new float[ 3*size/2];
+			}
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
-    }
-
-	public void remove( int index ) {
-		for( int i = index+1; i < size; i++ ) {
-			data[i-1] = data[i];
-		}
-		size--;
 	}
 
 	/**
@@ -153,7 +152,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public DogArray_F32 setTo( float... src ) {
+	public DogArray_F32 setTo( float... src) {
 		setTo(src, 0, src.length);
 		return this;
 	}
@@ -165,6 +164,13 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		float[] out = new float[size];
 		System.arraycopy(data,0,out,0,size);
 		return out;
+	}
+
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
 	}
 
 	/**
@@ -270,14 +276,30 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		return data[index];
 	}
 
-	public void set( int index, float value  ) {
+	public void set( int index , float value ) {
 		data[index] = value;
 	}
 
-	@Override
-	public void setTo( DogArray_F32 original ) {
+	@Override public void setTo( DogArray_F32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
+	@Override public void resize( int size ) {
+		if( data.length < size ) {
+			data = new float[size];
+		}
+		this.size = size;
+	}
+
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , float value ) {
+		resize(size);
+		fill(value);
 	}
 
 	public void fill( float value ) {
@@ -296,24 +318,6 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		return false;
 	}
 
-	@Override
-	public void resize( int size ) {
-		if( data.length < size ) {
-			data = new float[size];
-		}
-		this.size = size;
-	}
-
-	/**
-	 * Resizes the array and assigns the default value to every element.
-	 * @param size New size
-	 * @param value Default value
-	 */
-	public void resize( int size , float value ) {
-		resize(size);
-		fill(value);
-	}
-
 	@Override public void extend( int size ) {
 		reserve(size);
 		this.size = size;
@@ -327,25 +331,21 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		data = tmp;
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
-	@Override
-	public void zero() {
-		Arrays.fill(data,0,size,0);
+	@Override public void zero() {
+		Arrays.fill(data,0,size,(float)0);
 	}
 
-	@Override
-	public DogArray_F32 copy() {
-		DogArray_F32 ret = new DogArray_F32(size);
+	@Override public DogArray_F32 copy() {
+		var ret = new DogArray_F32(size);
 		ret.setTo(this);
 		return ret;
 	}
 
-	@Override
-	public void flip() {
+	@Override public void flip() {
 		if( size <= 1 )
 			return;
 
@@ -408,8 +408,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		return selected;
 	}
 
-	@Override
-	public void sort() {
+	@Override public void sort() {
 		Arrays.sort(data,0,size);
 	}
 

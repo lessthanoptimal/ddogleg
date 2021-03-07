@@ -28,12 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
-
 	@Test void count() {
-		DogArray_F64 alg = DogArray_F64.array(0.0,0.0,1.0,1.0,1.0);
+		DogArray_F64 alg = DogArray_F64.array(0,0,1,1,1);
 
-		assertEquals(2,alg.count(0.0));
-		assertEquals(3,alg.count(1.0));
+		assertEquals(2,alg.count(0));
+		assertEquals(3,alg.count(1));
 	}
 
 	@Test void isEquals() {
@@ -137,22 +136,22 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	@Test void resize_default() {
 		DogArray_F64 alg = new DogArray_F64(2);
 		assertEquals(0,alg.size);
-		alg.resize(12, 1.0);
+		alg.resize(12, (double)1);
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12,alg.size);
 		for (int i = 0; i < alg.size; i++) {
 			assertEquals(1.0,alg.get(i));
 		}
 		// The array isn't redeclared but the value should still change
-		alg.resize(10,2.0);
+		alg.resize(10, (double)2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10,alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(2.f,alg.get(i));
+			assertEquals((double)2,alg.get(i));
 		}
 		// it shouldn't change the entire array's value since that's wasteful
 		for (int i = alg.size; i < alg.data.length; i++) {
-			assertEquals(1.0,alg.data[i]);
+			assertEquals((double)1,alg.data[i]);
 		}
 	}
 
@@ -200,8 +199,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Test void remove() {
-
-		DogArray_F64 alg = new DogArray_F64(10);
+		var alg = new DogArray_F64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -236,28 +234,24 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 		assertEquals(6,alg.get(1), UtilEjml.TEST_F64);
 	}
 
-	@Override
-	public DogArray_F64 declare( int maxsize) {
+	@Override public DogArray_F64 declare( int maxsize) {
 		return new DogArray_F64(maxsize);
 	}
 
-	@Override
-	public void push( DogArray_F64 queue, double value) {
+	@Override public void push( DogArray_F64 queue, double value) {
 		queue.push(value);
 	}
 
-	@Override
-	public void insert( DogArray_F64 queue, int index, double value) {
+	@Override public void insert( DogArray_F64 queue, int index, double value) {
 		queue.insert(index,value);
 	}
 
-	@Override
-	public void check( DogArray_F64 queue, int index, double value) {
+	@Override public void check( DogArray_F64 queue, int index, double value) {
 		assertEquals(value,queue.get(index),1e-8);
 	}
 
 	@Test void indexOf() {
-		DogArray_F64 alg = new DogArray_F64(10);
+		var alg = new DogArray_F64(10);
 
 		alg.push(1);
 		alg.push(3);
@@ -269,7 +263,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Test void sort() {
-		DogArray_F64 alg = new DogArray_F64(6);
+		var alg = new DogArray_F64(6);
 
 		alg.push(8);
 		alg.push(2);
@@ -286,7 +280,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Test void getFraction() {
-		DogArray_F64 alg = new DogArray_F64(20);
+		var alg = new DogArray_F64(20);
 
 		for (int i = 0; i < 20; i++) {
 			alg.add(i);
@@ -302,7 +296,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Test void indexOfGreatest() {
-		DogArray_F64 alg = new DogArray_F64(20);
+		var alg = new DogArray_F64(20);
 
 		assertEquals(-1,alg.indexOfGreatest());
 
@@ -314,7 +308,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Test void indexOfLeast() {
-		DogArray_F64 alg = new DogArray_F64(20);
+		var alg = new DogArray_F64(20);
 
 		assertEquals(-1,alg.indexOfLeast());
 
@@ -368,7 +362,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 
 	@Test void forEach() {
 		DogArray_F64 alg = DogArray_F64.array(1,2,3,4,5);
-		DogArray_F64 cpy = new DogArray_F64(alg.size);
+		var cpy = new DogArray_F64(alg.size);
 		alg.forEach(cpy::add);
 		assertEquals(alg.size, cpy.size);
 		for (int i = 0; i < alg.size; i++) {

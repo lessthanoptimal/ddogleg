@@ -18,7 +18,6 @@
 
 package org.ddogleg.struct;
 
-
 import java.util.Arrays;
 
 /**
@@ -31,7 +30,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	public long[] data;
 	public int size;
 
-	public DogArray_I64( int maxSize) {
+	public DogArray_I64( int maxSize ) {
 		data = new long[ maxSize ];
 		this.size = 0;
 	}
@@ -115,67 +114,23 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		size += arraySize;
 	}
 
-	public void add(long value) {
-		push(value);
+	public void add( long val ) {
+		push(val);
 	}
 
 	public void push( long val ) {
 		if( size == data.length ) {
-			long[] temp = new long[ size * 2+5];
+			long[] temp;
+			try {
+				temp = new long[ size * 2+5];
+			} catch( OutOfMemoryError e ) {
+				System.gc();
+				temp = new long[ 3*size/2];
+			}
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
-	}
-
-	public long get( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[index];
-	}
-
-	public long getTail() {
-		if (size==0)
-			throw new IndexOutOfBoundsException("Array is empty");
-		return data[size-1];
-	}
-
-	/**
-	 * Returns an element starting from the end of the list. 0 = size -1
-	 */
-	public long getTail( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[size-index-1];
-	}
-
-	public void setTail( int index, long value ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		data[size-index-1] = value;
-	}
-
-	/**
-	 * Gets the value at the index which corresponds to the specified fraction
-	 * @param fraction 0 to 1 inclusive
-	 * @return value at fraction
-	 */
-	public long getFraction( double fraction ) {
-		return get( (int)((size-1)*fraction) );
-	}
-
-	public long unsafe_get( int index ) {
-		return data[index];
-	}
-
-	public void set( int index , long value ) {
-		data[index] = value;
-	}
-
-	@Override
-	public void setTo( DogArray_I64 original ) {
-		resize(original.size);
-		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
 	/**
@@ -199,13 +154,21 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		return this;
 	}
 
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public long[] toArray() {
+		long[] out = new long[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
+	}
+
 	public void remove( int index ) {
 		for( int i = index+1; i < size; i++ ) {
 			data[i-1] = data[i];
 		}
 		size--;
 	}
-
 
 	/**
 	 * Removes elements from the list starting at 'first' and ending at 'last'
@@ -270,8 +233,56 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		}
 	}
 
-	@Override
-	public void resize( int size ) {
+	public long get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
+
+	public long getTail() {
+		if (size==0)
+			throw new IndexOutOfBoundsException("Array is empty");
+		return data[size-1];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public long getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
+	}
+
+	public void setTail( int index, long value ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		data[size-index-1] = value;
+	}
+
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public long getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
+	public long unsafe_get( int index ) {
+		return data[index];
+	}
+
+	public void set( int index , long value ) {
+		data[index] = value;
+	}
+
+	@Override public void setTo( DogArray_I64 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
+	@Override public void resize( int size ) {
 		if( data.length < size ) {
 			data = new long[size];
 		}
@@ -317,29 +328,21 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		data = tmp;
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
-	public long pop() {
-		return data[--size];
+	@Override public void zero() {
+		Arrays.fill(data,0,size,(long)0);
 	}
 
-	@Override
-	public void zero() {
-		Arrays.fill(data,0,size,0);
-	}
-
-	@Override
-	public DogArray_I64 copy() {
-		DogArray_I64 ret = new DogArray_I64(size);
+	@Override public DogArray_I64 copy() {
+		var ret = new DogArray_I64(size);
 		ret.setTo(this);
 		return ret;
 	}
 
-	@Override
-	public void flip() {
+	@Override public void flip() {
 		if( size <= 1 )
 			return;
 
@@ -350,6 +353,10 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 			data[j] = tmp;
 		}
 	}
+
+	public long pop() {
+        return data[--size];
+    }
 
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
@@ -364,8 +371,41 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		return -1;
 	}
 
-	@Override
-	public void sort() {
+	public int indexOfGreatest() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		long best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] > best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected	;
+	}
+
+	public int indexOfLeast() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		long best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] < best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected;
+	}
+
+	@Override public void sort() {
 		Arrays.sort(data,0,size);
 	}
 

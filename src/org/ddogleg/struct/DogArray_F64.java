@@ -24,7 +24,7 @@ import org.ddogleg.sorting.QuickSort_F64;
 import java.util.Arrays;
 
 /**
- * This is a queue that is composed of integers.  Elements are added and removed from the tail
+ * Growable array composed of doubles.
  *
  * @author Peter Abeles
  */
@@ -128,14 +128,12 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 				temp = new double[ size * 2+5];
 			} catch( OutOfMemoryError e ) {
 				System.gc();
-//				System.out.println("Memory on size "+size+" or "+(size*8/1024/1024)+" MB");
-//				System.out.println("Trying smaller increment");
 				temp = new double[ 3*size/2];
 			}
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
-		data[size++] = val;
+		data[size++] = (double)val;
 	}
 
 	/**
@@ -282,14 +280,12 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		data[index] = value;
 	}
 
-	@Override
-	public void setTo( DogArray_F64 original ) {
+	@Override public void setTo( DogArray_F64 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
-	@Override
-	public void resize( int size ) {
+	@Override public void resize( int size ) {
 		if( data.length < size ) {
 			data = new double[size];
 		}
@@ -335,25 +331,21 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		data = tmp;
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
-	@Override
-	public void zero() {
-		Arrays.fill(data,0,size,0);
+	@Override public void zero() {
+		Arrays.fill(data,0,size,(double)0);
 	}
 
-	@Override
-	public DogArray_F64 copy() {
-		DogArray_F64 ret = new DogArray_F64(size);
+	@Override public DogArray_F64 copy() {
+		var ret = new DogArray_F64(size);
 		ret.setTo(this);
 		return ret;
 	}
 
-	@Override
-	public void flip() {
+	@Override public void flip() {
 		if( size <= 1 )
 			return;
 
@@ -416,8 +408,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		return selected;
 	}
 
-	@Override
-	public void sort() {
+	@Override public void sort() {
 		Arrays.sort(data,0,size);
 	}
 
