@@ -42,6 +42,10 @@ repositories {
 }
 
 sourceSets {
+    generate {
+        java { srcDir 'generate' }
+    }
+
     benchmark {
         java { srcDir 'benchmark/src' }
         resources {  srcDir 'benchmark/resources' }
@@ -59,7 +63,6 @@ sourceSets {
     test {
         java {
             srcDir 'test'
-            srcDir 'generate'
             srcDir 'benchmark/test'
         }
         resources { srcDir 'resources/test' }
@@ -81,7 +84,7 @@ dependencies {
     testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
 
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.6' // for auto code generation
+    generateCompile group: 'commons-io', name: 'commons-io', version: '2.6'
     testCompile project.sourceSets.benchmark.output
 
     benchmarkCompile project.sourceSets.main.output
