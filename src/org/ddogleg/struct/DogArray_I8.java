@@ -43,8 +43,16 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
 	public static DogArray_I8 zeros( int length ) {
-		DogArray_I8 out = new DogArray_I8(length);
+		var out = new DogArray_I8(length);
 		out.size = length;
+		return out;
+	}
+
+	public static DogArray_I8 array( byte... values ) {
+		DogArray_I8 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = values[i];
+		}
 		return out;
 	}
 
@@ -57,7 +65,22 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	}
 
 	/**
-	 * Counts the number of times the specified value occures in the list
+	 * Returns a new array with values containing range of integer numbers from idx0 to idx1-1.
+	 *
+	 * @param idx0 Lower extent, inclusive.
+	 * @param idx1 Upper extent, exclusive.
+	 * @return new array.
+	 */
+	public static DogArray_I8 range( int idx0, int idx1 ) {
+		DogArray_I8 out = zeros(idx1 - idx0);
+		for (int i = idx0; i < idx1; i++) {
+			out.data[i - idx0] = (byte)i;
+		}
+		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occurs in the list
 	 */
 	public int count( int value ) {
 		int total = 0;
@@ -74,7 +97,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * @param values primitive array
 	 * @return true if equal or false if not
 	 */
-	public boolean isEquals( int... values ) {
+	public boolean isEquals( byte... values ) {
 		if (size != values.length)
 			return false;
 		for (int i = 0; i < size; i++) {
@@ -84,7 +107,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		return true;
 	}
 
-	public boolean isEquals( byte... values ) {
+	public boolean isEquals( int... values ) {
 		if (size != values.length)
 			return false;
 		for (int i = 0; i < size; i++) {
@@ -287,8 +310,8 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		return data[index];
 	}
 
-	public void set( int index, byte value ) {
-		data[index] = value;
+	public void set( int index, int value ) {
+		data[index] = (byte)value;
 	}
 
 	@Override public void setTo( DogArray_I8 original ) {
@@ -367,6 +390,33 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 			data[i] = data[j];
 			data[j] = tmp;
 		}
+	}
+
+	/**
+	 * Prints the queue to stdout as a hex array
+	 */
+	public void printHex() {
+		System.out.print("[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.printf("0x%02X ",data[i]);
+		}
+		System.out.print("]");
+	}
+
+	public static DogArray_I8 parseHex( String message ) {
+		message = message.replaceAll("\\[","");
+		message = message.replaceAll("\\]","");
+		message = message.replaceAll(" ","");
+
+		String[] words = message.split(",");
+
+		DogArray_I8 out = new DogArray_I8(words.length);
+		out.size = words.length;
+
+		for (int i = 0; i < words.length; i++) {
+			out.data[i] = Integer.decode(words[i]).byteValue();
+		}
+		return out;
 	}
 
 	public byte pop() {
