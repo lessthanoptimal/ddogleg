@@ -18,11 +18,10 @@
 
 package org.ddogleg.struct;
 
-
 import java.util.Arrays;
 
 /**
- * This is a queue that is composed of bytes.  Elements are added and removed from the tail
+ * This is a queue that is composed of integers.  Elements are added and removed from the tail
  *
  * @author Peter Abeles
  */
@@ -31,7 +30,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	public byte[] data;
 	public int size;
 
-	public DogArray_I8( int maxSize) {
+	public DogArray_I8( int maxSize ) {
 		data = new byte[ maxSize ];
 		this.size = 0;
 	}
@@ -75,6 +74,16 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * @param values primitive array
 	 * @return true if equal or false if not
 	 */
+	public boolean isEquals( int... values ) {
+		if (size!=values.length)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values[i])
+				return false;
+		}
+		return true;
+	}
+
 	public boolean isEquals( byte... values ) {
 		if (size!=values.length)
 			return false;
@@ -115,67 +124,23 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		size += arraySize;
 	}
 
-	public void add(int value) {
-		push(value);
+	public void add( int val ) {
+		push(val);
 	}
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			byte[] temp = new byte[ size * 2+5];
+			byte[] temp;
+			try {
+				temp = new byte[ size * 2+5];
+			} catch( OutOfMemoryError e ) {
+				System.gc();
+				temp = new byte[ 3*size/2];
+			}
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = (byte)val;
-	}
-
-	public int get( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[index];
-	}
-
-	public int getTail() {
-		if (size==0)
-			throw new IndexOutOfBoundsException("Array is empty");
-		return data[size-1];
-	}
-
-	/**
-	 * Returns an element starting from the end of the list. 0 = size -1
-	 */
-	public int getTail( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[size-index-1];
-	}
-
-	public void setTail( int index, byte value ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		data[size-index-1] = value;
-	}
-
-	/**
-	 * Gets the value at the index which corresponds to the specified fraction
-	 * @param fraction 0 to 1 inclusive
-	 * @return value at fraction
-	 */
-	public int getFraction( double fraction ) {
-		return get( (int)((size-1)*fraction) );
-	}
-
-	public int unsafe_get( int index ) {
-		return data[index];
-	}
-
-	public void set( int index , int value ) {
-		data[index] = (byte)value;
-	}
-
-	@Override
-	public void setTo( DogArray_I8 original ) {
-		resize(original.size);
-		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
 	/**
@@ -206,6 +171,31 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		byte[] out = new byte[size];
 		System.arraycopy(data,0,out,0,size);
 		return out;
+	}
+
+	public void remove( int index ) {
+		for( int i = index+1; i < size; i++ ) {
+			data[i-1] = data[i];
+		}
+		size--;
+	}
+
+	/**
+	 * Removes elements from the list starting at 'first' and ending at 'last'
+	 * @param first First index you wish to remove. Inclusive.
+	 * @param last Last index you wish to remove. Inclusive.
+	 */
+	public void remove( int first , int last ) {
+		if( last < first )
+			throw new IllegalArgumentException("first <= last. first="+first+" last="+last );
+		if( last >= size )
+			throw new IllegalArgumentException("last must be less than the max size. last="+last+" size="+size);
+
+		int delta = last-first+1;
+		for( int i = last+1; i < size; i++ ) {
+			data[i-delta] = data[i];
+		}
+		size -= delta;
 	}
 
 	/**
@@ -253,22 +243,70 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
-	/**
-	 * Removes elements from the list starting at 'first' and ending at 'last'
-	 * @param first First index you wish to remove. Inclusive.
-	 * @param last Last index you wish to remove. Inclusive.
-	 */
-	public void remove( int first , int last ) {
-		if( last < first )
-			throw new IllegalArgumentException("first <= last. first="+first+" last="+last );
-		if( last >= size )
-			throw new IllegalArgumentException("last must be less than the max size. last="+last+" size="+size);
+	public byte get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
 
-		int delta = last-first+1;
-		for( int i = last+1; i < size; i++ ) {
-			data[i-delta] = data[i];
+	public byte getTail() {
+		if (size==0)
+			throw new IndexOutOfBoundsException("Array is empty");
+		return data[size-1];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public byte getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
+	}
+
+	public void setTail( int index, int value ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		data[size-index-1] = (byte)value;
+	}
+
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public byte getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
+	public byte unsafe_get( int index ) {
+		return data[index];
+	}
+
+	public void set( int index , byte value ) {
+		data[index] = value;
+	}
+
+	@Override public void setTo( DogArray_I8 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
+	@Override public void resize( int size ) {
+		if( data.length < size ) {
+			data = new byte[size];
 		}
-		size -= delta;
+		this.size = size;
+	}
+
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
+	public void resize( int size , byte value ) {
+		resize(size);
+		fill(value);
 	}
 
 	public void fill( byte value ) {
@@ -287,24 +325,6 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		return false;
 	}
 
-	@Override
-	public void resize( int size ) {
-		if( data.length < size ) {
-			data = new byte[size];
-		}
-		this.size = size;
-	}
-
-	/**
-	 * Resizes the array and assigns the default value to every element.
-	 * @param size New size
-	 * @param value Default value
-	 */
-	public void resize( int size , byte value ) {
-		resize(size);
-		fill(value);
-	}
-
 	@Override public void extend( int size ) {
 		reserve(size);
 		this.size = size;
@@ -318,29 +338,21 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		data = tmp;
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
-	public int pop() {
-		return data[--size];
-	}
-
-	@Override
-	public void zero() {
+	@Override public void zero() {
 		Arrays.fill(data,0,size,(byte)0);
 	}
 
-	@Override
-	public DogArray_I8 copy() {
-		DogArray_I8 ret = new DogArray_I8(size);
+	@Override public DogArray_I8 copy() {
+		var ret = new DogArray_I8(size);
 		ret.setTo(this);
 		return ret;
 	}
 
-	@Override
-	public void flip() {
+	@Override public void flip() {
 		if( size <= 1 )
 			return;
 
@@ -352,39 +364,16 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
-	/**
-	 * Prints the queue to stdout as a hex array
-	 */
-	public void printHex() {
-		System.out.print("[ ");
-		for (int i = 0; i < size; i++) {
-			System.out.printf("0x%02X ",data[i]);
-		}
-		System.out.print("]");
-	}
-
-	public static DogArray_I8 parseHex( String message ) {
-		message = message.replaceAll("\\[","");
-		message = message.replaceAll("\\]","");
-		message = message.replaceAll(" ","");
-
-		String[] words = message.split(",");
-
-		DogArray_I8 out = new DogArray_I8(words.length);
-		out.size = words.length;
-
-		for (int i = 0; i < words.length; i++) {
-			out.data[i] = Integer.decode(words[i]).byteValue();
-		}
-		return out;
-	}
+	public byte pop() {
+        return data[--size];
+    }
 
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
 	 * @param value Value to search for
 	 * @return index or -1 if it's not in the list
 	 */
-	public int indexOf( byte value ) {
+	public int indexOf( int value ) {
 		for (int i = 0; i < size; i++) {
 			if( data[i] == value )
 				return i;
@@ -392,8 +381,41 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		return -1;
 	}
 
-	@Override
-	public void sort() {
+	public int indexOfGreatest() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		byte best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] > best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected	;
+	}
+
+	public int indexOfLeast() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		byte best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] < best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected;
+	}
+
+	@Override public void sort() {
 		Arrays.sort(data,0,size);
 	}
 
@@ -402,7 +424,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 			func.process(i,data[i]);
 		}
 	}
-	
+
 	public void forEach(FunctionEach func) {
 		for (int i = 0; i < size; i++) {
 			func.process(data[i]);

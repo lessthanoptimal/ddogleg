@@ -37,9 +37,9 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 
 	@Test void isEquals() {
 		DogArray_I8 alg = DogArray_I8.array(0,0,1,1,4);
-		assertTrue(alg.isEquals((byte)0,(byte)0,(byte)1,(byte)1,(byte)4));
-		assertFalse(alg.isEquals((byte)0,(byte)0,(byte)1,(byte)1));
-		assertFalse(alg.isEquals((byte)0,(byte)0,(byte)3,(byte)1,(byte)4));
+		assertTrue(alg.isEquals(0,0,1,1,4));
+		assertFalse(alg.isEquals(0,0,1,1));
+		assertFalse(alg.isEquals(0,0,1,2,4));
 	}
 
 	@Test void addAll_queue() {
@@ -57,14 +57,14 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		queue0.addAll(queue1);
 		assertEquals(5,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+1);
+			assertEquals(queue0.get(i),i+1,1e-8);
 		}
 
 		queue0.reset();
 		queue0.addAll(queue1);
 		assertEquals(3,queue0.size);
 		for( int i = 0; i < queue0.size; i++ ) {
-			assertEquals(queue0.get(i),i+3);
+			assertEquals(queue0.get(i),i+3,1e-8);
 		}
 	}
 
@@ -140,18 +140,18 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12,alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(1,alg.get(i));
+			assertEquals(1.0,alg.get(i));
 		}
 		// The array isn't redeclared but the value should still change
-		alg.resize(10,(byte)2);
+		alg.resize(10, (byte)2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10,alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(2,alg.get(i));
+			assertEquals(2.f,alg.get(i));
 		}
 		// it shouldn't change the entire array's value since that's wasteful
 		for (int i = alg.size; i < alg.data.length; i++) {
-			assertEquals(1,alg.data[i]);
+			assertEquals(1.0,alg.data[i]);
 		}
 	}
 
@@ -191,6 +191,29 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
+	@Test void remove_swap() {
+		var alg = DogArray_I8.array(0,0,0,0,1);
+		alg.removeSwap(1);
+		assertEquals(4,alg.size);
+		alg.forIdx((i,v)-> assertEquals(i!=1?0.0:1.0, v));
+	}
+
+	@Test void remove() {
+
+		DogArray_I8 alg = new DogArray_I8(10);
+
+		alg.push(1);
+		alg.push(3);
+		alg.push(4);
+		alg.push(5);
+
+		alg.remove(1);
+		assertEquals(3,alg.size);
+		assertEquals(1,alg.get(0),1e-8);
+		assertEquals(4,alg.get(1),1e-8);
+		assertEquals(5,alg.get(2),1e-8);
+	}
+
 	@Test void remove_two() {
 		DogArray_I8 alg = new DogArray_I8(10);
 
@@ -210,13 +233,6 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		assertEquals(2,alg.size);
 		assertEquals(5,alg.get(0));
 		assertEquals(6,alg.get(1));
-	}
-
-	@Test void remove_swap() {
-		var alg = DogArray_I8.array(0,0,0,0,1);
-		alg.removeSwap(1);
-		assertEquals(4,alg.size);
-		alg.forIdx((i,v)-> assertEquals(i!=1?0:1, v));
 	}
 
 	@Override
@@ -247,27 +263,25 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		alg.push(4);
 		alg.push(5);
 
-		assertEquals(1,alg.indexOf((byte)3));
-		assertEquals(-1,alg.indexOf((byte)8));
+		assertEquals(1,alg.indexOf(3));
+		assertEquals(-1,alg.indexOf(8));
 	}
 
 	@Test void sort() {
-		DogArray_I8 alg = new DogArray_I8(6);
+		var alg = new DogArray_I8(6);
 
 		alg.push(8);
 		alg.push(2);
 		alg.push(4);
 		alg.push(3);
-		alg.push(-1);
 
 		alg.sort();
 
-		assertEquals(5,alg.size);
-		assertEquals(-1,alg.get(0));
-		assertEquals(2,alg.get(1));
-		assertEquals(3,alg.get(2));
-		assertEquals(4,alg.get(3));
-		assertEquals(8,alg.get(4));
+		assertEquals(4,alg.size);
+		assertEquals(2,alg.get(0),1e-8);
+		assertEquals(3,alg.get(1),1e-8);
+		assertEquals(4,alg.get(2),1e-8);
+		assertEquals(8,alg.get(3),1e-8);
 	}
 
 	@Test void getFraction() {
@@ -284,6 +298,30 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		assertEquals(1,alg.getFraction(1.7/19.0));
 		assertEquals(19/2,alg.getFraction(0.5));
 		assertEquals(19,alg.getFraction(1.0));
+	}
+
+	@Test void indexOfGreatest() {
+		DogArray_I8 alg = new DogArray_I8(20);
+
+		assertEquals(-1,alg.indexOfGreatest());
+
+		alg.add(-3);
+		alg.add(-2);
+		alg.add(-1);
+
+		assertEquals(2, alg.indexOfGreatest());
+	}
+
+	@Test void indexOfLeast() {
+		DogArray_I8 alg = new DogArray_I8(20);
+
+		assertEquals(-1,alg.indexOfLeast());
+
+		alg.add(-3);
+		alg.add(-2);
+		alg.add(-4);
+
+		assertEquals(2, alg.indexOfLeast());
 	}
 
 	@Test void getTail() {
@@ -315,7 +353,7 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		}
 
 		for (int i = 0; i < 20; i++) {
-			alg.setTail(i, (byte)-i);
+			alg.setTail(i, -i);
 		}
 		for (int i = 0; i < 20; i++) {
 			assertEquals(-i, alg.getTail(i));
@@ -324,7 +362,7 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 
 	@Test void forIdx() {
 		DogArray_I8 alg = DogArray_I8.array(1,2,3,4,5);
-		alg.forIdx((idx,value)-> assertEquals(idx+1,value));
+		alg.forIdx((idx,value)-> assertEquals(idx+1,value, 1e-8));
 	}
 
 	@Test void forEach() {

@@ -18,7 +18,6 @@
 
 package org.ddogleg.struct;
 
-
 import org.ddogleg.sorting.QuickSort_S32;
 
 import java.util.Arrays;
@@ -60,18 +59,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	/**
-	 * Creates a new array initialized with values from min to max, exclusive.
-	 */
-	public static DogArray_I32 range( int min , int max ) {
-		DogArray_I32 out = zeros(max-min);
-		for (int i = min; i < max; i++) {
-			out.data[i-min] = i;
-		}
-		return out;
-	}
-
-	/**
-	 * Counts the number of times the specified value occurs in the list
+	 * Counts the number of times the specified value occures in the list
 	 */
 	public int count( int value ) {
 		int total = 0;
@@ -84,6 +72,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	/**
 	 * Sees is the primitive array is equal to the values in this array
+	 *
 	 * @param values primitive array
 	 * @return true if equal or false if not
 	 */
@@ -127,67 +116,23 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		size += arraySize;
 	}
 
-	public void add(int value) {
-		push(value);
+	public void add( int val ) {
+		push(val);
 	}
 
 	public void push( int val ) {
 		if( size == data.length ) {
-			int[] temp = new int[ size * 2+5];
+			int[] temp;
+			try {
+				temp = new int[ size * 2+5];
+			} catch( OutOfMemoryError e ) {
+				System.gc();
+				temp = new int[ 3*size/2];
+			}
 			System.arraycopy(data,0,temp,0,size);
 			data = temp;
 		}
 		data[size++] = val;
-	}
-
-	public int get( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[index];
-	}
-
-	public int getTail() {
-		if (size==0)
-			throw new IndexOutOfBoundsException("Array is empty");
-		return data[size-1];
-	}
-
-	/**
-	 * Returns an element starting from the end of the list. 0 = size -1
-	 */
-	public int getTail( int index ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		return data[size-index-1];
-	}
-
-	public void setTail( int index, int value ) {
-		if( index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
-		data[size-index-1] = value;
-	}
-
-	/**
-	 * Gets the value at the index which corresponds to the specified fraction
-	 * @param fraction 0 to 1 inclusive
-	 * @return value at fraction
-	 */
-	public int getFraction( double fraction ) {
-		return get( (int)((size-1)*fraction) );
-	}
-
-	public int unsafe_get( int index ) {
-		return data[index];
-	}
-
-	public void set( int index , int value ) {
-		data[index] = value;
-	}
-
-	@Override
-	public void setTo( DogArray_I32 original ) {
-		resize(original.size);
-		System.arraycopy(original.data, 0, data, 0, size());
 	}
 
 	/**
@@ -209,6 +154,15 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	public DogArray_I32 setTo( int... src) {
 		setTo(src, 0, src.length);
 		return this;
+	}
+
+	/**
+	 * Creates a new primitive array which is a copy.
+	 */
+	public int[] toArray() {
+		int[] out = new int[size];
+		System.arraycopy(data,0,out,0,size);
+		return out;
 	}
 
 	public void remove( int index ) {
@@ -257,18 +211,6 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	/**
-	 * Removes the first 'total' elements from the queue. Element 'total' will be the new start of the queue
-	 *
-	 * @param total Number of elements to remove from the head of the queue
-	 */
-	public void removeHead( int total ) {
-		for( int j = total; j < size; j++ ) {
-			data[j-total] = data[j];
-		}
-		size -= total;
-	}
-
-	/**
 	 * Removes the specified index from the array by swapping it with last element. Does not preserve order
 	 * but has a runtime of O(1).
 	 *
@@ -293,17 +235,86 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		}
 	}
 
-	@Override
-	public void resize( int size ) {
+	public int get( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[index];
+	}
+
+	public int getTail() {
+		if (size==0)
+			throw new IndexOutOfBoundsException("Array is empty");
+		return data[size-1];
+	}
+
+	/**
+	 * Returns an element starting from the end of the list. 0 = size -1
+	 */
+	public int getTail( int index ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		return data[size-index-1];
+	}
+
+	public void setTail( int index, int value ) {
+		if( index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = "+index+"  size = "+size);
+		data[size-index-1] = value;
+	}
+
+	/**
+	 * Gets the value at the index which corresponds to the specified fraction
+	 * @param fraction 0 to 1 inclusive
+	 * @return value at fraction
+	 */
+	public int getFraction( double fraction ) {
+		return get( (int)((size-1)*fraction) );
+	}
+
+	public int unsafe_get( int index ) {
+		return data[index];
+	}
+
+	public void set( int index , int value ) {
+		data[index] = value;
+	}
+
+	@Override public void setTo( DogArray_I32 original ) {
+		resize(original.size);
+		System.arraycopy(original.data, 0, data, 0, size());
+	}
+
+	@Override public void resize( int size ) {
 		if( data.length < size ) {
 			data = new int[size];
 		}
 		this.size = size;
 	}
 
+	/**
+	 * Resizes the array and assigns the default value to every element.
+	 * @param size New size
+	 * @param value Default value
+	 */
 	public void resize( int size , int value ) {
 		resize(size);
 		fill(value);
+	}
+
+	public void fill( int value ) {
+		Arrays.fill(data, 0, size, value);
+	}
+
+	public void fill( int idx0, int idx1, int value ) {
+		Arrays.fill(data, idx0, idx1, value);
+	}
+
+	public boolean contains( int value ) {
+		for (int i = 0; i < size; i++) {
+			if( data[i] == value )
+				return true;
+		}
+		return false;
 	}
 
 	@Override public void extend( int size ) {
@@ -319,45 +330,21 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		data = tmp;
 	}
 
-	public void fill( int value ) {
-		Arrays.fill(data,0,size,value);
-	}
-
-	public void fill( int idx0, int idx1, int value ) {
-		Arrays.fill(data, idx0, idx1, value);
-	}
-
-	public boolean contains( int value ) {
-		for (int i = 0; i < size; i++) {
-			if( data[i] == value )
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
-	public int pop() {
-		return data[--size];
+	@Override public void zero() {
+		Arrays.fill(data,0,size,(int)0);
 	}
 
-	@Override
-	public void zero() {
-		Arrays.fill(data,0,size,0);
-	}
-
-	@Override
-	public DogArray_I32 copy() {
-		DogArray_I32 ret = new DogArray_I32(size);
+	@Override public DogArray_I32 copy() {
+		var ret = new DogArray_I32(size);
 		ret.setTo(this);
 		return ret;
 	}
 
-	@Override
-	public void flip() {
+	@Override public void flip() {
 		if( size <= 1 )
 			return;
 
@@ -369,14 +356,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		}
 	}
 
-	/**
-	 * Creates a new primitive array which is a copy.
-	 */
-	public int[] toArray() {
-		int[] out = new int[size];
-		System.arraycopy(data,0,out,0,size);
-		return out;
-	}
+	public int pop() {
+        return data[--size];
+    }
 
 	/**
 	 * Returns the index of the first element with the specified 'value'.  return -1 if it wasn't found
@@ -391,15 +373,48 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		return -1;
 	}
 
-	@Override
-	public void sort() {
+	public int indexOfGreatest() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		int best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] > best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected	;
+	}
+
+	public int indexOfLeast() {
+		if( size <=- 0 )
+			return -1;
+
+		int selected = 0;
+		int best = data[0];
+
+		for (int i = 1; i < size; i++) {
+			if( data[i] < best ) {
+				best = data[i];
+				selected = i;
+			}
+		}
+
+		return selected;
+	}
+
+	@Override public void sort() {
 		Arrays.sort(data,0,size);
 	}
 
 	/**
 	 * Sort but with a re-usable sorter to avoid declaring new memory
 	 */
-	public void sort(QuickSort_S32 sorter) {
+	public void sort( QuickSort_S32 sorter) {
 		sorter.sort(data,size);
 	}
 
