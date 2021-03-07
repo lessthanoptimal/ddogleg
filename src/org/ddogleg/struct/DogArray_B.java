@@ -21,7 +21,7 @@ package org.ddogleg.struct;
 import java.util.Arrays;
 
 /**
- * This is a queue that is composed of booleans.  Elements are added and removed from the tail
+ * Growable array composed of booleans.
  *
  * @author Peter Abeles
  */
