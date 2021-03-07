@@ -54,6 +54,7 @@ public class GenerateBigDogArray {
 		swaps.add( new WordSwaps("byte","_I8"));
 		swaps.add( new WordSwaps("int","_I32"));
 		swaps.add( new WordSwaps("long","_I64"));
+		swaps.add( new WordSwaps("boolean","_B"));
 
 		for (String template : templates ) {
 			File templateFile = new File(template);
