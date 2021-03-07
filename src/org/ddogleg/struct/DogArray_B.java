@@ -68,7 +68,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	}
 
 	/**
-	 * Counts the number of times the specified value occures in the list
+	 * Counts the number of times the specified value occurs in the list
 	 */
 	public int count( boolean value ) {
 		int total = 0;

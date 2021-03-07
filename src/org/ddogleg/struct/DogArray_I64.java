@@ -43,7 +43,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
 	public static DogArray_I64 zeros( int length ) {
-		DogArray_I64 out = new DogArray_I64(length);
+		var out = new DogArray_I64(length);
 		out.size = length;
 		return out;
 	}
@@ -57,7 +57,22 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	/**
-	 * Counts the number of times the specified value occures in the list
+	 * Returns a new array with values containing range of integer numbers from idx0 to idx1-1.
+	 *
+	 * @param idx0 Lower extent, inclusive.
+	 * @param idx1 Upper extent, exclusive.
+	 * @return new array.
+	 */
+	public static DogArray_I64 range( int idx0, int idx1 ) {
+		DogArray_I64 out = zeros(idx1 - idx0);
+		for (int i = idx0; i < idx1; i++) {
+			out.data[i - idx0] = (long)i;
+		}
+		return out;
+	}
+
+	/**
+	 * Counts the number of times the specified value occurs in the list
 	 */
 	public int count( long value ) {
 		int total = 0;

@@ -27,6 +27,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
+	@Test void range() {
+		DogArray_F32 alg = DogArray_F32.range(-1, 20);
+
+		assertEquals(21, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(i-1, alg.get(i));
+		}
+	}
+
 	@Test void count() {
 		DogArray_F32 alg = DogArray_F32.array(0, 0, 1, 1, 1);
 
