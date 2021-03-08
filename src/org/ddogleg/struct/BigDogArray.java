@@ -205,24 +205,6 @@ public abstract class BigDogArray<Array> {
 		setArray(this.size - length, array, offset, length);
 	}
 
-	protected void appendGrowthLogic( int blockIdx, int indexInBlock ) {
-		// see if it needs to grow by one block
-		if (indexInBlock == 0) {
-			// Is there a block in the queue it can recycle?
-			if (blocks.size <= blockIdx) {
-				// Nope, need to add a new block
-				int desiredBlockSize = computeLastBlockSize(size + 1, blocks.size + 1);
-				desiredBlockSize = Math.min(blockSize, desiredBlockSize + initialBlockSize);
-				blocks.add(newArrayInstance(desiredBlockSize));
-			} else {
-				// there is an existing block, but we need to make it bigger
-				growLastBlock(1);
-			}
-		} else if (indexInBlock >= arrayLength(blocks.data[blockIdx])) {
-			growLastBlock(1);
-		}
-	}
-
 	/**
 	 * Copies the passed in array into this array at the specified location
 	 *
@@ -292,49 +274,6 @@ public abstract class BigDogArray<Array> {
 		if (idx0 != idx1) {
 			op.process(blocks.data[idx0/blockSize], 0, idx1 - idx0, idx0 - origIdx0);
 		}
-	}
-
-	public Array getBlock( int index ) {
-		return blocks.get(index/blockSize);
-	}
-
-	/**
-	 * Changes the initial block size. This only matters when blocks can grow. If the value is out of bounds
-	 * it is assigned the closest valid value.
-	 *
-	 * @param initialBlockSize initial block size
-	 */
-	public void setInitialBlockSize( int initialBlockSize ) {
-		this.initialBlockSize = Math.max(1, Math.min(blockSize, initialBlockSize));
-	}
-
-	/**
-	 * If a growth strategy is employed on the last block this will
-	 *
-	 * @param requiredNewSpace (Input) How much new space is needed. It's assumed that this value won't bleed into the next block
-	 */
-	protected void growLastBlock( int requiredNewSpace ) {
-		Array block = blocks.data[blocks.size - 1];
-		if (arrayLength(block) == blockSize)
-			return;
-
-		// The minimum size of the block to fit the new data
-		int minimum = (size + requiredNewSpace)%blockSize;
-		if (minimum == 0)
-			minimum = blockSize;
-		if (arrayLength(block) >= minimum)
-			return;
-
-		// Need to declare a larger block to hold everything. Let's add some extra room
-		// to avoid doing this process too often
-		int desired = Math.min(blockSize, arrayLength(block)*2 + requiredNewSpace + initialBlockSize);
-
-		// declare the new array and copy the old array into it
-		Array work = newArrayInstance(desired);
-		System.arraycopy(block, 0, work, 0, size%blockSize);
-
-		// replace the old array with the new array
-		blocks.data[blocks.size - 1] = work;
 	}
 
 	private int getDesiredBlocks( int desiredSize ) {

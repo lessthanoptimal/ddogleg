@@ -55,15 +55,9 @@ public class BigDogArray_I32 extends BigDogArray<int[]> {
 	 * @param value (Input) The new value which is to be added
 	 */
 	public void append( int value ) {
-		// Current block that it's in
-		int blockIdx = size/blockSize;
-		// The new element in the block it will be at
-		int indexInBlock = (size%blockSize);
-
-		appendGrowthLogic(blockIdx, indexInBlock);
-
-		blocks.data[blockIdx][indexInBlock] = value;
-		size++;
+		allocate(this.size + 1, true, true);
+		blocks.data[size/blockSize][size%blockSize] = value;
+		this.size++;
 	}
 
 	/**
