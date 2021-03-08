@@ -345,6 +345,14 @@ public abstract class BigDogArray<Array> {
 		return arrayLength(blocks.get(block));
 	}
 
+	/**
+	 * Assigns a new initial block size. The value is adjusted to ensure that it is valid. Can't be
+	 * larger than a block or less than 1.
+	 */
+	public void setInitialBlockSize( int initialBlockSize ) {
+		this.initialBlockSize = Math.min(blockSize,Math.max(1,initialBlockSize));
+	}
+
 	protected abstract Array newArrayInstance( int size );
 
 	protected abstract int arrayLength( Array array );
