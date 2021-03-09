@@ -20,6 +20,7 @@ Date:     2021
   * This scales much better as array size gets very very large
 - PrimitiveArrays
   * Added minIdx(), maxIdx()
+- Added QuickSortComparable
 
 ------------------------------------------------------
 Version:  0.19
