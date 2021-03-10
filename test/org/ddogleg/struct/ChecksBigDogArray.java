@@ -98,6 +98,17 @@ public abstract class ChecksBigDogArray<Array> {
 		}
 	}
 
+	@Test void getDesiredBlocks() {
+		BigDogArray<Array> alg = createBigDog(1, 10, Growth.GROW_FIRST);
+
+		assertEquals(1, alg.getDesiredBlocks(1));
+		assertEquals(1, alg.getDesiredBlocks(9));
+		assertEquals(1, alg.getDesiredBlocks(10));
+		assertEquals(2, alg.getDesiredBlocks(11));
+		assertEquals(2, alg.getDesiredBlocks(19));
+		assertEquals(2, alg.getDesiredBlocks(20));
+	}
+
 	@Test void allocate_GROW_FIRST() {
 		BigDogArray<Array> alg = createBigDog(1, 10, Growth.GROW_FIRST);
 
@@ -106,6 +117,9 @@ public abstract class ChecksBigDogArray<Array> {
 		assertEquals(2, alg.getTotalAllocation());
 		alg.allocate(3,false,true);
 		assertTrue(3 <= alg.getTotalAllocation() && 10 >= alg.getTotalAllocation());
+
+		alg.allocate(10,false,false);
+		assertEquals(10, alg.getTotalAllocation());
 
 		alg.allocate(12,false,false);
 		assertEquals(20, alg.getTotalAllocation());
@@ -123,6 +137,9 @@ public abstract class ChecksBigDogArray<Array> {
 		alg.allocate(3,false,true);
 		assertTrue(3 <= alg.getTotalAllocation() && 10 >= alg.getTotalAllocation());
 
+		alg.allocate(10,false,false);
+		assertEquals(10, alg.getTotalAllocation());
+
 		alg.allocate(12,false,false);
 		assertEquals(12, alg.getTotalAllocation());
 
@@ -137,6 +154,9 @@ public abstract class ChecksBigDogArray<Array> {
 		alg.allocate(2,false,false);
 		assertEquals(10, alg.getTotalAllocation());
 		alg.allocate(3,false,true);
+		assertEquals(10, alg.getTotalAllocation());
+
+		alg.allocate(10,false,false);
 		assertEquals(10, alg.getTotalAllocation());
 
 		alg.allocate(12,false,false);

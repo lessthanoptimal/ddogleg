@@ -113,6 +113,9 @@ public abstract class BigDogArray<Array> {
 	 * exact request?
 	 */
 	protected void allocate( int desiredSize, boolean saveValues, boolean addExtra ) {
+		if (desiredSize < 0)
+			throw new IllegalArgumentException("desiredSize must be positive. Overflowed? desiredSize=" + desiredSize);
+
 		int desiredNumBlocks = getDesiredBlocks(desiredSize);
 
 		// See if the current allocation in blocks is larger than what's requested
@@ -213,30 +216,31 @@ public abstract class BigDogArray<Array> {
 	 * @param offset (Input) Offset inside of array that it should be copied from
 	 * @param length (Input) Number of elements in array to copy
 	 */
-	public void setArray( int location, Array array, int offset, int length ) {
-		int idx0 = location;
-		int idx1 = location + length;
+	public void setArray( long location, Array array, int offset, int length ) {
+		// must use long to avoid overflow issues
+		long idx0 = location;
+		long idx1 = location + length;
 
 		// First block is a special case. Fill up the block and make sure idx0 is aligned to the blocks
 		if (idx0%blockSize != 0) {
-			int blockIdx0 = idx0%blockSize;
+			int blockIdx0 = (int)(idx0%blockSize);
 			int remainingInBlock = blockSize - blockIdx0;
-			int lengthInBlock = Math.min(remainingInBlock, idx1 - idx0);
-			System.arraycopy(array, offset, blocks.data[idx0/blockSize], blockIdx0, lengthInBlock);
+			int lengthInBlock = Math.min(remainingInBlock, (int)(idx1 - idx0));
+			System.arraycopy(array, offset, blocks.data[(int)(idx0/blockSize)], blockIdx0, lengthInBlock);
 			offset += lengthInBlock;
 			idx0 += lengthInBlock;
 		}
 
 		// idx0 should be at the start of a block now. Just mindlessly copy until it hits the end of a block
-		while (idx0 + blockSize < idx1) {
-			System.arraycopy(array, offset, blocks.data[idx0/blockSize], 0, blockSize);
+		while (idx0 + blockSize <= idx1) {
+			System.arraycopy(array, offset, blocks.data[(int)(idx0/blockSize)], 0, blockSize);
 			offset += blockSize;
 			idx0 += blockSize;
 		}
 
 		// fill in the last block
 		if (idx0 != idx1) {
-			System.arraycopy(array, offset, blocks.data[idx0/blockSize], 0, idx1 - idx0);
+			System.arraycopy(array, offset, blocks.data[(int)(idx0/blockSize)], 0, (int)(idx1 - idx0));
 		}
 	}
 
@@ -276,7 +280,10 @@ public abstract class BigDogArray<Array> {
 		}
 	}
 
-	private int getDesiredBlocks( int desiredSize ) {
+	/**
+	 * Returns the number of blocks needed to store an array of the specified size
+	 */
+	protected final int getDesiredBlocks( int desiredSize ) {
 		return desiredSize/blockSize + (desiredSize%blockSize > 0 ? 1 : 0);
 	}
 
@@ -338,7 +345,7 @@ public abstract class BigDogArray<Array> {
 	 * or equal to this number\
 	 */
 	public int getTotalAllocation() {
-		return (blocks.size-1)*blockSize + arrayLength(blocks.data[blocks.size-1]);
+		return (blocks.size - 1)*blockSize + arrayLength(blocks.data[blocks.size - 1]);
 	}
 
 	protected int blockArrayLength( int block ) {
@@ -350,7 +357,7 @@ public abstract class BigDogArray<Array> {
 	 * larger than a block or less than 1.
 	 */
 	public void setInitialBlockSize( int initialBlockSize ) {
-		this.initialBlockSize = Math.min(blockSize,Math.max(1,initialBlockSize));
+		this.initialBlockSize = Math.min(blockSize, Math.max(1, initialBlockSize));
 	}
 
 	protected abstract Array newArrayInstance( int size );
