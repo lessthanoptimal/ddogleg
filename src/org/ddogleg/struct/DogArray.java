@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-
 /**
  * Growable array which automatically creates, recycles, and resets its elements. Access to internal variables
  * is provided for high performant code. If a reset function is provided then when an object is created or recycled
@@ -41,7 +40,7 @@ public class DogArray<T> extends FastAccess<T> {
 	// new instances are created using this. If null then no new instances are created automatically.
 	private @Getter Factory<T> factory;
 	// function that's called to reset a returned instance
-	private @Getter  @Setter DProcess<T> reset;
+	private @Getter @Setter DProcess<T> reset;
 	// function that's called to initialize a new instance
 	private @Getter @Setter DProcess<T> initialize = new DProcess.DoNothing<>();
 
@@ -71,7 +70,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param factory Creates new instances
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 */
-	public DogArray( Factory<T> factory , DProcess<T> reset ) {
+	public DogArray( Factory<T> factory, DProcess<T> reset ) {
 		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
 		init(10, factory);
@@ -84,7 +83,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param reset Called whenever an element is recycled and needs to be reset
 	 * @param initialize Called after a new instance is created
 	 */
-	public DogArray( Factory<T> factory , DProcess<T> reset, DProcess<T> initialize ) {
+	public DogArray( Factory<T> factory, DProcess<T> reset, DProcess<T> initialize ) {
 		super((Class<T>)factory.newInstance().getClass());
 		this.reset = reset;
 		this.initialize = initialize;
@@ -102,19 +101,19 @@ public class DogArray<T> extends FastAccess<T> {
 	/**
 	 * Data structure initialization is done here so that child classes can declay initialization until they are ready
 	 */
-	protected void init(int initialMaxSize, Factory<T> factory) {
+	protected void init( int initialMaxSize, Factory<T> factory ) {
 		this.size = 0;
 		this.factory = factory;
-		if( this.reset == null )
+		if (this.reset == null)
 			this.reset = new DProcess.DoNothing<>();
 
-		data = (T[]) Array.newInstance(type, initialMaxSize);
+		data = (T[])Array.newInstance(type, initialMaxSize);
 
-		if( factory != null ) {
-			for( int i = 0; i < initialMaxSize; i++ ) {
+		if (factory != null) {
+			for (int i = 0; i < initialMaxSize; i++) {
 				try {
 					data[i] = createInstance();
-				} catch( RuntimeException e ) {
+				} catch (RuntimeException e) {
 					throw new RuntimeException("declareInstances is true, but createInstance() can't create a new instance.  Maybe override createInstance()?");
 				}
 			}
@@ -143,38 +142,38 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param toIndex the index of the last element, exclusive, to be sorted
 	 * @param workSpace Optional internal workspace. Can be set to null.
 	 */
-	public void remove( int[] indexes , int fromIndex, int toIndex, @Nullable List<T> workSpace ) {
-		if( toIndex <= fromIndex )
+	public void remove( int[] indexes, int fromIndex, int toIndex, @Nullable List<T> workSpace ) {
+		if (toIndex <= fromIndex)
 			return;
-		if( workSpace == null ) {
+		if (workSpace == null) {
 			workSpace = new ArrayList<>();
 		} else {
 			workSpace.clear();
 		}
 		// sort indexes from lowest to highest
-		Arrays.sort(indexes,fromIndex,toIndex);
+		Arrays.sort(indexes, fromIndex, toIndex);
 
 		// the next index wihch should be skipped
 		int target = indexes[fromIndex];
 		// how many indexes have been removed so far
 		int count = 0;
-		for ( int i = indexes[fromIndex]; i < size; i++ ) {
-			if( i == target ) {
-				workSpace.add( data[i] );
+		for (int i = indexes[fromIndex]; i < size; i++) {
+			if (i == target) {
+				workSpace.add(data[i]);
 				count++;
-				if( count < toIndex-fromIndex ) {
-					target = indexes[fromIndex+count];
+				if (count < toIndex - fromIndex) {
+					target = indexes[fromIndex + count];
 				} else {
 					target = -1;
 				}
 			} else {
-				data[i-count] = data[i];
+				data[i - count] = data[i];
 			}
 		}
 
 		// push removed objects to the end
 		for (int i = 0; i < workSpace.size(); i++) {
-			data[size-i-1] = workSpace.get(i);
+			data[size - i - 1] = workSpace.get(i);
 		}
 		size -= workSpace.size();
 	}
@@ -185,7 +184,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @return The last element in the list that was removed.
 	 */
 	public T removeTail() {
-		if( size > 0 ) {
+		if (size > 0) {
 			size--;
 			return data[size];
 		} else
@@ -203,12 +202,12 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @return A new instance.
 	 */
 	public T grow() {
-		if( size < data.length ) {
+		if (size < data.length) {
 			T ret = data[size++];
 			reset.process(ret);
 			return ret;
 		} else {
-			reserve((data.length+1)*2);
+			reserve((data.length + 1)*2);
 			return data[size++];
 		}
 	}
@@ -216,11 +215,11 @@ public class DogArray<T> extends FastAccess<T> {
 	/**
 	 * Grows the array and adds all the items in list. Values are copied using the provided function
 	 */
-	public <S> void copyAll(List<S> list , Set<S,T> setter ) {
-		reserve(size()+list.size());
+	public <S> void copyAll( List<S> list, Set<S, T> setter ) {
+		reserve(size() + list.size());
 		for (int i = 0; i < list.size(); i++) {
 			T dst = grow();
-			setter.set(list.get(i),dst);
+			setter.set(list.get(i), dst);
 		}
 	}
 
@@ -234,10 +233,10 @@ public class DogArray<T> extends FastAccess<T> {
 	@Override
 	public T remove( int index ) {
 		T removed = data[index];
-		for( int i = index+1; i < size; i++ ) {
-			data[i-1] = data[i];
+		for (int i = index + 1; i < size; i++) {
+			data[i - 1] = data[i];
 		}
-		data[size-1] = removed;
+		data[size - 1] = removed;
 		size--;
 		return removed;
 	}
@@ -251,7 +250,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 */
 	public boolean remove( T target ) {
 		int index = indexOf(target);
-		if( index < 0 )
+		if (index < 0)
 			return false;
 		remove(index);
 		return true;
@@ -267,8 +266,8 @@ public class DogArray<T> extends FastAccess<T> {
 	@Override
 	public T removeSwap( int index ) {
 		T removed = data[index];
-		data[index] = data[size-1];
-		data[size-1] = removed;
+		data[index] = data[size - 1];
+		data[size - 1] = removed;
 		size--;
 		return removed;
 	}
@@ -280,16 +279,16 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * @param length Requested minimum internal array length
 	 */
-	public void reserve( int length) {
+	public void reserve( int length ) {
 		// now need to grow since it is already larger
-		if( this.data.length >= length)
+		if (this.data.length >= length)
 			return;
 
-		T []data = (T[])Array.newInstance(type, length);
-		System.arraycopy(this.data,0,data,0,this.data.length);
+		T[] data = (T[])Array.newInstance(type, length);
+		System.arraycopy(this.data, 0, data, 0, this.data.length);
 
-		if( factory != null ) {
-			for( int i = this.data.length; i < length; i++ ) {
+		if (factory != null) {
+			for (int i = this.data.length; i < length; i++) {
 				data[i] = createInstance();
 			}
 		}
@@ -298,9 +297,25 @@ public class DogArray<T> extends FastAccess<T> {
 
 	/**
 	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
+	 *
+	 * @param length The new size of the queue
+	 * @param initializer Used to assign an initial value to newly added elements to the array. Overrides
+	 * default initialization
+	 */
+	public void resize( int length, DProcess<T> initializer ) {
+		reserve(length);
+		for (int i = size; i < length; i++) {
+			initializer.process(data[i]);
+		}
+		this.size = length;
+	}
+
+	/**
+	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
+	 *
 	 * @param length The new size of the queue
 	 */
-	public void resize(int length) {
+	public void resize( int length ) {
 		reserve(length);
 		for (int i = size; i < length; i++) {
 			reset.process(data[i]);
@@ -310,10 +325,10 @@ public class DogArray<T> extends FastAccess<T> {
 
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {
-			int selected = rand.nextInt(size-i);
+			int selected = rand.nextInt(size - i);
 			T tmp = data[selected];
-			data[selected] = data[size-i-1];
-			data[size-i-1] = tmp;
+			data[selected] = data[size - i - 1];
+			data[size - i - 1] = tmp;
 		}
 	}
 
@@ -327,10 +342,10 @@ public class DogArray<T> extends FastAccess<T> {
 		return instance;
 	}
 
-	public List<T> copyIntoList(List<T> ret) {
-		if( ret == null )
+	public List<T> copyIntoList( List<T> ret ) {
+		if (ret == null)
 			ret = new ArrayList<>(size);
-		for( int i = 0; i < size; i++ ) {
+		for (int i = 0; i < size; i++) {
 			ret.add(data[i]);
 		}
 		return ret;
@@ -342,7 +357,7 @@ public class DogArray<T> extends FastAccess<T> {
 	public boolean isUnused( T object ) {
 		final T[] data = this.data;
 		for (int i = size; i < data.length; i++) {
-			if( data[i] == object )
+			if (data[i] == object)
 				return true;
 		}
 		return false;
@@ -353,7 +368,7 @@ public class DogArray<T> extends FastAccess<T> {
 		return data;
 	}
 
-	public void setData(T[] data) {
+	public void setData( T[] data ) {
 		this.data = data;
 	}
 
@@ -361,7 +376,7 @@ public class DogArray<T> extends FastAccess<T> {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize( int size ) {
 		this.size = size;
 	}
 
@@ -373,7 +388,7 @@ public class DogArray<T> extends FastAccess<T> {
 		return type;
 	}
 
-	public interface Set<S,D> {
-		void set( S src , D dst );
+	public interface Set<S, D> {
+		void set( S src, D dst );
 	}
 }

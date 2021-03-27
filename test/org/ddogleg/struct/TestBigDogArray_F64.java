@@ -229,6 +229,19 @@ public class TestBigDogArray_F64 extends ChecksBigDogArray<double[]> {
 		}
 	}
 
+	@Test void setTail_getTail() {
+		var alg = new BigDogArray_F64(2, 10, Growth.GROW);
+		alg.resize(25);
+
+		for (int i = 0; i < 25; i++) {
+			alg.setTail(i, (double)(i + 1));
+			assertEquals(i + 1, alg.getTail(i));
+		}
+
+		assertEquals(alg.get(alg.size-1), alg.getTail(0));
+		assertEquals(alg.get(alg.size-2), alg.getTail(1));
+	}
+
 	@Test void getArray() {
 		var alg = new BigDogArray_F64(2, 10, Growth.GROW);
 		alg.resize(22);
