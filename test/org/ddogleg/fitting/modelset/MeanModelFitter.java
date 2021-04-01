@@ -22,22 +22,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-
 /**
  * Computes the mean of a set of points.
  *
  * @author Peter Abeles
  */
-public class MeanModelFitter implements ModelFitter<double[],Double> ,
-		ModelGenerator<double[],Double>{
-
+public class MeanModelFitter implements ModelFitter<double[], Double>, ModelGenerator<double[], Double> {
 	@Override
-	public boolean generate(List<Double> dataSet, double[] param ) {
-		return fitModel(dataSet,null,param);
+	public boolean generate( List<Double> dataSet, double[] param ) {
+		return fitModel(dataSet, null, param);
 	}
 
 	@Override
-	public boolean fitModel(List<Double> dataSet, @Nullable double[] initParam, double[] foundParam) {
+	public boolean fitModel( List<Double> dataSet, @Nullable double[] initParam, double[] foundParam ) {
 		double mean = 0;
 
 		for (double d : dataSet) {
@@ -59,5 +56,9 @@ public class MeanModelFitter implements ModelFitter<double[],Double> ,
 	@Override
 	public int getMinimumPoints() {
 		return 1;
+	}
+
+	@Override public ModelGenerator<double[], Double> copyConcurrent() {
+		return this;
 	}
 }

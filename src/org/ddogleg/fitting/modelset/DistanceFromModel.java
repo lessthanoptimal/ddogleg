@@ -20,7 +20,6 @@ package org.ddogleg.fitting.modelset;
 
 import java.util.List;
 
-
 /**
  * <p>
  * Computes the distance a sample point is from the provided model.
@@ -32,16 +31,16 @@ import java.util.List;
  * in 3D space before the transform has been applied and the observed location after the transform
  * has been applied.
  * </p>
+ *
  * @author Peter Abeles
  */
 public interface DistanceFromModel<Model, Point> {
-
 	/**
 	 * Sets the model parameters.
 	 *
 	 * @param model Model parameters.
 	 */
-	void setModel(Model model);
+	void setModel( Model model );
 
 	/**
 	 * Computes the distance the point is from the model.
@@ -49,16 +48,16 @@ public interface DistanceFromModel<Model, Point> {
 	 * @param pt Point being evaluated. Not modified.
 	 * @return Distance the point is from the model.
 	 */
-	double distance(Point pt);
+	double distance( Point pt );
 
 	/**
 	 * Computes the distance a set of points is from the model and saves the results
 	 * in the provided array.
 	 *
-	 * @param points   Set of points which are to be evaluated.
+	 * @param points Set of points which are to be evaluated.
 	 * @param distance Where model distance is stored.
 	 */
-	void distances(List<Point> points, double[] distance);
+	void distances( List<Point> points, double[] distance );
 
 	/**
 	 * Returns a class for the input point object
@@ -73,4 +72,9 @@ public interface DistanceFromModel<Model, Point> {
 	 * @return model class type
 	 */
 	Class<Model> getModelType();
+
+	/**
+	 * Creates a new instance for threads. The model is not copied by relevant settings are.
+	 */
+	DistanceFromModel<Model, Point> newInstanceConcurrent();
 }

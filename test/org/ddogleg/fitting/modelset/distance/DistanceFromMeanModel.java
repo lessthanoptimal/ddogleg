@@ -59,4 +59,8 @@ public class DistanceFromMeanModel implements DistanceFromModel<double[],Double>
 	public Class<double[]> getModelType() {
 		return double[].class;
 	}
+
+	@Override public DistanceFromModel<double[], Double> newInstanceConcurrent() {
+		return new DistanceFromMeanModel();
+	}
 }

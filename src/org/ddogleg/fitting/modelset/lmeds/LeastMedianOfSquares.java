@@ -18,15 +18,14 @@
 
 package org.ddogleg.fitting.modelset.lmeds;
 
-
 import org.ddogleg.fitting.modelset.*;
 import org.ddogleg.fitting.modelset.ransac.Ransac;
 import org.ddogleg.sorting.QuickSelect;
+import org.ddogleg.struct.FastArray;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 
 /**
  * <p>
@@ -35,6 +34,7 @@ import java.util.Random;
  * set.  The model which minimizes the median is selected as the final model.  No pruning or formal
  * selection of inlier set is done.
  * </p>
+ *
  * @author Peter Abeles
  */
 // TODO Better algorithm for selecting the inlier set.
@@ -42,8 +42,10 @@ import java.util.Random;
 @SuppressWarnings("NullAway.Init")
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, Point>, InlierFraction {
 	// random number generator for selecting points
-	private Random rand;
 	private long randSeed;
+
+	// Each trial has its own seed to enable concurrent implementations that will produce identical results
+	protected final FastArray<Random> trialRNG = new FastArray<>(Random.class);
 
 	// number of times it performs its fit cycle
 	private int totalCycles;
@@ -52,9 +54,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	// if the best model has more than this error then it is considered a bad match
 	private double maxMedianError;
 	// fits a model to the provided data
-	private ModelGenerator<Model,Point> generator;
+	private ModelGenerator<Model, Point> generator;
 	// computes the error for a point to the model
-	private DistanceFromModel<Model,Point> errorMetric;
+	private DistanceFromModel<Model, Point> errorMetric;
 
 	// where the initial small set of points is stored
 	private List<Point> smallSet = new ArrayList<Point>();
@@ -72,10 +74,10 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	protected List<Point> dataSet = new ArrayList<>();
 
 	// stores all the errors for quicker sorting
-	private double []errors = new double[1];
+	private double[] errors = new double[1];
 
 	// list of indexes converting it from match set to input list
-	private int []matchToInput = new int[1];
+	private int[] matchToInput = new int[1];
 
 	private List<Point> inlierSet;
 	private double inlierFrac;
@@ -87,20 +89,18 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	 * @param totalCycles Number of random draws it will make when estimating model parameters.
 	 * @param maxMedianError If the best median error is larger than this it is considered a failure.
 	 * @param inlierFraction Data which is this fraction or lower is considered an inlier and used to
-	 *                          recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
+	 * recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
 	 * @param generator Creates a list of model hypotheses from a small set of points.
 	 * @param errorMetric Computes the error between a point and a model
 	 */
-	public LeastMedianOfSquares( long randSeed ,
-								 int totalCycles ,
-								 double maxMedianError ,
-								 double inlierFraction ,
+	public LeastMedianOfSquares( long randSeed,
+								 int totalCycles,
+								 double maxMedianError,
+								 double inlierFraction,
 								 ModelManager<Model> modelManager,
-								 ModelGenerator<Model,Point> generator,
-								 DistanceFromModel<Model,Point> errorMetric )
-	{
+								 ModelGenerator<Model, Point> generator,
+								 DistanceFromModel<Model, Point> errorMetric ) {
 		this.randSeed = randSeed;
-		this.rand = new Random(randSeed);
 		this.totalCycles = totalCycles;
 		this.maxMedianError = maxMedianError;
 		this.inlierFrac = inlierFraction;
@@ -111,9 +111,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		candidate = modelManager.createModelInstance();
 		this.sampleSize = generator.getMinimumPoints();
 
-		if( inlierFrac > 0.0 ) {
+		if (inlierFrac > 0.0) {
 			inlierSet = new ArrayList<Point>();
-		} else if( inlierFrac > 1.0 ) {
+		} else if (inlierFrac > 1.0) {
 			throw new IllegalArgumentException("Inlier fraction must be <= 1");
 		}
 	}
@@ -126,13 +126,12 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	 * @param generator Creates a list of model hypotheses from a small set of points.
 	 * @param errorMetric Computes the error between a point and a model
 	 */
-	public LeastMedianOfSquares( long randSeed ,
-								 int totalCycles ,
+	public LeastMedianOfSquares( long randSeed,
+								 int totalCycles,
 								 ModelManager<Model> modelManager,
-								 ModelGenerator<Model,Point> generator,
-								 DistanceFromModel<Model,Point> errorMetric )
-	{
-		this(randSeed,totalCycles,Double.MAX_VALUE,0,modelManager,generator,errorMetric);
+								 ModelGenerator<Model, Point> generator,
+								 DistanceFromModel<Model, Point> errorMetric ) {
+		this(randSeed, totalCycles, Double.MAX_VALUE, 0, modelManager, generator, errorMetric);
 	}
 
 	/**
@@ -140,38 +139,40 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	 *
 	 * @param sampleSize Number of points sampled when computing the model.
 	 */
-	public void setSampleSize(int sampleSize) {
+	public void setSampleSize( int sampleSize ) {
 		this.sampleSize = sampleSize;
 	}
 
 	@Override
-	public boolean process(List<Point> _dataSet) {
-		if( _dataSet.size() < sampleSize )
+	public boolean process( List<Point> _dataSet ) {
+		if (_dataSet.size() < sampleSize)
 			return false;
+
+		checkTrialGenerators();
 
 		dataSet.clear();
 		dataSet.addAll(_dataSet);
-        
+
 		int N = dataSet.size();
 
 		// make sure the array is large enough.  If not declare a new one that is
-		if( errors.length < N ) {
-			errors = new double[ N ];
+		if (errors.length < N) {
+			errors = new double[N];
 			matchToInput = new int[N];
 		}
 
 		bestMedian = Double.MAX_VALUE;
 
-		for( int i = 0; i < totalCycles; i++ ) {
-			Ransac.randomDraw(dataSet, sampleSize, smallSet, rand);
+		for (int trial = 0; trial < totalCycles; trial++) {
+			Ransac.randomDraw(dataSet, sampleSize, smallSet, trialRNG.get(trial));
 
-			if( generator.generate(smallSet, candidate) ) {
+			if (generator.generate(smallSet, candidate)) {
 				errorMetric.setModel(candidate);
-				errorMetric.distances(_dataSet,errors);
+				errorMetric.distances(_dataSet, errors);
 
-				double median = QuickSelect.select(errors, (int)(N*errorFraction+0.5), N);
+				double median = QuickSelect.select(errors, (int)(N*errorFraction + 0.5), N);
 
-				if( median < bestMedian ) {
+				if (median < bestMedian) {
 					bestMedian = median;
 					Model t = bestParam;
 					bestParam = candidate;
@@ -186,23 +187,37 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 		return bestMedian <= maxMedianError;
 	}
 
-	private void computeInlierSet(List<Point> dataSet, int n) {
-		int numPts = (int)(n *inlierFrac);
+	private void computeInlierSet( List<Point> dataSet, int n ) {
+		int numPts = (int)(n*inlierFrac);
 
-		if( inlierFrac > 0 && numPts > sampleSize ) {
+		if (inlierFrac > 0 && numPts > sampleSize) {
 			inlierSet.clear();
 			errorMetric.setModel(bestParam);
-			errorMetric.distances(dataSet,errors);
+			errorMetric.distances(dataSet, errors);
 
-			int []indexes = new int[n];
-			QuickSelect.selectIndex(errors,numPts, n,indexes);
-			for( int i = 0; i < numPts; i++ ) {
+			int[] indexes = new int[n];
+			QuickSelect.selectIndex(errors, numPts, n, indexes);
+			for (int i = 0; i < numPts; i++) {
 				int origIndex = indexes[i];
-				inlierSet.add( dataSet.get(origIndex) );
+				inlierSet.add(dataSet.get(origIndex));
 				matchToInput[i] = origIndex;
 			}
 		} else {
 			inlierSet = dataSet;
+		}
+	}
+
+	/**
+	 * If the maximum number of iterations has changed then re-generate the RNG for each trial
+	 */
+	private void checkTrialGenerators() {
+		if (trialRNG.size == totalCycles) {
+			return;
+		}
+		Random rand = new Random(randSeed);
+		trialRNG.resize(totalCycles);
+		for (int i = 0; i < totalCycles; i++) {
+			trialRNG.set(i, new Random(rand.nextLong()));
 		}
 	}
 
@@ -212,7 +227,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	}
 
 	@Override
-	public void setErrorFraction(double errorFraction) {
+	public void setErrorFraction( double errorFraction ) {
 		this.errorFraction = errorFraction;
 	}
 
@@ -233,7 +248,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 	}
 
 	@Override
-	public int getInputIndex(int matchIndex) {
+	public int getInputIndex( int matchIndex ) {
 		return matchToInput[matchIndex];
 	}
 
@@ -252,7 +267,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcher<Model, P
 
 	@Override
 	public void reset() {
-		this.rand = new Random(randSeed);
+		trialRNG.resize(0);
 	}
 
 	@Override

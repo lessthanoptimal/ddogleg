@@ -29,7 +29,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * A series of tests are provided that test to see the provided model set algorithm has the expected
  * behavior.  This includes removing outliers and estimating the model parameters.  The test
@@ -55,7 +54,7 @@ public abstract class GenericModelMatcherTests {
 	// If the model matcher is deterministic and doesn't use any random numbers
 	protected boolean deterministic = false;
 
-	protected void configure(double minMatchFrac, double parameterTol, boolean checkInlierSet) {
+	protected void configure( double minMatchFrac, double parameterTol, boolean checkInlierSet ) {
 		this.minMatchFrac = minMatchFrac;
 		this.parameterTol = parameterTol;
 		this.checkInlierSet = checkInlierSet;
@@ -72,7 +71,7 @@ public abstract class GenericModelMatcherTests {
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
-		ModelMatcher<double[],Double> alg = createModel(4, tol * 0.95);
+		ModelMatcher<double[], Double> alg = createModel(4, tol*0.95);
 
 		List<Double> samples = createSampleSet(100, mean, tol, 0.1);
 
@@ -81,7 +80,7 @@ public abstract class GenericModelMatcherTests {
 		List<Double> matchSet = alg.getMatchSet();
 
 		if (checkInlierSet)
-			assertTrue(matchSet.size() / 90.0 >= minMatchFrac);
+			assertTrue(matchSet.size()/90.0 >= minMatchFrac);
 		assertEquals(inlierMean, alg.getModelParameters()[0], parameterTol);
 	}
 
@@ -96,13 +95,13 @@ public abstract class GenericModelMatcherTests {
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
-		ModelMatcher<double[],Double> alg = createModel(4, tol);
+		ModelMatcher<double[], Double> alg = createModel(4, tol);
 
 		for (int i = 0; i < 10; i++) {
 			// try different sample sizes in each trial.  a bug was found once where
 			// a small value of N than previous caused a problem
-			int N = 200 - i * 10;
-			List<Double> samples = createSampleSet(N, mean, tol * 0.90, 0.1);
+			int N = 200 - i*10;
+			List<Double> samples = createSampleSet(N, mean, tol*0.90, 0.1);
 
 			assertTrue(alg.process(samples));
 
@@ -111,7 +110,7 @@ public abstract class GenericModelMatcherTests {
 			double foundMean = alg.getModelParameters()[0];
 
 			if (checkInlierSet)
-				assertTrue(matchSet.size() / (N * 0.9) >= minMatchFrac);
+				assertTrue(matchSet.size()/(N*0.9) >= minMatchFrac);
 			assertEquals(inlierMean, foundMean, parameterTol);
 		}
 	}
@@ -120,20 +119,20 @@ public abstract class GenericModelMatcherTests {
 	 * Creates a set of sample points that are part of the model and some outliers
 	 *
 	 * @param numPoints Number of sample points it will generate
-	 * @param mean		Mean of the distribution
-	 * @param modelDist   How close to the model do the points need to be.
+	 * @param mean Mean of the distribution
+	 * @param modelDist How close to the model do the points need to be.
 	 * @param fracOutlier Fraction of the points which will be outliers.
 	 * @return Set of sample points
 	 */
-	private List<Double> createSampleSet(int numPoints, double mean, double modelDist, double fracOutlier) {
+	protected List<Double> createSampleSet( int numPoints, double mean, double modelDist, double fracOutlier ) {
 		List<Double> ret = new ArrayList<>();
 
-		double numOutlier = (int) (numPoints * fracOutlier);
+		double numOutlier = (int)(numPoints*fracOutlier);
 
 		inlierMean = 0;
 
 		for (int i = 0; i < numPoints - numOutlier; i++) {
-			double d = mean + (rand.nextDouble() - 0.5) * 2.0 * modelDist;
+			double d = mean + (rand.nextDouble() - 0.5)*2.0*modelDist;
 
 			inlierMean += d;
 
@@ -143,10 +142,10 @@ public abstract class GenericModelMatcherTests {
 		inlierMean /= ret.size();
 
 		while (ret.size() < numPoints) {
-			double d = (rand.nextDouble() - 0.5) * 200 * modelDist;
+			double d = (rand.nextDouble() - 0.5)*200*modelDist;
 
 			// add a point if its sufficiently far away from the model
-			if (Math.abs(d) > modelDist * 10) {
+			if (Math.abs(d) > modelDist*10) {
 				ret.add(d);
 			}
 		}
@@ -167,7 +166,7 @@ public abstract class GenericModelMatcherTests {
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
-		ModelMatcher<double[],Double> alg = createModel(4, tol * 0.95);
+		ModelMatcher<double[], Double> alg = createModel(4, tol*0.95);
 
 		List<Double> samples = createSampleSet(100, mean, tol, 0.1);
 
@@ -179,11 +178,11 @@ public abstract class GenericModelMatcherTests {
 		assertTrue(matchSet.size() > 20);
 
 		int orderNotTheSame = 0;
-		for( int i = 0; i < matchSet.size(); i++ ) {
+		for (int i = 0; i < matchSet.size(); i++) {
 			int expected = samples.indexOf(matchSet.get(i));
 			int found = alg.getInputIndex(i);
 
-			if( found != i )
+			if (found != i)
 				orderNotTheSame++;
 
 			assertEquals(expected, found);
@@ -203,13 +202,13 @@ public abstract class GenericModelMatcherTests {
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
-		ModelMatcher<double[],Double> alg = createModel(1, tol * 0.95);
+		ModelMatcher<double[], Double> alg = createModel(1, 0.6);
 
-		List<Double> samples = createSampleSet(500, mean, tol, 0.0);
-
-		// add noise so it's ambiguous
-		for (int i = 0; i < samples.size(); i++) {
-			samples.set(i, samples.get(i)+rand.nextDouble()*0.3);
+		// Create a uniform sample with multiple just as good solutions so it's unlikely that two random
+		// draws will get the exact same solution
+		List<Double> samples = new ArrayList<>();
+		for (int i = 0; i < 500; i++) {
+			samples.add(mean - (0.5 - i/500.0)*2.0);
 		}
 
 		assertTrue(alg.process(samples));
@@ -220,44 +219,41 @@ public abstract class GenericModelMatcherTests {
 
 		// See if this produces different results
 		boolean matched = matchesA.size() == matchesB.size();
-		if( matched ) {
+		if (matched) {
 			for (int i = 0; i < matchesA.size(); i++) {
-				if(!matchesA.get(i).equals(matchesB.get(i))) {
+				if (!matchesA.get(i).equals(matchesB.get(i))) {
 					matched = false;
 					break;
 				}
 			}
 		}
-		assertEquals(deterministic,matched);
+		assertEquals(deterministic, matched);
 
-		if( deterministic )
+		if (deterministic)
 			return;
 
 		// It should now produce identical results to the first run
 		alg.reset();
 		assertTrue(alg.process(samples));
 		List<Double> matchesC = new ArrayList<>(alg.getMatchSet());
-		assertEquals(matchesA.size(),matchesC.size());
+		assertEquals(matchesA.size(), matchesC.size());
 		for (int i = 0; i < matchesA.size(); i++) {
 			assertEquals(matchesA.get(i), matchesC.get(i));
 		}
-
 	}
 
-	private ModelMatcher<double[],Double> createModel(int minPoints, double fitThreshold) {
+	protected ModelMatcher<double[], Double> createModel( int minPoints, double fitThreshold ) {
 		DoubleArrayManager manager = new DoubleArrayManager(1);
 		DistanceFromMeanModel dist = new DistanceFromMeanModel();
 		MeanModelFitter fitter = new MeanModelFitter();
 
-		return createModelMatcher(manager,dist, fitter,fitter, minPoints, fitThreshold);
+		return createModelMatcher(manager, dist, fitter, fitter, minPoints, fitThreshold);
 	}
 
-	public abstract ModelMatcher<double[],Double> createModelMatcher(
+	public abstract ModelMatcher<double[], Double> createModelMatcher(
 			ModelManager<double[]> manager,
-			DistanceFromModel<double[],Double> distance,
-			ModelGenerator<double[],Double> generator,
-			ModelFitter<double[],Double> fitter,
-			int minPoints, double fitThreshold);
-
-
+			DistanceFromModel<double[], Double> distance,
+			ModelGenerator<double[], Double> generator,
+			ModelFitter<double[], Double> fitter,
+			int minPoints, double fitThreshold );
 }

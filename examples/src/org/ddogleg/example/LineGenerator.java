@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,13 +27,13 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class LineGenerator implements ModelGenerator<Line2D,Point2D> {
+public class LineGenerator implements ModelGenerator<Line2D, Point2D> {
 
 	// a point at the origin (0,0)
 	Point2D origin = new Point2D();
 
 	@Override
-	public boolean generate(List<Point2D> dataSet, Line2D output) {
+	public boolean generate( List<Point2D> dataSet, Line2D output ) {
 		Point2D p1 = dataSet.get(0);
 		Point2D p2 = dataSet.get(1);
 
@@ -43,8 +43,8 @@ public class LineGenerator implements ModelGenerator<Line2D,Point2D> {
 
 		// Now that we have the slope, all we need is a line on the point (we pick p1) to find
 		// the closest point on the line to the origin. This closest point is the parametrization.
-		double t = slopeX * ( origin.x - p1.x) + slopeY * ( origin.y - p1.y);
-		t /= slopeX * slopeX + slopeY * slopeY;
+		double t = slopeX*(origin.x - p1.x) + slopeY*(origin.y - p1.y);
+		t /= slopeX*slopeX + slopeY*slopeY;
 
 		output.x = p1.x + t*slopeX;
 		output.y = p1.y + t*slopeY;
@@ -55,5 +55,9 @@ public class LineGenerator implements ModelGenerator<Line2D,Point2D> {
 	@Override
 	public int getMinimumPoints() {
 		return 2;
+	}
+
+	@Override public ModelGenerator<Line2D, Point2D> copyConcurrent() {
+		return this;
 	}
 }
