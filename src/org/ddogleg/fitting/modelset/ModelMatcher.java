@@ -34,7 +34,6 @@ import java.util.List;
  * @author Peter Abeles
  */
 public interface ModelMatcher<Model, Point> {
-
 	/**
 	 * Finds a set of points from the provided list that are a good fit for the internal model and
 	 * computes the fit parameters for the model.

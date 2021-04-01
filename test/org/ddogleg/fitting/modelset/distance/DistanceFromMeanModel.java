@@ -44,9 +44,7 @@ public class DistanceFromMeanModel implements DistanceFromModel<double[],Double>
 	@Override
 	public void distances(List<Double> points, double[] distance) {
 		for (int i = 0; i < points.size(); i++) {
-			double d = points.get(i);
-
-			distance[i] = Math.abs(d - mean);
+			distance[i] = Math.abs(points.get(i) - mean);
 		}
 	}
 

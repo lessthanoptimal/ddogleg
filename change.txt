@@ -20,6 +20,9 @@ Date:     2021
   * This scales much better as array size gets very very large
 - PrimitiveArrays
   * Added minIdx(), maxIdx()
+- ModelMatcher
+  * Created ModelMatcherPost that let's you specify the model after creation
+  * Concurrent implementations of RANSAC and LeastMedianOfSquares
 - Added QuickSortComparable
 
 ------------------------------------------------------
