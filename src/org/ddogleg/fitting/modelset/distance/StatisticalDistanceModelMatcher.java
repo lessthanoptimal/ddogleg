@@ -120,11 +120,11 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 
 		switch (statistics) {
 			case MEAN:
-				errorAlg = new FitByMeanStatistics<Model,Point>(pruneThreshold);
+				errorAlg = new FitByMeanStatistics<>(pruneThreshold);
 				break;
 
 			case PERCENTILE:
-				errorAlg = new FitByMedianStatistics<Model,Point>(pruneThreshold);
+				errorAlg = new FitByMedianStatistics<>(pruneThreshold);
 				break;
 
 			default:
@@ -144,7 +144,7 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 		pruneList.clear();
 		inliers.clear();
 		for( int i = 0; i < dataSet.size(); i++ )
-			pruneList.add( new PointIndex<Point>(dataSet.get(i),i));
+			pruneList.add(new PointIndex<>(dataSet.get(i), i));
 		inliers.clear();
 
 		errorAlg.init(modelError, pruneList);

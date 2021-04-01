@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericModelMatcherTests {
+public abstract class GenericModelMatcherPostTests {
 
 	protected Random rand = new Random(0x353456);
 
@@ -198,6 +198,7 @@ public abstract class GenericModelMatcherTests {
 	@Test
 	public void reset() {
 		double mean = 2.5;
+		double tol = 0.2;
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
@@ -241,18 +242,15 @@ public abstract class GenericModelMatcherTests {
 		}
 	}
 
-	protected ModelMatcher<double[], Double> createModel( int minPoints, double fitThreshold ) {
+	protected ModelMatcherPost<double[], Double> createModel( int minPoints, double fitThreshold ) {
 		DoubleArrayManager manager = new DoubleArrayManager(1);
-		DistanceFromMeanModel dist = new DistanceFromMeanModel();
-		MeanModelFitter fitter = new MeanModelFitter();
 
-		return createModelMatcher(manager, dist, fitter, fitter, minPoints, fitThreshold);
+		ModelMatcherPost<double[], Double> alg = createModelMatcher(manager, minPoints, fitThreshold);
+		alg.setModel(MeanModelFitter::new, DistanceFromMeanModel::new);
+		return alg;
 	}
 
-	public abstract ModelMatcher<double[], Double> createModelMatcher(
+	public abstract ModelMatcherPost<double[], Double> createModelMatcher(
 			ModelManager<double[]> manager,
-			DistanceFromModel<double[], Double> distance,
-			ModelGenerator<double[], Double> generator,
-			ModelFitter<double[], Double> fitter,
 			int minPoints, double fitThreshold );
 }

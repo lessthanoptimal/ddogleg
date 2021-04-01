@@ -16,26 +16,23 @@
  * limitations under the License.
  */
 
-package org.ddogleg.fitting.modelset.lmeds;
+package org.ddogleg.fitting.modelset;
 
-import org.ddogleg.fitting.modelset.GenericModelMatcherPostTests;
-import org.ddogleg.fitting.modelset.ModelManager;
-import org.ddogleg.fitting.modelset.ModelMatcherPost;
-
+import org.ddogleg.struct.Factory;
 
 /**
+ * Extension of {@link ModelMatcher} where the models are specified after construction.
+ *
  * @author Peter Abeles
  */
-public class TestLeastMedianOfSquares extends GenericModelMatcherPostTests {
-
-	public TestLeastMedianOfSquares() {
-		configure(0.9, 0.1, false);
-	}
-
-	@Override
-	public ModelMatcherPost<double[], Double> createModelMatcher( ModelManager<double[]> manager,
-																  int minPoints,
-																  double fitThreshold ) {
-		return new LeastMedianOfSquares<>(4234,50,fitThreshold,0.9,manager, Double.class);
-	}
+public interface ModelMatcherPost<Model, Point> extends ModelMatcher<Model, Point> {
+	/**
+	 * Specifies the internal model. Factories are provided since each thread might need its own unique instance of
+	 * the generator and distance function if they are not thread safe.
+	 *
+	 * @param factoryGenerator {@link ModelGenerator}
+	 * @param factoryDistance {@link DistanceFromModel}
+	 */
+	void setModel( Factory<ModelGenerator<Model,Point>> factoryGenerator,
+				   Factory<DistanceFromModel<Model,Point>> factoryDistance );
 }
