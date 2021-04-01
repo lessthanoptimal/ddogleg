@@ -28,14 +28,14 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
+public class DistanceFromLine implements DistanceFromModel<Line2D, Point2D> {
 
 	// parametric line equation
 	double x0, y0;
-	double slopeX,slopeY;
+	double slopeX, slopeY;
 
 	@Override
-	public void setModel(Line2D param) {
+	public void setModel( Line2D param ) {
 		x0 = param.x;
 		y0 = param.y;
 
@@ -44,11 +44,11 @@ public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
 	}
 
 	@Override
-	public double distance(Point2D p) {
+	public double distance( Point2D p ) {
 
 		// find the closest point on the line to the point
-		double t = slopeX * ( p.x - x0) + slopeY * ( p.y - y0);
-		t /= slopeX * slopeX + slopeY * slopeY;
+		double t = slopeX*(p.x - x0) + slopeY*(p.y - y0);
+		t /= slopeX*slopeX + slopeY*slopeY;
 
 		double closestX = x0 + t*slopeX;
 		double closestY = y0 + t*slopeY;
@@ -65,8 +65,8 @@ public class DistanceFromLine implements DistanceFromModel<Line2D,Point2D> {
 	 * This is not one of them.
 	 */
 	@Override
-	public void distances(List<Point2D> obs, double[] distance) {
-		for( int i = 0; i < obs.size(); i++ ) {
+	public void distances( List<Point2D> obs, double[] distance ) {
+		for (int i = 0; i < obs.size(); i++) {
 			distance[i] = distance(obs.get(i));
 		}
 	}

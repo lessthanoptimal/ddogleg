@@ -24,29 +24,27 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 /**
  * Claims to fit a model but really doesn't
  *
  * @author Peter Abeles
  */
-public class DoNothingModelFitter implements ModelFitter<double[],Double> ,
-		ModelGenerator<double[],Double>{
+public class DoNothingModelFitter implements ModelFitter<double[], Double>, ModelGenerator<double[], Double> {
 
 	int minPoints;
 
-	public DoNothingModelFitter(int minPoints) {
+	public DoNothingModelFitter( int minPoints ) {
 		this.minPoints = minPoints;
 	}
 
 	@Override
-	public boolean generate(List<Double> dataSet, double[] param ) {
-		return fitModel(dataSet,null,param);
+	public boolean generate( List<Double> dataSet, double[] param ) {
+		return fitModel(dataSet, null, param);
 	}
 
 	@Override
-	public boolean fitModel(List<Double> dataSet, @Nullable double[] initParam, double[] foundParam) {
-		assertEquals(minPoints,dataSet.size());
+	public boolean fitModel( List<Double> dataSet, @Nullable double[] initParam, double[] foundParam ) {
+		assertEquals(minPoints, dataSet.size());
 		return true;
 	}
 

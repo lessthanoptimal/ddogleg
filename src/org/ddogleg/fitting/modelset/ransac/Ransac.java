@@ -19,11 +19,11 @@
 package org.ddogleg.fitting.modelset.ransac;
 
 import org.ddogleg.fitting.modelset.*;
+import org.ddogleg.struct.FastArray;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierThreshold {
+public class Ransac<Model, Point> implements ModelMatcher<Model, Point>, InlierThreshold {
 	// how many points are drawn to generate the model
 	protected int sampleSize;
 
@@ -49,13 +49,15 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	protected double thresholdFit;
 
 	// generates an initial model given a set of points
-	protected ModelGenerator<Model,Point> modelGenerator;
+	protected ModelGenerator<Model, Point> modelGenerator;
 	// computes the distance a point is from the model
-	protected DistanceFromModel<Model,Point> modelDistance;
+	protected DistanceFromModel<Model, Point> modelDistance;
 
 	// used to randomly select points/samples
-	protected Random rand;
 	protected long randSeed;
+
+	// Each trial has its own seed to enable concurrent implementations that will produce identical results
+	protected final FastArray<Random> trialRNG = new FastArray<>(Random.class);
 
 	// list of points which are a candidate for the best fit set
 	protected List<Point> candidatePoints = new ArrayList<>();
@@ -78,8 +80,8 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	protected List<Point> initialSample = new ArrayList<>();
 
 	// list of indexes converting it from match set to input list
-	protected int []matchToInput = new int[1];
-	protected int []bestMatchToInput = new int[1];
+	protected int[] matchToInput = new int[1];
+	protected int[] bestMatchToInput = new int[1];
 
 	/**
 	 * Creates a new instance of the ransac algorithm.  The number of points sampled will default to the
@@ -91,17 +93,16 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	 * @param maxIterations The maximum number of iterations the RANSAC algorithm will perform.
 	 * @param thresholdFit How close of a fit a points needs to be to the model to be considered a fit.
 	 */
-	public Ransac(long randSeed,
-				  ModelManager<Model> modelManager,
-				  ModelGenerator<Model, Point> modelGenerator,
-				  DistanceFromModel<Model, Point> modelDistance,
-				  int maxIterations,
-				  double thresholdFit) {
+	public Ransac( long randSeed,
+				   ModelManager<Model> modelManager,
+				   ModelGenerator<Model, Point> modelGenerator,
+				   DistanceFromModel<Model, Point> modelDistance,
+				   int maxIterations,
+				   double thresholdFit ) {
 		this.modelGenerator = modelGenerator;
 		this.modelDistance = modelDistance;
 
 		this.randSeed = randSeed;
-		this.rand = new Random(randSeed);
 		this.maxIterations = maxIterations;
 
 		this.bestFitParam = modelManager.createModelInstance();
@@ -112,11 +113,13 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	}
 
 	@Override
-	public boolean process(List<Point> _dataSet ) {
-
+	public boolean process( List<Point> _dataSet ) {
 		// see if it has the minimum number of points
-		if (_dataSet.size() < modelGenerator.getMinimumPoints() )
+		if (_dataSet.size() < modelGenerator.getMinimumPoints())
 			return false;
+
+		// make sure there is a RNG for each trial
+		checkTrialGenerators();
 
 		// the data set will be modified so a copy is needed. Otherwise indexes of match set will not
 		// be correct
@@ -128,15 +131,15 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 
 		// iterate until it has exhausted all iterations or stop if the entire data set
 		// is in the inlier set
-		for (int i = 0; i < maxIterations && bestFitPoints.size() != dataSet.size(); i++) {
+		for (int trial = 0; trial < maxIterations && bestFitPoints.size() != dataSet.size(); trial++) {
 			// sample the a small set of points
-			randomDraw(dataSet, sampleSize, initialSample, rand);
-			
+			randomDraw(dataSet, sampleSize, initialSample, trialRNG.get(trial));
+
 			// get the candidate(s) for this sample set
-			if( modelGenerator.generate(initialSample, candidateParam ) ) {
+			if (modelGenerator.generate(initialSample, candidateParam)) {
 
 				// see if it can find a model better than the current best one
-				if( !selectMatchSet(_dataSet, thresholdFit, candidateParam) )
+				if (!selectMatchSet(_dataSet, thresholdFit, candidateParam))
 					continue;
 
 				// save this results
@@ -150,14 +153,28 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	}
 
 	/**
+	 * If the maximum number of iterations has changed then re-generate the RNG for each trial
+	 */
+	private void checkTrialGenerators() {
+		if (trialRNG.size == maxIterations) {
+			return;
+		}
+		Random rand = new Random(randSeed);
+		trialRNG.resize(maxIterations);
+		for (int i = 0; i < maxIterations; i++) {
+			trialRNG.set(i, new Random(rand.nextLong()));
+		}
+	}
+
+	/**
 	 * Initialize internal data structures
 	 */
 	public void initialize( List<Point> dataSet ) {
 		bestFitPoints.clear();
 
-		if( dataSet.size() > matchToInput.length ) {
-			matchToInput = new int[ dataSet.size() ];
-			bestMatchToInput = new int[ dataSet.size() ];
+		if (dataSet.size() > matchToInput.length) {
+			matchToInput = new int[dataSet.size()];
+			bestMatchToInput = new int[dataSet.size()];
 		}
 	}
 
@@ -167,22 +184,22 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	 *
 	 * @param dataSet List that points are to be selected from.  Modified.
 	 */
-	public static <T> void randomDraw(List<T> dataSet, int numSample,
-									  List<T> initialSample, Random rand) {
+	public static <T> void randomDraw( List<T> dataSet, int numSample,
+									   List<T> initialSample, Random rand ) {
 		initialSample.clear();
 
 		for (int i = 0; i < numSample; i++) {
 			// index of last element that has not been selected
-			int indexLast = dataSet.size()-i-1;
+			int indexLast = dataSet.size() - i - 1;
 			// randomly select an item from the list which has not been selected
-			int indexSelected = rand.nextInt(indexLast+1);
+			int indexSelected = rand.nextInt(indexLast + 1);
 
 			T a = dataSet.get(indexSelected);
 			initialSample.add(a);
 
 			// Swap the selected item with the last unselected item in the list. This way the selected
 			// item can't be selected again and the last item can now be selected
-			dataSet.set(indexSelected,dataSet.set(indexLast,a));
+			dataSet.set(indexSelected, dataSet.set(indexLast, a));
 		}
 	}
 
@@ -192,12 +209,12 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	 *
 	 * @param dataSet The points being considered
 	 */
-	protected boolean selectMatchSet(List<Point> dataSet, double threshold, Model param) {
+	protected boolean selectMatchSet( List<Point> dataSet, double threshold, Model param ) {
 		candidatePoints.clear();
 		modelDistance.setModel(param);
 
 		// If it fails more than this it can't possibly beat the best model and should stop
-		int maxFailures = dataSet.size()-bestFitPoints.size();
+		int maxFailures = dataSet.size() - bestFitPoints.size();
 
 		for (int i = 0; i < dataSet.size() && maxFailures >= 0; i++) {
 			Point point = dataSet.get(i);
@@ -237,7 +254,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	}
 
 	@Override
-	public int getInputIndex(int matchIndex) {
+	public int getInputIndex( int matchIndex ) {
 		return bestMatchToInput[matchIndex];
 	}
 
@@ -255,7 +272,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 		return maxIterations;
 	}
 
-	public void setMaxIterations(int maxIterations) {
+	public void setMaxIterations( int maxIterations ) {
 		this.maxIterations = maxIterations;
 	}
 
@@ -266,7 +283,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 
 	@Override
 	public void reset() {
-		this.rand = new Random(randSeed);
+		trialRNG.resize(0);
 	}
 
 	/**
@@ -275,7 +292,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	 *
 	 * @param sampleSize Number of sample points.
 	 */
-	public void setSampleSize(int sampleSize) {
+	public void setSampleSize( int sampleSize ) {
 		this.sampleSize = sampleSize;
 	}
 
@@ -285,7 +302,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point>, InlierTh
 	}
 
 	@Override
-	public void setThresholdFit(double thresholdFit) {
+	public void setThresholdFit( double thresholdFit ) {
 		this.thresholdFit = thresholdFit;
 	}
 

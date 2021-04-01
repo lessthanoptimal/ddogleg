@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,8 +27,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public interface ModelGenerator<Model,Point> {
-	
+public interface ModelGenerator<Model, Point> {
 	/**
 	 * Creates a list of hypotheses from the set of sample points.
 	 *
@@ -36,12 +35,12 @@ public interface ModelGenerator<Model,Point> {
 	 * @param output Storage for generated model.
 	 * @return true if a model was generated, otherwise false is none were
 	 */
-	public boolean generate( List<Point> dataSet , Model output );
+	boolean generate( List<Point> dataSet, Model output );
 
 	/**
 	 * The minimum number of points required to fit a data set
 	 *
 	 * @return Number of points.
 	 */
-	public int getMinimumPoints();
+	int getMinimumPoints();
 }

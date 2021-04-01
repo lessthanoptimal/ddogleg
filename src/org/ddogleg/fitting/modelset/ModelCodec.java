@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,7 +32,7 @@ public interface ModelCodec<T> {
 	 * @param input input model parameters.
 	 * @param outputModel Output. The decoded model..
 	 */
-	void decode( double input[] , T outputModel );
+	void decode( double[] input, T outputModel );
 
 	/**
 	 * Converts the provided model into the array format.
@@ -40,7 +40,7 @@ public interface ModelCodec<T> {
 	 * @param inputModel Input model.
 	 * @param output Output parameterized model
 	 */
-	void encode( T inputModel , double output[] );
+	void encode( T inputModel , double[] output );
 
 	/**
 	 * Number of elements in array encoded parameters.

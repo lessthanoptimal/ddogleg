@@ -26,7 +26,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * @author Peter Abeles
  */
@@ -37,13 +36,13 @@ public class TestRansac extends GenericModelMatcherTests {
 	}
 
 	@Override
-	public ModelMatcher<double[],Double> createModelMatcher(ModelManager<double[]> manager,
-															DistanceFromModel<double[],Double> distance,
-															ModelGenerator<double[],Double> generator,
-															ModelFitter<double[],Double> fitter,
-															int minPoints,
-															double fitThreshold) {
-		Ransac<double[],Double> ret = new Ransac<>(344, manager, generator, distance, 50, fitThreshold);
+	public ModelMatcher<double[], Double> createModelMatcher( ModelManager<double[]> manager,
+															  DistanceFromModel<double[], Double> distance,
+															  ModelGenerator<double[], Double> generator,
+															  ModelFitter<double[], Double> fitter,
+															  int minPoints,
+															  double fitThreshold ) {
+		Ransac<double[], Double> ret = new Ransac<>(344, manager, generator, distance, 50, fitThreshold);
 		ret.setSampleSize(minPoints);
 
 		return ret;
@@ -56,11 +55,11 @@ public class TestRansac extends GenericModelMatcherTests {
 	@SuppressWarnings({"NumberEquality"})
 	@Test
 	public void randomDraw() {
-		randomDraw_sanity(200,15);
-		randomDraw_sanity(200,150);
+		randomDraw_sanity(200, 15);
+		randomDraw_sanity(200, 150);
 	}
 
-	private void randomDraw_sanity( int total , int numSample ) {
+	private void randomDraw_sanity( int total, int numSample ) {
 		List<Integer> dataSet = new ArrayList<>();
 
 		for (int i = 0; i < total; i++) {
@@ -95,7 +94,7 @@ public class TestRansac extends GenericModelMatcherTests {
 		}
 
 		// if the order has been randomized then very few should be in the original order
-		assertTrue(numTheSame < initSet.size() * 0.9);
+		assertTrue(numTheSame < initSet.size()*0.9);
 
 		// call get init set once more and see if it was cleared
 		Ransac.randomDraw(dataSet, numSample, initSet, rand);
@@ -112,7 +111,7 @@ public class TestRansac extends GenericModelMatcherTests {
 		for (int i = 0; i < 30; i++) {
 			dataSet.add(i);
 		}
-		int[] histogram = new int[ dataSet.size() ];
+		int[] histogram = new int[dataSet.size()];
 
 		List<Integer> selected = new ArrayList<>();
 
@@ -121,14 +120,14 @@ public class TestRansac extends GenericModelMatcherTests {
 			Ransac.randomDraw(dataSet, 3, selected, rand);
 
 			for (int j = 0; j < selected.size(); j++) {
-				histogram[ selected.get(j)]++;
+				histogram[selected.get(j)]++;
 			}
 		}
 
 		double expected = (3.0/30.0)*numTrials;
 
 		for (int i = 0; i < histogram.length; i++) {
-			assertTrue( Math.abs(histogram[i]-expected)/expected < 0.1 );
+			assertTrue(Math.abs(histogram[i] - expected)/expected < 0.1);
 		}
 	}
 
@@ -145,11 +144,11 @@ public class TestRansac extends GenericModelMatcherTests {
 			dataSet.add(i);
 		}
 
-		DebugModelStuff stuff = new DebugModelStuff((int) modelVal);
-		Ransac<double[],Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
+		DebugModelStuff stuff = new DebugModelStuff((int)modelVal);
+		Ransac<double[], Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
 		ransac.setSampleSize(5);
 		// declare the array so it doesn't blow up when accessed
-		ransac.matchToInput = new int[ dataSet.size()];
+		ransac.matchToInput = new int[dataSet.size()];
 		double[] param = new double[]{modelVal};
 
 		assertTrue(ransac.selectMatchSet(dataSet, 4, param));
@@ -170,11 +169,11 @@ public class TestRansac extends GenericModelMatcherTests {
 			dataSet.add(i);
 		}
 
-		DebugModelStuff stuff = new DebugModelStuff((int) modelVal);
-		Ransac<double[],Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
+		DebugModelStuff stuff = new DebugModelStuff((int)modelVal);
+		Ransac<double[], Integer> ransac = new Ransac<>(234, stuff, stuff, stuff, 20, 1);
 		ransac.setSampleSize(5);
 		// declare the array so it doesn't blow up when accessed
-		ransac.matchToInput = new int[ dataSet.size()];
+		ransac.matchToInput = new int[dataSet.size()];
 		double[] param = new double[]{modelVal};
 
 		// the match set will be must smaller than this
@@ -186,29 +185,30 @@ public class TestRansac extends GenericModelMatcherTests {
 	}
 
 	@SuppressWarnings({"NullAway"})
-	public static class DebugModelStuff implements
-			ModelManager<double[]>,DistanceFromModel<double[],Integer>, ModelGenerator<double[],Integer> {
-
+	public static class DebugModelStuff
+			implements ModelManager<double[]>,
+			DistanceFromModel<double[], Integer>,
+			ModelGenerator<double[], Integer> {
 		int threshold;
 		double error;
 		double[] param;
 
-		public DebugModelStuff(int threshold) {
+		public DebugModelStuff( int threshold ) {
 			this.threshold = threshold;
 		}
 
 		@Override
-		public void setModel(double[] param) {
+		public void setModel( double[] param ) {
 			this.param = param;
 		}
 
 		@Override
-		public double distance(Integer pt) {
+		public double distance( Integer pt ) {
 			return Math.abs(pt - param[0]);
 		}
 
 		@Override
-		public void distances(List<Integer> points, double[] distance) {
+		public void distances( List<Integer> points, double[] distance ) {
 			throw new RuntimeException("Why was this called?");
 		}
 
@@ -228,16 +228,16 @@ public class TestRansac extends GenericModelMatcherTests {
 		}
 
 		@Override
-		public void copyModel(double[] src, double[] dst) {
-			System.arraycopy(src,0,dst,0,1);
+		public void copyModel( double[] src, double[] dst ) {
+			System.arraycopy(src, 0, dst, 0, 1);
 		}
 
 		@Override
-		public boolean generate(List<Integer> dataSet, double[] p) {
+		public boolean generate( List<Integer> dataSet, double[] p ) {
 
 			error = 0;
 
-			int offset = (int) p[0];
+			int offset = (int)p[0];
 
 			for (Integer a : dataSet) {
 				if (a + offset >= threshold) {

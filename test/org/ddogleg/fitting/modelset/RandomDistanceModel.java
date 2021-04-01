@@ -21,35 +21,34 @@ package org.ddogleg.fitting.modelset;
 import java.util.List;
 import java.util.Random;
 
-
 /**
  * Returns a random distance
  *
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public class RandomDistanceModel implements DistanceFromModel<double[],Double> {
+public class RandomDistanceModel implements DistanceFromModel<double[], Double> {
 	Random rand = new Random(234);
 
 	double errorMagnitude;
 	double errorMinimum;
 
-	public RandomDistanceModel(double errorMagnitude, double errorMinimum) {
+	public RandomDistanceModel( double errorMagnitude, double errorMinimum ) {
 		this.errorMagnitude = errorMagnitude;
 		this.errorMinimum = errorMinimum;
 	}
 
 	@Override
-	public void setModel(double[] param) {
+	public void setModel( double[] param ) {
 	}
 
 	@Override
-	public double distance(Double pt) {
-		return rand.nextDouble()*errorMagnitude+errorMinimum;
+	public double distance( Double pt ) {
+		return rand.nextDouble()*errorMagnitude + errorMinimum;
 	}
 
 	@Override
-	public void distances(List<Double> points, double[] distance) {
+	public void distances( List<Double> points, double[] distance ) {
 		for (int i = 0; i < points.size(); i++) {
 			distance[i] = distance(null);
 		}
