@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,7 +17,6 @@
  */
 
 package org.ddogleg.sorting;
-
 
 /**
  * <p>
@@ -45,69 +44,81 @@ public class QuickSelect {
 	 *
 	 * @param data The unsorted list
 	 * @param k The element of the sorted list that is to be found
-	 * @param maxIndex Only element up to this value are considered
+	 * @param idx1 Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static Comparable select( Comparable[]data , int k , int maxIndex ) {
+	public static <T extends Comparable<T>> T select( T[] data, int k, int idx1 ) {
+		return select(data, k, 0, idx1);
+	}
 
-		int i,j,mid;
-		int n = maxIndex;
-		Comparable a;
-		int l = 0;
-		int ir = n-1;
+	/**
+	 *
+	 * @param k All elements i data[idx0+i] <= data[idx0+k]
+	 * @param idx0 Lower extent of the array considered. Inclusive.
+	 * @param idx1 Upper extent of the array considered. Exclusive.
+	 * @return value at 'k'
+	 */
+	public static <T extends Comparable<T>> T select( T[] data, int k, int idx0, int idx1 ) {
+		k += idx0;
 
-		Comparable temp;
+		int i, j, mid;
+		int n = idx1;
+		T a;
+		int l = idx0;
+		int ir = n - 1;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir].compareTo(data[l]) < 0 ) {
+		T temp;
+
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir].compareTo(data[l]) < 0) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l].compareTo(data[ir]) > 0 ) {
+				if (data[l].compareTo(data[ir]) > 0) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1].compareTo( data[ir] ) > 0 ) {
+				if (data[lp1].compareTo(data[ir]) > 0) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l].compareTo(data[lp1]) > 0 ) {
+				if (data[l].compareTo(data[lp1]) > 0) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i].compareTo(a) < 0);
+				for (; ; ) {
+					do i++; while (data[i].compareTo(a) < 0);
 					do j--; while (data[j].compareTo(a) > 0);
-					if( j < i) break;
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -123,23 +134,22 @@ public class QuickSelect {
 	 * @param indexes (output) Sorted list of indexes.
 	 * @return the 'k'th largest element
 	 */
-	public static Comparable select( Comparable[]data , int k , int maxIndex , int []indexes) {
-
-		for( int i = 0; i < maxIndex; i++ ) {
+	public static <T extends Comparable<T>> T select( T[] data, int k, int maxIndex, int[] indexes ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]].compareTo(data[indexes[l]]) < 0 ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]].compareTo(data[indexes[l]]) < 0) {
 
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
@@ -147,47 +157,47 @@ public class QuickSelect {
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]].compareTo(data[indexes[ir]]) > 0 ) {
+				if (data[indexes[l]].compareTo(data[indexes[ir]]) > 0) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]].compareTo( data[indexes[ir]] ) > 0 ) {
+				if (data[indexes[lp1]].compareTo(data[indexes[ir]]) > 0) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]].compareTo(data[indexes[lp1]]) > 0 ) {
+				if (data[indexes[l]].compareTo(data[indexes[lp1]]) > 0) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]].compareTo(data[a]) < 0);
+				for (; ; ) {
+					do i++; while (data[indexes[i]].compareTo(data[a]) < 0);
 					do j--; while (data[indexes[j]].compareTo(data[a]) > 0);
-					if( j < i) break;
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -199,69 +209,80 @@ public class QuickSelect {
 	 *
 	 * @param data The unsorted list. Is modified.
 	 * @param k The element of the sorted list that is to be found
-	 * @param maxIndex Only element up to this value are considered
+	 * @param size Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static float select( float []data , int k , int maxIndex ) {
+	public static float select( float[] data, int k, int size ) {
+		return select(data, k, 0, size);
+	}
 
-		int i,j,mid;
-		int n = maxIndex;
+	/**
+	 *
+	 * @param k All elements i data[idx0+i] <= data[idx0+k]
+	 * @param idx0 Lower extent of the array considered. Inclusive.
+	 * @param idx1 Upper extent of the array considered. Exclusive.
+	 * @return value at 'k'
+	 */
+	public static float select( float[] data, int k, int idx0, int idx1 ) {
+		k += idx0;
+		int i, j, mid;
+		int n = idx1;
 		float a;
-		int l = 0;
-		int ir = n-1;
+		int l = idx0;
+		int ir = n - 1;
 
 		float temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -270,77 +291,76 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( float []data , int k , int maxIndex ,  int []indexes) {
-
-		for( int i = 0; i < maxIndex; i++ ) {
+	public static int selectIndex( float[] data, int k, int maxIndex, int[] indexes ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -352,69 +372,81 @@ public class QuickSelect {
 	 *
 	 * @param data The unsorted list. Is modified.
 	 * @param k The element of the sorted list that is to be found
-	 * @param maxIndex Only element up to this value are considered
+	 * @param size Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static double select( double []data , int k , int maxIndex ) {
+	public static double select( double[] data, int k, int size ) {
+		return select(data, k, 0, size);
+	}
 
-		int i,j,mid;
-		int n = maxIndex;
+	/**
+	 *
+	 * @param k All elements i data[idx0+i] <= data[idx0+k]
+	 * @param idx0 Lower extent of the array considered. Inclusive.
+	 * @param idx1 Upper extent of the array considered. Exclusive.
+	 * @return value at 'k'
+	 */
+	public static double select( double[] data, int k, int idx0, int idx1 ) {
+		k += idx0;
+
+		int i, j, mid;
+		int n = idx1;
 		double a;
-		int l = 0;
-		int ir = n-1;
+		int l = idx0;
+		int ir = n - 1;
 
 		double temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -423,77 +455,77 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( double []data , int k , int maxIndex ,  int []indexes) {
+	public static int selectIndex( double[] data, int k, int maxIndex, int[] indexes ) {
 
-		for( int i = 0; i < maxIndex; i++ ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -508,66 +540,66 @@ public class QuickSelect {
 	 * @param maxIndex Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static long select( long []data , int k , int maxIndex ) {
+	public static long select( long[] data, int k, int maxIndex ) {
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		long a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		long temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -576,77 +608,77 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( long []data , int k , int maxIndex ,  int []indexes) {
+	public static int selectIndex( long[] data, int k, int maxIndex, int[] indexes ) {
 
-		for( int i = 0; i < maxIndex; i++ ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -661,66 +693,66 @@ public class QuickSelect {
 	 * @param maxIndex Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static int select( int []data , int k , int maxIndex ) {
+	public static int select( int[] data, int k, int maxIndex ) {
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -729,77 +761,77 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( int []data , int k , int maxIndex ,  int []indexes) {
+	public static int selectIndex( int[] data, int k, int maxIndex, int[] indexes ) {
 
-		for( int i = 0; i < maxIndex; i++ ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -814,66 +846,66 @@ public class QuickSelect {
 	 * @param maxIndex Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static short select( short []data , int k , int maxIndex ) {
+	public static short select( short[] data, int k, int maxIndex ) {
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		short a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		short temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -882,77 +914,77 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( short []data , int k , int maxIndex ,  int []indexes) {
+	public static int selectIndex( short[] data, int k, int maxIndex, int[] indexes ) {
 
-		for( int i = 0; i < maxIndex; i++ ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -967,66 +999,66 @@ public class QuickSelect {
 	 * @param maxIndex Only element up to this value are considered
 	 * @return the 'k'th largest element
 	 */
-	public static byte select( byte []data , int k , int maxIndex ) {
+	public static byte select( byte[] data, int k, int maxIndex ) {
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		byte a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		byte temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[ir] < data[l] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[ir] < data[l]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 				return data[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = data[mid];
 				data[mid] = data[lp1];
 				data[lp1] = temp;
 
-				if( data[l] > data[ir] ) {
+				if (data[l] > data[ir]) {
 					temp = data[l];
 					data[l] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[lp1] > data[ir] ) {
+				if (data[lp1] > data[ir]) {
 					temp = data[lp1];
 					data[lp1] = data[ir];
 					data[ir] = temp;
 				}
 
-				if( data[l] > data[lp1] ) {
+				if (data[l] > data[lp1]) {
 					temp = data[lp1];
 					data[lp1] = data[l];
 					data[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=data[lp1];
+				i = lp1;
+				j = ir;
+				a = data[lp1];
 
-				for(;;) {
-					do i++; while(data[i]<a);
-					do j--; while (data[j]>a);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[i] < a);
+					do j--; while (data[j] > a);
+					if (j < i) break;
 					temp = data[i];
 					data[i] = data[j];
 					data[j] = temp;
 				}
 				data[lp1] = data[j];
 				data[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
@@ -1035,80 +1067,78 @@ public class QuickSelect {
 	 * <p>
 	 * Returns the original index of the 'k' largest element in the list.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: There is additional overhead since the values of indexes needs to be set
 	 * </p>
-	 * 
+	 *
 	 * @param indexes Temporary storage and is overwritten
 	 */
-	public static int selectIndex( byte []data , int k , int maxIndex ,  int []indexes) {
+	public static int selectIndex( byte[] data, int k, int maxIndex, int[] indexes ) {
 
-		for( int i = 0; i < maxIndex; i++ ) {
+		for (int i = 0; i < maxIndex; i++) {
 			indexes[i] = i;
 		}
 
-		int i,j,mid;
+		int i, j, mid;
 		int n = maxIndex;
 		int a;
 		int l = 0;
-		int ir = n-1;
+		int ir = n - 1;
 
 		int temp;
 
-		for(;;) {
-			if( ir <= l+1 ) {
-				if( ir == l+1 && data[indexes[ir]] < data[indexes[l]] ) {
+		for (; ; ) {
+			if (ir <= l + 1) {
+				if (ir == l + 1 && data[indexes[ir]] < data[indexes[l]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 				return indexes[k];
 			} else {
-				mid = (l+ir) >> 1;
+				mid = (l + ir) >> 1;
 
-				int lp1 = l+1;
+				int lp1 = l + 1;
 				temp = indexes[mid];
 				indexes[mid] = indexes[lp1];
 				indexes[lp1] = temp;
 
-				if( data[indexes[l]] > data[indexes[ir]] ) {
+				if (data[indexes[l]] > data[indexes[ir]]) {
 					temp = indexes[l];
 					indexes[l] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[lp1]] > data[indexes[ir]] ) {
+				if (data[indexes[lp1]] > data[indexes[ir]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[ir];
 					indexes[ir] = temp;
 				}
 
-				if( data[indexes[l]] > data[indexes[lp1]] ) {
+				if (data[indexes[l]] > data[indexes[lp1]]) {
 					temp = indexes[lp1];
 					indexes[lp1] = indexes[l];
 					indexes[l] = temp;
 				}
 
-				i=lp1;
-				j=ir;
-				a=indexes[lp1];
+				i = lp1;
+				j = ir;
+				a = indexes[lp1];
 
-				for(;;) {
-					do i++; while(data[indexes[i]]<data[a]);
-					do j--; while (data[indexes[j]]>data[a]);
-					if( j < i) break;
+				for (; ; ) {
+					do i++; while (data[indexes[i]] < data[a]);
+					do j--; while (data[indexes[j]] > data[a]);
+					if (j < i) break;
 					temp = indexes[i];
 					indexes[i] = indexes[j];
 					indexes[j] = temp;
 				}
 				indexes[lp1] = indexes[j];
 				indexes[j] = a;
-				if( j >= k ) ir=j-1;
-				if( j <= k ) l=i;
+				if (j >= k) ir = j - 1;
+				if (j <= k) l = i;
 			}
 		}
 	}
-
-
 }
