@@ -448,4 +448,46 @@ class TestPrimitiveArrays {
 		assertEquals(1, PrimitiveArrays.lowerBound(orig,1,99,-1));
 		assertEquals(100, PrimitiveArrays.lowerBound(orig,1,99,200));
 	}
+
+	@Test void sumD_byte() {
+		var array = new byte[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
+
+	@Test void sumD_short() {
+		var array = new short[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
+
+	@Test void sumD_int() {
+		var array = new int[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
+
+	@Test void sumD_long() {
+		var array = new long[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
+
+	@Test void sumD_float() {
+		var array = new float[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
+
+	@Test void sumD_double() {
+		var array = new double[]{5,-2,10,120};
+
+		assertEquals(133.0, PrimitiveArrays.sumD(array, 0, 4));
+		assertEquals(128.0, PrimitiveArrays.sumD(array, 1, 3));
+	}
 }

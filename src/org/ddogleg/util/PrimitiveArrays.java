@@ -554,4 +554,70 @@ public class PrimitiveArrays {
 		}
 		return first;
 	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( byte[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( short[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( int[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( long[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( float[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
+
+	/**
+	 * Computes the sum of the array and stores the result in a double
+	 */
+	public static double sumD( double[] array, int offset, int length ) {
+		double sum = 0.0;
+		for (int i = 0; i < length; i++) {
+			sum += array[offset + i];
+		}
+		return sum;
+	}
 }

@@ -19,7 +19,7 @@ Date:     2021
   * Does not use a single very large array internally
   * This scales much better as array size gets very very large
 - PrimitiveArrays
-  * Added minIdx(), maxIdx()
+  * Added minIdx(), maxIdx(), sumD()
 - ModelMatcher
   * Created ModelMatcherPost that let's you specify the model after creation
   * Concurrent implementations of RANSAC and LeastMedianOfSquares
