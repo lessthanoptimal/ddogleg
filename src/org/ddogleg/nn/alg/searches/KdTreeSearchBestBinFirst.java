@@ -227,12 +227,7 @@ public abstract class KdTreeSearchBestBinFirst<P> {
 
 		@Override
 		public int compareTo(Helper o) {
-			if( closestPossibleSq < o.closestPossibleSq)
-				return -1;
-			else if( closestPossibleSq > o.closestPossibleSq)
-				return 1;
-			else
-				return 0;
+			return Double.compare(closestPossibleSq, o.closestPossibleSq);
 		}
 	}
 }
