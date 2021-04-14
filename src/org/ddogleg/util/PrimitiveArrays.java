@@ -620,4 +620,80 @@ public class PrimitiveArrays {
 		}
 		return sum;
 	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( byte[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( short[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( int[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( long[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( float[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	/**
+	 * Recursively computes a result from an array. Previous results are feedback into the current value being
+	 * considered.
+	 */
+	public static double feedbackIdxDOp( double[] array, int offset, int length, FeedbackIdxD op ) {
+		double result = 0.0;
+		for (int i = 0; i < length; i++) {
+			result = op.process(i, array[i + offset], result);
+		}
+		return result;
+	}
+
+	@FunctionalInterface interface FeedbackIdxD {
+		double process( int idx, double value, double previous );
+	}
 }
