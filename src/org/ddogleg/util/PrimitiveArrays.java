@@ -693,7 +693,8 @@ public class PrimitiveArrays {
 		return result;
 	}
 
-	@FunctionalInterface interface FeedbackIdxD {
+	@FunctionalInterface
+	public interface FeedbackIdxD {
 		double process( int idx, double value, double previous );
 	}
 }
