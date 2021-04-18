@@ -37,8 +37,12 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	void setTo( T original );
 
 	/**
-	 * Ensures that the internal array is at least this size and changes the size to be this. Array
-	 * data is not saved
+	 * Ensures that the internal array is at least this size. Value of elements previously in the array will
+	 * not be changed. If the size is increased then the value of new elements in undefined.
+	 *
+	 * If you wish to resize the array and avoid copying over past values for performance reasons, then you must
+	 * either resize(0) or call {@link #reset} first.
+	 *
 	 * @param size desired new size
 	 */
 	void resize( int size );

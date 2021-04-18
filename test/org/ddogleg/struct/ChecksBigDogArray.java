@@ -18,7 +18,6 @@
 
 package org.ddogleg.struct;
 
-import org.ddogleg.struct.BigDogArray.Growth;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,24 +28,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public abstract class ChecksBigDogArray<Array> {
 
-	public abstract BigDogArray<Array> createBigDog(int initialAllocation, int blockSize, Growth growth);
+	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth);
 
 	/**
 	 * Ensures that the initial array allocation is done correctly by the constructor
 	 */
 	@Test void constructor() {
-		checkConstructor(5, 10, Growth.GROW_FIRST, 5);
-		checkConstructor(85, 10, Growth.GROW_FIRST, 10);
-		checkConstructor(5, 10, Growth.GROW, 5);
-		checkConstructor(85, 10, Growth.GROW, 5);
-		checkConstructor(5, 10, Growth.FIXED, 10);
-		checkConstructor(85, 10, Growth.FIXED, 10);
+		checkConstructor(5, 10, BigDogGrowth.GROW_FIRST, 5);
+		checkConstructor(85, 10, BigDogGrowth.GROW_FIRST, 10);
+		checkConstructor(5, 10, BigDogGrowth.GROW, 5);
+		checkConstructor(85, 10, BigDogGrowth.GROW, 5);
+		checkConstructor(5, 10, BigDogGrowth.FIXED, 10);
+		checkConstructor(85, 10, BigDogGrowth.FIXED, 10);
 	}
 
-	private void checkConstructor( int initialAllocation, int blockSize, Growth growth, int expectLastBlock ) {
+	private void checkConstructor( int initialAllocation, int blockSize, BigDogGrowth growth, int expectLastBlock ) {
 		int expectedBlocks = initialAllocation/blockSize + (initialAllocation%blockSize != 0 ? 1 : 0);
 
-		BigDogArray<Array> alg = createBigDog(initialAllocation, blockSize, growth);
+		BigDogArrayBase<Array> alg = createBigDog(initialAllocation, blockSize, growth);
 		assertEquals(0, alg.size);
 		assertEquals(growth, alg.growth);
 		assertEquals(10, alg.blockSize);
@@ -57,27 +56,27 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void reserve() {
-		checkReserve(5, Growth.GROW_FIRST, 5);
-		checkReserve(10, Growth.GROW_FIRST, 10);
-		checkReserve(11, Growth.GROW_FIRST, 10);
-		checkReserve(45, Growth.GROW_FIRST, 10);
-		checkReserve(50, Growth.GROW_FIRST, 10);
-		checkReserve(5, Growth.GROW, 5);
-		checkReserve(10, Growth.GROW, 10);
-		checkReserve(45, Growth.GROW, 5);
-		checkReserve(50, Growth.GROW, 10);
-		checkReserve(5, Growth.FIXED, 10);
-		checkReserve(10, Growth.FIXED, 10);
-		checkReserve(45, Growth.FIXED, 10);
-		checkReserve(50, Growth.FIXED, 10);
+		checkReserve(5, BigDogGrowth.GROW_FIRST, 5);
+		checkReserve(10, BigDogGrowth.GROW_FIRST, 10);
+		checkReserve(11, BigDogGrowth.GROW_FIRST, 10);
+		checkReserve(45, BigDogGrowth.GROW_FIRST, 10);
+		checkReserve(50, BigDogGrowth.GROW_FIRST, 10);
+		checkReserve(5, BigDogGrowth.GROW, 5);
+		checkReserve(10, BigDogGrowth.GROW, 10);
+		checkReserve(45, BigDogGrowth.GROW, 5);
+		checkReserve(50, BigDogGrowth.GROW, 10);
+		checkReserve(5, BigDogGrowth.FIXED, 10);
+		checkReserve(10, BigDogGrowth.FIXED, 10);
+		checkReserve(45, BigDogGrowth.FIXED, 10);
+		checkReserve(50, BigDogGrowth.FIXED, 10);
 	}
 
-	private void checkReserve( int allocation, Growth growth, int expectLastBlock ) {
+	private void checkReserve( int allocation, BigDogGrowth growth, int expectLastBlock ) {
 		int blockSize = 10;
 		int expectedBlocks = allocation/blockSize + (allocation%blockSize != 0 ? 1 : 0);
 
 		// Allocate the memory
-		BigDogArray<Array> alg = createBigDog(1, blockSize, growth);
+		BigDogArrayBase<Array> alg = createBigDog(1, blockSize, growth);
 		alg.reserve(allocation);
 		assertEquals(0, alg.size); // make sure the size didn't change
 		assertTrue(alg.isValidStructure());
@@ -99,7 +98,7 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void getDesiredBlocks() {
-		BigDogArray<Array> alg = createBigDog(1, 10, Growth.GROW_FIRST);
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.GROW_FIRST);
 
 		assertEquals(1, alg.getDesiredBlocks(1));
 		assertEquals(1, alg.getDesiredBlocks(9));
@@ -110,7 +109,7 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void allocate_GROW_FIRST() {
-		BigDogArray<Array> alg = createBigDog(1, 10, Growth.GROW_FIRST);
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.GROW_FIRST);
 
 		assertEquals(1, alg.getTotalAllocation());
 		alg.allocate(2,false,false);
@@ -129,7 +128,7 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void allocate_GROW() {
-		BigDogArray<Array> alg = createBigDog(1, 10, Growth.GROW);
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.GROW);
 
 		assertEquals(1, alg.getTotalAllocation());
 		alg.allocate(2,false,false);
@@ -148,7 +147,7 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void allocate_FIXED() {
-		BigDogArray<Array> alg = createBigDog(1, 10, Growth.FIXED);
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
 
 		assertEquals(10, alg.getTotalAllocation());
 		alg.allocate(2,false,false);

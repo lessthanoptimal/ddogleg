@@ -224,7 +224,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 	 */
 	protected void matchPointsToClusters( LArrayAccessor<P> points, DogArray<P> clusters ) {
 		// reset the member counts to zero for each cluster
-		memberCount.resize(clusters.size, 0);
+		memberCount.resetResize(clusters.size, 0);
 
 		// updated inside the call to findBestMatch
 		sumDistance = 0;

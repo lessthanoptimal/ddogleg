@@ -31,7 +31,7 @@ public class TestDogArray_I32 extends ChecksDogArrayPrimitive<DogArray_I32> {
 
 		assertEquals(21, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i-1, alg.get(i));
+			assertEquals(i - 1, alg.get(i));
 		}
 	}
 
@@ -141,24 +141,52 @@ public class TestDogArray_I32 extends ChecksDogArrayPrimitive<DogArray_I32> {
 	}
 
 	@Test void resize_default() {
-		DogArray_I32 alg = new DogArray_I32(2);
+		var alg = new DogArray_I32(2);
 		assertEquals(0, alg.size);
 		alg.resize(12, (int)1);
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(1.0, alg.get(i));
+			assertEquals((int)1, alg.get(i));
 		}
-		// The array isn't redeclared but the value should still change
+
+		// If the size has been reduced then there are no new elements to initialize
 		alg.resize(10, (int)2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals((int)2, alg.get(i));
+			assertEquals((int)1, alg.get(i));
 		}
-		// it shouldn't change the entire array's value since that's wasteful
-		for (int i = alg.size; i < alg.data.length; i++) {
-			assertEquals((int)1, alg.data[i]);
+
+		// It's now larger and the new elements should be initialized
+		alg.resize(20, (int)3);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((int)(i < 10 ? 1 : 3), alg.get(i));
+		}
+	}
+
+	@Test void resize_operator() {
+		var alg = new DogArray_I32(2);
+		assertEquals(0, alg.size);
+		alg.resize(12, ( idx ) -> (int)idx);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((int)i, alg.get(i));
+		}
+
+		// If the size has been reduced then there are no new elements to initialize
+		alg.resize(10, ( idx ) -> (int)2);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((int)i, alg.get(i));
+		}
+
+		// It's now larger and the new elements should be initialized
+		alg.resize(20, ( idx ) -> (int)(100 + idx));
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((int)(i < 10 ? i : 100 + i), alg.get(i));
 		}
 	}
 

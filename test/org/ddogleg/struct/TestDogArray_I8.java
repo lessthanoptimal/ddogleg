@@ -31,7 +31,7 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 
 		assertEquals(21, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i-1, alg.get(i));
+			assertEquals(i - 1, alg.get(i));
 		}
 	}
 
@@ -141,24 +141,52 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 	}
 
 	@Test void resize_default() {
-		DogArray_I8 alg = new DogArray_I8(2);
+		var alg = new DogArray_I8(2);
 		assertEquals(0, alg.size);
 		alg.resize(12, (byte)1);
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(1.0, alg.get(i));
+			assertEquals((double)1, alg.get(i));
 		}
-		// The array isn't redeclared but the value should still change
+
+		// If the size has been reduced then there are no new elements to initialize
 		alg.resize(10, (byte)2);
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals((byte)2, alg.get(i));
+			assertEquals((byte)1, alg.get(i));
 		}
-		// it shouldn't change the entire array's value since that's wasteful
-		for (int i = alg.size; i < alg.data.length; i++) {
-			assertEquals((byte)1, alg.data[i]);
+
+		// It's now larger and the new elements should be initialized
+		alg.resize(20, (byte)3);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((byte)(i < 10 ? 1 : 3), alg.get(i));
+		}
+	}
+
+	@Test void resize_operator() {
+		var alg = new DogArray_I8(2);
+		assertEquals(0, alg.size);
+		alg.resize(12, ( idx ) -> (byte)idx);
+		assertTrue(alg.data.length >= 12);
+		assertEquals(12, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((byte)i, alg.get(i));
+		}
+
+		// If the size has been reduced then there are no new elements to initialize
+		alg.resize(10, ( idx ) -> (byte)2);
+		assertTrue(alg.data.length >= 10);
+		assertEquals(10, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((byte)i, alg.get(i));
+		}
+
+		// It's now larger and the new elements should be initialized
+		alg.resize(20, ( idx ) -> (byte)(100 + idx));
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((byte)(i < 10 ? i : 100 + i), alg.get(i));
 		}
 	}
 

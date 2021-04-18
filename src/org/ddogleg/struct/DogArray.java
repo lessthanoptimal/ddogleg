@@ -314,6 +314,21 @@ public class DogArray<T> extends FastAccess<T> {
 	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
 	 *
 	 * @param length The new size of the queue
+	 * @param initializer Used to assign an initial value to newly added elements to the array. Overrides
+	 * default initialization
+	 */
+	public void resize( int length, DProcessIdx<T> initializer ) {
+		reserve(length);
+		for (int i = size; i < length; i++) {
+			initializer.process(i, data[i]);
+		}
+		this.size = length;
+	}
+
+	/**
+	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
+	 *
+	 * @param length The new size of the queue
 	 */
 	public void resize( int length ) {
 		reserve(length);

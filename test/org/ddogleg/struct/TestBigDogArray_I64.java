@@ -18,7 +18,6 @@
 
 package org.ddogleg.struct;
 
-import org.ddogleg.struct.BigDogArray.Growth;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,13 +30,13 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 
 	/** resize with a set value */
 	@Test void resizeValue() {
-		checkResizeValue(BigDogArray.Growth.GROW_FIRST);
-		checkResizeValue(BigDogArray.Growth.GROW);
-		checkResizeValue(BigDogArray.Growth.FIXED);
+		checkResizeValue(BigDogGrowth.GROW_FIRST);
+		checkResizeValue(BigDogGrowth.GROW);
+		checkResizeValue(BigDogGrowth.FIXED);
 	}
 
 	/** Check resize by seeing if the size changed then checking the values */
-	private void checkResizeValue( Growth growth ) {
+	private void checkResizeValue( BigDogGrowth growth ) {
 		int blockSize = 10;
 
 		var alg = new BigDogArray_I64(1, blockSize, growth);
@@ -69,13 +68,13 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 
 	/** resize only */
 	@Test void resize() {
-		checkResize(BigDogArray.Growth.GROW_FIRST);
-		checkResize(BigDogArray.Growth.GROW);
-		checkResize(BigDogArray.Growth.FIXED);
+		checkResize(BigDogGrowth.GROW_FIRST);
+		checkResize(BigDogGrowth.GROW);
+		checkResize(BigDogGrowth.FIXED);
 	}
 
 	/** Check resize by seeing if the size changed then checking the values */
-	private void checkResize( BigDogArray.Growth growth ) {
+	private void checkResize( BigDogGrowth growth ) {
 		int blockSize = 10;
 
 		var alg = new BigDogArray_I64(1, blockSize, growth);
@@ -106,14 +105,14 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void appendArray() {
-		for (Growth growth : Growth.values()) {
+		for (BigDogGrowth growth : BigDogGrowth.values()) {
 			checkAppendArray(1, growth, 5);
 			checkAppendArray(1, growth, 12);
 			checkAppendArray(4, growth, 8);
 		}
 	}
 
-	private void checkAppendArray( int initialSize, Growth growth, int arraySize ) {
+	private void checkAppendArray( int initialSize, BigDogGrowth growth, int arraySize ) {
 		long[] array = new long[arraySize];
 		for (int i = 0; i < arraySize; i++) {
 			array[i] = (long)(i + 1);
@@ -133,13 +132,13 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void appendValue() {
-		for (Growth growth : Growth.values()) {
+		for (BigDogGrowth growth : BigDogGrowth.values()) {
 			checkAppendValue(1, growth);
 			checkAppendValue(4, growth);
 		}
 	}
 
-	private void checkAppendValue( int initialSize, Growth growth ) {
+	private void checkAppendValue( int initialSize, BigDogGrowth growth ) {
 		var alg = new BigDogArray_I64(initialSize, 10, growth);
 		alg.resize(initialSize);
 
@@ -176,12 +175,12 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void fill() {
-		for (Growth growth : Growth.values()) {
+		for (BigDogGrowth growth : BigDogGrowth.values()) {
 			checkFill(growth);
 		}
 	}
 
-	private void checkFill( Growth growth ) {
+	private void checkFill( BigDogGrowth growth ) {
 		var alg = new BigDogArray_I64(1, 10, growth);
 		alg.resize(4, (long)2);
 		alg.resize(11, (long)10);
@@ -205,7 +204,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void setArray() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
 		long[] array = new long[21];
@@ -220,7 +219,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void set_get() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
 		for (int i = 0; i < 25; i++) {
@@ -230,7 +229,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void setTail_getTail() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
 		for (int i = 0; i < 25; i++) {
@@ -243,7 +242,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void getArray() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
 			alg.set(i, (long)(i + 1));
@@ -259,7 +258,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void forEach() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
 			alg.set(i, (long)(i + 1));
@@ -274,7 +273,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void forIdx() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
 			alg.set(i, (long)(i + 1));
@@ -290,7 +289,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void applyIdx() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
 			alg.set(i, (long)(i + 1));
@@ -307,7 +306,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 	}
 
 	@Test void processByBlock() {
-		var alg = new BigDogArray_I64(2, 10, Growth.GROW);
+		var alg = new BigDogArray_I64(2, 10, BigDogGrowth.GROW);
 		alg.resize(26);
 		alg.processByBlock(1, alg.size - 1, ( block, idx0, idx1, offset ) -> {
 			for (int i = idx0; i < idx1; i++) {
@@ -323,7 +322,7 @@ public class TestBigDogArray_I64 extends ChecksBigDogArray<long[]> {
 		}
 	}
 
-	@Override public BigDogArray<long[]> createBigDog( int initialAllocation, int blockSize, Growth growth ) {
+	@Override public BigDogArrayBase<long[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		return new BigDogArray_I64(initialAllocation, blockSize, growth);
 	}
 }

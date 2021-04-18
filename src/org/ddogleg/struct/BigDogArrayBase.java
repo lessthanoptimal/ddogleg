@@ -24,14 +24,14 @@ import lombok.Getter;
  * A growable array that is composed of internal blocks. This is intended to reduce overhead when growing a very large
  * array. Contrast this with {@link DogArray} for which its entire internal array needs to be copied when growing.
  * While more complex and in some classes slightly slower, the approach employed here is much more memory and
- * speed efficient while growing. See {@link Growth} for a description of different growth strategies.
+ * speed efficient while growing. See {@link BigDogGrowth} for a description of different growth strategies.
  *
  * When operations are used which add/append to the end of the array then extra room is typically added, if a grow
  * strategy is employed. This is done to avoid excessive amount of memory copy operations.
  *
  * @author Peter Abeles
  */
-public abstract class BigDogArray<Array> {
+public abstract class BigDogArrayBase<Array> {
 	/**
 	 * Default block size. It's assumed that this is used in fairly large arrays.
 	 */
@@ -58,9 +58,9 @@ public abstract class BigDogArray<Array> {
 	/**
 	 * Approach used for growth. See enum for a description
 	 */
-	protected @Getter final BigDogArray.Growth growth;
+	protected @Getter final BigDogGrowth growth;
 
-	protected BigDogArray( int initialAllocation, int blockSize, BigDogArray.Growth growth ) {
+	protected BigDogArrayBase( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		// initializing with a size of zero causes all sorts of edge cases. So just make it illegal.
 		if (initialAllocation <= 0)
 			throw new IllegalArgumentException("initialAllocation size must be a positive value");
@@ -80,7 +80,7 @@ public abstract class BigDogArray<Array> {
 
 		// The last block might be a partial block
 		if (blocks.size > 0) {
-			if ((blocks.size == 1 && growth == BigDogArray.Growth.GROW_FIRST) || growth == BigDogArray.Growth.GROW) {
+			if ((blocks.size == 1 && growth == BigDogGrowth.GROW_FIRST) || growth == BigDogGrowth.GROW) {
 				blocks.set(blocks.size - 1, newArrayInstance(initialAllocation%blockSize));
 			} else {
 				blocks.set(blocks.size - 1, newArrayInstance(blockSize));
@@ -176,7 +176,7 @@ public abstract class BigDogArray<Array> {
 	 * @return A new array
 	 */
 	private int computeLastBlockSize( int desiredSize, int numBlocks ) {
-		if (growth == BigDogArray.Growth.FIXED || (numBlocks > 1 && growth == BigDogArray.Growth.GROW_FIRST)) {
+		if (growth == BigDogGrowth.FIXED || (numBlocks > 1 && growth == BigDogGrowth.GROW_FIRST)) {
 			return blockSize;
 		} else {
 			return desiredSize%blockSize == 0 ? blockSize : desiredSize%blockSize;
@@ -375,27 +375,5 @@ public abstract class BigDogArray<Array> {
 		 * @param offset The number of elements offset from the first element it requested
 		 */
 		void process( Array block, int idx0, int idx1, int offset );
-	}
-
-	/**
-	 * Specifies which strategy is used to select internal array size when adding new blocks. If a fixed sized
-	 * block is always used this can be memory inefficient, but is faster as array creation and copy can be avoided.
-	 */
-	public enum Growth {
-		/**
-		 * Blocks always have a fixed size.
-		 */
-		FIXED,
-		/**
-		 * The first block will grow as needed but all blocks later on are fixed. The idea being that initially
-		 * a block can be much bigger than needed initially, but after the first block the amount of memory wasted
-		 * is relatively small.
-		 */
-		GROW_FIRST,
-		/**
-		 * Every new block will start out as small as possible. Most memory efficient approach but will be
-		 * wasteful as smaller arrays will be continuously created and copied as the array grows.
-		 */
-		GROW
 	}
 }

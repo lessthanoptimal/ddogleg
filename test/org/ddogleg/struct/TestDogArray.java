@@ -26,7 +26,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * @author Peter Abeles
  */
@@ -37,13 +36,13 @@ class TestDogArray {
 	 */
 	@Test
 	void reset_grow() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new,( d)->d.value=2);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		for (int i = 0; i < 5; i++) {
 			DummyData d = alg.grow();
-			assertEquals(2,d.value);
+			assertEquals(2, d.value);
 		}
-		assertEquals(5,alg.size);
+		assertEquals(5, alg.size);
 	}
 
 	/**
@@ -51,7 +50,7 @@ class TestDogArray {
 	 */
 	@Test
 	void reset_resize() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new,( d)->d.value=2);
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		alg.resize(3);
 		for (int i = 0; i < alg.size; i++) {
@@ -69,10 +68,40 @@ class TestDogArray {
 	}
 
 	@Test
+	void resize_Initialize() {
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+
+		alg.resize(3, ( o ) -> o.value = 100);
+		alg.resize(10, ( o ) -> o.value = 200);
+
+		for (int i = 0; i < 3; i++) {
+			assertEquals(100, alg.get(i).value);
+		}
+		for (int i = 3; i < 10; i++) {
+			assertEquals(200, alg.get(i).value);
+		}
+	}
+
+	@Test
+	void resize_InitializeIdx() {
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+
+		alg.resize(3, ( idx, o ) -> o.value = 100 + idx);
+		alg.resize(10, ( idx, o ) -> o.value = 200 + idx);
+
+		for (int i = 0; i < 3; i++) {
+			assertEquals(100 + i, alg.get(i).value);
+		}
+		for (int i = 3; i < 10; i++) {
+			assertEquals(200 + i, alg.get(i).value);
+		}
+	}
+
+	@Test
 	void checkDeclareInstance() {
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
-		assertTrue(alg.getMaxSize()>0);
+		assertTrue(alg.getMaxSize() > 0);
 		assertNotNull(alg.data[0]);
 	}
 
@@ -81,63 +110,63 @@ class TestDogArray {
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
-		
+		assertEquals(0, l.size());
+
 		alg.grow().value = 1;
 		alg.grow().value = 1;
 		alg.grow().value = 2;
 		alg.removeTail();
 
 		l = alg.toList();
-		assertEquals(2,l.size());
-		assertEquals(1,l.get(0).value);
-		assertEquals(1,l.get(1).value);
+		assertEquals(2, l.size());
+		assertEquals(1, l.get(0).value);
+		assertEquals(1, l.get(1).value);
 	}
 
 	@Test
 	void remove_indexes() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
 
-		int[] indexes = new int[]{0,1,4,2,6,8,9};
-		alg.remove(indexes,2,6,null);
-		assertEquals(6,alg.size());
-		assertEquals(0,alg.get(0).value);
-		assertEquals(1,alg.get(1).value);
-		assertEquals(3,alg.get(2).value);
-		assertEquals(5,alg.get(3).value);
-		assertEquals(7,alg.get(4).value);
-		assertEquals(9,alg.get(5).value);
+		int[] indexes = new int[]{0, 1, 4, 2, 6, 8, 9};
+		alg.remove(indexes, 2, 6, null);
+		assertEquals(6, alg.size());
+		assertEquals(0, alg.get(0).value);
+		assertEquals(1, alg.get(1).value);
+		assertEquals(3, alg.get(2).value);
+		assertEquals(5, alg.get(3).value);
+		assertEquals(7, alg.get(4).value);
+		assertEquals(9, alg.get(5).value);
 
 		// make sure original objects were recycled properly
 		for (int i = 0; i < 10; i++) {
-			for (int j = i+1; j < 10; j++) {
-				assertNotEquals(alg.data[i].value,alg.data[j].value);
+			for (int j = i + 1; j < 10; j++) {
+				assertNotEquals(alg.data[i].value, alg.data[j].value);
 			}
 		}
 	}
 
 	@Test
 	void remove_indexes_RemoveNothing() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
 		int[] indexes = new int[]{};
-		alg.remove(indexes,2,2,null);
-		assertEquals(10,alg.size());
+		alg.remove(indexes, 2, 2, null);
+		assertEquals(10, alg.size());
 	}
 
 	@Test
 	void removeTail() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 
 		alg.grow();
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 		alg.removeTail();
-		assertEquals(0,alg.size);
+		assertEquals(0, alg.size);
 	}
 
 	@Test
@@ -149,7 +178,7 @@ class TestDogArray {
 			data.add(d);
 		}
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
-		alg.copyAll(data,(src, dst)-> dst.value=src.value);
+		alg.copyAll(data, ( src, dst ) -> dst.value = src.value);
 
 		for (int i = 0; i < 10; i++) {
 			assertNotEquals(data.get(i), alg.get(i));
@@ -159,10 +188,10 @@ class TestDogArray {
 
 	@Test
 	void remove_index() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
+		assertEquals(0, l.size());
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -170,23 +199,23 @@ class TestDogArray {
 
 		alg.remove(1);
 
-		assertEquals(2,alg.size());
-		assertEquals(1,alg.get(0).value);
-		assertEquals(3,alg.get(1).value);
+		assertEquals(2, alg.size());
+		assertEquals(1, alg.get(0).value);
+		assertEquals(3, alg.get(1).value);
 		// make sure the data was shifted to the end
-		assertEquals(2,alg.data[2].value);
+		assertEquals(2, alg.data[2].value);
 
 		alg.remove(1);
-		assertEquals(1,alg.size());
-		assertEquals(1,alg.get(0).value);
-		assertEquals(3,alg.data[1].value);
-		assertEquals(2,alg.data[2].value);
+		assertEquals(1, alg.size());
+		assertEquals(1, alg.get(0).value);
+		assertEquals(3, alg.data[1].value);
+		assertEquals(2, alg.data[2].value);
 
 		alg.remove(0);
-		assertEquals(0,alg.size());
-		assertEquals(1,alg.data[0].value);
-		assertEquals(3,alg.data[1].value);
-		assertEquals(2,alg.data[2].value);
+		assertEquals(0, alg.size());
+		assertEquals(1, alg.data[0].value);
+		assertEquals(3, alg.data[1].value);
+		assertEquals(2, alg.data[2].value);
 	}
 
 	@Test
@@ -200,22 +229,22 @@ class TestDogArray {
 		assertFalse(alg.remove(new DummyData()));
 
 		assertTrue(alg.remove(alg.get(1)));
-		assertEquals(2,alg.size);
-		assertEquals(10,alg.get(0).value);
-		assertEquals(12,alg.get(1).value);
+		assertEquals(2, alg.size);
+		assertEquals(10, alg.get(0).value);
+		assertEquals(12, alg.get(1).value);
 	}
 
 	@Test
 	void removeSwap() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
+		assertEquals(0, l.size());
 
 		alg.grow().value = 1;
 		DummyData d = alg.get(0);
-		assertSame(d,alg.removeSwap(0));
-		assertEquals(0,alg.size());
+		assertSame(d, alg.removeSwap(0));
+		assertEquals(0, alg.size());
 
 		alg.grow().value = 1;
 		alg.grow().value = 2;
@@ -224,28 +253,30 @@ class TestDogArray {
 
 		alg.removeSwap(1);
 
-		assertEquals(3,alg.size());
-		assertEquals(1,alg.get(0).value);
-		assertEquals(4,alg.get(1).value);
-		assertEquals(3,alg.get(2).value);
+		assertEquals(3, alg.size());
+		assertEquals(1, alg.get(0).value);
+		assertEquals(4, alg.get(1).value);
+		assertEquals(3, alg.get(2).value);
 		// Make sure the removed element is at the tail
-		assertEquals(2,alg.data[3].value);
+		assertEquals(2, alg.data[3].value);
 	}
 
 	@Test
 	void getTail() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 
-		alg.grow();alg.grow();
+		alg.grow();
+		alg.grow();
 
 		assertSame(alg.data[1], alg.getTail());
 	}
 
 	@Test
 	void getTail_index() {
-		DogArray<DummyData> alg = new DogArray<>(10,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
 
-		alg.grow();alg.grow();
+		alg.grow();
+		alg.grow();
 
 		for (int i = 0; i < alg.size(); i++) {
 			assertSame(alg.data[i], alg.getTail(alg.size - i - 1));
@@ -260,7 +291,8 @@ class TestDogArray {
 		try {
 			alg.get(0);
 			fail("Didn't fail");
-		} catch( IllegalArgumentException ignore ) {}
+		} catch (IllegalArgumentException ignore) {
+		}
 
 		alg.grow();
 		alg.get(0);
@@ -269,9 +301,9 @@ class TestDogArray {
 	@Test
 	void size() {
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
-		assertEquals(0,alg.size);
+		assertEquals(0, alg.size);
 		alg.grow();
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 	}
 
 	/**
@@ -279,25 +311,25 @@ class TestDogArray {
 	 */
 	@Test
 	void pop_grow() {
-		DogArray<DummyData> alg = new DogArray<>(1,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(1, DummyData::new);
 
 		int before = alg.getMaxSize();
-		for( int i = 0; i < 20; i++ ) {
+		for (int i = 0; i < 20; i++) {
 			alg.grow();
 		}
 		alg.get(19);
 		int after = alg.getMaxSize();
-		assertTrue(after>before);
+		assertTrue(after > before);
 	}
 
 	@Test
 	void reserve() {
-		DogArray<DummyData> alg = new DogArray<>(1,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(1, DummyData::new);
 
 		alg.grow().value = 10;
 		int before = alg.getMaxSize();
-		alg.reserve(before+5);
-		assertEquals(10,alg.get(0).value);
+		alg.reserve(before + 5);
+		assertEquals(10, alg.get(0).value);
 	}
 
 	@Test
@@ -312,32 +344,31 @@ class TestDogArray {
 
 	@Test
 	void indexOf() {
-		DogArray<DummyData> queue = new DogArray<>(100,DummyData::new);
+		DogArray<DummyData> queue = new DogArray<>(100, DummyData::new);
 		queue.grow().value = 1;
 		queue.grow().value = 3;
 		queue.grow().value = 2;
 
-		assertEquals(-1,queue.indexOf(new DummyData()), UtilEjml.TEST_F64);
-		assertEquals(0,queue.indexOf(queue.get(0)), UtilEjml.TEST_F64);
-		assertEquals(1,queue.indexOf(queue.get(1)), UtilEjml.TEST_F64);
-		assertEquals(2,queue.indexOf(queue.get(2)), UtilEjml.TEST_F64);
+		assertEquals(-1, queue.indexOf(new DummyData()), UtilEjml.TEST_F64);
+		assertEquals(0, queue.indexOf(queue.get(0)), UtilEjml.TEST_F64);
+		assertEquals(1, queue.indexOf(queue.get(1)), UtilEjml.TEST_F64);
+		assertEquals(2, queue.indexOf(queue.get(2)), UtilEjml.TEST_F64);
 	}
-
 
 	@Test
 	void swap() {
-		DogArray<DummyData> queue = new DogArray<>(100,DummyData::new);
+		DogArray<DummyData> queue = new DogArray<>(100, DummyData::new);
 		queue.grow().value = 1;
 		queue.grow().value = 2;
 		queue.grow().value = 3;
 		queue.grow().value = 4;
 
-		queue.swap(0,3);
-		queue.swap(0,1);
+		queue.swap(0, 3);
+		queue.swap(0, 1);
 
-		assertEquals(2,queue.get(0).value);
-		assertEquals(4,queue.get(1).value);
-		assertEquals(3,queue.get(2).value);
-		assertEquals(1,queue.get(3).value);
+		assertEquals(2, queue.get(0).value);
+		assertEquals(4, queue.get(1).value);
+		assertEquals(3, queue.get(2).value);
+		assertEquals(1, queue.get(3).value);
 	}
 }
