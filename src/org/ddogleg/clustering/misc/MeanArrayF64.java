@@ -49,7 +49,7 @@ public class MeanArrayF64 implements ComputeMeanClusters<double[]> {
 			throw new IllegalArgumentException("Points and assignments need to be the same size");
 
 		// set the number of points in each cluster to zero and zero the clusters
-		counts.resize(clusters.size, 0);
+		counts.resetResize(clusters.size, 0);
 		for (int i = 0; i < clusters.size; i++) {
 			Arrays.fill(clusters.get(i),0,length,0.0);
 		}

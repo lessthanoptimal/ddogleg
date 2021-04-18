@@ -70,7 +70,7 @@ public class InitializePlusPlus<P> implements InitializeKMeans<P> {
 		points.getCopy(rand.nextInt(points.size()), selectedSeeds.grow());
 
 		// Initialize the sum of distance from seeds to 0
-		distances.resize(points.size(), Double.MAX_VALUE);
+		distances.resetResize(points.size(), Double.MAX_VALUE);
 
 		// Update with information from the first seed
 		updateDistanceWithNewSeed(points, selectedSeeds.get(0));

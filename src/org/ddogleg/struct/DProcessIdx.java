@@ -18,45 +18,21 @@
 
 package org.ddogleg.struct;
 
+import java.io.Serializable;
+
 /**
- * Common lambdas used in DDogleg
+ * Function which processes an object and passes in an integer that represents the index
  *
  * @author Peter Abeles
  */
-public interface DogLambdas {
-	@FunctionalInterface interface NewInstance<P> {
-		P newInstance();
-	}
+public interface DProcessIdx<T> {
+	void process(int index, T o);
 
-	@FunctionalInterface interface Copy<P> {
-		void copy(P src, P dst);
-	}
-
-	@FunctionalInterface interface AssignIdx_B {
-		boolean assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_I8 {
-		byte assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_I16 {
-		short assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_I32 {
-		int assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_I64 {
-		long assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_F32 {
-		float assign(int idx);
-	}
-
-	@FunctionalInterface interface AssignIdx_F64 {
-		double assign(int idx);
+	/**
+	 * Default implementation which does nothing
+	 */
+	class DoNothing<T> implements DProcessIdx<T>, Serializable {
+		@Override
+		public void process(int index, T o) {}
 	}
 }

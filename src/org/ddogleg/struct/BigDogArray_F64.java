@@ -21,21 +21,21 @@ package org.ddogleg.struct;
 import java.util.Arrays;
 
 /**
- * Implementation of {@link BigDogArray} for double[].
+ * Implementation of {@link BigDogArrayBase} for double[].
  *
  * @author Peter Abeles
  */
-public class BigDogArray_F64 extends BigDogArray<double[]> {
+public class BigDogArray_F64 extends BigDogArrayBase<double[]> {
 
 	public BigDogArray_F64() {
-		this(8, DEFAULT_BLOCK_SIZE, Growth.GROW_FIRST);
+		this(8, DEFAULT_BLOCK_SIZE, BigDogGrowth.GROW_FIRST);
 	}
 
 	public BigDogArray_F64( int initialAllocation ) {
-		this(initialAllocation, DEFAULT_BLOCK_SIZE, Growth.GROW_FIRST);
+		this(initialAllocation, DEFAULT_BLOCK_SIZE, BigDogGrowth.GROW_FIRST);
 	}
 
-	public BigDogArray_F64( int initialAllocation, int blockSize, Growth growth ) {
+	public BigDogArray_F64( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		super(initialAllocation, blockSize, growth);
 	}
 

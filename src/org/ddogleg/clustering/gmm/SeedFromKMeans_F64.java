@@ -58,7 +58,7 @@ public class SeedFromKMeans_F64 implements InitializeGmm_F64 {
 
 	@Override
 	public void selectSeeds( LArrayAccessor<double[]> points, List<GaussianGmm_F64> seeds) {
-		totals.resize(seeds.size(), 0);
+		totals.resetResize(seeds.size(), 0);
 
 		// initial cluster
 		kmeans.process(points,seeds.size());

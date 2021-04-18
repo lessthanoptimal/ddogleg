@@ -74,8 +74,7 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 		DDoglegConcurrency.loopBlocks(0, points.size(), workspace, ( work, idx0, idx1 ) -> {
 			final DogArray_I32 memberCount = work.memberCount;
 			// reset the member counts to zero for each cluster
-			memberCount.reset();
-			memberCount.resize(clusters.size, 0);
+			memberCount.resetResize(clusters.size, 0);
 			final P point = work.point;
 
 			// Assign each point a single cluster
@@ -91,7 +90,7 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 		});
 
 		// Stitch results back together from the threads
-		memberCount.resize(clusters.size, 0);
+		memberCount.resetResize(clusters.size, 0);
 		sumDistance = 0;
 
 		for (int i = 0; i < workspace.size(); i++) {

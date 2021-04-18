@@ -124,6 +124,7 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 		assertEquals(3, alg.size());
 
 		alg.reserve(1);
+		check(alg,0,3);
 		assertEquals(3, alg.size());
 	}
 }

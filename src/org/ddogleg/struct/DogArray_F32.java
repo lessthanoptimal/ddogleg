@@ -304,21 +304,48 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	}
 
 	@Override public void resize( int size ) {
-		if (data.length < size) {
-			data = new float[size];
-		}
+		reserve(size);
 		this.size = size;
 	}
 
 	/**
-	 * Resizes the array and assigns the default value to every element.
+	 * Resizes the array and assigns the default value to every new element.
 	 *
 	 * @param size New size
 	 * @param value Default value
 	 */
 	public void resize( int size, float value ) {
+		int priorSize = this.size;
 		resize(size);
-		fill(value);
+		if (priorSize >= size )
+			return;
+		fill(priorSize, size, value);
+	}
+
+	/**
+	 * Convenience function that will first call {@link #reset} then {@link #resize(int, float)}, ensuring
+	 * that every element in the array will have the specified value
+	 *
+	 * @param size New size
+	 * @param value New value of every element
+	 */
+	public void resetResize( int size, float value ) {
+		reset();
+		resize(size, value);
+	}
+
+	/**
+	 * Resizes and assigns the new elements (if any) to the value specified by the lambda
+	 *
+	 * @param size New sie
+	 * @param op Assigns default values
+	 */
+	public void resize( int size, DogLambdas.AssignIdx_F32 op ) {
+		int priorSize = this.size;
+		resize(size);
+		for (int i = priorSize; i < size; i++) {
+			data[i] = op.assign(i);
+		}
 	}
 
 	public void fill( float value ) {
@@ -342,12 +369,20 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		this.size = size;
 	}
 
+	@SuppressWarnings("NullAway")
 	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		float[] tmp = new float[amount];
-		System.arraycopy(data, 0, tmp, 0, this.size);
-		data = tmp;
+		if (size == 0) {
+			// In this special case we can dereference the old array and this might allow the GC to free up memory
+			// before declaring the new array. Could be useful if the arrays are very large.
+			this.data = null;
+			this.data = new float[amount];
+		} else {
+			var tmp = new float[amount];
+			System.arraycopy(data, 0, tmp, 0, this.size);
+			data = tmp;
+		}
 	}
 
 	@Override public int size() {

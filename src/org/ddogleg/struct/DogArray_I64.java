@@ -302,9 +302,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	@Override public void resize( int size ) {
-		if (data.length < size) {
-			data = new long[size];
-		}
+		reserve(size);
 		this.size = size;
 	}
 
@@ -315,8 +313,37 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @param value Default value
 	 */
 	public void resize( int size, long value ) {
+		int priorSize = this.size;
 		resize(size);
-		fill(value);
+		if (priorSize >= size)
+			return;
+		fill(priorSize, size, value);
+	}
+
+	/**
+	 * Convenience function that will first call {@link #reset} then {@link #resize(int, long)}, ensuring
+	 * that every element in the array will have the specified value
+	 *
+	 * @param size New size
+	 * @param value New value of every element
+	 */
+	public void resetResize( int size, long value ) {
+		reset();
+		resize(size, value);
+	}
+
+	/**
+	 * Resizes and assigns the new elements (if any) to the value specified by the lambda
+	 *
+	 * @param size New sie
+	 * @param op Assigns default values
+	 */
+	public void resize( int size, DogLambdas.AssignIdx_I64 op ) {
+		int priorSize = this.size;
+		resize(size);
+		for (int i = priorSize; i < size; i++) {
+			data[i] = op.assign(i);
+		}
 	}
 
 	public void fill( long value ) {
@@ -340,12 +367,20 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		this.size = size;
 	}
 
+	@SuppressWarnings("NullAway")
 	@Override public void reserve( int amount ) {
 		if (data.length >= amount)
 			return;
-		long[] tmp = new long[amount];
-		System.arraycopy(data, 0, tmp, 0, this.size);
-		data = tmp;
+		if (size == 0) {
+			// In this special case we can dereference the old array and this might allow the GC to free up memory
+			// before declaring the new array. Could be useful if the arrays are very large.
+			this.data = null;
+			this.data = new long[amount];
+		} else {
+			var tmp = new long[amount];
+			System.arraycopy(data, 0, tmp, 0, this.size);
+			data = tmp;
+		}
 	}
 
 	@Override public int size() {
