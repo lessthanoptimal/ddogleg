@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,6 +30,10 @@ public class Point2D {
 		this.y = y;
 	}
 
-	public Point2D() {
+	public Point2D() {}
+
+	public void setTo(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 }
