@@ -296,16 +296,37 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
+	 * Resize with a configuration operator. Equivalent to calling {@link #reserve} and this.size = N, then
+	 * applying the 'configure' operator to each new element.
+	 *
+	 * NOTE: The 'reset' operator is applied before the 'configure' operator.
 	 *
 	 * @param length The new size of the queue
-	 * @param initializer Used to assign an initial value to newly added elements to the array. Overrides
-	 * default initialization
+	 * @param configure Operator that the "new" element is passed in to.
 	 */
-	public void resize( int length, DProcess<T> initializer ) {
+	public void resize( int length, DProcess<T> configure ) {
 		reserve(length);
 		for (int i = size; i < length; i++) {
-			initializer.process(data[i]);
+			reset.process(data[i]);
+			configure.process(data[i]);
+		}
+		this.size = length;
+	}
+
+	/**
+	 * Resize with a configuration operator. Equivalent to calling {@link #reserve} and this.size = N, then
+	 * applying the 'configure' operator to each new element.
+	 *
+	 * NOTE: The 'reset' operator is applied before the 'configure' operator.
+	 *
+	 * @param length The new size of the queue
+	 * @param configure Operator that the "new" element is passed in to along with the index of the element.
+	 */
+	public void resize( int length, DProcessIdx<T> configure ) {
+		reserve(length);
+		for (int i = size; i < length; i++) {
+			reset.process(data[i]);
+			configure.process(i, data[i]);
 		}
 		this.size = length;
 	}
@@ -313,20 +334,7 @@ public class DogArray<T> extends FastAccess<T> {
 	/**
 	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
 	 *
-	 * @param length The new size of the queue
-	 * @param initializer Used to assign an initial value to newly added elements to the array. Overrides
-	 * default initialization
-	 */
-	public void resize( int length, DProcessIdx<T> initializer ) {
-		reserve(length);
-		for (int i = size; i < length; i++) {
-			initializer.process(i, data[i]);
-		}
-		this.size = length;
-	}
-
-	/**
-	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
+	 * All new elements will be passed in to {@link #reset}.
 	 *
 	 * @param length The new size of the queue
 	 */
