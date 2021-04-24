@@ -30,8 +30,8 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	public long[] data;
 	public int size;
 
-	public DogArray_I64( int maxSize ) {
-		data = new long[maxSize];
+	public DogArray_I64( int reserve ) {
+		data = new long[reserve];
 		this.size = 0;
 	}
 

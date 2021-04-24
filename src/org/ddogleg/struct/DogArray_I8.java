@@ -30,8 +30,8 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	public byte[] data;
 	public int size;
 
-	public DogArray_I8( int maxSize ) {
-		data = new byte[maxSize];
+	public DogArray_I8( int reserve ) {
+		data = new byte[reserve];
 		this.size = 0;
 	}
 

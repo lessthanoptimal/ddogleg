@@ -32,8 +32,8 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	public float[] data;
 	public int size;
 
-	public DogArray_F32( int maxSize ) {
-		data = new float[maxSize];
+	public DogArray_F32( int reserve ) {
+		data = new float[reserve];
 		this.size = 0;
 	}
 

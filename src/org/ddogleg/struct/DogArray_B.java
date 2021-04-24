@@ -30,8 +30,8 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	public boolean[] data;
 	public int size;
 
-	public DogArray_B( int maxSize ) {
-		data = new boolean[maxSize];
+	public DogArray_B( int reserve ) {
+		data = new boolean[reserve];
 		this.size = 0;
 	}
 

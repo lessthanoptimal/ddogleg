@@ -18,6 +18,7 @@
 
 package org.ddogleg.util;
 
+import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -29,6 +30,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 class TestPrimitiveArrays {
+	@Test void intersection_FindMinMax() {
+		int[] setA = new int[]{8, 7, 6, 3, 1, 0, -2, -5};
+		int[] setB = new int[]{3, 4, 5, -3, 1, 7, -2, -5};
+		int[] expected = new int[]{-5, -2, 1, 3, 7};
+
+		var results = new DogArray_I32();
+		results.add(-99); // make sure it's cleared
+
+		// intentionally give it a min/max that's larger than the actual
+		PrimitiveArrays.intersection(setA, setA.length, setB, setB.length, results, null);
+
+		assertEquals(expected.length, results.size);
+		for (int i = 0; i < results.size; i++) {
+			assertEquals(expected[i], results.get(i));
+		}
+	}
+
+	@Test void intersection_GivenMinMax() {
+		int[] setA = new int[]{8, 7, 6, 3, 1, 0, -2, -5};
+		int[] setB = new int[]{3, 4, 5, -3, 1, 7, -2, -5};
+		int[] expected = new int[]{-5, -2, 1, 3, 7};
+
+		var results = new DogArray_I32();
+		results.add(-99); // make sure it's cleared
+
+		// intentionally give it a min/max that's larger than the actual
+		PrimitiveArrays.intersection(setA, setA.length, setB, setB.length, -6, 20, results, null);
+
+		assertEquals(expected.length, results.size);
+		for (int i = 0; i < results.size; i++) {
+			assertEquals(expected[i], results.get(i));
+		}
+	}
+
+	@Test void union_GivenMinMax() {
+		int[] setA = new int[]{8, 7, 6, 3, 1, 0, -2, -5};
+		int[] setB = new int[]{3, 4, 5, -3, 1, 7, -2, -5};
+		int[] expected = new int[]{-5, -3, -2, 0, 1, 3, 4, 5, 6, 7, 8};
+
+		var results = new DogArray_I32();
+		results.add(-99); // make sure it's cleared
+
+		// intentionally give it a min/max that's larger than the actual
+		PrimitiveArrays.union(setA, setA.length, setB, setB.length, -6, 20, results, null);
+
+		assertEquals(expected.length, results.size);
+		for (int i = 0; i < results.size; i++) {
+			assertEquals(expected[i], results.get(i));
+		}
+	}
+
 	@Test void fillCount_input() {
 		int[] orig = new int[100];
 		PrimitiveArrays.fillCounting(orig, 10, 40);

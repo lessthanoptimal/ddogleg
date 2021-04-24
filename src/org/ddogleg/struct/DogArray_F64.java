@@ -32,8 +32,8 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	public double[] data;
 	public int size;
 
-	public DogArray_F64( int maxSize ) {
-		data = new double[maxSize];
+	public DogArray_F64( int reserve ) {
+		data = new double[reserve];
 		this.size = 0;
 	}
 

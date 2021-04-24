@@ -18,6 +18,10 @@
 
 package org.ddogleg.util;
 
+import org.ddogleg.struct.DogArray_I32;
+import org.ddogleg.struct.DogArray_I8;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Random;
 
 /**
@@ -26,6 +30,124 @@ import java.util.Random;
  * @author Peter Abeles
  */
 public class PrimitiveArrays {
+
+	/**
+	 * Finds the itersection of two sets. Uses a algorithm that requires linear time and memory. Manually
+	 * determines the min and max values contained in both sets.
+	 *
+	 * @param setA Set A of integers. Unsorted.
+	 * @param sizeA Number of elements in set A
+	 * @param setB Set B of integers. Unsorted.
+	 * @param sizeB Number of elements in set B
+	 * @param work Work space
+	 * @param results Output set that is the intersection. Sorted from least to greatest
+	 */
+	public static void intersection( int[] setA, int sizeA,
+									 int[] setB, int sizeB,
+									 DogArray_I32 results,
+									 @Nullable DogArray_I8 work ) {
+		// Handling the pathological case where enables safely accessing the first element in setA
+		if (sizeA == 0 || sizeB == 0) {
+			results.reset();
+			return;
+		}
+
+		// Set the min/max to an actual element. This enables if else to be used below.
+		int min = setA[0];
+		int max = min;
+
+		// Exhaustively search to find the minimum and maximum values
+		for (int i = 1; i < sizeA; i++) {
+			int v = setA[i];
+			if (v < min)
+				min = v;
+			else if (v > max)
+				max = v;
+		}
+
+		for (int i = 0; i < sizeB; i++) {
+			int v = setB[i];
+			if (v < min)
+				min = v;
+			else if (v > max)
+				max = v;
+		}
+		intersection(setA, sizeA, setB, sizeB, min, max, results, work);
+	}
+
+	/**
+	 * Finds the intersection of two sets. Uses a algorithm that requires linear time and memory.
+	 *
+	 * @param setA Set A of integers. Unsorted.
+	 * @param sizeA Number of elements in set A
+	 * @param setB Set B of integers. Unsorted.
+	 * @param sizeB Number of elements in set B
+	 * @param valueMin Minimum value in either set
+	 * @param valueMax Maximum value in either set
+	 * @param work Work space
+	 * @param results Output set that is the intersection. Sorted from least to greatest
+	 */
+	public static void intersection( int[] setA, int sizeA,
+									 int[] setB, int sizeB,
+									 int valueMin, int valueMax,
+									 DogArray_I32 results,
+									 @Nullable DogArray_I8 work ) {
+		work = countOccurrences(setA, sizeA, setB, sizeB, valueMin, valueMax, results, work);
+
+		for (int i = 0; i < work.size; i++) {
+			if (work.data[i] != 2)
+				continue;
+			results.add(i + valueMin);
+		}
+	}
+
+	/**
+	 * Finds the intersection of two sets. Uses a algorithm that requires linear time and memory.
+	 *
+	 * @param setA Set A of integers. Unsorted.
+	 * @param sizeA Number of elements in set A
+	 * @param setB Set B of integers. Unsorted.
+	 * @param sizeB Number of elements in set B
+	 * @param valueMin Minimum value in either set
+	 * @param valueMax Maximum value in either set
+	 * @param work Work space
+	 * @param results Output set that is the intersection. Sorted from least to greatest
+	 */
+	public static void union( int[] setA, int sizeA,
+									 int[] setB, int sizeB,
+									 int valueMin, int valueMax,
+									 DogArray_I32 results,
+									 @Nullable DogArray_I8 work ) {
+		work = countOccurrences(setA, sizeA, setB, sizeB, valueMin, valueMax, results, work);
+
+		for (int i = 0; i < work.size; i++) {
+			if (work.data[i] == 0)
+				continue;
+			results.add(i + valueMin);
+		}
+	}
+
+	private static DogArray_I8 countOccurrences( int[] setA, int sizeA,
+												 int[] setB, int sizeB,
+												 int valueMin, int valueMax,
+												 DogArray_I32 results,
+												 @Nullable DogArray_I8 work ) {
+		results.reset();
+		results.reserve(Math.min(sizeA, sizeB));
+
+		if (work == null)
+			work = new DogArray_I8(valueMax - valueMin + 1);
+		work.reset();
+		work.resize(valueMax - valueMin + 1, (byte)0);
+
+		for (int i = 0; i < sizeA; i++) {
+			work.data[setA[i] - valueMin]++;
+		}
+		for (int i = 0; i < sizeB; i++) {
+			work.data[setB[i] - valueMin]++;
+		}
+		return work;
+	}
 
 	/**
 	 * Sets each element within range to a number counting up
