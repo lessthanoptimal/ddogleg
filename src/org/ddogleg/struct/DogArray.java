@@ -135,7 +135,7 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Removes the indexes from the queue. This is done by swapping removed elements with the last element. O(N) copies.
+	 * Removes the indexes from the array. This is done by swapping removed elements with the last element. O(N) copies.
 	 *
 	 * @param indexes Index of elements which are to be removed. This will be modified
 	 * @param fromIndex the index of the first element, inclusive, to be sorted
@@ -224,7 +224,7 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
-	 * Removes an element from the queue and preserves the order of all elements. This is done by shifting elements
+	 * Removes an element from the array and preserves the order of all elements. This is done by shifting elements
 	 * in the array down one and placing the removed element at the old end of the list. O(N) runtime.
 	 *
 	 * @param index Index of the element being removed
@@ -301,7 +301,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * NOTE: The 'reset' operator is applied before the 'configure' operator.
 	 *
-	 * @param length The new size of the queue
+	 * @param length The new size of the array
 	 * @param configure Operator that the "new" element is passed in to.
 	 */
 	public void resize( int length, DProcess<T> configure ) {
@@ -319,7 +319,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * NOTE: The 'reset' operator is applied before the 'configure' operator.
 	 *
-	 * @param length The new size of the queue
+	 * @param length The new size of the array
 	 * @param configure Operator that the "new" element is passed in to along with the index of the element.
 	 */
 	public void resize( int length, DProcessIdx<T> configure ) {
@@ -336,14 +336,24 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * All new elements will be passed in to {@link #reset}.
 	 *
-	 * @param length The new size of the queue
+	 * @param newSize New array size
 	 */
-	public void resize( int length ) {
-		reserve(length);
-		for (int i = size; i < length; i++) {
+	public void resize( int newSize ) {
+		reserve(newSize);
+		for (int i = size; i < newSize; i++) {
 			reset.process(data[i]);
 		}
-		this.size = length;
+		this.size = newSize;
+	}
+
+	/**
+	 * Convenience functions that calls {@link #reset} first before {@link #resize}.
+	 *
+	 * @param newSize New array size
+	 */
+	public void resetResize( int newSize ) {
+		reset();
+		resize(newSize);
 	}
 
 	public void shuffle( Random rand ) {
