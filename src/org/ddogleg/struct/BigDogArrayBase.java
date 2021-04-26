@@ -89,6 +89,13 @@ public abstract class BigDogArrayBase<Array> {
 	}
 
 	/**
+	 * Returns true if the specified array index is outside the allowed value range
+	 */
+	public boolean isIndexOutOfBounds( int index ) {
+		return index < 0 || index >= size;
+	}
+
+	/**
 	 * Sets the array size to zero. No memory is freed.
 	 */
 	public void reset() {

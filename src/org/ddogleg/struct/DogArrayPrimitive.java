@@ -31,6 +31,13 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	void reset();
 
 	/**
+	 * Returns true if the specified array index is outside the allowed value range
+	 */
+	default boolean isIndexOutOfBounds( int index ) {
+		return index < 0 || index >= size();
+	}
+
+	/**
 	 * Turns 'this' into a copy of 'original'
 	 * @param original queue that is to be copied
 	 */

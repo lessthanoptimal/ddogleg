@@ -46,6 +46,13 @@ public abstract class FastAccess<T> implements Serializable {
 	}
 
 	/**
+	 * Returns true if the specified array index is outside the allowed value range
+	 */
+	public boolean isIndexOutOfBounds( int index ) {
+		return index < 0 || index >= size;
+	}
+
+	/**
 	 * The maximum number of elements before the 'data' array needs to grow
 	 * @return length of 'data'
 	 */
