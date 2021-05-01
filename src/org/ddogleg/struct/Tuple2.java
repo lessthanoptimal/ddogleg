@@ -22,6 +22,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Simple data structure for passing a pair of data.
  *
@@ -37,5 +39,15 @@ public class Tuple2<A,B> {
 	}
 
 	public Tuple2() {}
+
+	/** Returns d0 but performs a null check first */
+	public A getCheckD0() {
+		return Objects.requireNonNull(d0);
+	}
+
+	/** Returns d1 but performs a null check first */
+	public B getCheckD1() {
+		return Objects.requireNonNull(d1);
+	}
 }
 

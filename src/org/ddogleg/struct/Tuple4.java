@@ -22,6 +22,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Simple data structure for passing a quad of data.
  *
@@ -40,7 +42,26 @@ public class Tuple4<A,B,C,D> {
 		this.d3 = d3;
 	}
 
-	public Tuple4() {
+	public Tuple4() {}
+
+	/** Returns d0 but performs a null check first */
+	public A getCheckD0() {
+		return Objects.requireNonNull(d0);
+	}
+
+	/** Returns d1 but performs a null check first */
+	public B getCheckD1() {
+		return Objects.requireNonNull(d1);
+	}
+
+	/** Returns d2 but performs a null check first */
+	public C getCheckD2() {
+		return Objects.requireNonNull(d2);
+	}
+
+	/** Returns d3 but performs a null check first */
+	public D getCheckD3() {
+		return Objects.requireNonNull(d3);
 	}
 }
 
