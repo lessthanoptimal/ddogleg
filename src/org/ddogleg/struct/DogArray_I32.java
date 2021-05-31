@@ -492,6 +492,15 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		}
 	}
 
+	public int count( Filter filter ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if (filter.include(data[i]))
+				total++;
+		}
+		return total;
+	}
+
 	@FunctionalInterface
 	public interface FunctionEachIdx {
 		void process( int index, int value );
@@ -505,5 +514,10 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	@FunctionalInterface
 	public interface FunctionApplyIdx {
 		int process( int index, int value );
+	}
+
+	@FunctionalInterface
+	public interface Filter {
+		boolean include( int value );
 	}
 }

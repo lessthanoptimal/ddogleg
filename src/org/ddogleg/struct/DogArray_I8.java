@@ -527,6 +527,15 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 			data[i] = func.process(i, data[i]);
 		}
 	}
+	
+	public int count( Filter filter ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if (filter.include(data[i]))
+				total++;
+		}
+		return total;
+	}
 
 	@FunctionalInterface
 	public interface FunctionEachIdx {
@@ -541,5 +550,10 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	@FunctionalInterface
 	public interface FunctionApplyIdx {
 		byte process( int index, byte value );
+	}
+
+	@FunctionalInterface
+	public interface Filter {
+		boolean include( int value );
 	}
 }
