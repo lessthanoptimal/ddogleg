@@ -82,30 +82,30 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void fillCount_input() {
-		int[] orig = new int[100];
-		PrimitiveArrays.fillCounting(orig, 10, 40);
-		for (int i = 0; i < orig.length; i++) {
+		int[] values = new int[100];
+		PrimitiveArrays.fillCounting(values, 10, 40);
+		for (int i = 0; i < values.length; i++) {
 			if (i < 10 || i >= 50) {
-				assertEquals(0, orig[i]);
+				assertEquals(0, values[i]);
 			} else {
-				assertEquals(i - 10, orig[i]);
+				assertEquals(i - 10, values[i]);
 			}
 		}
 	}
 
 	@Test void shuffle_byte() {
 		Random rand = new Random(234);
-		byte[] orig = new byte[100];
+		byte[] values = new byte[100];
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (byte)i;
+			values[i + 10] = (byte)i;
 		}
-		PrimitiveArrays.shuffle(orig, 10, 90, rand);
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
 
 		// make sure each element still only appears once
 		for (int i = 0; i < 90; i++) {
 			int count = 0;
 			for (int j = 0; j < 90; j++) {
-				if (Math.abs(orig[j + 10] - i) == 0) {
+				if (Math.abs(values[j + 10] - i) == 0) {
 					count++;
 				}
 			}
@@ -116,7 +116,7 @@ class TestPrimitiveArrays {
 		// then something is wrong
 		int matches = 0;
 		for (int i = 0; i < 90; i++) {
-			if (Math.abs(orig[i + 10] - i) == 0) {
+			if (Math.abs(values[i + 10] - i) == 0) {
 				matches++;
 			}
 		}
@@ -125,17 +125,17 @@ class TestPrimitiveArrays {
 
 	@Test void shuffle_short() {
 		Random rand = new Random(234);
-		short[] orig = new short[100];
+		short[] values = new short[100];
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (short)i;
+			values[i + 10] = (short)i;
 		}
-		PrimitiveArrays.shuffle(orig, 10, 90, rand);
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
 
 		// make sure each element still only appears once
 		for (int i = 0; i < 90; i++) {
 			int count = 0;
 			for (int j = 0; j < 90; j++) {
-				if (Math.abs(orig[j + 10] - i) == 0) {
+				if (Math.abs(values[j + 10] - i) == 0) {
 					count++;
 				}
 			}
@@ -146,7 +146,7 @@ class TestPrimitiveArrays {
 		// then something is wrong
 		int matches = 0;
 		for (int i = 0; i < 90; i++) {
-			if (Math.abs(orig[i + 10] - i) == 0) {
+			if (Math.abs(values[i + 10] - i) == 0) {
 				matches++;
 			}
 		}
@@ -155,17 +155,17 @@ class TestPrimitiveArrays {
 
 	@Test void shuffle_int() {
 		Random rand = new Random(234);
-		int[] orig = new int[100];
+		int[] values = new int[100];
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		PrimitiveArrays.shuffle(orig, 10, 90, rand);
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
 
 		// make sure each element still only appears once
 		for (int i = 0; i < 90; i++) {
 			int count = 0;
 			for (int j = 0; j < 90; j++) {
-				if (Math.abs(orig[j + 10] - i) == 0) {
+				if (Math.abs(values[j + 10] - i) == 0) {
 					count++;
 				}
 			}
@@ -176,7 +176,7 @@ class TestPrimitiveArrays {
 		// then something is wrong
 		int matches = 0;
 		for (int i = 0; i < 90; i++) {
-			if (Math.abs(orig[i + 10] - i) == 0) {
+			if (Math.abs(values[i + 10] - i) == 0) {
 				matches++;
 			}
 		}
@@ -185,17 +185,17 @@ class TestPrimitiveArrays {
 
 	@Test void shuffle_float() {
 		Random rand = new Random(234);
-		float[] orig = new float[100];
+		float[] values = new float[100];
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		PrimitiveArrays.shuffle(orig, 10, 90, rand);
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
 
 		// make sure each element still only appears once
 		for (int i = 0; i < 90; i++) {
 			int count = 0;
 			for (int j = 0; j < 90; j++) {
-				if (Math.abs(orig[j + 10] - i) == 0) {
+				if (Math.abs(values[j + 10] - i) == 0) {
 					count++;
 				}
 			}
@@ -206,7 +206,7 @@ class TestPrimitiveArrays {
 		// then something is wrong
 		int matches = 0;
 		for (int i = 0; i < 90; i++) {
-			if (Math.abs(orig[i + 10] - i) == 0) {
+			if (Math.abs(values[i + 10] - i) == 0) {
 				matches++;
 			}
 		}
@@ -215,17 +215,17 @@ class TestPrimitiveArrays {
 
 	@Test void shuffle_double() {
 		Random rand = new Random(234);
-		double[] orig = new double[100];
+		double[] values = new double[100];
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		PrimitiveArrays.shuffle(orig, 10, 90, rand);
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
 
 		// make sure each element still only appears once
 		for (int i = 0; i < 90; i++) {
 			int count = 0;
 			for (int j = 0; j < 90; j++) {
-				if (Math.abs(orig[j + 10] - i) == 0) {
+				if (Math.abs(values[j + 10] - i) == 0) {
 					count++;
 				}
 			}
@@ -236,7 +236,7 @@ class TestPrimitiveArrays {
 		// then something is wrong
 		int matches = 0;
 		for (int i = 0; i < 90; i++) {
-			if (Math.abs(orig[i + 10] - i) == 0) {
+			if (Math.abs(values[i + 10] - i) == 0) {
 				matches++;
 			}
 		}
@@ -244,261 +244,361 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void min_byte() {
-		byte[] orig = new byte[100];
-		orig[1] = 120;
+		byte[] values = new byte[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (byte)(i + 2);
+			values[i + 10] = (byte)(i + 2);
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_byte_extremes() {
+		assertEquals(Byte.MIN_VALUE, PrimitiveArrays.min(new byte[]{Byte.MIN_VALUE}, 0, 1));
+		assertEquals(Byte.MAX_VALUE, PrimitiveArrays.min(new byte[]{Byte.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void min_short() {
-		short[] orig = new short[100];
-		orig[1] = 120;
+		short[] values = new short[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (short)(i + 2);
+			values[i + 10] = (short)(i + 2);
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_short_extremes() {
+		assertEquals(Short.MIN_VALUE, PrimitiveArrays.min(new short[]{Short.MIN_VALUE}, 0, 1));
+		assertEquals(Short.MAX_VALUE, PrimitiveArrays.min(new short[]{Short.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void min_int() {
-		int[] orig = new int[100];
-		orig[1] = 120;
+		int[] values = new int[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_int_extremes() {
+		assertEquals(Integer.MIN_VALUE, PrimitiveArrays.min(new int[]{Integer.MIN_VALUE}, 0, 1));
+		assertEquals(Integer.MAX_VALUE, PrimitiveArrays.min(new int[]{Integer.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void min_long() {
-		long[] orig = new long[100];
-		orig[1] = 120;
+		long[] values = new long[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_long_extremes() {
+		assertEquals(Long.MIN_VALUE, PrimitiveArrays.min(new long[]{Long.MIN_VALUE}, 0, 1));
+		assertEquals(Long.MAX_VALUE, PrimitiveArrays.min(new long[]{Long.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void min_float() {
-		float[] orig = new float[100];
-		orig[1] = 120;
+		float[] values = new float[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_float_extremes() {
+		assertEquals(-Float.MAX_VALUE, PrimitiveArrays.min(new float[]{-Float.MAX_VALUE}, 0, 1));
+		assertEquals(Float.MAX_VALUE, PrimitiveArrays.min(new float[]{Float.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void min_double() {
-		double[] orig = new double[100];
-		orig[1] = 120;
+		double[] values = new double[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(2, PrimitiveArrays.min(orig, 10, 90));
+		assertEquals(2, PrimitiveArrays.min(values, 10, 90));
+	}
+
+	@Test void min_double_extremes() {
+		assertEquals(-Double.MAX_VALUE, PrimitiveArrays.min(new double[]{-Double.MAX_VALUE}, 0, 1));
+		assertEquals(Double.MAX_VALUE, PrimitiveArrays.min(new double[]{Double.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void minIdx_byte() {
-		byte[] orig = new byte[100];
-		orig[1] = 120;
+		byte[] values = new byte[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (byte)(i + 2);
+			values[i + 10] = (byte)(i + 2);
 		}
-		assertEquals(10, PrimitiveArrays.minIdx(orig, 10, 90));
+		assertEquals(10, PrimitiveArrays.minIdx(values, 10, 90));
+	}
+
+	@Test void minIdx_byte_extremes() {
+		assertEquals(0, PrimitiveArrays.minIdx(new byte[]{Byte.MIN_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.minIdx(new byte[]{Byte.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void minIdx_int() {
-		int[] orig = new int[100];
-		orig[1] = 120;
+		int[] values = new int[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(10, PrimitiveArrays.minIdx(orig, 10, 90));
+		assertEquals(10, PrimitiveArrays.minIdx(values, 10, 90));
+	}
+
+	@Test void minIdx_int_extremes() {
+		assertEquals(0, PrimitiveArrays.minIdx(new int[]{Integer.MIN_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.minIdx(new int[]{Integer.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void minIdx_float() {
-		float[] orig = new float[100];
-		orig[1] = 120;
+		float[] values = new float[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(10, PrimitiveArrays.minIdx(orig, 10, 90));
+		assertEquals(10, PrimitiveArrays.minIdx(values, 10, 90));
+	}
+
+	@Test void minIdx_float_extremes() {
+		assertEquals(0, PrimitiveArrays.minIdx(new float[]{-Float.MAX_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.minIdx(new float[]{Float.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void minIdx_double() {
-		double[] orig = new double[100];
-		orig[1] = 120;
+		double[] values = new double[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i + 2;
+			values[i + 10] = i + 2;
 		}
-		assertEquals(10, PrimitiveArrays.minIdx(orig, 10, 90));
+		assertEquals(10, PrimitiveArrays.minIdx(values, 10, 90));
+	}
+
+	@Test void minIdx_double_extremes() {
+		assertEquals(0, PrimitiveArrays.minIdx(new double[]{-Double.MAX_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.minIdx(new double[]{Double.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void max_byte() {
-		byte[] orig = new byte[100];
-		orig[1] = 120;
+		byte[] values = new byte[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (byte)i;
+			values[i + 10] = (byte)i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_byte_extremes() {
+		assertEquals(Byte.MIN_VALUE, PrimitiveArrays.max(new byte[]{Byte.MIN_VALUE}, 0, 1));
+		assertEquals(Byte.MAX_VALUE, PrimitiveArrays.max(new byte[]{Byte.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void max_short() {
-		short[] orig = new short[100];
-		orig[1] = 120;
+		short[] values = new short[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (short)i;
+			values[i + 10] = (short)i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_short_extremes() {
+		assertEquals(Short.MIN_VALUE, PrimitiveArrays.max(new short[]{Short.MIN_VALUE}, 0, 1));
+		assertEquals(Short.MAX_VALUE, PrimitiveArrays.max(new short[]{Short.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void max_int() {
-		int[] orig = new int[100];
-		orig[1] = 120;
+		int[] values = new int[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_int_extremes() {
+		assertEquals(Integer.MIN_VALUE, PrimitiveArrays.max(new int[]{Integer.MIN_VALUE}, 0, 1));
+		assertEquals(Integer.MAX_VALUE, PrimitiveArrays.max(new int[]{Integer.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void max_long() {
-		long[] orig = new long[100];
-		orig[1] = 120;
+		long[] values = new long[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (long)i;
+			values[i + 10] = (long)i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_long_extremes() {
+		assertEquals(Long.MIN_VALUE, PrimitiveArrays.max(new long[]{Long.MIN_VALUE}, 0, 1));
+		assertEquals(Long.MAX_VALUE, PrimitiveArrays.max(new long[]{Long.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void max_float() {
-		float[] orig = new float[100];
-		orig[1] = 120;
+		float[] values = new float[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_float_extremes() {
+		float[] values = {-Float.MAX_VALUE, Float.MAX_VALUE};
+		assertEquals(-Float.MAX_VALUE, PrimitiveArrays.min(values, 0, values.length));
 	}
 
 	@Test void max_double() {
-		double[] orig = new double[100];
-		orig[1] = 120;
+		double[] values = new double[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(89, PrimitiveArrays.max(orig, 10, 90));
+		assertEquals(89, PrimitiveArrays.max(values, 10, 90));
+	}
+
+	@Test void max_double_extremes() {
+		double[] values = {-Double.MAX_VALUE, Double.MAX_VALUE};
+		assertEquals(-Double.MAX_VALUE, PrimitiveArrays.min(values, 0, values.length));
 	}
 
 	@Test void maxIdx_byte() {
-		byte[] orig = new byte[100];
-		orig[1] = 120;
+		byte[] values = new byte[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = (byte)i;
+			values[i + 10] = (byte)i;
 		}
-		assertEquals(99, PrimitiveArrays.maxIdx(orig, 10, 90));
+		assertEquals(99, PrimitiveArrays.maxIdx(values, 10, 90));
+	}
+
+	@Test void maxIdx_byte_extremes() {
+		assertEquals(0, PrimitiveArrays.maxIdx(new byte[]{Byte.MIN_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.maxIdx(new byte[]{Byte.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void maxIdx_int() {
-		int[] orig = new int[100];
-		orig[1] = 120;
+		int[] values = new int[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(99, PrimitiveArrays.maxIdx(orig, 10, 90));
+		assertEquals(99, PrimitiveArrays.maxIdx(values, 10, 90));
+	}
+
+	@Test void maxIdx_int_extremes() {
+		assertEquals(0, PrimitiveArrays.maxIdx(new int[]{Integer.MIN_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.maxIdx(new int[]{Integer.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void maxIdx_float() {
-		float[] orig = new float[100];
-		orig[1] = 120;
+		float[] values = new float[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(99, PrimitiveArrays.maxIdx(orig, 10, 90));
+		assertEquals(99, PrimitiveArrays.maxIdx(values, 10, 90));
+	}
+
+	@Test void maxIdx_float_extremes() {
+		assertEquals(0, PrimitiveArrays.maxIdx(new float[]{-Float.MAX_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.maxIdx(new float[]{Float.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void maxIdx_double() {
-		double[] orig = new double[100];
-		orig[1] = 120;
+		double[] values = new double[100];
+		values[1] = 120;
 		for (int i = 0; i < 90; i++) {
-			orig[i + 10] = i;
+			values[i + 10] = i;
 		}
-		assertEquals(99, PrimitiveArrays.maxIdx(orig, 10, 90));
+		assertEquals(99, PrimitiveArrays.maxIdx(values, 10, 90));
+	}
+
+	@Test void maxIdx_double_extremes() {
+		assertEquals(0, PrimitiveArrays.maxIdx(new double[]{-Double.MAX_VALUE}, 0, 1));
+		assertEquals(0, PrimitiveArrays.maxIdx(new double[]{Double.MAX_VALUE}, 0, 1));
 	}
 
 	@Test void lowerBoundU_byte() {
-		byte[] orig = new byte[100];
-		orig[0] = 124;
+		byte[] values = new byte[100];
+		values[0] = 124;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = (byte)(i + 100);
+			values[i] = (byte)(i + 100);
 		}
-		assertEquals(51, PrimitiveArrays.lowerBoundU(orig, 1, 99, 151));
-		assertEquals(50, PrimitiveArrays.lowerBoundU(orig, 1, 99, 150));
-		assertEquals(49, PrimitiveArrays.lowerBoundU(orig, 1, 99, 149));
-		assertEquals(1, PrimitiveArrays.lowerBoundU(orig, 1, 99, 0));
-		assertEquals(100, PrimitiveArrays.lowerBoundU(orig, 1, 99, 300));
+		assertEquals(51, PrimitiveArrays.lowerBoundU(values, 1, 99, 151));
+		assertEquals(50, PrimitiveArrays.lowerBoundU(values, 1, 99, 150));
+		assertEquals(49, PrimitiveArrays.lowerBoundU(values, 1, 99, 149));
+		assertEquals(1, PrimitiveArrays.lowerBoundU(values, 1, 99, 0));
+		assertEquals(100, PrimitiveArrays.lowerBoundU(values, 1, 99, 300));
 	}
 
 	@Test void lowerBound_byte() {
-		byte[] orig = new byte[100];
-		orig[0] = 124;
+		byte[] values = new byte[100];
+		values[0] = 124;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = (byte)(i - 50);
+			values[i] = (byte)(i - 50);
 		}
-		assertEquals(51, PrimitiveArrays.lowerBound(orig, 1, 99, 1));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 0));
-		assertEquals(49, PrimitiveArrays.lowerBound(orig, 1, 99, -1));
-		assertEquals(1, PrimitiveArrays.lowerBound(orig, 1, 99, -100));
-		assertEquals(100, PrimitiveArrays.lowerBound(orig, 1, 99, 200));
+		assertEquals(51, PrimitiveArrays.lowerBound(values, 1, 99, 1));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 0));
+		assertEquals(49, PrimitiveArrays.lowerBound(values, 1, 99, -1));
+		assertEquals(1, PrimitiveArrays.lowerBound(values, 1, 99, -100));
+		assertEquals(100, PrimitiveArrays.lowerBound(values, 1, 99, 200));
 	}
 
 	@Test void lowerBound_short() {
-		short[] orig = new short[100];
-		orig[0] = 9999;
+		short[] values = new short[100];
+		values[0] = 9999;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = (short)(i - 50);
+			values[i] = (short)(i - 50);
 		}
-		assertEquals(51, PrimitiveArrays.lowerBound(orig, 1, 99, 1));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 0));
-		assertEquals(49, PrimitiveArrays.lowerBound(orig, 1, 99, -1));
-		assertEquals(1, PrimitiveArrays.lowerBound(orig, 1, 99, -100));
-		assertEquals(100, PrimitiveArrays.lowerBound(orig, 1, 99, 200));
+		assertEquals(51, PrimitiveArrays.lowerBound(values, 1, 99, 1));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 0));
+		assertEquals(49, PrimitiveArrays.lowerBound(values, 1, 99, -1));
+		assertEquals(1, PrimitiveArrays.lowerBound(values, 1, 99, -100));
+		assertEquals(100, PrimitiveArrays.lowerBound(values, 1, 99, 200));
 	}
 
 	@Test void lowerBound_int() {
-		int[] orig = new int[100];
-		orig[0] = 99999;
+		int[] values = new int[100];
+		values[0] = 99999;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = i;
+			values[i] = i;
 		}
-		assertEquals(51, PrimitiveArrays.lowerBound(orig, 1, 99, 51));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 50));
-		assertEquals(49, PrimitiveArrays.lowerBound(orig, 1, 99, 49));
-		assertEquals(1, PrimitiveArrays.lowerBound(orig, 1, 99, -1));
-		assertEquals(100, PrimitiveArrays.lowerBound(orig, 1, 99, 200));
+		assertEquals(51, PrimitiveArrays.lowerBound(values, 1, 99, 51));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 50));
+		assertEquals(49, PrimitiveArrays.lowerBound(values, 1, 99, 49));
+		assertEquals(1, PrimitiveArrays.lowerBound(values, 1, 99, -1));
+		assertEquals(100, PrimitiveArrays.lowerBound(values, 1, 99, 200));
 	}
 
 	@Test void lowerBound_float() {
-		float[] orig = new float[100];
-		orig[0] = 99999;
+		float[] values = new float[100];
+		values[0] = 99999;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = i;
+			values[i] = i;
 		}
-		assertEquals(51, PrimitiveArrays.lowerBound(orig, 1, 99, 50.1f));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 50f));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 49.9f));
-		assertEquals(1, PrimitiveArrays.lowerBound(orig, 1, 99, -1f));
-		assertEquals(100, PrimitiveArrays.lowerBound(orig, 1, 99, 200f));
+		assertEquals(51, PrimitiveArrays.lowerBound(values, 1, 99, 50.1f));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 50f));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 49.9f));
+		assertEquals(1, PrimitiveArrays.lowerBound(values, 1, 99, -1f));
+		assertEquals(100, PrimitiveArrays.lowerBound(values, 1, 99, 200f));
 	}
 
 	@Test void lowerBound_double() {
-		double[] orig = new double[100];
-		orig[0] = 99999;
+		double[] values = new double[100];
+		values[0] = 99999;
 		for (int i = 1; i < 100; i++) {
-			orig[i] = i;
+			values[i] = i;
 		}
-		assertEquals(51, PrimitiveArrays.lowerBound(orig, 1, 99, 50.1));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 50));
-		assertEquals(50, PrimitiveArrays.lowerBound(orig, 1, 99, 49.9));
-		assertEquals(1, PrimitiveArrays.lowerBound(orig, 1, 99, -1));
-		assertEquals(100, PrimitiveArrays.lowerBound(orig, 1, 99, 200));
+		assertEquals(51, PrimitiveArrays.lowerBound(values, 1, 99, 50.1));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 50));
+		assertEquals(50, PrimitiveArrays.lowerBound(values, 1, 99, 49.9));
+		assertEquals(1, PrimitiveArrays.lowerBound(values, 1, 99, -1));
+		assertEquals(100, PrimitiveArrays.lowerBound(values, 1, 99, 200));
 	}
 
 	@Test void sumD_byte() {

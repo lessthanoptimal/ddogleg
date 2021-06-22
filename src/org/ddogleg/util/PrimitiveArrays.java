@@ -114,10 +114,10 @@ public class PrimitiveArrays {
 	 * @param results Output set that is the intersection. Sorted from least to greatest
 	 */
 	public static void union( int[] setA, int sizeA,
-									 int[] setB, int sizeB,
-									 int valueMin, int valueMax,
-									 DogArray_I32 results,
-									 @Nullable DogArray_I8 work ) {
+							  int[] setB, int sizeB,
+							  int valueMin, int valueMax,
+							  DogArray_I32 results,
+							  @Nullable DogArray_I8 work ) {
 		work = countOccurrences(setA, sizeA, setB, sizeB, valueMin, valueMax, results, work);
 
 		for (int i = 0; i < work.size; i++) {
@@ -153,6 +153,8 @@ public class PrimitiveArrays {
 	 * Sets each element within range to a number counting up
 	 */
 	public static void fillCounting( int[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			array[i + offset] = i;
 		}
@@ -168,6 +170,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( byte[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			byte tmp = array[offset + src + i];
@@ -180,6 +184,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( short[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			short tmp = array[offset + src + i];
@@ -192,6 +198,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( int[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			int tmp = array[offset + src + i];
@@ -204,6 +212,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( long[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			long tmp = array[offset + src + i];
@@ -216,6 +226,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( float[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			float tmp = array[offset + src + i];
@@ -228,6 +240,8 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( double[] array, int offset, int length, Random rand ) {
+		sanityCheckRange(array.length, offset, length);
+
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
 			double tmp = array[offset + src + i];
@@ -240,9 +254,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static int min( byte[] array, int offset, int length ) {
-		int min = Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		byte min = array[offset];
+		for (int i = 1; i < length; i++) {
+			byte tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
 			}
@@ -254,9 +270,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static int min( short[] array, int offset, int length ) {
-		int min = Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		short min = array[offset];
+		for (int i = 1; i < length; i++) {
+			short tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
 			}
@@ -268,8 +286,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static int min( int[] array, int offset, int length ) {
-		int min = Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		int min = array[offset];
+		for (int i = 1; i < length; i++) {
 			int tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -282,8 +302,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static long min( long[] array, int offset, int length ) {
-		long min = Long.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		long min = array[offset];
+		for (int i = 1; i < length; i++) {
 			long tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -296,8 +318,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static float min( float[] array, int offset, int length ) {
-		float min = Float.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		float min = array[offset];
+		for (int i = 1; i < length; i++) {
 			float tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -310,8 +334,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the minimum value
 	 */
 	public static double min( double[] array, int offset, int length ) {
-		double min = Double.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		double min = array[offset];
+		for (int i = 1; i < length; i++) {
 			double tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -324,10 +350,12 @@ public class PrimitiveArrays {
 	 * Returns the index of the element with the minimum value
 	 */
 	public static int minIdx( byte[] array, int offset, int length ) {
-		int min = Integer.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		byte min = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
+			byte tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
 				index = i;
@@ -340,9 +368,11 @@ public class PrimitiveArrays {
 	 * Returns the index of the element with the minimum value
 	 */
 	public static int minIdx( int[] array, int offset, int length ) {
-		int min = Integer.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		int min = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			int tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -356,9 +386,11 @@ public class PrimitiveArrays {
 	 * Returns the index of the element with the minimum value
 	 */
 	public static int minIdx( float[] array, int offset, int length ) {
-		float min = Float.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		float min = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			float tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -372,9 +404,11 @@ public class PrimitiveArrays {
 	 * Returns the index of the element with the minimum value
 	 */
 	public static int minIdx( double[] array, int offset, int length ) {
-		double min = Double.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		double min = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			double tmp = array[offset + i];
 			if (tmp < min) {
 				min = tmp;
@@ -388,9 +422,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int max( byte[] array, int offset, int length ) {
-		int max = -Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		byte max = array[offset];
+		for (int i = 1; i < length; i++) {
+			byte tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
 			}
@@ -402,9 +438,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int max( short[] array, int offset, int length ) {
-		int max = -Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		short max = array[offset];
+		for (int i = 1; i < length; i++) {
+			short tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
 			}
@@ -416,8 +454,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int max( int[] array, int offset, int length ) {
-		int max = -Integer.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		int max = array[offset];
+		for (int i = 1; i < length; i++) {
 			int tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -430,8 +470,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static long max( long[] array, int offset, int length ) {
-		long max = -Long.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		long max = array[offset];
+		for (int i = 1; i < length; i++) {
 			long tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -444,8 +486,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static float max( float[] array, int offset, int length ) {
-		float max = -Float.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		float max = array[offset];
+		for (int i = 1; i < length; i++) {
 			float tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -458,8 +502,10 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static double max( double[] array, int offset, int length ) {
-		double max = -Double.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		double max = array[offset];
+		for (int i = 1; i < length; i++) {
 			double tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -472,10 +518,12 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int maxIdx( byte[] array, int offset, int length ) {
-		int max = -Integer.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
-			int tmp = array[offset + i];
+		sanityCheckRange(array.length, offset, length);
+
+		byte max = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
+			byte tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
 				index = i;
@@ -488,9 +536,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int maxIdx( int[] array, int offset, int length ) {
-		int max = -Integer.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		int max = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			int tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -504,9 +554,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int maxIdx( float[] array, int offset, int length ) {
-		float max = -Float.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		float max = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			float tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -520,9 +572,11 @@ public class PrimitiveArrays {
 	 * Returns the value of the element with the maximum value
 	 */
 	public static int maxIdx( double[] array, int offset, int length ) {
-		double max = -Double.MAX_VALUE;
-		int index = -1;
-		for (int i = 0; i < length; i++) {
+		sanityCheckRange(array.length, offset, length);
+
+		double max = array[offset];
+		int index = 0;
+		for (int i = 1; i < length; i++) {
 			double tmp = array[offset + i];
 			if (tmp > max) {
 				max = tmp;
@@ -541,6 +595,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBound( byte[] array, int offset, int length, int val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -566,6 +622,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBoundU( byte[] array, int offset, int length, int val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -590,6 +648,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBound( short[] array, int offset, int length, int val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -614,6 +674,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBound( int[] array, int offset, int length, int val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -638,6 +700,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBound( float[] array, int offset, int length, float val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -662,6 +726,8 @@ public class PrimitiveArrays {
 	 * @return lower bound index
 	 */
 	public static int lowerBound( double[] array, int offset, int length, double val ) {
+		sanityCheckRange(array.length, offset, length);
+
 		int count = length;
 		int first = offset;
 		while (count > 0) {
@@ -681,6 +747,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( byte[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -692,6 +760,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( short[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -703,6 +773,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( int[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -714,6 +786,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( long[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -725,6 +799,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( float[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -736,6 +812,8 @@ public class PrimitiveArrays {
 	 * Computes the sum of the array and stores the result in a double
 	 */
 	public static double sumD( double[] array, int offset, int length ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double sum = 0.0;
 		for (int i = 0; i < length; i++) {
 			sum += array[offset + i];
@@ -748,6 +826,8 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( byte[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
@@ -760,6 +840,8 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( short[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
@@ -772,6 +854,8 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( int[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
@@ -784,6 +868,8 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( long[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
@@ -796,6 +882,8 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( float[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
@@ -808,11 +896,20 @@ public class PrimitiveArrays {
 	 * considered.
 	 */
 	public static double feedbackIdxDOp( double[] array, int offset, int length, FeedbackIdxD op ) {
+		sanityCheckRange(array.length, offset, length);
+
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
 			result = op.process(i, array[i + offset], result);
 		}
 		return result;
+	}
+
+	private static void sanityCheckRange( int arrayLength, int offset, int length ) {
+		if (length <= 0)
+			throw new IllegalArgumentException("length must be positive. length=" + length);
+		if (offset < 0 || offset >= arrayLength)
+			throw new IllegalArgumentException("offset is invalid. offset=" + offset);
 	}
 
 	@FunctionalInterface
