@@ -134,6 +134,8 @@ class TestPrimitiveArrays {
 		for (int i = 0; i < 5; i++) {
 			assertEquals(5-i, values[i]);
 		}
+
+		PrimitiveArrays.shuffle(new byte[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_short() {
@@ -177,6 +179,8 @@ class TestPrimitiveArrays {
 		for (int i = 0; i < 5; i++) {
 			assertEquals(5-i, values[i]);
 		}
+
+		PrimitiveArrays.shuffle(new short[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_int() {
@@ -220,6 +224,8 @@ class TestPrimitiveArrays {
 		for (int i = 0; i < 5; i++) {
 			assertEquals(5-i, values[i]);
 		}
+
+		PrimitiveArrays.shuffle(new int[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_long() {
@@ -263,6 +269,8 @@ class TestPrimitiveArrays {
 		for (int i = 0; i < values.length; i++) {
 			assertEquals(5-i, values[i]);
 		}
+
+		PrimitiveArrays.shuffle(new long[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_float() {
@@ -306,6 +314,8 @@ class TestPrimitiveArrays {
 		for (int i = 0; i < 5; i++) {
 			assertEquals(5-i, values[i]);
 		}
+
+		PrimitiveArrays.shuffle(new float[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_double() {
@@ -336,6 +346,8 @@ class TestPrimitiveArrays {
 			}
 		}
 		assertTrue(matches < 10);
+
+		PrimitiveArrays.shuffle(new double[0], 0, 0, new Random(234));
 	}
 
 	@Test void shuffle_double_zeroLength() {

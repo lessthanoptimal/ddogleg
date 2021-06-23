@@ -916,7 +916,7 @@ public class PrimitiveArrays {
 	private static void sanityCheckShuffle( int arrayLength, int offset, int length ) {
 		if (length < 0)
 			throw new IllegalArgumentException("length must not be negative. length=" + length);
-		if (offset < 0 || offset >= arrayLength)
+		if (offset < 0 || offset > arrayLength)
 			throw new IllegalArgumentException("offset is invalid. offset=" + offset);
 	}
 
