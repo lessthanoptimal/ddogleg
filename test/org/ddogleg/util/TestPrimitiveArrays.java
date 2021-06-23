@@ -123,6 +123,19 @@ class TestPrimitiveArrays {
 		assertTrue(matches < 10);
 	}
 
+	@Test void shuffle_byte_zeroLength() {
+		var values = new byte[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (byte)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < 5; i++) {
+			assertEquals(5-i, values[i]);
+		}
+	}
+
 	@Test void shuffle_short() {
 		Random rand = new Random(234);
 		short[] values = new short[100];
@@ -151,6 +164,19 @@ class TestPrimitiveArrays {
 			}
 		}
 		assertTrue(matches < 10);
+	}
+
+	@Test void shuffle_short_zeroLength() {
+		var values = new short[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (short)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < 5; i++) {
+			assertEquals(5-i, values[i]);
+		}
 	}
 
 	@Test void shuffle_int() {
@@ -183,6 +209,62 @@ class TestPrimitiveArrays {
 		assertTrue(matches < 10);
 	}
 
+	@Test void shuffle_int_zeroLength() {
+		var values = new int[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (int)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < 5; i++) {
+			assertEquals(5-i, values[i]);
+		}
+	}
+
+	@Test void shuffle_long() {
+		Random rand = new Random(234);
+		long[] values = new long[100];
+		for (int i = 0; i < 90; i++) {
+			values[i + 10] = i;
+		}
+		PrimitiveArrays.shuffle(values, 10, 90, rand);
+
+		// make sure each element still only appears once
+		for (int i = 0; i < 90; i++) {
+			int count = 0;
+			for (int j = 0; j < 90; j++) {
+				if (Math.abs(values[j + 10] - i) == 0) {
+					count++;
+				}
+			}
+			assertEquals(1, count);
+		}
+
+		// see if elements were shuffled around. If too many match
+		// then something is wrong
+		int matches = 0;
+		for (int i = 0; i < 90; i++) {
+			if (Math.abs(values[i + 10] - i) == 0) {
+				matches++;
+			}
+		}
+		assertTrue(matches < 10);
+	}
+
+	@Test void shuffle_long_zeroLength() {
+		var values = new long[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (long)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < values.length; i++) {
+			assertEquals(5-i, values[i]);
+		}
+	}
+
 	@Test void shuffle_float() {
 		Random rand = new Random(234);
 		float[] values = new float[100];
@@ -213,6 +295,19 @@ class TestPrimitiveArrays {
 		assertTrue(matches < 10);
 	}
 
+	@Test void shuffle_float_zeroLength() {
+		var values = new float[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (float)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < 5; i++) {
+			assertEquals(5-i, values[i]);
+		}
+	}
+
 	@Test void shuffle_double() {
 		Random rand = new Random(234);
 		double[] values = new double[100];
@@ -241,6 +336,19 @@ class TestPrimitiveArrays {
 			}
 		}
 		assertTrue(matches < 10);
+	}
+
+	@Test void shuffle_double_zeroLength() {
+		var values = new double[5];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = (double)(5-i);
+		}
+
+		// nothing should change if it shuffles with a length of 1
+		PrimitiveArrays.shuffle(values, 1, 0, new Random(234));
+		for (int i = 0; i < 5; i++) {
+			assertEquals(5-i, values[i]);
+		}
 	}
 
 	@Test void min_byte() {

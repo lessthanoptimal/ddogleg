@@ -170,7 +170,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( byte[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -184,7 +184,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( short[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -198,7 +198,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( int[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -212,7 +212,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( long[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -226,7 +226,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( float[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -240,7 +240,7 @@ public class PrimitiveArrays {
 	 * Randomly shuffle the array
 	 */
 	public static void shuffle( double[] array, int offset, int length, Random rand ) {
-		sanityCheckRange(array.length, offset, length);
+		sanityCheckShuffle(array.length, offset, length);
 
 		for (int i = 0; i < length; i++) {
 			int src = rand.nextInt(length - i);
@@ -908,6 +908,14 @@ public class PrimitiveArrays {
 	private static void sanityCheckRange( int arrayLength, int offset, int length ) {
 		if (length <= 0)
 			throw new IllegalArgumentException("length must be positive. length=" + length);
+		if (offset < 0 || offset >= arrayLength)
+			throw new IllegalArgumentException("offset is invalid. offset=" + offset);
+	}
+
+
+	private static void sanityCheckShuffle( int arrayLength, int offset, int length ) {
+		if (length < 0)
+			throw new IllegalArgumentException("length must not be negative. length=" + length);
 		if (offset < 0 || offset >= arrayLength)
 			throw new IllegalArgumentException("offset is invalid. offset=" + offset);
 	}
