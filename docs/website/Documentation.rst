@@ -17,8 +17,10 @@ Several examples are included with the source code and can be found in the "ddog
 
 List of Example Code:
 
+* :doc:`/BigDogArray`
 * :doc:`/Clustering`
 * :doc:`/Combinatorics`
+* :doc:`/DogArray`
 * :doc:`/optimization/NonLinearLeastSquares`
 * :doc:`/optimization/NonLinearMinimization`
 * :doc:`/optimization/NonLinearSparseSchurComplement`
