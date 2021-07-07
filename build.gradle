@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id "com.peterabeles.gversion" version "1.10"
-    id "net.ltgt.errorprone" version "1.2.1"
+    id "net.ltgt.errorprone" version "2.0.1"
 }
 
 apply plugin: 'idea'
@@ -16,6 +16,9 @@ group = 'org.ddogleg'
 version = '0.20-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
+project.ext.set("lombok_version", '1.18.18')
+project.ext.set("errorprone_version", '2.7.1')
+
 gversion {
     srcDir       = "src"
     classPackage = "org.ddogleg"
@@ -24,14 +27,19 @@ gversion {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
+    toolchain { languageVersion = JavaLanguageVersion.of(15) }
 }
 
+// Prevents tons of errors if someone is using ASCII
+tasks.withType(JavaCompile).configureEach { options.encoding = "UTF-8" }
+
 // Creates Java 8 byte code
-tasks.withType(JavaCompile).all { options.compilerArgs = ["--release", "8"] }
+tasks.withType(JavaCompile).configureEach { options.release = 8 }
+
+// Enable incremental compile. Should make single file changes faster
+tasks.withType(JavaCompile) { options.incremental = true }
 
 repositories {
     mavenCentral()
@@ -42,18 +50,14 @@ repositories {
 }
 
 sourceSets {
-    generate {
-        java { srcDir 'generate' }
-    }
+    generate { java { srcDir 'generate' }  }
 
     benchmark {
         java { srcDir 'benchmark/src' }
         resources {  srcDir 'benchmark/resources' }
     }
 
-    examples {
-        java { srcDir 'examples/src' }
-    }
+    examples { java { srcDir 'examples/src' } }
 
     main {
         java { srcDir 'src' }
@@ -71,11 +75,11 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.41-SNAPSHOT'}
+        compile group: 'org.ejml', name: a, version: '0.41'}
 
     compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
     compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
-    compileOnly 'org.projectlombok:lombok:1.18.10'
+    compileOnly "org.projectlombok:lombok:$project.lombok_version"
     testCompile project.sourceSets.main.compileClasspath
 
     examplesImplementation project.sourceSets.main.compileClasspath
@@ -93,14 +97,9 @@ dependencies {
     examplesCompile project.sourceSets.main.output
 
     // needed to use Java 11+ syntax with Java 1.8 byte code
-    annotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.2.0'){
-        exclude group: 'net.bytebuddy', module: 'byte-buddy'
-        exclude group: 'net.bytebuddy', module: 'byte-buddy-agent'
-    }
-    annotationProcessor("net.bytebuddy:byte-buddy:1.10.10")
-    annotationProcessor("net.bytebuddy:byte-buddy-agent:1.10.10")
+    annotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.3.0')
 
-    errorprone "com.google.errorprone:error_prone_core:2.4.0"
+    errorprone "com.google.errorprone:error_prone_core:$project.errorprone_version"
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 
     // even if it's not used you still need to include the dependency
@@ -108,7 +107,7 @@ dependencies {
     testAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
     benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:0.8.0"
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.10' // @Getter @Setter
+    annotationProcessor "org.projectlombok:lombok:$project.lombok_version" // @Getter @Setter
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -282,5 +281,5 @@ project.compileJava.dependsOn(createVersionFile)
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = '6.4.1'
+    gradleVersion = '6.8.3'
 }
