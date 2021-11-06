@@ -107,6 +107,12 @@ public class FastArray<T> extends FastAccess<T> {
 		size = 0;
 	}
 
+	/** Convenience function which resets the array and reserves memory */
+	public void resetReserve(int length) {
+		reset();
+		reserve(length);
+	}
+
 	/**
 	 * Sets the size of the list to zero and removes all internal references inside the current array.
 	 */
