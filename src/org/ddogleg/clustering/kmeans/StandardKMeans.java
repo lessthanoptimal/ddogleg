@@ -128,6 +128,11 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 	@Override
 	public void process( LArrayAccessor<P> points, int numCluster ) {
+		if (numCluster <= 0)
+			throw new IllegalArgumentException("There must be at least one cluster");
+		if (points.size() == 0)
+			throw new IllegalArgumentException("There must be at least one point");
+
 		if (verbose)
 			System.out.println("ENTER standard kmeans process");
 		// declare data

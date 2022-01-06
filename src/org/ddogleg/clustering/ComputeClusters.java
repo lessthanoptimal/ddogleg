@@ -37,7 +37,8 @@ public interface ComputeClusters<P> {
 	void initialize(long randomSeed);
 
 	/**
-	 * Computes a set of clusters which segment the points into numCluster sets.
+	 * Computes a set of clusters which segment the points into numCluster sets. The number
+	 * of clusters and points must be 1 or more. If this is not true then the behavior is undefined.
 	 *
 	 * @param points Set of points which are to be clustered. Not modified.
 	 * @param numCluster Number of clusters it will use to split the points.
