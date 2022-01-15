@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ public class TestAssignKMeans {
 		clusters.add( new double[]{10,0,0});
 		clusters.add( new double[]{0,0,10});
 
-		var alg = new AssignKMeans<>(clusters, new EuclideanSqArrayF64(3));
+		var alg = new AssignKMeans<>(clusters.toList(), new EuclideanSqArrayF64(3));
 
 		assertEquals(1,alg.assign(new double[]{0,0,9}));
 		assertEquals(0, alg.assign(new double[]{12, 0, 0}));
@@ -45,7 +45,7 @@ public class TestAssignKMeans {
 		clusters.add( new double[]{10,0,0});
 		clusters.add( new double[]{5,0,0});
 
-		var alg = new AssignKMeans<>(clusters, new EuclideanSqArrayF64(3));
+		var alg = new AssignKMeans<>(clusters.toList(), new EuclideanSqArrayF64(3));
 
 		var histogram = new double[2];
 
@@ -60,7 +60,7 @@ public class TestAssignKMeans {
 		// this is actually a difficult case for using this type of distance metric
 		// one cluster is much farther away and as a result the weight is equality split between the two closer points
 		// which might not be desirable
-		clusters.add( new double[]{5000,0,0});
+		alg.clusters.add( new double[]{5000,0,0});
 		histogram = new double[3];
 		alg.assign(new double[]{6,0,0},histogram);
 		assertTrue(histogram[0]/30.0 > histogram[2]);

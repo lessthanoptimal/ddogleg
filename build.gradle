@@ -15,7 +15,7 @@ version = '0.21-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 project.ext.set("lombok_version", '1.18.18')
-project.ext.set("errorprone_version", '2.7.1')
+project.ext.set("errorprone_version", '2.9.0')
 project.ext.set("nullaway_version", '0.9.5')
 
 gversion {
@@ -136,10 +136,10 @@ dependencies {
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 
     // even if it's not used you still need to include the dependency
-    annotationProcessor "com.uber.nullaway:nullaway:$project.nullaway_version"
-    testAnnotationProcessor "com.uber.nullaway:nullaway:$project.nullaway_version)"
-    benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:$project.nullaway_version"
-    examplesAnnotationProcessor "com.uber.nullaway:nullaway:$project.nullaway_version"
+    annotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
+    testAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
+    benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
+    examplesAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
 
     annotationProcessor "org.projectlombok:lombok:$project.lombok_version" // @Getter @Setter
     testAnnotationProcessor "org.projectlombok:lombok:$project.lombok_version"
