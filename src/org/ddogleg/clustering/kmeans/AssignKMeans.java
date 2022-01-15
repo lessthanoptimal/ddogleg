@@ -24,7 +24,10 @@ import org.ddogleg.clustering.AssignCluster;
 import org.ddogleg.clustering.PointDistance;
 import org.ddogleg.struct.FastAccess;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of {@link org.ddogleg.clustering.AssignCluster} for K-Means.  Euclidean distance squared is
@@ -33,16 +36,17 @@ import java.util.Arrays;
  *
  * @author Peter Abeles
  */
-public class AssignKMeans<P> implements AssignCluster<P> {
+public class AssignKMeans<P> implements AssignCluster<P>, Serializable{
 
 	/** Each point is the mean of a cluster */
-	@Getter @Setter FastAccess<P> clusters;
+	@Getter @Setter List<P> clusters;
 
 	/** Computes the distance two points are apart */
 	@Getter @Setter PointDistance<P> distancer;
 
-	public AssignKMeans(FastAccess<P> clusters, PointDistance<P> distancer) {
-		this.clusters = clusters;
+	public AssignKMeans(List<P> clusters, PointDistance<P> distancer) {
+		// Copy to make sure there are no serialization issues.
+		this.clusters = new ArrayList<>(clusters);
 		this.distancer = distancer;
 	}
 

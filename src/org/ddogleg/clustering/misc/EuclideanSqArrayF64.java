@@ -20,12 +20,14 @@ package org.ddogleg.clustering.misc;
 
 import org.ddogleg.clustering.PointDistance;
 
+import java.io.Serializable;
+
 /**
  * Returns Euclidean distance squared for double[] points.
  *
  * @author Peter Abeles
  */
-public class EuclideanSqArrayF64 implements PointDistance<double[]> {
+public class EuclideanSqArrayF64 implements PointDistance<double[]>, Serializable {
 	// Number of elements in the array
 	final int arrayLength;
 

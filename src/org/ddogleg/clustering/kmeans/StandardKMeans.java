@@ -220,7 +220,7 @@ public class StandardKMeans<P> implements ComputeClusters<P> {
 
 	@Override
 	public AssignCluster<P> getAssignment() {
-		return new AssignKMeans<>(bestClusters, distancer);
+		return new AssignKMeans<>(bestClusters.toList(), distancer);
 	}
 
 	/**
