@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DDogleg Numerics'
-copyright = u'2020, Peter Abeles'
+copyright = u'2022, Peter Abeles'
 author = u'Peter Abeles'
 
 # The version info for the project you're documenting, acts as replacement for
