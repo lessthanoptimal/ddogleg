@@ -4,10 +4,13 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.21
-Date:     2022
+Date:     2022-01-17
 
 - FastArray
   * Added resetReserve()
+- K-Means Clustering
+  * Fixed serialization
+  * Checks contract
 
 ------------------------------------------------------
 Version:  0.20
