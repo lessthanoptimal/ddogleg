@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id "com.peterabeles.gversion" version "1.10"
-    id "net.ltgt.errorprone" version "2.0.1"
+    id "net.ltgt.errorprone" version "2.0.2"
 }
 
 apply plugin: 'java-library'
@@ -11,12 +11,15 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.21'
+version = '0.22-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
-project.ext.set("lombok_version", '1.18.18')
-project.ext.set("errorprone_version", '2.9.0')
-project.ext.set("nullaway_version", '0.9.5')
+project.ext.lombok_version = '1.18.20'
+project.ext.errorprone_version = '2.11.0'
+project.ext.nullaway_version = '0.9.5'
+project.ext.guava_version = '31.0.1-jre'
+project.ext.jabel_version = '0.4.2'
+project.ext.jetnull_version = '23.0.0'
 
 gversion {
     srcDir       = "src"
@@ -28,14 +31,17 @@ gversion {
 java {
     withJavadocJar()
     withSourcesJar()
-    toolchain { languageVersion = JavaLanguageVersion.of(15) }
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 // Prevents tons of errors if someone is using ASCII
 tasks.withType(JavaCompile).configureEach { options.encoding = "UTF-8" }
 
-// Creates Java 8 byte code
-tasks.withType(JavaCompile).configureEach { options.release = 8 }
+// Creates Java 11 byte code but Java 17 syntax
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = 17
+    options.release = 11
+}
 
 // Enable incremental compile. Should make single file changes faster
 tasks.withType(JavaCompile) { options.incremental = true }
@@ -52,8 +58,8 @@ project.publish.dependsOn failDirtyNotSnapshot
 // To make ErrorProne and Kotlin plugins happy
 configurations.all {
     resolutionStrategy {
-        force 'org.jetbrains:annotations:20.0.0'
-        force 'com.google.guava:guava:30.1-jre'
+        force "org.jetbrains:annotations:$project.jetnull_version"
+        force "com.google.guava:guava:$project.guava_version"
         force "com.google.errorprone:error_prone_annotations:$project.errorprone_version"
         force 'com.google.code.findbugs:jsr305:3.0.2'
         force 'org.checkerframework:checker-qual:2.10.0'
@@ -105,12 +111,12 @@ sourceSets {
 
 dependencies {
     ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        compile group: 'org.ejml', name: a, version: '0.41'}
+        api group: 'org.ejml', name: a, version: '0.41'}
 
     compileOnly "org.projectlombok:lombok:$project.lombok_version"
     compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
     compileOnly 'javax.annotation:jsr250-api:1.0'  // @Generated
-    testCompile project.sourceSets.main.compileClasspath
+    testImplementation project.sourceSets.main.compileClasspath
 
     examplesImplementation project.sourceSets.main.compileClasspath
     examplesImplementation project.sourceSets.main.runtimeClasspath
@@ -119,21 +125,20 @@ dependencies {
     testImplementation( 'org.junit.jupiter:junit-jupiter-params:5.4.0' )
     testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
 
-    generateCompile group: 'commons-io', name: 'commons-io', version: '2.6'
-    testCompile project.sourceSets.benchmark.output
+    generateImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    testImplementation project.sourceSets.benchmark.output
 
-    benchmarkCompile project.sourceSets.main.output
-    benchmarkCompile project.sourceSets.main.runtimeClasspath
-    benchmarkCompile project.sourceSets.main.compileClasspath
-    examplesCompile project.sourceSets.main.output
+    benchmarkImplementation project.sourceSets.main.output
+    benchmarkImplementation project.sourceSets.main.runtimeClasspath
+    benchmarkImplementation project.sourceSets.main.compileClasspath
+    examplesImplementation project.sourceSets.main.output
 
-    // needed to use Java 11+ syntax with Java 1.8 byte code
-    annotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.3.0')
-    testAnnotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.3.0')
-    benchmarkAnnotationProcessor('com.github.bsideup.jabel:jabel-javac-plugin:0.3.0')
+    // needed to use Java 17 syntax with Java 11 byte code
+    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
+    testAnnotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
+    benchmarkAnnotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
 
-    errorprone "com.google.errorprone:error_prone_core:$project.errorprone_version"
-    errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
+    errorprone("com.google.errorprone:error_prone_core:$project.errorprone_version")
 
     // even if it's not used you still need to include the dependency
     annotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
@@ -182,8 +187,8 @@ javadoc {
     }
 
     // https://github.com/gradle/gradle/issues/11182 Error introduced in JDK 11
-    if (JavaVersion.current().compareTo(JavaVersion.VERSION_1_9) >= 0) {
-        options.addStringOption("-release", "8");
+    if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+        options.addStringOption("-release", "11")
     }
 
     if(JavaVersion.current().isJava9Compatible()) {
@@ -299,5 +304,5 @@ project.compileJava.dependsOn(createVersionFile)
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = '6.8.3'
+    gradleVersion = '7.3.3'
 }

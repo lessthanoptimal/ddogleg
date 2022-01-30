@@ -3,6 +3,14 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.22
+Date:     2022
+
+- Build
+  * Generates Java 11 bytecode but compiles with Java 17
+
+
+------------------------------------------------------
 Version:  0.21
 Date:     2022-01-17
 
