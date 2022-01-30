@@ -18,42 +18,48 @@
 
 package org.ddogleg.struct;
 
-import org.ddogleg.sorting.QuickSort_S32;
-
 import java.util.Arrays;
 
 /**
- * Growable array composed of ints.
+ * Growable array composed of short.
  *
  * @author Peter Abeles
  */
-public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
+public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 
-	public int[] data;
+	public short[] data;
 	public int size;
 
-	public DogArray_I32( int reserve ) {
-		data = new int[reserve];
+	public DogArray_I16( int reserve ) {
+		data = new short[reserve];
 		this.size = 0;
 	}
 
-	public DogArray_I32() {
+	public DogArray_I16() {
 		this(10);
 	}
 
 	/**
 	 * Creates a queue with the specified length as its size filled with all zeros
 	 */
-	public static DogArray_I32 zeros( int length ) {
-		var out = new DogArray_I32(length);
+	public static DogArray_I16 zeros( int length ) {
+		var out = new DogArray_I16(length);
 		out.size = length;
 		return out;
 	}
 
-	public static DogArray_I32 array( int... values ) {
-		DogArray_I32 out = zeros(values.length);
+	public static DogArray_I16 array( short... values ) {
+		DogArray_I16 out = zeros(values.length);
 		for (int i = 0; i < values.length; i++) {
 			out.data[i] = values[i];
+		}
+		return out;
+	}
+
+	public static DogArray_I16 array( int... values ) {
+		DogArray_I16 out = zeros(values.length);
+		for (int i = 0; i < values.length; i++) {
+			out.data[i] = (short)values[i];
 		}
 		return out;
 	}
@@ -65,10 +71,10 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param idx1 Upper extent, exclusive.
 	 * @return new array.
 	 */
-	public static DogArray_I32 range( int idx0, int idx1 ) {
-		DogArray_I32 out = zeros(idx1 - idx0);
+	public static DogArray_I16 range( int idx0, int idx1 ) {
+		DogArray_I16 out = zeros(idx1 - idx0);
 		for (int i = idx0; i < idx1; i++) {
-			out.data[i - idx0] = (int)i;
+			out.data[i - idx0] = (short)i;
 		}
 		return out;
 	}
@@ -91,6 +97,16 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param values primitive array
 	 * @return true if equal or false if not
 	 */
+	public boolean isEquals( short... values ) {
+		if (size != values.length)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values[i])
+				return false;
+		}
+		return true;
+	}
+
 	public boolean isEquals( int... values ) {
 		if (size != values.length)
 			return false;
@@ -106,9 +122,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		size = 0;
 	}
 
-	public void addAll( DogArray_I32 queue ) {
+	public void addAll( DogArray_I16 queue ) {
 		if (size + queue.size > data.length) {
-			int[] temp = new int[(size + queue.size)*2];
+			short[] temp = new short[(size + queue.size)*2];
 			System.arraycopy(data, 0, temp, 0, size);
 			data = temp;
 		}
@@ -116,14 +132,14 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		size += queue.size;
 	}
 
-	public void addAll( int[] array, int startIndex, int endIndex ) {
+	public void addAll( short[] array, int startIndex, int endIndex ) {
 		if (endIndex > array.length)
 			throw new IllegalAccessError("endIndex is larger than input array. " + endIndex + " > " + array.length);
 
 		int arraySize = endIndex - startIndex;
 
 		if (size + arraySize > data.length) {
-			int[] temp = new int[(size + arraySize)*2];
+			short[] temp = new short[(size + arraySize)*2];
 			System.arraycopy(data, 0, temp, 0, size);
 			data = temp;
 		}
@@ -137,17 +153,17 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	public void push( int val ) {
 		if (size == data.length) {
-			int[] temp;
+			short[] temp;
 			try {
-				temp = new int[size*2 + 5];
+				temp = new short[size*2 + 5];
 			} catch (OutOfMemoryError e) {
 				System.gc();
-				temp = new int[3*size/2];
+				temp = new short[3*size/2];
 			}
 			System.arraycopy(data, 0, temp, 0, size);
 			data = temp;
 		}
-		data[size++] = (int)val;
+		data[size++] = (short)val;
 	}
 
 	/**
@@ -157,7 +173,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( int[] array, int offset, int length ) {
+	public void setTo( short[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
 	}
@@ -168,7 +184,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param src (Input) The input array
 	 * @return A reference to "this" to allow chaining of commands
 	 */
-	public DogArray_I32 setTo( int... src ) {
+	public DogArray_I16 setTo( short... src ) {
 		setTo(src, 0, src.length);
 		return this;
 	}
@@ -176,8 +192,8 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	/**
 	 * Creates a new primitive array which is a copy.
 	 */
-	public int[] toArray() {
-		int[] out = new int[size];
+	public short[] toArray() {
+		short[] out = new short[size];
 		System.arraycopy(data, 0, out, 0, size);
 		return out;
 	}
@@ -213,9 +229,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 */
 	public void insert( int index, int value ) {
 		if (size == data.length) {
-			int[] temp = new int[size*2 + 5];
+			short[] temp = new short[size*2 + 5];
 			System.arraycopy(data, 0, temp, 0, index);
-			temp[index] = value;
+			temp[index] = (short)value;
 			System.arraycopy(data, index, temp, index + 1, size - index);
 			this.data = temp;
 			size++;
@@ -224,7 +240,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 			for (int i = size - 1; i > index; i--) {
 				data[i] = data[i - 1];
 			}
-			data[index] = value;
+			data[index] = (short)value;
 		}
 	}
 
@@ -235,16 +251,16 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
-	public int removeSwap( int index ) {
+	public short removeSwap( int index ) {
 		if (index < 0 || index >= size)
 			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
-		int ret = data[index];
+		short ret = data[index];
 		size -= 1;
 		data[index] = data[size];
 		return ret;
 	}
 
-	public int removeTail() {
+	public short removeTail() {
 		if (size > 0) {
 			size--;
 			return data[size];
@@ -253,13 +269,13 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		}
 	}
 
-	public int get( int index ) {
+	public short get( int index ) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 		return data[index];
 	}
 
-	public int getTail() {
+	public short getTail() {
 		if (size == 0)
 			throw new IndexOutOfBoundsException("Array is empty");
 		return data[size - 1];
@@ -268,7 +284,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	/**
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
-	public int getTail( int index ) {
+	public short getTail( int index ) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 		return data[size - index - 1];
@@ -277,7 +293,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	public void setTail( int index, int value ) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-		data[size - index - 1] = value;
+		data[size - index - 1] = (short)value;
 	}
 
 	/**
@@ -286,19 +302,19 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param fraction 0 to 1 inclusive
 	 * @return value at fraction
 	 */
-	public int getFraction( double fraction ) {
+	public short getFraction( double fraction ) {
 		return get((int)((size - 1)*fraction));
 	}
 
-	public int unsafe_get( int index ) {
+	public short unsafe_get( int index ) {
 		return data[index];
 	}
 
 	public void set( int index, int value ) {
-		data[index] = value;
+		data[index] = (short)value;
 	}
 
-	@Override public void setTo( DogArray_I32 original ) {
+	@Override public void setTo( DogArray_I16 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
 	}
@@ -314,7 +330,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, int value ) {
+	public void resize( int size, short value ) {
 		int priorSize = this.size;
 		resize(size);
 		if (priorSize >= size )
@@ -323,13 +339,13 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	/**
-	 * Convenience function that will first call {@link #reset} then {@link #resize(int, int)}, ensuring
+	 * Convenience function that will first call {@link #reset} then {@link #resize(int, short)}, ensuring
 	 * that every element in the array will have the specified value
 	 *
 	 * @param size New size
 	 * @param value New value of every element
 	 */
-	public void resetResize( int size, int value ) {
+	public void resetResize( int size, short value ) {
 		reset();
 		resize(size, value);
 	}
@@ -340,7 +356,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param size New sie
 	 * @param op Assigns default values
 	 */
-	public void resize( int size, DogLambdas.AssignIdx_I32 op ) {
+	public void resize( int size, DogLambdas.AssignIdx_I16 op ) {
 		int priorSize = this.size;
 		resize(size);
 		for (int i = priorSize; i < size; i++) {
@@ -348,15 +364,15 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		}
 	}
 
-	public void fill( int value ) {
+	public void fill( short value ) {
 		Arrays.fill(data, 0, size, value);
 	}
 
-	public void fill( int idx0, int idx1, int value ) {
+	public void fill( int idx0, int idx1, short value ) {
 		Arrays.fill(data, idx0, idx1, value);
 	}
 
-	public boolean contains( int value ) {
+	public boolean contains( short value ) {
 		for (int i = 0; i < size; i++) {
 			if (data[i] == value)
 				return true;
@@ -377,9 +393,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 			// In this special case we can dereference the old array and this might allow the GC to free up memory
 			// before declaring the new array. Could be useful if the arrays are very large.
 			this.data = null;
-			this.data = new int[amount];
+			this.data = new short[amount];
 		} else {
-			var tmp = new int[amount];
+			var tmp = new short[amount];
 			System.arraycopy(data, 0, tmp, 0, this.size);
 			data = tmp;
 		}
@@ -390,11 +406,11 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	@Override public void zero() {
-		Arrays.fill(data, 0, size, (int)0);
+		Arrays.fill(data, 0, size, (short)0);
 	}
 
-	@Override public DogArray_I32 copy() {
-		var ret = new DogArray_I32(size);
+	@Override public DogArray_I16 copy() {
+		var ret = new DogArray_I16(size);
 		ret.setTo(this);
 		return ret;
 	}
@@ -405,29 +421,40 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 		int D = size/2;
 		for (int i = 0, j = size - 1; i < D; i++, j--) {
-			int tmp = data[i];
+			short tmp = data[i];
 			data[i] = data[j];
 			data[j] = tmp;
 		}
 	}
 
-	public static DogArray_I32 parseHex( String message ) {
+	/**
+	 * Prints the queue to stdout as a hex array
+	 */
+	public void printHex() {
+		System.out.print("[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.printf("0x%04X ",data[i]);
+		}
+		System.out.print("]");
+	}
+
+	public static DogArray_I16 parseHex( String message ) {
 		message = message.replaceAll("\\[","");
 		message = message.replaceAll("\\]","");
 		message = message.replaceAll(" ","");
 
 		String[] words = message.split(",");
 
-		var out = new DogArray_I32(words.length);
+		var out = new DogArray_I16(words.length);
 		out.size = words.length;
 
 		for (int i = 0; i < words.length; i++) {
-			out.data[i] = Integer.decode(words[i]).byteValue();
+			out.data[i] = Integer.decode(words[i]).shortValue();
 		}
 		return out;
 	}
 
-	public int pop() {
+	public short pop() {
 		return data[--size];
 	}
 
@@ -450,7 +477,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 			return -1;
 
 		int selected = 0;
-		int best = data[0];
+		short best = data[0];
 
 		for (int i = 1; i < size; i++) {
 			if (data[i] > best) {
@@ -467,7 +494,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 			return -1;
 
 		int selected = 0;
-		int best = data[0];
+		short best = data[0];
 
 		for (int i = 1; i < size; i++) {
 			if (data[i] < best) {
@@ -481,13 +508,6 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	@Override public void sort() {
 		Arrays.sort(data, 0, size);
-	}
-
-	/**
-	 * Sort but with a re-usable sorter to avoid declaring new memory
-	 */
-	public void sort( QuickSort_S32 sorter) {
-		sorter.sort(data,size);
 	}
 
 	public void forIdx( FunctionEachIdx func ) {
@@ -507,7 +527,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 			data[i] = func.process(i, data[i]);
 		}
 	}
-
+	
 	public int count( Filter filter ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {
@@ -519,17 +539,17 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	@FunctionalInterface
 	public interface FunctionEachIdx {
-		void process( int index, int value );
+		void process( int index, short value );
 	}
 
 	@FunctionalInterface
 	public interface FunctionEach {
-		void process( int value );
+		void process( short value );
 	}
 
 	@FunctionalInterface
 	public interface FunctionApplyIdx {
-		int process( int index, int value );
+		short process( int index, short value );
 	}
 
 	@FunctionalInterface

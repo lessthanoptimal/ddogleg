@@ -8,6 +8,7 @@ Date:     2022
 
 - Build
   * Generates Java 11 bytecode but compiles with Java 17
+- Added DogArray_I16
 
 
 ------------------------------------------------------
