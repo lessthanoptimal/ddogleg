@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -112,6 +112,16 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 			return false;
 		for (int i = 0; i < size; i++) {
 			if (data[i] != values[i])
+				return false;
+		}
+		return true;
+	}
+
+	public boolean isEquals( DogArray_I8 values ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values.data[i])
 				return false;
 		}
 		return true;

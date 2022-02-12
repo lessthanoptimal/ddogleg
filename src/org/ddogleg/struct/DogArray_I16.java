@@ -117,6 +117,16 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 		return true;
 	}
 
+	public boolean isEquals( DogArray_I16 values ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values.data[i])
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
@@ -333,7 +343,7 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	public void resize( int size, short value ) {
 		int priorSize = this.size;
 		resize(size);
-		if (priorSize >= size )
+		if (priorSize >= size)
 			return;
 		fill(priorSize, size, value);
 	}
@@ -433,15 +443,15 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	public void printHex() {
 		System.out.print("[ ");
 		for (int i = 0; i < size; i++) {
-			System.out.printf("0x%04X ",data[i]);
+			System.out.printf("0x%04X ", data[i]);
 		}
 		System.out.print("]");
 	}
 
 	public static DogArray_I16 parseHex( String message ) {
-		message = message.replaceAll("\\[","");
-		message = message.replaceAll("\\]","");
-		message = message.replaceAll(" ","");
+		message = message.replaceAll("\\[", "");
+		message = message.replaceAll("\\]", "");
+		message = message.replaceAll(" ", "");
 
 		String[] words = message.split(",");
 
@@ -527,7 +537,7 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 			data[i] = func.process(i, data[i]);
 		}
 	}
-	
+
 	public int count( Filter filter ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {

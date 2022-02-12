@@ -101,6 +101,16 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		return true;
 	}
 
+	public boolean isEquals( DogArray_I32 values ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values.data[i])
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
