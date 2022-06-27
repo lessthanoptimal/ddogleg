@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset.ransac;
 
+import lombok.Setter;
 import org.ddogleg.fitting.modelset.*;
 import org.ddogleg.struct.DogArray_I32;
 import org.ddogleg.struct.Factory;
@@ -69,6 +70,9 @@ public class Ransac<Model, Point> implements ModelMatcherPost<Model, Point>, Inl
 
 	// RANSAC's internal state while trying to find the best solution
 	protected @Nullable TrialHelper helper;
+
+	/** Optional function for initializing generator and distance functions */
+	protected @Setter @Nullable InitializeModels<Model, Point> initializeModels;
 
 	Class<Model> modelType;
 	Class<Point> pointType;
@@ -307,6 +311,9 @@ public class Ransac<Model, Point> implements ModelMatcherPost<Model, Point>, Inl
 			candidatePoints.clear();
 			bestFitPoints.clear();
 			selectedIdx.reset();
+
+			if (initializeModels != null)
+				initializeModels.initialize(modelGenerator, modelDistance);
 		}
 	}
 
@@ -378,4 +385,8 @@ public class Ransac<Model, Point> implements ModelMatcherPost<Model, Point>, Inl
 		return modelType;
 	}
 
+	@FunctionalInterface
+	public interface InitializeModels<Model, Point> {
+		void initialize( ModelGenerator<Model, Point> generator, DistanceFromModel<Model, Point> distance );
+	}
 }
