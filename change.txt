@@ -11,6 +11,8 @@ Date:     2022
 - Added DogArray_I16
 - BigDogArrayBase
   * Fixed excessive growth of internal array
+- DogLinkedList
+  * Fixed reset for cyclical lists
 - Ransac_MT
   * Added way to initialize generators and distance functions for each thread
 

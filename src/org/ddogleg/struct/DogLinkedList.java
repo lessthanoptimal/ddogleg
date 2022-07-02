@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,6 +52,9 @@ public class DogLinkedList<T> {
 			e.clear();
 			available.add( e );
 			e = n;
+			// This is possible if the list is cyclical
+			if (e == first)
+				break;
 		}
 		first = last = null;
 		size = 0;
@@ -272,7 +275,7 @@ public class DogLinkedList<T> {
 		}
 		size--;
 		element.clear();
-		available.push(element);
+		available.add(element);
 	}
 
 	/**
@@ -285,7 +288,7 @@ public class DogLinkedList<T> {
 
 		T ret = first.getObject();
 		Element<T> e = first;
-		available.push(first);
+		available.add(first);
 
 		if( first.next != null ) {
 			first.next.prev = null;
