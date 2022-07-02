@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -158,11 +158,14 @@ public abstract class BigDogArrayBase<Array> {
 			// If requested/allowed, increase the size the last array. This will effectively double its size.
 			// Adding a bit of extra when growing significantly reduces number of array copies
 			Array old = blocks.data[priorNumBlocks - 1];
-			if (addExtra)
-				desiredLastBlockSize =
-						Math.min(blockSize, initialBlockSize + arrayLength(old)*2 + desiredLastBlockSize);
+			int oldLength = arrayLength(old);
 
-			if (arrayLength(old) < desiredLastBlockSize) {
+			// See if it needs to allocate more memory
+			if (oldLength < desiredLastBlockSize) {
+				// Add extra elements to reduce how often an expensive growth operation is done
+				if (addExtra)
+					desiredLastBlockSize = Math.min(blockSize, initialBlockSize + oldLength*2 + desiredLastBlockSize);
+
 				Array replacement = newArrayInstance(desiredLastBlockSize);
 				if (saveValues)
 					System.arraycopy(old, 0, replacement, 0, arrayLength(old));

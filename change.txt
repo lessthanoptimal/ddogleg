@@ -9,6 +9,8 @@ Date:     2022
 - Build
   * Generates Java 11 bytecode but compiles with Java 17
 - Added DogArray_I16
+- BigDogArrayBase
+  * Fixed excessive growth of internal array
 - Ransac_MT
   * Added way to initialize generators and distance functions for each thread
 
