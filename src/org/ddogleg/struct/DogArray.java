@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -354,6 +354,18 @@ public class DogArray<T> extends FastAccess<T> {
 	public void resetResize( int newSize ) {
 		reset();
 		resize(newSize);
+	}
+
+	/**
+	 * Convenience functions that calls {@link #reset} first before {@link #resize}, then applies the
+	 * configure function for each element..
+	 *
+	 * @param newSize New array size
+	 * @param configure Operator that the "new" element is passed in to along with the index of the element.
+	 */
+	public void resetResize( int newSize, DProcessIdx<T> configure ) {
+		reset();
+		resize(newSize, configure);
 	}
 
 	public void shuffle( Random rand ) {
