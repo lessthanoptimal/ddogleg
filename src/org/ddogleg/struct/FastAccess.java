@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.struct;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -208,6 +209,15 @@ public abstract class FastAccess<T> implements Serializable {
 	}
 
 	/**
+	 * Same as {@link #findAll} but returns a new list.
+	 */
+	public List<T> filter( FunctionMatches<T> function) {
+		List<T> list = new ArrayList<>();
+		findAll(list, function);
+		return list;
+	}
+
+	/**
 	 * The passed in function is called once for each element in the list
 	 */
 	public void forIdx(FunctionEachIdx<T> function ) {
@@ -237,6 +247,16 @@ public abstract class FastAccess<T> implements Serializable {
 		for (int i = 0; i < size; i++) {
 			function.process(data[i]);
 		}
+	}
+
+	/** Counts the number of times an element returns true when passed into 'test' */
+	public int count( FunctionMatches<T> test ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if (test.process(data[i]))
+				total++;
+		}
+		return total;
 	}
 
 	/**

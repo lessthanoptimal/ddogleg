@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -151,5 +151,17 @@ public class TestFastAccess {
 				assertEquals(0,alg.get(i).value);
 			}
 		}
+	}
+
+	@Test void count() {
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+		alg.grow();
+		alg.grow();
+		alg.grow();
+
+		alg.forEach((o)->o.value=2);
+
+		assertEquals(0, alg.count((o)->o.value==0));
+		assertEquals(3, alg.count((o)->o.value==2));
 	}
 }
