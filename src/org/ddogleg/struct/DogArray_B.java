@@ -107,6 +107,16 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		return true;
 	}
 
+	public boolean isEquals( DogArray_B values ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (data[i] != values.data[i])
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void reset() {
 		size = 0;
