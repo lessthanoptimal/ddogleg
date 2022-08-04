@@ -17,6 +17,7 @@ Date:     2022
   * Added count(), filter()
 - DogArray
   * Added resetResize(size, configure)
+  * Added shuffle(rand)
 - Ransac_MT
   * Added way to initialize generators and distance functions for each thread
 

@@ -21,6 +21,7 @@ package org.ddogleg.struct;
 import org.ddogleg.sorting.QuickSort_S32;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Growable array composed of ints.
@@ -498,6 +499,16 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 */
 	public void sort( QuickSort_S32 sorter) {
 		sorter.sort(data,size);
+	}
+
+	/** Shuffle elements by randomly swapping them */
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int src = rand.nextInt(size-i);
+			int tmp = data[i];
+			data[i] = data[src];
+			data[src] = tmp;
+		}
 	}
 
 	public void forIdx( FunctionEachIdx func ) {

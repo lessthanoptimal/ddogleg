@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,12 +20,16 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Peter Abeles
  */
 public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
+
+	protected Random rand = new Random(0xfeed);
 
 	public abstract T declare( int maxsize );
 

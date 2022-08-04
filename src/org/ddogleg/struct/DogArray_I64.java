@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.struct;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Growable array composed of longs.
@@ -463,6 +464,16 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 
 	@Override public void sort() {
 		Arrays.sort(data, 0, size);
+	}
+
+	/** Shuffle elements by randomly swapping them */
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int src = rand.nextInt(size - i) + i;
+			long tmp = data[i];
+			data[i] = data[src];
+			data[src] = tmp;
+		}
 	}
 
 	public void forIdx( FunctionEachIdx func ) {

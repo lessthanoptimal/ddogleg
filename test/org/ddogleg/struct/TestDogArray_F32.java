@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -313,6 +313,21 @@ public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
 		assertEquals(3, alg.get(1), 1e-8);
 		assertEquals(4, alg.get(2), 1e-8);
 		assertEquals(8, alg.get(3), 1e-8);
+	}
+
+	@Test void shuffle() {
+		int N = 20;
+		var alg = new DogArray_F32(N);
+		for (int i = 0; i < N; i++) {
+			alg.add(i);
+		}
+		alg.shuffle(rand);
+		int changed = 0;
+		for (int i = 0; i < N; i++) {
+			if (alg.get(i) != i)
+				changed++;
+		}
+		assertTrue(changed >= 18);
 	}
 
 	@Test void getFraction() {

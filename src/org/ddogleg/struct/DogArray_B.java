@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.struct;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Growable array composed of booleans.
@@ -426,6 +427,16 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 
 	@Override public void sort() {
 		throw new RuntimeException("Undefined for boolean");
+	}
+
+	/** Shuffle elements by randomly swapping them */
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int src = rand.nextInt(size - i) + i;
+			boolean tmp = data[i];
+			data[i] = data[src];
+			data[src] = tmp;
+		}
 	}
 
 	public void forIdx( FunctionEachIdx func ) {

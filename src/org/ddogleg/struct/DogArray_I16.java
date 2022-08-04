@@ -19,6 +19,7 @@
 package org.ddogleg.struct;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Growable array composed of short.
@@ -518,6 +519,16 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 
 	@Override public void sort() {
 		Arrays.sort(data, 0, size);
+	}
+
+	/** Shuffle elements by randomly swapping them */
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int src = rand.nextInt(size - i) + i;
+			short tmp = data[i];
+			data[i] = data[src];
+			data[src] = tmp;
+		}
 	}
 
 	public void forIdx( FunctionEachIdx func ) {

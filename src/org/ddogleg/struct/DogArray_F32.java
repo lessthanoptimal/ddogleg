@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,6 +21,7 @@ package org.ddogleg.struct;
 import org.ddogleg.sorting.QuickSort_F32;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Growable array composed of floats.
@@ -472,6 +473,16 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	 */
 	public void sort( QuickSort_F32 sorter ) {
 		sorter.sort(data, size);
+	}
+
+	/** Shuffle elements by randomly swapping them */
+	public void shuffle( Random rand ) {
+		for (int i = 0; i < size; i++) {
+			int src = rand.nextInt(size - i) + i;
+			float tmp = data[i];
+			data[i] = data[src];
+			data[src] = tmp;
+		}
 	}
 
 	public void forIdx( FunctionEachIdx func ) {

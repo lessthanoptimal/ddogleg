@@ -311,6 +311,21 @@ public class TestDogArray_I16 extends ChecksDogArrayPrimitive<DogArray_I16> {
 		assertEquals(8, alg.get(3), 1e-8);
 	}
 
+	@Test void shuffle() {
+		int N = 20;
+		var alg = new DogArray_I16(N);
+		for (int i = 0; i < N; i++) {
+			alg.add(i);
+		}
+		alg.shuffle(rand);
+		int changed = 0;
+		for (int i = 0; i < N; i++) {
+			if (alg.get(i) != i)
+				changed++;
+		}
+		assertTrue(changed >= 18);
+	}
+
 	@Test void getFraction() {
 		var alg = new DogArray_I16(20);
 
