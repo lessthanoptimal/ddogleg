@@ -111,8 +111,9 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	@Override
-	public void reset() {
+	public DogArray_I64 reset() {
 		size = 0;
+		return this;
 	}
 
 	public void addAll( DogArray_I64 queue ) {
@@ -307,14 +308,16 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		data[index] = value;
 	}
 
-	@Override public void setTo( DogArray_I64 original ) {
+	@Override public DogArray_I64 setTo( DogArray_I64 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+		return this;
 	}
 
-	@Override public void resize( int size ) {
+	@Override public DogArray_I64 resize( int size ) {
 		reserve(size);
 		this.size = size;
+		return this;
 	}
 
 	/**
@@ -323,12 +326,13 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, long value ) {
+	public DogArray_I64 resize( int size, long value ) {
 		int priorSize = this.size;
 		resize(size);
 		if (priorSize >= size)
-			return;
+			return this;
 		fill(priorSize, size, value);
+		return this;
 	}
 
 	/**
@@ -338,6 +342,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @param size New size
 	 * @param value New value of every element
 	 */
+	@Deprecated
 	public void resetResize( int size, long value ) {
 		reset();
 		resize(size, value);
@@ -349,12 +354,13 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @param size New sie
 	 * @param op Assigns default values
 	 */
-	public void resize( int size, DogLambdas.AssignIdx_I64 op ) {
+	public DogArray_I64 resize( int size, DogLambdas.AssignIdx_I64 op ) {
 		int priorSize = this.size;
 		resize(size);
 		for (int i = priorSize; i < size; i++) {
 			data[i] = op.assign(i);
 		}
+		return this;
 	}
 
 	public void fill( long value ) {

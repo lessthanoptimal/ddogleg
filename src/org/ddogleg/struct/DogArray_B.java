@@ -118,8 +118,9 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	}
 
 	@Override
-	public void reset() {
+	public DogArray_B reset() {
 		size = 0;
+		return this;
 	}
 
 	public void addAll( DogArray_B queue ) {
@@ -173,9 +174,10 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( boolean[] array, int offset, int length ) {
+	public DogArray_B setTo( boolean[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
+		return this;
 	}
 
 	/**
@@ -304,14 +306,16 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		data[index] = value;
 	}
 
-	@Override public void setTo( DogArray_B original ) {
+	@Override public DogArray_B setTo( DogArray_B original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+		return this;
 	}
 
-	@Override public void resize( int size ) {
+	@Override public DogArray_B resize( int size ) {
 		reserve(size);
 		this.size = size;
+		return this;
 	}
 
 	/**
@@ -320,12 +324,13 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, boolean value ) {
+	public DogArray_B resize( int size, boolean value ) {
 		int priorSize = this.size;
 		resize(size);
 		if (priorSize >= size)
-			return;
+			return this;
 		fill(priorSize, size, value);
+		return this;
 	}
 
 	/**
@@ -335,6 +340,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * @param size New size
 	 * @param value New value of every element
 	 */
+	@Deprecated
 	public void resetResize( int size, boolean value ) {
 		reset();
 		resize(size, value);
@@ -346,12 +352,13 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * @param size New sie
 	 * @param op Assigns default values
 	 */
-	public void resize( int size, DogLambdas.AssignIdx_B op ) {
+	public DogArray_B resize( int size, DogLambdas.AssignIdx_B op ) {
 		int priorSize = this.size;
 		resize(size);
 		for (int i = priorSize; i < size; i++) {
 			data[i] = op.assign(i);
 		}
+		return this;
 	}
 
 	public void fill( boolean value ) {

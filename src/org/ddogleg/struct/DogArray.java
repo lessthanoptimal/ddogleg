@@ -191,8 +191,9 @@ public class DogArray<T> extends FastAccess<T> {
 			throw new IllegalArgumentException("Size is already zero");
 	}
 
-	public void reset() {
+	public DogArray<T> reset() {
 		size = 0;
+		return this;
 	}
 
 	/**
@@ -304,13 +305,14 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param length The new size of the array
 	 * @param configure Operator that the "new" element is passed in to.
 	 */
-	public void resize( int length, DProcess<T> configure ) {
+	public DogArray<T> resize( int length, DProcess<T> configure ) {
 		reserve(length);
 		for (int i = size; i < length; i++) {
 			reset.process(data[i]);
 			configure.process(data[i]);
 		}
 		this.size = length;
+		return this;
 	}
 
 	/**
@@ -322,13 +324,14 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param length The new size of the array
 	 * @param configure Operator that the "new" element is passed in to along with the index of the element.
 	 */
-	public void resize( int length, DProcessIdx<T> configure ) {
+	public DogArray<T> resize( int length, DProcessIdx<T> configure ) {
 		reserve(length);
 		for (int i = size; i < length; i++) {
 			reset.process(data[i]);
 			configure.process(i, data[i]);
 		}
 		this.size = length;
+		return this;
 	}
 
 	/**
@@ -338,12 +341,13 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * @param newSize New array size
 	 */
-	public void resize( int newSize ) {
+	public DogArray<T> resize( int newSize ) {
 		reserve(newSize);
 		for (int i = size; i < newSize; i++) {
 			reset.process(data[i]);
 		}
 		this.size = newSize;
+		return this;
 	}
 
 	/**
@@ -351,6 +355,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * @param newSize New array size
 	 */
+	@Deprecated
 	public void resetResize( int newSize ) {
 		reset();
 		resize(newSize);
@@ -363,6 +368,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param newSize New array size
 	 * @param configure Operator that the "new" element is passed in to along with the index of the element.
 	 */
+	@Deprecated
 	public void resetResize( int newSize, DProcessIdx<T> configure ) {
 		reset();
 		resize(newSize, configure);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,8 +27,10 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	/**
 	 * Sets the size to zero.
+	 *
+	 * @return Returns 'this' to allow chaining of operations.
 	 */
-	void reset();
+	T reset();
 
 	/**
 	 * Returns true if the specified array index is outside the allowed value range
@@ -39,20 +41,22 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	/**
 	 * Turns 'this' into a copy of 'original'
+	 *
 	 * @param original queue that is to be copied
+	 * @return Returns 'this' to allow chaining of operations.
 	 */
-	void setTo( T original );
+	T setTo( T original );
 
 	/**
-	 * Ensures that the internal array is at least this size. Value of elements previously in the array will
-	 * not be changed. If the size is increased then the value of new elements in undefined.
+	 * <p>Ensures that the internal array is at least this size. Value of elements previously in the array will
+	 * not be changed. If the size is increased then the value of new elements in undefined.</p>
 	 *
 	 * If you wish to resize the array and avoid copying over past values for performance reasons, then you must
 	 * either resize(0) or call {@link #reset} first.
 	 *
 	 * @param size desired new size
 	 */
-	void resize( int size );
+	T resize( int size );
 
 	/**
 	 * Changes the array to the specified size. If there is not enough storage, a new internal array is created
@@ -68,7 +72,7 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 *
 	 * @param amount minimum size of internal array
 	 */
-	void reserve(int amount);
+	void reserve( int amount );
 
 	/**
 	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.
@@ -77,6 +81,7 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	/**
 	 * Number of elements in the queue
+	 *
 	 * @return size of queue
 	 */
 	int size();

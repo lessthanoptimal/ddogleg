@@ -16,8 +16,9 @@ Date:     2022
 - FastAccess
   * Added count(), filter()
 - DogArray
-  * Added resetResize(size, configure)
+  * Added ability to chain some commands.
   * Added shuffle(rand)
+  * Deprecated resetResize()
 - Ransac_MT
   * Added way to initialize generators and distance functions for each thread
 

@@ -129,8 +129,9 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	}
 
 	@Override
-	public void reset() {
+	public DogArray_I16 reset() {
 		size = 0;
+		return this;
 	}
 
 	public void addAll( DogArray_I16 queue ) {
@@ -184,9 +185,10 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( short[] array, int offset, int length ) {
+	public DogArray_I16 setTo( short[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
+		return this;
 	}
 
 	/**
@@ -325,14 +327,16 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 		data[index] = (short)value;
 	}
 
-	@Override public void setTo( DogArray_I16 original ) {
+	@Override public DogArray_I16 setTo( DogArray_I16 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+		return this;
 	}
 
-	@Override public void resize( int size ) {
+	@Override public DogArray_I16 resize( int size ) {
 		reserve(size);
 		this.size = size;
+		return this;
 	}
 
 	/**
@@ -341,12 +345,13 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, short value ) {
+	public DogArray_I16 resize( int size, short value ) {
 		int priorSize = this.size;
 		resize(size);
 		if (priorSize >= size)
-			return;
+			return this;
 		fill(priorSize, size, value);
+		return this;
 	}
 
 	/**
@@ -356,6 +361,7 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	 * @param size New size
 	 * @param value New value of every element
 	 */
+	@Deprecated
 	public void resetResize( int size, short value ) {
 		reset();
 		resize(size, value);

@@ -113,8 +113,9 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Override
-	public void reset() {
+	public DogArray_F64 reset() {
 		size = 0;
+		return this;
 	}
 
 	public void addAll( DogArray_F64 queue ) {
@@ -168,9 +169,10 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( double[] array, int offset, int length ) {
+	public DogArray_F64 setTo( double[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
+		return this;
 	}
 
 	/**
@@ -309,14 +311,16 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		data[index] = value;
 	}
 
-	@Override public void setTo( DogArray_F64 original ) {
+	@Override public DogArray_F64 setTo( DogArray_F64 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+		return this;
 	}
 
-	@Override public void resize( int size ) {
+	@Override public DogArray_F64 resize( int size ) {
 		reserve(size);
 		this.size = size;
+		return this;
 	}
 
 	/**
@@ -325,12 +329,13 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, double value ) {
+	public DogArray_F64 resize( int size, double value ) {
 		int priorSize = this.size;
 		resize(size);
 		if (priorSize >= size)
-			return;
+			return this;
 		fill(priorSize, size, value);
+		return this;
 	}
 
 	/**
@@ -340,6 +345,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * @param size New size
 	 * @param value New value of every element
 	 */
+	@Deprecated
 	public void resetResize( int size, double value ) {
 		reset();
 		resize(size, value);
@@ -351,12 +357,13 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * @param size New sie
 	 * @param op Assigns default values
 	 */
-	public void resize( int size, DogLambdas.AssignIdx_F64 op ) {
+	public DogArray_F64 resize( int size, DogLambdas.AssignIdx_F64 op ) {
 		int priorSize = this.size;
 		resize(size);
 		for (int i = priorSize; i < size; i++) {
 			data[i] = op.assign(i);
 		}
+		return this;
 	}
 
 	public void fill( double value ) {
@@ -521,7 +528,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		}
 		return total;
 	}
-	
+
 	@FunctionalInterface
 	public interface FunctionEachIdx {
 		void process( int index, double value );

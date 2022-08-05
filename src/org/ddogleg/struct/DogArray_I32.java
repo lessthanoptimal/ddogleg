@@ -113,8 +113,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	@Override
-	public void reset() {
+	public DogArray_I32 reset() {
 		size = 0;
+		return this;
 	}
 
 	public void addAll( DogArray_I32 queue ) {
@@ -309,14 +310,16 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		data[index] = value;
 	}
 
-	@Override public void setTo( DogArray_I32 original ) {
+	@Override public DogArray_I32 setTo( DogArray_I32 original ) {
 		resize(original.size);
 		System.arraycopy(original.data, 0, data, 0, size());
+		return this;
 	}
 
-	@Override public void resize( int size ) {
+	@Override public DogArray_I32 resize( int size ) {
 		reserve(size);
 		this.size = size;
+		return this;
 	}
 
 	/**
@@ -325,12 +328,13 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param size New size
 	 * @param value Default value
 	 */
-	public void resize( int size, int value ) {
+	public DogArray_I32 resize( int size, int value ) {
 		int priorSize = this.size;
 		resize(size);
-		if (priorSize >= size )
-			return;
+		if (priorSize >= size)
+			return this;
 		fill(priorSize, size, value);
+		return this;
 	}
 
 	/**
@@ -340,6 +344,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param size New size
 	 * @param value New value of every element
 	 */
+	@Deprecated
 	public void resetResize( int size, int value ) {
 		reset();
 		resize(size, value);
@@ -423,9 +428,9 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	public static DogArray_I32 parseHex( String message ) {
-		message = message.replaceAll("\\[","");
-		message = message.replaceAll("\\]","");
-		message = message.replaceAll(" ","");
+		message = message.replaceAll("\\[", "");
+		message = message.replaceAll("\\]", "");
+		message = message.replaceAll(" ", "");
 
 		String[] words = message.split(",");
 
@@ -497,14 +502,14 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	/**
 	 * Sort but with a re-usable sorter to avoid declaring new memory
 	 */
-	public void sort( QuickSort_S32 sorter) {
-		sorter.sort(data,size);
+	public void sort( QuickSort_S32 sorter ) {
+		sorter.sort(data, size);
 	}
 
 	/** Shuffle elements by randomly swapping them */
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {
-			int src = rand.nextInt(size-i);
+			int src = rand.nextInt(size - i);
 			int tmp = data[i];
 			data[i] = data[src];
 			data[src] = tmp;
