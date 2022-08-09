@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,10 @@
 
 package org.ddogleg.fitting.modelset.lmeds;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ddogleg.fitting.modelset.*;
+import org.ddogleg.fitting.modelset.ransac.Ransac;
 import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.DogArray_F64;
 import org.ddogleg.struct.DogArray_I32;
@@ -48,22 +51,25 @@ import static org.ddogleg.fitting.modelset.ransac.Ransac.randomDraw;
 // Maybe revert this back to the way it was before and just have it be a separate alg entirely.
 @SuppressWarnings("NullAway.Init")
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Model, Point>, InlierFraction {
-	// random number generator for selecting points
-	private final long randSeed;
+	/** random number generator for selecting points */
+	@Getter private final long randSeed;
 
 	// Each trial has its own seed to enable concurrent implementations that will produce identical results
 	protected final FastArray<Random> trialRNG = new FastArray<>(Random.class);
 
-	// number of times it performs its fit cycle
-	protected final int totalCycles;
+	/** number of times it performs its fit cycle */
+	@Getter protected final int totalCycles;
 	// how many points it samples to generate a model from
 	protected int sampleSize;
 	// if the best model has more than this error then it is considered a bad match
 	protected final double maxMedianError;
 	protected final ModelManager<Model> ModelManager;
 
-	@Nullable Factory<ModelGenerator<Model, Point>> factoryGenerator;
-	@Nullable Factory<DistanceFromModel<Model, Point>> factoryDistance;
+	/** Used to create model generators for each thread */
+	@Getter @Nullable Factory<ModelGenerator<Model, Point>> factoryGenerator;
+
+	/** Used to create distance functions for each thread */
+	@Getter @Nullable Factory<DistanceFromModel<Model, Point>> factoryDistance;
 
 	// list of indexes converting it from match set to input list
 	protected int[] matchToInput = new int[1];
@@ -77,6 +83,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	protected final double inlierFrac;
 
 	protected @Nullable TrialHelper helper;
+
+	/** Optional function for initializing generator and distance functions */
+	protected @Setter @Nullable Ransac.InitializeModels<Model, Point> initializeModels;
 
 	Class<Model> modelType;
 	Class<Point> pointType;
@@ -248,6 +257,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 			if (matchToInput.length != datasetSize) {
 				matchToInput = new int[datasetSize];
 			}
+
+			if (initializeModels != null)
+				initializeModels.initialize(modelGenerator, modelDistance);
 		}
 
 		public void swapModels() {

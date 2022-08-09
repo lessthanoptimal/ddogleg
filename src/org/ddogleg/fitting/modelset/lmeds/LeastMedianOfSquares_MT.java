@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -39,7 +39,7 @@ import static org.ddogleg.fitting.modelset.ransac.Ransac.randomDraw;
  * @author Peter Abeles
  */
 public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<Model, Point> {
-		// Storage for each thread's state
+	// Storage for each thread's state
 	final GrowArray<TrialHelper> helpers;
 
 	//------------------- BEGIN LOCK OWNED
@@ -60,14 +60,14 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 		super(randSeed, totalCycles, maxMedianError, inlierFraction, modelManager, pointType);
 
 		// Initialize size is zero. so factories not being defined won't cause problems
-		helpers = new GrowArray<>(TrialHelper::new, (a)->a.initialize(matchToInput.length), (Class)TrialHelper.class);
+		helpers = new GrowArray<>(TrialHelper::new, ( a ) -> a.initialize(matchToInput.length), (Class)TrialHelper.class);
 	}
 
 	public LeastMedianOfSquares_MT( long randSeed,
 									int totalCycles,
 									ModelManager<Model> modelManager,
 									Class<Point> pointType ) {
-		this(randSeed, totalCycles, Double.MAX_VALUE, 0, modelManager,pointType);
+		this(randSeed, totalCycles, Double.MAX_VALUE, 0, modelManager, pointType);
 	}
 
 	@Override
@@ -139,8 +139,6 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 		// discard previous helpers since they are no longer valid
 		helpers.releaseInternalArray();
 
-		// Figure out how many points to sample
-		helpers.resize(1);
-		sampleSize = helpers.get(0).modelGenerator.getMinimumPoints();
+		sampleSize = factoryGenerator.newInstance().getMinimumPoints();
 	}
 }

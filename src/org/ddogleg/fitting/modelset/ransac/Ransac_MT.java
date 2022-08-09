@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -136,8 +136,6 @@ public class Ransac_MT<Model, Point> extends Ransac<Model, Point> {
 		// discard previous helpers since they are no longer valid
 		helpers.releaseInternalArray();
 
-		// Figure out how many points to sample
-		helpers.resize(1);
-		sampleSize = helpers.get(0).modelGenerator.getMinimumPoints();
+		sampleSize = factoryGenerator.newInstance().getMinimumPoints();
 	}
 }
