@@ -90,6 +90,8 @@ public class Ransac<Model, Point> implements ModelMatcherPost<Model, Point>, Inl
 				   double thresholdFit,
 				   ModelManager<Model> modelManager,
 				   Class<Point> pointType ) {
+		if (maxIterations <= 0)
+			throw new IllegalArgumentException("Number of iterations must be positive");
 		this.masterModelManager = modelManager;
 		this.randSeed = randSeed;
 		this.maxIterations = maxIterations;

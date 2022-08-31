@@ -105,6 +105,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 								 double inlierFraction,
 								 ModelManager<Model> modelManager,
 								 Class<Point> pointType ) {
+		if (totalCycles <= 0)
+			throw new IllegalArgumentException("Number of cycles must be positive");
+
 		this.randSeed = randSeed;
 		this.totalCycles = totalCycles;
 		this.maxMedianError = maxMedianError;
