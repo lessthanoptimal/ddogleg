@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.22
-Date:     2022
+Date:     2022/Aug/31
 
 - Build
   * Generates Java 11 bytecode but compiles with Java 17
@@ -21,7 +21,6 @@ Date:     2022
   * Deprecated resetResize()
 - Ransac_MT and LeastMedianOfSquares_MT
   * Added way to initialize generators and distance functions for each thread
-
 
 ------------------------------------------------------
 Version:  0.21
