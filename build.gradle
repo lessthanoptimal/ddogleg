@@ -11,7 +11,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.22'
+version = '0.23-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 project.ext.lombok_version = '1.18.20'

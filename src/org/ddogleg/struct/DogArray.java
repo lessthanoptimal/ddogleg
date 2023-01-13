@@ -374,8 +374,26 @@ public class DogArray<T> extends FastAccess<T> {
 		resize(newSize, configure);
 	}
 
+	/**
+	 * Randomly shuffles elements in the list. O(N) complexity.
+	 *
+	 * @param rand random seed.
+	 */
 	public void shuffle( Random rand ) {
-		for (int i = 0; i < size; i++) {
+		shuffle(rand, size);
+	}
+
+	/**
+	 * Shuffle where it will only shuffle up to the specified number of elements. This is useful
+	 * when you want to randomly select up to N elements in the list. When shuffling, The first
+	 * i < N elements is randomly selected out from an element from i+1 to N-1.
+	 *
+	 * @param numShuffle The maximum number of elements that will be shuffled
+	 * @param rand random seed.
+	 */
+	public void shuffle( Random rand, int numShuffle ) {
+		int N = Math.min(numShuffle, size);
+		for (int i = 0; i < N; i++) {
 			int selected = rand.nextInt(size - i);
 			T tmp = data[selected];
 			data[selected] = data[size - i - 1];

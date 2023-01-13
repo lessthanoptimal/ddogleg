@@ -3,6 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.23
+Date:     2023
+
+- DogArray
+  * Added shuffle(rand, int)
+
+------------------------------------------------------
 Version:  0.22
 Date:     2022/Aug/31
 
