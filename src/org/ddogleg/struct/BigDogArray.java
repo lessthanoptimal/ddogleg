@@ -42,10 +42,10 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	/** Type of object */
 	private @Getter final Class<T> type;
 
-	protected BigDogArray( int initialAllocation,
-						   int blockSize,
-						   BigDogGrowth growth,
-						   Factory<T> factory, DProcess<T> reset ) {
+	public BigDogArray( int initialAllocation,
+						int blockSize,
+						BigDogGrowth growth,
+						Factory<T> factory, DProcess<T> reset ) {
 		super(initialAllocation, blockSize, growth,
 				new NewObjectArray<T>((Class<T>)factory.newInstance().getClass()),
 				( array, startIndex ) -> {
@@ -59,11 +59,11 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 		this.type = (Class<T>)factory.newInstance().getClass();
 	}
 
-	protected BigDogArray( Factory<T> factory, DProcess<T> reset ) {
+	public BigDogArray( Factory<T> factory, DProcess<T> reset ) {
 		this(8, DEFAULT_BLOCK_SIZE, BigDogGrowth.GROW_FIRST, factory, reset);
 	}
 
-	protected BigDogArray( Factory<T> factory ) {
+	public BigDogArray( Factory<T> factory ) {
 		this(8, DEFAULT_BLOCK_SIZE, BigDogGrowth.GROW_FIRST, factory, new DProcess.DoNothing<>());
 	}
 
@@ -113,6 +113,7 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 
 	/**
 	 * Override resize so that it calls the reset function
+	 *
 	 * @param desiredSize (Input) New array size
 	 */
 	@Override public void resize( int desiredSize ) {
