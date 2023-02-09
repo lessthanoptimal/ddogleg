@@ -112,6 +112,14 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	}
 
 	/**
+	 * Override resize so that it calls the reset function
+	 * @param desiredSize (Input) New array size
+	 */
+	@Override public void resize( int desiredSize ) {
+		resize(desiredSize, reset);
+	}
+
+	/**
 	 * Resizes the array and fills all new elements with the specified value
 	 *
 	 * @param desiredSize New array size

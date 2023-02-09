@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestBigDogArray extends ChecksBigDogArray<TestBigDogArray.Foo[]> {
-
 	/** resize with a set value */
 	@Test void resizeValue() {
 		checkResizeValue(BigDogGrowth.GROW_FIRST);
@@ -98,6 +97,14 @@ public class TestBigDogArray extends ChecksBigDogArray<TestBigDogArray.Foo[]> {
 		assertEquals(blockSize*2 + 1, alg.size);
 		for (int i = 0; i < alg.size; i++) {
 			assertEquals(i < blockSize + 3 ? 5 : -1, alg.get(i).stuff);
+		}
+
+		// Zero then resize, this should trigger the reset function
+		alg.fill(0, alg.size, ( v ) -> v.stuff = 5);
+		alg.resize(0);
+		alg.resize(blockSize + blockSize/2);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals(-1, alg.get(i).stuff);
 		}
 	}
 
