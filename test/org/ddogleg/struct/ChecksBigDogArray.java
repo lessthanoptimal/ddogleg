@@ -22,12 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public abstract class ChecksBigDogArray<Array> {
 
 	Random rand = new Random(234);
@@ -175,16 +171,38 @@ public abstract class ChecksBigDogArray<Array> {
 		assertEquals(20, alg.getTotalAllocation());
 	}
 
-	@Test void removeTail() {
+	/**
+	 * Pass in idx0 >= idx1 and it should do nothing.
+	 */
+	@Test void processByBlock_Invalid() {
 		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
-		alg.resize(50);
+		alg.resize(12);
+		alg.processByBlock(12, 12, (block, idx0, idx1, offset) -> {
+			fail("Shouldn't be called");
+		});
+		alg.processByBlock(14, 10, (block, idx0, idx1, offset) -> {
+			fail("Shouldn't be called");
+		});
+	}
+
+	@Test void removeTail() {
+		for (var growth : BigDogGrowth.values()) {
+			for (int N : new int[]{45, 50}) {
+				removeTail(growth, N);
+			}
+		}
+	}
+
+	void removeTail( BigDogGrowth growth, int N ) {
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, growth);
+		alg.resize(N);
 		fillRandom(alg);
 
-		BigDogArrayBase<Array> orig = createBigDog(1, 10, BigDogGrowth.FIXED);
+		BigDogArrayBase<Array> orig = createBigDog(1, 10, growth);
 		copy(alg, orig);
 
 		alg.removeTail();
-		assertEquals(alg.size, 49);
+		assertEquals(N - 1, alg.size);
 
 		for (int i = 0; i < alg.size; i++) {
 			assertTrue(isEquivalent(get(alg, i), get(orig, i)));
@@ -192,16 +210,24 @@ public abstract class ChecksBigDogArray<Array> {
 	}
 
 	@Test void removeSwap() {
-		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
-		alg.resize(50);
+		for (var growth : BigDogGrowth.values()) {
+			for (int N : new int[]{45, 50}) {
+				removeSwap(growth, N);
+			}
+		}
+	}
+
+	void removeSwap( BigDogGrowth growth, int N ) {
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, growth);
+		alg.resize(N);
 		fillRandom(alg);
 
-		BigDogArrayBase<Array> orig = createBigDog(1, 10, BigDogGrowth.FIXED);
+		BigDogArrayBase<Array> orig = createBigDog(1, 10, growth);
 		copy(alg, orig);
 
 		int target = 30;
 		alg.removeSwap(target);
-		assertEquals(alg.size, 49);
+		assertEquals(N - 1, alg.size);
 
 		for (int i = 0; i < target; i++) {
 			assertTrue(isEquivalent(get(alg, i), get(orig, i)));

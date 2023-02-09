@@ -11,6 +11,7 @@ Date:     2023
 - BigDog
   * Added BigDogArray for objects
   * Added removeTail(), removeSwap()
+  * Fixed bug in processByBlock() Now ignores case idx0 >= idx1
 
 ------------------------------------------------------
 Version:  0.22

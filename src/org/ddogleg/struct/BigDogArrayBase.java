@@ -299,6 +299,9 @@ public abstract class BigDogArrayBase<Array> {
 	 * @param op The operator which processes the values
 	 */
 	public void processByBlock( int idx0, int idx1, FunctionEachRange<Array> op ) {
+		// Handle edge case. Here it shouldn't do anything since the completion criteria has already been reached
+		if (idx0 >= idx1)
+			return;
 		int origIdx0 = idx0;
 
 		// If not initially aligned at the block boundaries, process it until it hits the first boundary
@@ -321,6 +324,8 @@ public abstract class BigDogArrayBase<Array> {
 
 		// The end is another special case. It might end before a block boundary
 		if (idx0 != idx1) {
+			if (blocks.data.length <= idx0/blockSize)
+				System.out.println("FOO");
 			op.process(blocks.data[idx0/blockSize], 0, idx1 - idx0, idx0 - origIdx0);
 		}
 	}
