@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,12 +37,12 @@ public class CircularArray<T> {
 	Class<T> type;
 
 	public CircularArray( Class<T> type ) {
-		this(type,10);
+		this(type, 10);
 	}
 
-	public CircularArray( Class<T> type , int maxSize) {
+	public CircularArray( Class<T> type, int maxSize ) {
 		this.type = type;
-		data = (T[])Array.newInstance(type,maxSize);
+		data = (T[])Array.newInstance(type, maxSize);
 	}
 
 	public void reset() {
@@ -51,6 +51,7 @@ public class CircularArray<T> {
 
 	/**
 	 * Returns and removes the first element from the queue.
+	 *
 	 * @return first element in the queue
 	 */
 	public T popHead() {
@@ -61,6 +62,7 @@ public class CircularArray<T> {
 
 	/**
 	 * Returns and removes the last element from the queue.
+	 *
 	 * @return last element in the queue
 	 */
 	public T popTail() {
@@ -80,14 +82,14 @@ public class CircularArray<T> {
 	 * Value of the last element in the queue
 	 */
 	public T tail() {
-		return data[(start+size-1)%data.length];
+		return data[(start + size - 1)%data.length];
 	}
 
 	/**
 	 * Removes the first element
 	 */
 	public void removeHead() {
-		start = (start+1)%data.length;
+		start = (start + 1)%data.length;
 		size--;
 	}
 
@@ -100,27 +102,29 @@ public class CircularArray<T> {
 
 	/**
 	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
+	 *
 	 * @param index Which element in the queue you wish to access
 	 * @return the element's value
 	 */
 	public T get( int index ) {
-		return data[(start+index)%data.length];
+		return data[(start + index)%data.length];
 	}
 
 	/**
 	 * Adds a new element to the end of the list and returns it.  If the inner array isn't large enough
 	 * then it will grow.
+	 *
 	 * @return instance at the tail
 	 */
 	public T grow() {
-		if( size >= data.length) {
+		if (size >= data.length) {
 			T a = createInstance();
 			add(a);
 			return a;
 		} else {
-			T a = data[(start+size)%data.length];
-			if( a == null ) {
-				data[(start+size)%data.length] = a = createInstance();
+			T a = data[(start + size)%data.length];
+			if (a == null) {
+				data[(start + size)%data.length] = a = createInstance();
 			}
 			size++;
 			return a;
@@ -130,19 +134,20 @@ public class CircularArray<T> {
 	/**
 	 * Adds a new element to the end of the list and returns it.  If the inner array isn't large enough
 	 * then the oldest element will be written over.
+	 *
 	 * @return instance at the tail
 	 */
 	public T growW() {
 		T a;
-		if( size >= data.length) {
+		if (size >= data.length) {
 			a = data[start];
-			if( a == null )
+			if (a == null)
 				data[start] = a = createInstance();
-			start = (start+1)%data.length;
+			start = (start + 1)%data.length;
 		} else {
-			a = data[(start+size)%data.length];
-			if( a == null )
-				data[(start+size)%data.length] = a = createInstance();
+			a = data[(start + size)%data.length];
+			if (a == null)
+				data[(start + size)%data.length] = a = createInstance();
 			size++;
 		}
 		return a;
@@ -151,22 +156,23 @@ public class CircularArray<T> {
 	/**
 	 * Adds a new element to the queue.  If the queue isn't large enough to store this value then its internal data
 	 * array will grow
+	 *
 	 * @param value Value which is to be added
 	 */
 	public void add( T value ) {
 		// see if it needs to grow the queue
-		if( size >= data.length) {
+		if (size >= data.length) {
 			growInnerArray();
 		}
-		data[(start+size)%data.length] = value;
+		data[(start + size)%data.length] = value;
 		size++;
 	}
 
 	private void growInnerArray() {
-		T[] a = (T[]) Array.newInstance(type, nextDataSize());
+		T[] a = (T[])Array.newInstance(type, nextDataSize());
 
-		System.arraycopy(data,start,a,0,data.length-start);
-		System.arraycopy(data,0,a,data.length-start,start);
+		System.arraycopy(data, start, a, 0, data.length - start);
+		System.arraycopy(data, 0, a, data.length - start, start);
 		start = 0;
 		data = a;
 	}
@@ -178,19 +184,19 @@ public class CircularArray<T> {
 	 */
 	public void addW( T value ) {
 		// see if it needs to grow the queue
-		if( size >= data.length) {
+		if (size >= data.length) {
 			data[start] = value;
-			start = (start+1)%data.length;
+			start = (start + 1)%data.length;
 		} else {
-			data[(start+size)%data.length] = value;
+			data[(start + size)%data.length] = value;
 			size++;
 		}
 	}
 
 	private int nextDataSize() {
-		if( data.length < 1000 )
+		if (data.length < 1000)
 			return data.length*2;
-		else if( data.length < 10000 )
+		else if (data.length < 10000)
 			return data.length*3/2;
 		else
 			return data.length*6/5;
@@ -204,7 +210,7 @@ public class CircularArray<T> {
 		return size == 0;
 	}
 
-	public boolean isFull(){ return size == data.length;}
+	public boolean isFull() {return size == data.length;}
 
 	protected T createInstance() {
 		try {

@@ -36,7 +36,7 @@ public class BigDogArray_F64 extends BigDogArrayBase<double[]> {
 	}
 
 	public BigDogArray_F64( int initialAllocation, int blockSize, BigDogGrowth growth ) {
-		super(initialAllocation, blockSize, growth, double[]::new, (a,b)->{});
+		super(initialAllocation, blockSize, growth, double[]::new, ( a, b ) -> {});
 	}
 
 	@Override public void removeSwap( int index ) {
@@ -117,7 +117,7 @@ public class BigDogArray_F64 extends BigDogArrayBase<double[]> {
 	 * @param value (Input) The element's new value
 	 */
 	public void setTail( int index, double value ) {
-		set( size - index - 1, value);
+		set(size - index - 1, value);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class BigDogArray_F64 extends BigDogArrayBase<double[]> {
 	 * @param index (Input) Index relative to the end counting in reverse order. 0 = get(size-1)
 	 */
 	public double getTail( int index ) {
-		return get( size - index - 1);
+		return get(size - index - 1);
 	}
 
 	/**

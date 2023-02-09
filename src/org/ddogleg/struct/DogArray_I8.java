@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -348,7 +348,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	public DogArray_I8 resize( int size, byte value ) {
 		int priorSize = this.size;
 		resize(size);
-		if (priorSize >= size )
+		if (priorSize >= size)
 			return this;
 		fill(priorSize, size, value);
 		return this;
@@ -451,15 +451,15 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	public void printHex() {
 		System.out.print("[ ");
 		for (int i = 0; i < size; i++) {
-			System.out.printf("0x%02X ",data[i]);
+			System.out.printf("0x%02X ", data[i]);
 		}
 		System.out.print("]");
 	}
 
 	public static DogArray_I8 parseHex( String message ) {
-		message = message.replaceAll("\\[","");
-		message = message.replaceAll("\\]","");
-		message = message.replaceAll(" ","");
+		message = message.replaceAll("\\[", "");
+		message = message.replaceAll("\\]", "");
+		message = message.replaceAll(" ", "");
 
 		String[] words = message.split(",");
 
@@ -555,7 +555,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 			data[i] = func.process(i, data[i]);
 		}
 	}
-	
+
 	public int count( Filter filter ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -46,6 +46,7 @@ public class CircularArray_F64 {
 
 	/**
 	 * Returns and removes the first element from the queue.
+	 *
 	 * @return first element in the queue
 	 */
 	public double popHead() {
@@ -56,6 +57,7 @@ public class CircularArray_F64 {
 
 	/**
 	 * Returns and removes the last element from the queue.
+	 *
 	 * @return last element in the queue
 	 */
 	public double popTail() {
@@ -75,14 +77,14 @@ public class CircularArray_F64 {
 	 * Value of the last element in the queue
 	 */
 	public double tail() {
-		return data[(start+size-1)%data.length];
+		return data[(start + size - 1)%data.length];
 	}
 
 	/**
 	 * Removes the first element
 	 */
 	public void removeHead() {
-		start = (start+1)%data.length;
+		start = (start + 1)%data.length;
 		size--;
 	}
 
@@ -95,11 +97,12 @@ public class CircularArray_F64 {
 
 	/**
 	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
+	 *
 	 * @param index Which element in the queue you wish to access
 	 * @return the element's value
 	 */
 	public double get( int index ) {
-		return data[(start+index)%data.length];
+		return data[(start + index)%data.length];
 	}
 
 	/**
@@ -109,20 +112,20 @@ public class CircularArray_F64 {
 	 */
 	public void add( double value ) {
 		// see if it needs to grow the queue
-		if( size >= data.length) {
+		if (size >= data.length) {
 			data[start] = value;
-			start = (start+1)%data.length;
+			start = (start + 1)%data.length;
 		} else {
-			data[(start+size)%data.length] = value;
+			data[(start + size)%data.length] = value;
 			size++;
 		}
 	}
 
 	public void set( CircularArray_F64 original ) {
-		if( this.data.length != original.data.length) {
+		if (this.data.length != original.data.length) {
 			this.data = new double[original.data.length];
 		}
-		System.arraycopy(original.data,0,this.data,0,this.data.length);
+		System.arraycopy(original.data, 0, this.data, 0, this.data.length);
 		this.size = original.size;
 		this.start = original.start;
 	}
@@ -134,7 +137,7 @@ public class CircularArray_F64 {
 	}
 
 	public void resizeQueue( int maxSize ) {
-		if( this.data.length != maxSize) {
+		if (this.data.length != maxSize) {
 			this.data = new double[maxSize];
 		}
 	}
@@ -151,5 +154,5 @@ public class CircularArray_F64 {
 		return size == 0;
 	}
 
-	public boolean isFull(){ return size == data.length;}
+	public boolean isFull() {return size == data.length;}
 }

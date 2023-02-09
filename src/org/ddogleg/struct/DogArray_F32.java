@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -332,7 +332,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	public DogArray_F32 resize( int size, float value ) {
 		int priorSize = this.size;
 		resize(size);
-		if (priorSize >= size )
+		if (priorSize >= size)
 			return this;
 		fill(priorSize, size, value);
 		return this;
@@ -519,7 +519,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 			data[i] = func.process(i, data[i]);
 		}
 	}
-	
+
 	public int count( Filter filter ) {
 		int total = 0;
 		for (int i = 0; i < size; i++) {

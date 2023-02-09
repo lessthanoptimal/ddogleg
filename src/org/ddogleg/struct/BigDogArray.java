@@ -48,7 +48,7 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 						   Factory<T> factory, DProcess<T> reset ) {
 		super(initialAllocation, blockSize, growth,
 				new NewObjectArray<T>((Class<T>)factory.newInstance().getClass()),
-				(array, startIndex)->{
+				( array, startIndex ) -> {
 					for (int i = startIndex; i < array.length; i++) {
 						array[i] = factory.newInstance();
 						reset.process(array[i]);

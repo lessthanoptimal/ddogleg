@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -46,6 +46,7 @@ public class CircularArray_I32 {
 
 	/**
 	 * Returns and removes the first element from the queue.
+	 *
 	 * @return first element in the queue
 	 */
 	public int popHead() {
@@ -56,6 +57,7 @@ public class CircularArray_I32 {
 
 	/**
 	 * Returns and removes the last element from the queue.
+	 *
 	 * @return last element in the queue
 	 */
 	public int popTail() {
@@ -75,14 +77,14 @@ public class CircularArray_I32 {
 	 * Value of the last element in the queue
 	 */
 	public int tail() {
-		return data[(start+size-1)%data.length];
+		return data[(start + size - 1)%data.length];
 	}
 
 	/**
 	 * Removes the first element
 	 */
 	public void removeHead() {
-		start = (start+1)%data.length;
+		start = (start + 1)%data.length;
 		size--;
 	}
 
@@ -95,29 +97,31 @@ public class CircularArray_I32 {
 
 	/**
 	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
+	 *
 	 * @param index Which element in the queue you wish to access
 	 * @return the element's value
 	 */
 	public int get( int index ) {
-		return data[(start+index)%data.length];
+		return data[(start + index)%data.length];
 	}
 
 	/**
 	 * Adds a new element to the queue.  If the queue isn't large enough to store this value then its internal data
 	 * array will grow
+	 *
 	 * @param value Value which is to be added
 	 */
 	public void add( int value ) {
 		// see if it needs to grow the queue
-		if( size >= data.length) {
-			int a[] = new int[ nextDataSize() ];
+		if (size >= data.length) {
+			int a[] = new int[nextDataSize()];
 
-			System.arraycopy(data,start,a,0,data.length-start);
-			System.arraycopy(data,0,a,data.length-start,start);
+			System.arraycopy(data, start, a, 0, data.length - start);
+			System.arraycopy(data, 0, a, data.length - start, start);
 			start = 0;
 			data = a;
 		}
-		data[(start+size)%data.length] = value;
+		data[(start + size)%data.length] = value;
 		size++;
 	}
 
@@ -128,19 +132,19 @@ public class CircularArray_I32 {
 	 */
 	public void addW( int value ) {
 		// see if it needs to grow the queue
-		if( size >= data.length) {
+		if (size >= data.length) {
 			data[start] = value;
-			start = (start+1)%data.length;
+			start = (start + 1)%data.length;
 		} else {
-			data[(start+size)%data.length] = value;
+			data[(start + size)%data.length] = value;
 			size++;
 		}
 	}
 
 	private int nextDataSize() {
-		if( data.length < 1000 )
+		if (data.length < 1000)
 			return data.length*2;
-		else if( data.length < 10000 )
+		else if (data.length < 10000)
 			return data.length*3/2;
 		else
 			return data.length*6/5;
@@ -154,5 +158,5 @@ public class CircularArray_I32 {
 		return size == 0;
 	}
 
-	public boolean isFull(){ return size == data.length;}
+	public boolean isFull() {return size == data.length;}
 }
