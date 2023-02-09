@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -324,5 +324,23 @@ public class TestBigDogArray_I8 extends ChecksBigDogArray<byte[]> {
 
 	@Override public BigDogArrayBase<byte[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		return new BigDogArray_I8(initialAllocation, blockSize, growth);
+	}
+
+	@Override public void fillRandom( BigDogArrayBase<byte[]> _array ) {
+		var array = (BigDogArray_I8)_array;
+		array.applyIdx(0, array.size, ( idx, v ) -> (byte)rand.nextInt());
+	}
+
+	@Override public Object get( BigDogArrayBase<byte[]> _array, int index ) {
+		var array = (BigDogArray_I8)_array;
+		return array.get(index);
+	}
+
+	@Override public void copy( BigDogArrayBase<byte[]> _src, BigDogArrayBase<byte[]> _dst ) {
+		var src = (BigDogArray_I8)_src;
+		var dst = (BigDogArray_I8)_dst;
+
+		dst.resize(src.size);
+		dst.applyIdx(0, src.size, ( idx, v ) -> src.get(idx));
 	}
 }

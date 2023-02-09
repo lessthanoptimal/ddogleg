@@ -8,6 +8,9 @@ Date:     2023
 
 - DogArray
   * Added shuffle(rand, int)
+- BigDog
+  * Added BigDogArray for objects
+  * Added removeTail(), removeSwap()
 
 ------------------------------------------------------
 Version:  0.22

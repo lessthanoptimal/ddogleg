@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,11 +37,11 @@ import java.util.Random;
  */
 @SuppressWarnings({"unchecked", "NullAway.Init", "ForLoopReplaceableByForEach", "ManualArrayToCollectionCopy"})
 public class DogArray<T> extends FastAccess<T> {
-	// new instances are created using this. If null then no new instances are created automatically.
+	/** new instances are created using this. If null then no new instances are created automatically. */
 	private @Getter Factory<T> factory;
-	// function that's called to reset a returned instance
+	/** function that's called to reset a returned instance */
 	private @Getter @Setter DProcess<T> reset;
-	// function that's called to initialize a new instance
+	/** function that's called to initialize a new instance */
 	private @Getter @Setter DProcess<T> initialize = new DProcess.DoNothing<>();
 
 	// Wrapper around this class for lists

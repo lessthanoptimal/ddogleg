@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,6 +31,7 @@ import lombok.Getter;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings({"SuspiciousSystemArraycopy", "unchecked"})
 public abstract class BigDogArrayBase<Array> {
 	/**
 	 * Default block size. It's assumed that this is used in fairly large arrays.
@@ -60,7 +61,13 @@ public abstract class BigDogArrayBase<Array> {
 	 */
 	protected @Getter final BigDogGrowth growth;
 
-	protected BigDogArrayBase( int initialAllocation, int blockSize, BigDogGrowth growth ) {
+	public final NewArray<Array> generatorArray;
+	public final AssignNewArrayElements<Array> initializeArray;
+
+	protected BigDogArrayBase( int initialAllocation, int blockSize,
+							   BigDogGrowth growth,
+							   NewArray<Array> generator,
+							   AssignNewArrayElements<Array> initializeArray ) {
 		// initializing with a size of zero causes all sorts of edge cases. So just make it illegal.
 		if (initialAllocation <= 0)
 			throw new IllegalArgumentException("initialAllocation size must be a positive value");
@@ -68,23 +75,29 @@ public abstract class BigDogArrayBase<Array> {
 			throw new IllegalArgumentException("Block size must be a positive value");
 		this.blockSize = blockSize;
 		this.growth = growth;
+		this.generatorArray = generator;
+		this.initializeArray = initializeArray;
 
-		Class<Array> type = (Class)newArrayInstance(0).getClass();
+		Class<Array> type = (Class<Array>)generator.create(0).getClass();
 		blocks = new FastArray<>(type, getDesiredBlocks(initialAllocation));
 		blocks.size = blocks.data.length; // hack to enable the code below to work
 
 		// Declare all full blocks
 		for (int i = 0; i < blocks.size - 1; i++) {
-			blocks.set(i, newArrayInstance(blockSize));
+			blocks.set(i, generator.create(blockSize));
+			initializeArray.initialize(blocks.get(i), 0);
 		}
 
 		// The last block might be a partial block
 		if (blocks.size > 0) {
+			int lastLength;
 			if ((blocks.size == 1 && growth == BigDogGrowth.GROW_FIRST) || growth == BigDogGrowth.GROW) {
-				blocks.set(blocks.size - 1, newArrayInstance(initialAllocation%blockSize));
+				lastLength = initialAllocation%blockSize;
 			} else {
-				blocks.set(blocks.size - 1, newArrayInstance(blockSize));
+				lastLength = blockSize;
 			}
+			blocks.set(blocks.size - 1, generator.create(lastLength));
+			initializeArray.initialize(blocks.get(blocks.size - 1), 0);
 		}
 	}
 
@@ -139,16 +152,21 @@ public abstract class BigDogArrayBase<Array> {
 			// all growth methods require the non last block to be blockSize
 			Array old = blocks.data[priorNumBlocks - 1];
 			if (arrayLength(old) != blockSize) {
-				Array replacement = newArrayInstance(blockSize);
-				if (saveValues)
+				Array replacement = generatorArray.create(blockSize);
+				if (saveValues) {
 					System.arraycopy(old, 0, replacement, 0, arrayLength(old));
+					initializeArray.initialize(replacement, arrayLength(old));
+				} else {
+					initializeArray.initialize(replacement, 0);
+				}
 				blocks.data[priorNumBlocks - 1] = replacement;
 			}
 		}
 
 		// All new blocks, but the last one, must be blockSize in length
 		for (int i = priorNumBlocks; i < desiredNumBlocks - 1; i++) {
-			blocks.data[i] = newArrayInstance(blockSize);
+			blocks.data[i] = generatorArray.create(blockSize);
+			initializeArray.initialize(blocks.data[i], 0);
 		}
 
 		// The last block might not be a full block
@@ -166,16 +184,21 @@ public abstract class BigDogArrayBase<Array> {
 				if (addExtra)
 					desiredLastBlockSize = Math.min(blockSize, initialBlockSize + oldLength*2 + desiredLastBlockSize);
 
-				Array replacement = newArrayInstance(desiredLastBlockSize);
-				if (saveValues)
+				Array replacement = generatorArray.create(desiredLastBlockSize);
+				if (saveValues) {
 					System.arraycopy(old, 0, replacement, 0, arrayLength(old));
+					initializeArray.initialize(replacement, arrayLength(old));
+				} else {
+					initializeArray.initialize(replacement, 0);
+				}
 				blocks.data[desiredNumBlocks - 1] = replacement;
 			}
 		} else if (priorNumBlocks < desiredNumBlocks) {
 			if (addExtra)
 				desiredLastBlockSize = Math.min(blockSize, initialBlockSize + 2*desiredLastBlockSize);
 
-			blocks.data[desiredNumBlocks - 1] = newArrayInstance(desiredLastBlockSize);
+			blocks.data[desiredNumBlocks - 1] = generatorArray.create(desiredLastBlockSize);
+			initializeArray.initialize(blocks.data[desiredNumBlocks - 1], 0);
 		}
 	}
 
@@ -217,6 +240,18 @@ public abstract class BigDogArrayBase<Array> {
 		this.size = this.size + length;
 		setArray(this.size - length, array, offset, length);
 	}
+
+	/**
+	 * Shrinks the array by one
+	 */
+	public void removeTail() {
+		resize(size - 1);
+	}
+
+	/**
+	 * Removes an element in O(1) time by swapping the specified index with the last index and resizing to size -1.
+	 */
+	public abstract void removeSwap( int index );
 
 	/**
 	 * Copies the passed in array into this array at the specified location
@@ -313,15 +348,13 @@ public abstract class BigDogArrayBase<Array> {
 
 		// Make sure internal blocks are correct size
 		switch (growth) {
-			case FIXED: {
+			case FIXED -> {
 				for (int i = 0; i < blocks.size; i++) {
 					if (arrayLength(blocks.get(i)) != blockSize)
 						return false;
 				}
 			}
-			break;
-
-			case GROW_FIRST: {
+			case GROW_FIRST -> {
 				for (int i = 1; i < blocks.size; i++) {
 					if (arrayLength(blocks.get(i)) != blockSize)
 						return false;
@@ -334,9 +367,7 @@ public abstract class BigDogArrayBase<Array> {
 						return false;
 				}
 			}
-			break;
-
-			case GROW: {
+			case GROW -> {
 				for (int i = 0; i < blocks.size - 1; i++) {
 					if (arrayLength(blocks.get(i)) != blockSize)
 						return false;
@@ -344,7 +375,6 @@ public abstract class BigDogArrayBase<Array> {
 				if (arrayLength(blocks.getTail()) > blockSize)
 					return false;
 			}
-			break;
 		}
 
 		return true;
@@ -370,8 +400,6 @@ public abstract class BigDogArrayBase<Array> {
 		this.initialBlockSize = Math.min(blockSize, Math.max(1, initialBlockSize));
 	}
 
-	protected abstract Array newArrayInstance( int size );
-
 	protected abstract int arrayLength( Array array );
 
 	@FunctionalInterface
@@ -385,5 +413,18 @@ public abstract class BigDogArrayBase<Array> {
 		 * @param offset The number of elements offset from the first element it requested
 		 */
 		void process( Array block, int idx0, int idx1, int offset );
+	}
+
+	@FunctionalInterface
+	public interface NewArray<Array> {
+		Array create( int length );
+	}
+
+	/**
+	 * Assigns values to elements in a newly constructed array
+	 */
+	@FunctionalInterface
+	public interface AssignNewArrayElements<Array> {
+		void initialize( Array block, int startIndex );
 	}
 }

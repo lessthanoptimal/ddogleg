@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,8 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +30,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public abstract class ChecksBigDogArray<Array> {
 
-	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth);
+	Random rand = new Random(234);
+
+	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth );
+
+	public abstract void fillRandom( BigDogArrayBase<Array> array );
+
+	public abstract Object get( BigDogArrayBase<Array> array, int index );
+
+	public abstract void copy( BigDogArrayBase<Array> src, BigDogArrayBase<Array> dst );
 
 	/**
 	 * Ensures that the initial array allocation is done correctly by the constructor
@@ -112,18 +122,18 @@ public abstract class ChecksBigDogArray<Array> {
 		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.GROW_FIRST);
 
 		assertEquals(1, alg.getTotalAllocation());
-		alg.allocate(2,false,false);
+		alg.allocate(2, false, false);
 		assertEquals(2, alg.getTotalAllocation());
-		alg.allocate(3,false,true);
+		alg.allocate(3, false, true);
 		assertTrue(3 <= alg.getTotalAllocation() && 10 >= alg.getTotalAllocation());
 
-		alg.allocate(10,false,false);
+		alg.allocate(10, false, false);
 		assertEquals(10, alg.getTotalAllocation());
 
-		alg.allocate(12,false,false);
+		alg.allocate(12, false, false);
 		assertEquals(20, alg.getTotalAllocation());
 
-		alg.allocate(13,false,true);
+		alg.allocate(13, false, true);
 		assertEquals(20, alg.getTotalAllocation());
 	}
 
@@ -131,18 +141,18 @@ public abstract class ChecksBigDogArray<Array> {
 		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.GROW);
 
 		assertEquals(1, alg.getTotalAllocation());
-		alg.allocate(2,false,false);
+		alg.allocate(2, false, false);
 		assertEquals(2, alg.getTotalAllocation());
-		alg.allocate(3,false,true);
+		alg.allocate(3, false, true);
 		assertTrue(3 <= alg.getTotalAllocation() && 10 >= alg.getTotalAllocation());
 
-		alg.allocate(10,false,false);
+		alg.allocate(10, false, false);
 		assertEquals(10, alg.getTotalAllocation());
 
-		alg.allocate(12,false,false);
+		alg.allocate(12, false, false);
 		assertEquals(12, alg.getTotalAllocation());
 
-		alg.allocate(13,false,true);
+		alg.allocate(13, false, true);
 		assertTrue(13 <= alg.getTotalAllocation() && 20 >= alg.getTotalAllocation());
 	}
 
@@ -150,18 +160,58 @@ public abstract class ChecksBigDogArray<Array> {
 		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
 
 		assertEquals(10, alg.getTotalAllocation());
-		alg.allocate(2,false,false);
+		alg.allocate(2, false, false);
 		assertEquals(10, alg.getTotalAllocation());
-		alg.allocate(3,false,true);
-		assertEquals(10, alg.getTotalAllocation());
-
-		alg.allocate(10,false,false);
+		alg.allocate(3, false, true);
 		assertEquals(10, alg.getTotalAllocation());
 
-		alg.allocate(12,false,false);
+		alg.allocate(10, false, false);
+		assertEquals(10, alg.getTotalAllocation());
+
+		alg.allocate(12, false, false);
 		assertEquals(20, alg.getTotalAllocation());
 
-		alg.allocate(13,false,true);
+		alg.allocate(13, false, true);
 		assertEquals(20, alg.getTotalAllocation());
+	}
+
+	@Test void removeTail() {
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
+		alg.resize(50);
+		fillRandom(alg);
+
+		BigDogArrayBase<Array> orig = createBigDog(1, 10, BigDogGrowth.FIXED);
+		copy(alg, orig);
+
+		alg.removeTail();
+		assertEquals(alg.size, 49);
+
+		for (int i = 0; i < alg.size; i++) {
+			assertTrue(isEquivalent(get(alg, i), get(orig, i)));
+		}
+	}
+
+	@Test void removeSwap() {
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
+		alg.resize(50);
+		fillRandom(alg);
+
+		BigDogArrayBase<Array> orig = createBigDog(1, 10, BigDogGrowth.FIXED);
+		copy(alg, orig);
+
+		int target = 30;
+		alg.removeSwap(target);
+		assertEquals(alg.size, 49);
+
+		for (int i = 0; i < target; i++) {
+			assertTrue(isEquivalent(get(alg, i), get(orig, i)));
+		}
+		for (int i = target + 1; i < alg.size; i++) {
+			assertTrue(isEquivalent(get(alg, i), get(orig, i)));
+		}
+	}
+
+	public <T> boolean isEquivalent( T a, T b ) {
+		return a.equals(b);
 	}
 }

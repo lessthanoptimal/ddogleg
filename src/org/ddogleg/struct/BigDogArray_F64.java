@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,11 +36,18 @@ public class BigDogArray_F64 extends BigDogArrayBase<double[]> {
 	}
 
 	public BigDogArray_F64( int initialAllocation, int blockSize, BigDogGrowth growth ) {
-		super(initialAllocation, blockSize, growth);
+		super(initialAllocation, blockSize, growth, double[]::new, (a,b)->{});
 	}
 
-	@Override protected double[] newArrayInstance( int size ) {
-		return new double[size];
+	@Override public void removeSwap( int index ) {
+		int indexTail = size - 1;
+
+		double target = get(index);
+		double tail = get(indexTail);
+
+		blocks.data[indexTail/blockSize][indexTail%blockSize] = target;
+		blocks.data[index/blockSize][index%blockSize] = tail;
+		size--;
 	}
 
 	@Override protected int arrayLength( double[] array ) {

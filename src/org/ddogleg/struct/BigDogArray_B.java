@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,11 +38,18 @@ public class BigDogArray_B extends BigDogArrayBase<boolean[]> {
 	}
 
 	public BigDogArray_B( int initialAllocation, int blockSize, BigDogGrowth growth ) {
-		super(initialAllocation, blockSize, growth);
+		super(initialAllocation, blockSize, growth, boolean[]::new, (a,b)->{});
 	}
 
-	@Override protected boolean[] newArrayInstance( int size ) {
-		return new boolean[size];
+	@Override public void removeSwap( int index ) {
+		int indexTail = size - 1;
+
+		boolean target = get(index);
+		boolean tail = get(indexTail);
+
+		blocks.data[indexTail/blockSize][indexTail%blockSize] = target;
+		blocks.data[index/blockSize][index%blockSize] = tail;
+		size--;
 	}
 
 	@Override protected int arrayLength( boolean[] array ) {

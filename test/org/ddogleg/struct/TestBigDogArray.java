@@ -20,12 +20,10 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
-public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
+public class TestBigDogArray extends ChecksBigDogArray<TestBigDogArray.Foo[]> {
 
 	/** resize with a set value */
 	@Test void resizeValue() {
@@ -38,30 +36,30 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	private void checkResizeValue( BigDogGrowth growth ) {
 		int blockSize = 10;
 
-		var alg = new BigDogArray_B(1, blockSize, growth);
+		var alg = new BigDogArray<>(1, blockSize, growth, Foo::new, Foo::reset);
 
 		// give it some values that we know and this is within the first block
-		alg.resize(blockSize - 4, true);
-		alg.resize(blockSize - 1, false);
+		alg.resize(blockSize - 4, ( v ) -> v.stuff = 4);
+		alg.resize(blockSize - 1, ( v ) -> v.stuff = 3);
 		assertEquals(blockSize - 1, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize - 4, alg.get(i));
+			assertEquals(i < blockSize - 4 ? 4 : 3, alg.get(i).stuff);
 		}
 
 		// Resize past the first block
-		alg.resize(blockSize + 3, false);
+		alg.resize(blockSize + 3, ( v ) -> v.stuff = 3);
 		assertEquals(blockSize + 3, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize - 4, alg.get(i));
+			assertEquals(i < blockSize - 4 ? 4 : 3, alg.get(i).stuff);
 		}
 
 		// Fill this all in with a known value
-		alg.fill(0, alg.size, true);
+		alg.fill(0, alg.size, ( v ) -> v.stuff = 5);
 		// Resize past the second block
-		alg.resize(blockSize*2 + 1, false);
+		alg.resize(blockSize*2 + 1, ( v ) -> v.stuff = 6);
 		assertEquals(blockSize*2 + 1, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize + 3, alg.get(i));
+			assertEquals(i < blockSize + 3 ? 5 : 6, alg.get(i).stuff);
 		}
 	}
 
@@ -76,30 +74,30 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	private void checkResize( BigDogGrowth growth ) {
 		int blockSize = 10;
 
-		var alg = new BigDogArray_B(1, blockSize, growth);
+		var alg = new BigDogArray<>(1, blockSize, growth, Foo::new, Foo::reset);
 
-		// give it some values that we know and this is within the first block
-		alg.resize(blockSize - 4, true);
+		// NOTE: -1 is the value assigned by reset
+		alg.resize(blockSize - 4, ( a ) -> a.stuff = 4);
 		alg.resize(blockSize - 1);
 		assertEquals(blockSize - 1, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize - 4, alg.get(i));
+			assertEquals(i < blockSize - 4 ? 4 : -1, alg.get(i).stuff);
 		}
 
 		// Resize past the first block
 		alg.resize(blockSize + 3);
 		assertEquals(blockSize + 3, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize - 4, alg.get(i));
+			assertEquals(i < blockSize - 4 ? 4 : -1, alg.get(i).stuff);
 		}
 
 		// Fill this all in with a known value
-		alg.fill(0, alg.size, true);
+		alg.fill(0, alg.size, ( v ) -> v.stuff = 5);
 		// Resize past the second block
 		alg.resize(blockSize*2 + 1);
 		assertEquals(blockSize*2 + 1, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals(i < blockSize + 3, alg.get(i));
+			assertEquals(i < blockSize + 3 ? 5 : -1, alg.get(i).stuff);
 		}
 	}
 
@@ -112,18 +110,18 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	}
 
 	private void checkAppendArray( int initialSize, BigDogGrowth growth, int arraySize ) {
-		boolean[] array = new boolean[arraySize];
+		double[] array = new double[arraySize];
 		for (int i = 0; i < arraySize; i++) {
-			array[i] = true;
+			array[i] = (double)(i + 1);
 		}
 
-		var alg = new BigDogArray_B(initialSize, 10, growth);
+		var alg = new BigDogArray_F64(initialSize, 10, growth);
 		alg.resize(initialSize);
 		alg.append(array, 1, arraySize - 1);
 		assertTrue(alg.isValidStructure());
 		assertEquals(initialSize + arraySize - 1, alg.size);
 		for (int i = 0; i < initialSize; i++) {
-			assertFalse(alg.get(i));
+			assertEquals(0, alg.get(i));
 		}
 		for (int i = initialSize; i < alg.size; i++) {
 			assertEquals(array[i - initialSize + 1], alg.get(i));
@@ -138,21 +136,21 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	}
 
 	private void checkAppendValue( int initialSize, BigDogGrowth growth ) {
-		var alg = new BigDogArray_B(initialSize, 10, growth);
+		var alg = new BigDogArray_F64(initialSize, 10, growth);
 		alg.resize(initialSize);
 
 		for (int i = 0; i < 21; i++) {
-			alg.append(true);
+			alg.append((double)(i + 1));
 			assertEquals(initialSize + i + 1, alg.size);
 			assertTrue(alg.isValidStructure());
 		}
 		assertEquals(3, alg.blocks.size);
 
 		for (int i = 0; i < initialSize; i++) {
-			assertFalse(alg.get(i));
+			assertEquals(0, alg.get(i));
 		}
 		for (int i = initialSize; i < alg.size; i++) {
-			assertTrue(alg.get(i));
+			assertEquals(i + 1 - initialSize, alg.get(i));
 		}
 
 		// Do it over again with a predeclared array
@@ -160,16 +158,16 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 		alg.resize(initialSize);
 
 		for (int i = 0; i < 10; i++) {
-			alg.append(true);
+			alg.append((double)(i + 1));
 			assertEquals(initialSize + i + 1, alg.size);
 			assertTrue(alg.isValidStructure());
 		}
 
 		for (int i = 0; i < initialSize; i++) {
-			assertFalse(alg.get(i));
+			assertEquals(0, alg.get(i));
 		}
 		for (int i = initialSize; i < alg.size; i++) {
-			assertTrue(alg.get(i));
+			assertEquals(i + 1 - initialSize, alg.get(i));
 		}
 	}
 
@@ -180,35 +178,35 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	}
 
 	private void checkFill( BigDogGrowth growth ) {
-		var alg = new BigDogArray_B(1, 10, growth);
-		alg.resize(4, true);
-		alg.resize(11, false);
-		alg.fill(0, 3, false);
-		alg.fill(3, 9, true);
+		var alg = new BigDogArray_F64(1, 10, growth);
+		alg.resize(4, (double)2);
+		alg.resize(11, (double)10);
+		alg.fill(0, 3, (double)1);
+		alg.fill(3, 9, (double)2);
 
 		for (int i = 0; i < 3; i++) {
-			assertFalse(alg.get(i));
+			assertEquals(1, alg.get(i));
 		}
 		for (int i = 3; i < 9; i++) {
-			assertTrue(alg.get(i));
+			assertEquals(2, alg.get(i));
 		}
-		assertFalse(alg.get(9));
-		assertFalse(alg.get(10));
+		assertEquals(10, alg.get(9));
+		assertEquals(10, alg.get(10));
 
 		// fill across block boundary
-		alg.fill(0, alg.size, true);
+		alg.fill(0, alg.size, (double)4);
 		for (int i = 3; i < alg.size; i++) {
-			assertTrue(alg.get(i));
+			assertEquals(4, alg.get(i));
 		}
 	}
 
 	@Test void setArray() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
-		boolean[] array = new boolean[21];
+		double[] array = new double[21];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = i%2 == 0;
+			array[i] = (double)(i + 1);
 		}
 
 		alg.setArray(1, array, 1, array.length - 1);
@@ -218,22 +216,22 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	}
 
 	@Test void set_get() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
 		for (int i = 0; i < 25; i++) {
-			alg.set(i, i%2 == 0);
-			assertEquals(i%2 == 0, alg.get(i));
+			alg.set(i, (double)(i + 1));
+			assertEquals(i + 1, alg.get(i));
 		}
 	}
 
 	@Test void setTail_getTail() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(25);
 
 		for (int i = 0; i < 25; i++) {
-			alg.setTail(i, i%2 == 0);
-			assertEquals(i%2 == 0, alg.getTail(i));
+			alg.setTail(i, (double)(i + 1));
+			assertEquals(i + 1, alg.getTail(i));
 		}
 
 		assertEquals(alg.get(alg.size - 1), alg.getTail(0));
@@ -241,106 +239,123 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 	}
 
 	@Test void getArray() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
-			alg.set(i, i%2 == 0);
+			alg.set(i, (double)(i + 1));
 		}
-		boolean[] array = new boolean[15];
+		double[] array = new double[15];
 		alg.getArray(2, array, 1, 12);
 		for (int i = 0; i < array.length; i++) {
 			if (i >= 1 && i < 13)
-				assertEquals(i%2 == 1, array[i]);
+				assertEquals(2 + i, array[i]);
 			else
-				assertFalse(array[i]);
+				assertEquals(0, array[i]);
 		}
 	}
 
 	@Test void forEach() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
-			alg.set(i, i%2 == 0);
+			alg.set(i, (double)(i + 1));
 		}
 
-		DogArray_B results = new DogArray_B();
+		DogArray_F64 results = new DogArray_F64();
 		alg.forEach(1, 12, results::add);
 		assertEquals(11, results.size);
 		for (int i = 0; i < 11; i++) {
-			assertEquals(i%2 == 1, results.get(i));
+			assertEquals(i + 2, results.get(i));
 		}
 	}
 
 	@Test void forIdx() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
-			alg.set(i, i%2 == 0);
+			alg.set(i, (double)(i + 1));
 		}
 
-		DogArray_B results = new DogArray_B(12);
+		DogArray_F64 results = new DogArray_F64(12);
 		results.resize(12);
 		alg.forIdx(1, 12, results::set);
-		assertFalse(results.get(0));
+		assertEquals(0, results.get(0));
 		for (int i = 1; i < 12; i++) {
-			assertEquals(i%2 == 0, results.get(i));
+			assertEquals(i + 1, results.get(i));
 		}
 	}
 
 	@Test void applyIdx() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(22);
 		for (int i = 0; i < alg.size; i++) {
-			alg.set(i, i%2 == 0);
+			alg.set(i, (double)(i + 1));
 		}
 
-		alg.applyIdx(1, 12, ( idx, val ) -> idx%2 == 1);
+		alg.applyIdx(1, 12, ( idx, val ) -> (double)(idx*2));
 		for (int i = 0; i < alg.size; i++) {
 			if (i >= 1 && i < 12) {
-				assertEquals(i%2 == 1, alg.get(i));
+				assertEquals(i*2, alg.get(i));
 			} else {
-				assertEquals(i%2 == 0, alg.get(i));
+				assertEquals(i + 1, alg.get(i));
 			}
 		}
 	}
 
 	@Test void processByBlock() {
-		var alg = new BigDogArray_B(2, 10, BigDogGrowth.GROW);
+		var alg = new BigDogArray_F64(2, 10, BigDogGrowth.GROW);
 		alg.resize(26);
 		alg.processByBlock(1, alg.size - 1, ( block, idx0, idx1, offset ) -> {
 			for (int i = idx0; i < idx1; i++) {
-				block[i] = (i - idx0 + offset)%2 == 0;
+				block[i] = (double)(i - idx0 + offset);
 			}
 		});
 		for (int i = 0; i < alg.size; i++) {
 			if (i >= 1 && i < alg.size - 1) {
-				assertEquals((i - 1)%2 == 0, alg.get(i));
+				assertEquals((double)(i - 1), alg.get(i));
 			} else {
-				assertFalse(alg.get(i));
+				assertEquals(0, alg.get(i));
 			}
 		}
 	}
 
-	@Override
-	public BigDogArrayBase<boolean[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
-		return new BigDogArray_B(initialAllocation, blockSize, growth);
+	@Override public BigDogArrayBase<Foo[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
+		return new BigDogArray<>(initialAllocation, blockSize, growth, Foo::new, Foo::reset);
 	}
 
-	@Override public void fillRandom( BigDogArrayBase<boolean[]> _array ) {
-		var array = (BigDogArray_B)_array;
-		array.applyIdx(0, array.size, ( idx, v ) -> rand.nextBoolean());
+	@Override public void fillRandom( BigDogArrayBase<Foo[]> _array ) {
+		var array = (BigDogArray<Foo>)_array;
+		array.forEach(0, array.size, ( v ) -> v.stuff = rand.nextInt());
 	}
 
-	@Override public Object get( BigDogArrayBase<boolean[]> _array, int index ) {
-		var array = (BigDogArray_B)_array;
+	@Override public Object get( BigDogArrayBase<Foo[]> _array, int index ) {
+		var array = (BigDogArray<Foo>)_array;
 		return array.get(index);
 	}
 
-	@Override public void copy( BigDogArrayBase<boolean[]> _src, BigDogArrayBase<boolean[]> _dst ) {
-		var src = (BigDogArray_B)_src;
-		var dst = (BigDogArray_B)_dst;
+	@Override public void copy( BigDogArrayBase<Foo[]> _src, BigDogArrayBase<Foo[]> _dst ) {
+		var src = (BigDogArray<Foo>)_src;
+		var dst = (BigDogArray<Foo>)_dst;
 
 		dst.resize(src.size);
-		dst.applyIdx(0, src.size, ( idx, v ) -> src.get(idx));
+		for (int i = 0; i < src.size; i++) {
+			dst.get(i).setTo(src.get(i));
+		}
+	}
+
+	@Override public <T> boolean isEquivalent( T a, T b ) {
+		return ((Foo)a).stuff == ((Foo)b).stuff;
+	}
+
+	public static class Foo {
+		public int stuff;
+
+		public void reset() {
+			stuff = -1;
+		}
+
+		public void setTo( Foo src ) {
+			this.stuff = src.stuff;
+		}
 	}
 }
