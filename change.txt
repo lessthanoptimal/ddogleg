@@ -12,6 +12,8 @@ Date:     2023
   * Added BigDogArray for objects
   * Added removeTail(), removeSwap()
   * Fixed bug in processByBlock() Now ignores case idx0 >= idx1
+- Java Module support
+  * Added module-info.java so now Java Modules are supported
 
 ------------------------------------------------------
 Version:  0.22
