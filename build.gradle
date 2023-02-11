@@ -14,12 +14,14 @@ group = 'org.ddogleg'
 version = '0.23-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
-project.ext.lombok_version = '1.18.20'
+project.ext.commons_io_version = '2.11.0'
+project.ext.lombok_version = '1.18.24'
 project.ext.errorprone_version = '2.11.0'
 project.ext.nullaway_version = '0.9.5'
-project.ext.guava_version = '31.0.1-jre'
-project.ext.jabel_version = '0.4.2'
+project.ext.guava_version = '31.1-jre'
+project.ext.jabel_version = '1.0.0'
 project.ext.jetnull_version = '23.0.0'
+project.ext.junit_version = '5.9.1'
 
 gversion {
     srcDir       = "src"
@@ -122,11 +124,11 @@ dependencies {
     examplesImplementation project.sourceSets.main.compileClasspath
     examplesImplementation project.sourceSets.main.runtimeClasspath
 
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.0')
-    testImplementation('org.junit.jupiter:junit-jupiter-params:5.4.0')
-    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.4.0')
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$project.junit_version")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$project.junit_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$project.junit_version")
 
-    generateImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    generateImplementation "commons-io:commons-io:$project.commons_io_version"
     testImplementation project.sourceSets.benchmark.output
 
     benchmarkImplementation project.sourceSets.main.output
