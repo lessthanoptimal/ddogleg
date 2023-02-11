@@ -86,11 +86,11 @@ repositories {
 }
 
 sourceSets {
-    generate { java { srcDir 'generate' }  }
+    generate { java { srcDir 'generate' } }
 
     benchmark {
         java { srcDir 'benchmark/src' }
-        resources {  srcDir 'benchmark/resources' }
+        resources { srcDir 'benchmark/resources' }
     }
 
     examples { java { srcDir 'examples/src' } }
@@ -110,8 +110,9 @@ sourceSets {
 }
 
 dependencies {
-    ['ejml-core','ejml-fdense','ejml-ddense','ejml-simple','ejml-dsparse'].each { String a ->
-        api group: 'org.ejml', name: a, version: '0.41'}
+    ['ejml-core', 'ejml-fdense', 'ejml-ddense', 'ejml-simple', 'ejml-dsparse'].each { String a ->
+        api group: 'org.ejml', name: a, version: '0.42'
+    }
 
     compileOnly "org.projectlombok:lombok:$project.lombok_version"
     compileOnly 'org.jetbrains:annotations:20.0.0' // @Nullable
@@ -121,9 +122,9 @@ dependencies {
     examplesImplementation project.sourceSets.main.compileClasspath
     examplesImplementation project.sourceSets.main.runtimeClasspath
 
-    testImplementation( 'org.junit.jupiter:junit-jupiter-api:5.4.0')
-    testImplementation( 'org.junit.jupiter:junit-jupiter-params:5.4.0' )
-    testRuntimeOnly( 'org.junit.jupiter:junit-jupiter-engine:5.4.0')
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.0')
+    testImplementation('org.junit.jupiter:junit-jupiter-params:5.4.0')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.4.0')
 
     generateImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
     testImplementation project.sourceSets.benchmark.output
@@ -152,23 +153,23 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
-    if( path.contains("compileBenchmark") )
+    if (path.contains("compileBenchmark"))
         return
-    if( path.contains("example") )
+    if (path.contains("example"))
         return
 
     options.errorprone.enabled = true
     options.errorprone.disableWarningsInGeneratedCode = true
-    options.errorprone.disable("TypeParameterUnusedInFormals","StringSplitter","InconsistentCapitalization",
+    options.errorprone.disable("TypeParameterUnusedInFormals", "StringSplitter", "InconsistentCapitalization",
             "HidingField", // this is sometimes done when the specific type is known by child. Clean up later.
             "ClassNewInstance", // yes it's deprecated, but new version is more verbose with ignored errors
             "FloatingPointLiteralPrecision", // too many false positives in test code
-            "MissingSummary","UnescapedEntity","EmptyBlockTag")
-    options.errorprone.error("MissingOverride","MissingCasesInEnumSwitch","BadInstanceof",
-            "PublicConstructorForAbstractClass","EmptyCatch","NarrowingCompoundAssignment","JdkObsolete")
+            "MissingSummary", "UnescapedEntity", "EmptyBlockTag")
+    options.errorprone.error("MissingOverride", "MissingCasesInEnumSwitch", "BadInstanceof",
+            "PublicConstructorForAbstractClass", "EmptyCatch", "NarrowingCompoundAssignment", "JdkObsolete")
 
-    if( name.startsWith("compileTest") ) {
-        options.errorprone.disable("ReferenceEquality","IntLongMath","ClassCanBeStatic")
+    if (name.startsWith("compileTest")) {
+        options.errorprone.disable("ReferenceEquality", "IntLongMath", "ClassCanBeStatic")
     }
 
     options.errorprone {
@@ -191,13 +192,13 @@ javadoc {
         options.addStringOption("-release", "11")
     }
 
-    if(JavaVersion.current().isJava9Compatible()) {
+    if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
 
 // if Maven central isn't setup in ~/.gradle/gradle.properties fill in these variables to make it happy
-if( !project.hasProperty('ossrhUsername') ) {
+if (!project.hasProperty('ossrhUsername')) {
     ext.ossrhUsername = "dummy"
     ext.ossrhPassword = "dummy"
 }
@@ -249,7 +250,7 @@ if (ext.ossrhPassword != "dummy") {
 }
 
 // Creates a directory with all the compiled jars and the dependencies
-task createLibraryDirectory( dependsOn: ['jar','sourcesJar'] ) {
+task createLibraryDirectory(dependsOn: ['jar', 'sourcesJar']) {
     doLast {
         ext.listExternal = files(project.configurations.runtimeClasspath)
         ext.listInternal = files(project.tasks.jar.archivePath)
@@ -294,8 +295,8 @@ task alljavadoc(type: Javadoc) {
     configure(options) {
         failOnError = false
         docTitle = "DDogleg ($project.version)"
-        links = [ 'http://docs.oracle.com/javase/8/docs/api/',
-                  'http://ejml.org/javadoc/' ]
+        links = ['http://docs.oracle.com/javase/8/docs/api/',
+                 'http://ejml.org/javadoc/']
         bottom = file('misc/bottom.txt').text
     }
 }
