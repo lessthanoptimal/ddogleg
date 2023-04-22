@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -102,12 +102,16 @@ public class FastArray<T> extends FastAccess<T> {
 
 	/**
 	 * Sets the size of the list to zero. External references are not modified.
+	 *
+	 * @return A reference to 'this' enabling commands can be chained.
 	 */
-	public void reset() {
+	public FastArray<T> reset() {
 		size = 0;
+		return this;
 	}
 
 	/** Convenience function which resets the array and reserves memory */
+	@Deprecated
 	public void resetReserve(int length) {
 		reset();
 		reserve(length);
@@ -116,9 +120,10 @@ public class FastArray<T> extends FastAccess<T> {
 	/**
 	 * Sets the size of the list to zero and removes all internal references inside the current array.
 	 */
-	public void clear() {
+	public FastArray<T> clear() {
 		Arrays.fill(data,0,size,null);
 		size = 0;
+		return this;
 	}
 
 	/**
@@ -127,51 +132,59 @@ public class FastArray<T> extends FastAccess<T> {
 	 * not change.
 	 *
 	 * @param length Requested minimum internal array length
+	 * @return A reference to 'this' enabling commands can be chained.
 	 */
-	public void reserve(int length ) {
+	public FastArray<T> reserve(int length ) {
 		reserve(length,true);
+		return this;
 	}
 
-	public void reserve(int length, boolean copy ) {
+	public FastArray<T> reserve(int length, boolean copy ) {
 		// now need to grow since it is already larger
 		if (this.data.length >= length)
-			return;
+			return this;
 
 		T []data = (T[])Array.newInstance(type, length);
 		if (copy)
 			System.arraycopy(this.data,0,data,0,size);
 		this.data = data;
+		return this;
 	}
 
 	/**
 	 * Changes the size to the specified length. Equivalent to calling {@link #reserve} and this.size = N.
 	 * @param length The new size of the queue
+	 * @return A reference to 'this' enabling commands can be chained.
 	 */
-	public void resize(int length) {
+	public FastArray<T> resize(int length) {
 		reserve(length);
 		this.size = length;
+		return this;
 	}
 
 	/**
 	 * Changes the size and fills each element with this value
+	 * @return A reference to 'this' enabling commands can be chained.
 	 */
-	public void resize(int length, T value) {
+	public FastArray<T> resize(int length, T value) {
 		reserve(length,false);
 		Arrays.fill(data,0,length,value);
 		this.size = length;
+		return this;
 	}
 
-
-	public void addAll( FastAccess<T> list ) {
+	public FastArray<T> addAll( FastAccess<T> list ) {
 		for( int i = 0; i < list.size; i++ ) {
 			add( list.data[i]);
 		}
+		return this;
 	}
 
-	public void add( T[] array , int first, int length ) {
+	public FastArray<T> add( T[] array , int first, int length ) {
 		for( int i = 0; i < length; i++ ) {
 			add( array[first+i]);
 		}
+		return this;
 	}
 
 	public void setTail( int index, T value ) {
@@ -180,12 +193,13 @@ public class FastArray<T> extends FastAccess<T> {
 		data[size-index-1] = value;
 	}
 
-	public void addAll( final List<T> list ) {
+	public FastArray<T> addAll( final List<T> list ) {
 		final int originalSize = this.size;
 		resize(this.size+list.size());
 		for (int i = 0; i < list.size(); i++) {
 			data[originalSize+i] = list.get(i);
 		}
+		return this;
 	}
 
 	/**
