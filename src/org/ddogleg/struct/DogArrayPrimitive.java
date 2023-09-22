@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -73,6 +73,16 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 * @param amount minimum size of internal array
 	 */
 	void reserve( int amount );
+
+	/**
+	 * Ensures that the reserve is at lease the current {@link #size} plus the specified amount. This is
+	 * exactly the same as doing `reserve(size() + amount)`
+	 *
+	 * @param amount How much you wish the ensure the size is increased by
+	 */
+	default void reserveIncrease( int amount ) {
+		reserve(size() + amount);
+	}
 
 	/**
 	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.

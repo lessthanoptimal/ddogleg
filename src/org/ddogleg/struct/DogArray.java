@@ -297,6 +297,16 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
+	 * Ensures that the reserve is at lease the current {@link #size} plus the specified amount. This is
+	 * exactly the same as doing `reserve(size + amount)`
+	 *
+	 * @param amount How much you wish the ensure the size is increased by
+	 */
+	public void reserveIncrease( int amount ) {
+		reserve(size + amount);
+	}
+
+	/**
 	 * Resize with a configuration operator. Equivalent to calling {@link #reserve} and this.size = N, then
 	 * applying the 'configure' operator to each new element.
 	 *
