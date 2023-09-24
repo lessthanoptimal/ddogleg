@@ -11,7 +11,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.24-SNAPSHOT'
+version = '0.23.1'
 project.archivesBaseName = 'ddogleg'
 
 project.ext.commons_io_version = '2.11.0'
@@ -115,7 +115,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core', 'ejml-fdense', 'ejml-ddense', 'ejml-simple', 'ejml-dsparse'].each { String a ->
-        api group: 'org.ejml', name: a, version: '0.42'
+        api group: 'org.ejml', name: a, version: '0.43.1'
     }
 
     compileOnly "org.projectlombok:lombok:${project.lombok_version}"

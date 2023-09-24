@@ -3,11 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.24
-Date:     2023/Feb/15
+Version:  0.23.1
+Date:     2023/Sep/23
 
 - DogArray
   * Added reserveIncrease()
+- Updated EJML which includes an important fix
 
 ------------------------------------------------------
 Version:  0.23
