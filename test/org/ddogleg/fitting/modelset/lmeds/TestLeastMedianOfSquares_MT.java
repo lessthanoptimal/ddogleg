@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,7 +18,10 @@
 
 package org.ddogleg.fitting.modelset.lmeds;
 
-import org.ddogleg.fitting.modelset.*;
+import org.ddogleg.fitting.modelset.DoubleArrayManager;
+import org.ddogleg.fitting.modelset.MeanModelFitter;
+import org.ddogleg.fitting.modelset.ModelManager;
+import org.ddogleg.fitting.modelset.ModelMatcherPost;
 import org.ddogleg.fitting.modelset.distance.DistanceFromMeanModel;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-class TestLeastMedianOfSquares_MT extends GenericModelMatcherPostTests {
+class TestLeastMedianOfSquares_MT extends TestLeastMedianOfSquares {
 	int numTrials = 50;
 
 	public TestLeastMedianOfSquares_MT() {

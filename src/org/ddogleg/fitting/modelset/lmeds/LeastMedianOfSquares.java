@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -195,7 +195,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		// if configured to do so compute the inlier set
 		computeInlierSet(dataSet, N, helper);
 
-		return bestMedian <= maxMedianError;
+		// If bestMedian == MAX_VALUE that means no model was found. This needs to fail even if maxMedianError
+		// has been set to MAX_VALUE.
+		return bestMedian != Double.MAX_VALUE && bestMedian < maxMedianError;
 	}
 
 	protected void computeInlierSet( List<Point> dataSet, int n,

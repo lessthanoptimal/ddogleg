@@ -2,6 +2,14 @@ Change log for DDogleg Numerics
 
 Date Format: YEAR-MONTH-DAY
 
+
+------------------------------------------------------
+Version:  0.23.2
+Date:     2023/
+
+- LeastMedianOfSquares
+  * Fixed bug when max distance was set to MAX_VALUE
+
 ------------------------------------------------------
 Version:  0.23.1
 Date:     2023/Sep/23

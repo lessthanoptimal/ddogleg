@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -122,12 +122,18 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 			}
 		});
 
-		super.helper = Objects.requireNonNull(bestHelper);
+		// bestHelper can be null if every attempt to generate a model failed
+		if (bestHelper == null)
+			return false;
+
+		super.helper = bestHelper;
 
 		// if configured to do so compute the inlier set
 		computeInlierSet(dataSet, N, Objects.requireNonNull(super.helper));
 
-		return bestMedian <= maxMedianError;
+		// If bestMedian == MAX_VALUE that means no model was found. This needs to fail even if maxMedianError
+		// has been set to MAX_VALUE.
+		return bestMedian != Double.MAX_VALUE && bestMedian < maxMedianError;
 	}
 
 	@Override
