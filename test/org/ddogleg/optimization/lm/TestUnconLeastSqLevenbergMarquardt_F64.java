@@ -46,38 +46,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SuppressWarnings({"NullAway"})
 public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
-	@Test
-	public void computeGradientHessian() {
+	@Test void computeGradientHessian() {
 		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
 
-		MockResiduals residuals = new MockResiduals();
-		MockJacobian jacobian = new MockJacobian();
-		lm.setFunction(residuals,jacobian);
-		lm.residuals.reshape(2,1);
+		var residuals = new MockResiduals();
+		var jacobian = new MockJacobian();
+		lm.setFunction(residuals, jacobian);
+		lm.residuals.reshape(2, 1);
 		lm.hessian = new MockHessian();
 
-		DMatrixRMaj x = new DMatrixRMaj(2,1);
-		DMatrixRMaj g = new DMatrixRMaj(2,1);
-		lm.functionGradientHessian(x,true,g,lm.hessian);
+		var x = new DMatrixRMaj(2, 1);
+		var g = new DMatrixRMaj(2, 1);
+		lm.functionGradientHessian(x, true, g, lm.hessian);
 		assertFalse(residuals.called);
 
-		MockHessian h = (MockHessian)lm.hessian;
+		var h = (MockHessian)lm.hessian;
 		assertTrue(h.hessian);
 
-		lm.functionGradientHessian(x,false,g,lm.hessian);
+		lm.functionGradientHessian(x, false, g, lm.hessian);
 		assertTrue(residuals.called);
 	}
 
-	@Test
-	public void computeResiduals() {
+	@Test void computeResiduals() {
 		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
 
-		MockResiduals residuals = new MockResiduals();
-		lm.setFunction(residuals,new MockJacobian());
+		var residuals = new MockResiduals();
+		lm.setFunction(residuals, new MockJacobian());
 
-		DMatrixRMaj x = new DMatrixRMaj(1,1);
-		DMatrixRMaj r = new DMatrixRMaj(1,1);
-		lm.computeResiduals(x,r);
+		var x = new DMatrixRMaj(1, 1);
+		var r = new DMatrixRMaj(1, 1);
+		lm.computeResiduals(x, r);
 		assertTrue(residuals.called);
 	}
 
@@ -87,30 +85,26 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 	}
 
 	private UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> createLM() {
-		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		var config = new ConfigLevenbergMarquardt();
 
 		LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
-		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
+		var hessian = new HessianLeastSquares_DDRM(solver);
+		var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(), hessian);
 		lm.configure(config);
 		return lm;
 	}
 
 	@Nested
 	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
-
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			return createLM();
 		}
 	}
 
 	@Nested
 	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
-
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
 
 			LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 			HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
@@ -123,10 +117,8 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 
 	@Nested
 	class LeastSquaresDDRM_scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
-
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
 
 			config.dampeningInitial = 0.1;
 			config.hessianScaling = true;
@@ -141,10 +133,9 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 	}
 
 	public class MockJacobian implements FunctionNtoMxN<DMatrixRMaj> {
-
 		boolean called = false;
-		@Override
-		public void process(double[] input, DMatrixRMaj output) {
+
+		@Override public void process( double[] input, DMatrixRMaj output ) {
 			called = true;
 			output.reshape(2,3);
 		}
@@ -157,8 +148,7 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 	private class MockHessian extends HessianLeastSquares_DDRM {
 		boolean hessian = false;
 
-		@Override
-		public void updateHessian(DMatrixRMaj jacobian) {
+		@Override public void updateHessian( DMatrixRMaj jacobian ) {
 			this.hessian = true;
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -44,18 +44,17 @@ public class FactoryOptimizationSparse {
 	/**
 	 * Creates a sparse Schur Complement trust region optimization using dogleg steps.
 	 *
-	 * @see UnconLeastSqTrustRegionSchur_F64
-	 *
 	 * @param config Trust region configuration
 	 * @return The new optimization routine
+	 * @see UnconLeastSqTrustRegionSchur_F64
 	 */
 	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> doglegSchur( @Nullable ConfigTrustRegion config ) {
-		if( config == null )
+		if (config == null)
 			config = new ConfigTrustRegion();
 
 		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
 		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> update = new TrustRegionUpdateDogleg_F64<>();
-		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(update,hessian);
+		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(update, hessian);
 		alg.configure(config);
 		return alg;
 	}
@@ -63,21 +62,20 @@ public class FactoryOptimizationSparse {
 	/**
 	 * Creates a sparse trust region optimization using dogleg steps.
 	 *
-	 * @see UnconLeastSqTrustRegion_F64
-	 *
 	 * @param config Trust region configuration
 	 * @return The new optimization routine
+	 * @see UnconLeastSqTrustRegion_F64
 	 */
-	public static UnconstrainedLeastSquares<DMatrixSparseCSC> dogleg( @Nullable ConfigTrustRegion config) {
-		if( config == null )
+	public static UnconstrainedLeastSquares<DMatrixSparseCSC> dogleg( @Nullable ConfigTrustRegion config ) {
+		if (config == null)
 			config = new ConfigTrustRegion();
 
-		LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+		LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 
 		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
 		MatrixMath_DSCC math = new MatrixMath_DSCC();
 		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> update = new TrustRegionUpdateDogleg_F64<>();
-		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
+		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
 		alg.configure(config);
 		return alg;
 	}
@@ -85,46 +83,42 @@ public class FactoryOptimizationSparse {
 	/**
 	 * Creates a sparse trust region optimization using cauchy steps.
 	 *
-	 * @see UnconLeastSqTrustRegion_F64
-	 *
 	 * @param config Trust region configuration
 	 * @return The new optimization routine
+	 * @see UnconLeastSqTrustRegion_F64
 	 */
 	public static UnconstrainedLeastSquares<DMatrixSparseCSC> cauchy( @Nullable ConfigTrustRegion config ) {
-		if( config == null )
+		if (config == null)
 			config = new ConfigTrustRegion();
 
 		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC();
 		MatrixMath_DSCC math = new MatrixMath_DSCC();
 		TrustRegionUpdateCauchy_F64<DMatrixSparseCSC> update = new TrustRegionUpdateCauchy_F64<>();
-		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
+		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
 		alg.configure(config);
 		return alg;
 	}
 
 	public static UnconstrainedLeastSquares<DMatrixSparseCSC> levenbergMarquardt(
-			@Nullable ConfigLevenbergMarquardt config  )
-	{
-		if( config == null )
+			@Nullable ConfigLevenbergMarquardt config ) {
+		if (config == null)
 			config = new ConfigLevenbergMarquardt();
 
-		LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+		LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 
-		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
-		UnconLeastSqLevenbergMarquardt_F64<DMatrixSparseCSC> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(),hessian);
+		var hessian = new HessianLeastSquares_DSCC(solver);
+		var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(), hessian);
 		lm.configure(config);
 		return lm;
 	}
 
 	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> levenbergMarquardtSchur(
-			@Nullable ConfigLevenbergMarquardt config  )
-	{
-		if( config == null )
+			@Nullable ConfigLevenbergMarquardt config ) {
+		if (config == null)
 			config = new ConfigLevenbergMarquardt();
 
-		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
-				new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+		var hessian = new HessianSchurComplement_DSCC();
+		var lm = new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(), hessian);
 		lm.configure(config);
 		return lm;
 	}

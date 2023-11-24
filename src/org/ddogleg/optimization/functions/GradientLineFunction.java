@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,13 +20,10 @@ package org.ddogleg.optimization.functions;
 
 /**
  * Contains functions for optimization algorithms that perform a line search and require the
- * function's value and its gradient.  A single interface is provided for those functions
- * to encourage data reuse.  Any time setInput() is called for either the function or line search
+ * function's value and its gradient. A single interface is provided for those functions
+ * to encourage data reuse. Any time setInput() is called for either the function or line search
  * all functions will use the same input and the old outputs are discarded.
  *
  * @author Peter Abeles
  */
-public interface GradientLineFunction
-		extends CoupledGradient , LineSearchFunction
-{
-}
+public interface GradientLineFunction extends CoupledGradient, LineSearchFunction {}

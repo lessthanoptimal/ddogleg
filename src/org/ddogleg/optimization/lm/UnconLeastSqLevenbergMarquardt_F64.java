@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,37 +36,33 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
-		extends LevenbergMarquardt_F64<S,HessianLeastSquares<S>>
-		implements UnconstrainedLeastSquares<S>
-{
+		extends LevenbergMarquardt_F64<S, HessianLeastSquares<S>>
+		implements UnconstrainedLeastSquares<S> {
 	S jacobian;
 
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
-	public UnconLeastSqLevenbergMarquardt_F64(MatrixMath<S> math,
-											  HessianLeastSquares<S> hessian )
-	{
-		super(math,hessian);
+	public UnconLeastSqLevenbergMarquardt_F64( MatrixMath<S> math,
+											   HessianLeastSquares<S> hessian ) {
+		super(math, hessian);
 
 		this.jacobian = math.createMatrix();
 	}
 
-	@Override
-	public void setFunction(FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian) {
+	@Override public void setFunction( FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian ) {
 		this.functionResiduals = function;
-		if( jacobian == null )
-			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function,(Class)this.jacobian.getClass());
+		if (jacobian == null)
+			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function, (Class)this.jacobian.getClass());
 		else
 			this.functionJacobian = jacobian;
 		int M = functionResiduals.getNumOfOutputsM();
 		int N = functionResiduals.getNumOfInputsN();
 
-		((ReshapeMatrix)this.jacobian).reshape(M,N);
+		((ReshapeMatrix)this.jacobian).reshape(M, N);
 	}
 
-	@Override
-	public void initialize(double[] initial, double ftol, double gtol) {
+	@Override public void initialize( double[] initial, double ftol, double gtol ) {
 		config.ftol = ftol;
 		config.gtol = gtol;
 
@@ -75,38 +71,34 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 				functionResiduals.getNumOfOutputsM());
 	}
 
-	@Override
-	public double[] getParameters() {
+	@Override public double[] getParameters() {
 		return x.data;
 	}
 
-	@Override
-	public double getFunctionValue() {
+	@Override public double getFunctionValue() {
 		return fx;
 	}
 
-	@Override
-	public boolean isUpdated() {
+	@Override public boolean isUpdated() {
 		return mode == Mode.COMPUTE_DERIVATIVES;
 	}
 
-	@Override
-	public boolean isConverged() {
+	@Override public boolean isConverged() {
 		return mode == Mode.CONVERGED;
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
-										   DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
-		if( !sameStateAsResiduals )
-			functionResiduals.process(x.data,residuals.data);
-		functionJacobian.process(x.data,jacobian);
+	protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsResiduals,
+											DMatrixRMaj gradient, HessianLeastSquares<S> hessian ) {
+		if (!sameStateAsResiduals)
+			functionResiduals.process(x.data, residuals.data);
+		functionJacobian.process(x.data, jacobian);
 		hessian.updateHessian(jacobian);
 		math.multTransA(jacobian, residuals, gradient);
 	}
 
 	@Override
-	protected void computeResiduals(DMatrixRMaj x, DMatrixRMaj residuals) {
-		functionResiduals.process(x.data,residuals.data);
+	protected void computeResiduals( DMatrixRMaj x, DMatrixRMaj residuals ) {
+		functionResiduals.process(x.data, residuals.data);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,8 +19,8 @@
 package org.ddogleg.optimization.functions;
 
 /**
- * Function which takes in N parameters as input and outputs M elements.  The number N is typically determined
- * by the number of parameters in a model, say 2 for a line in 2D (slope and intercept).  The number M is determined
+ * Function which takes in N parameters as input and outputs M elements. The number N is typically determined
+ * by the number of parameters in a model, say 2 for a line in 2D (slope and intercept). The number M is determined
  * by the number of observations, for M 2D points the output would be M variables representing the distance of
  * each point from the line.
  *
@@ -29,9 +29,9 @@ package org.ddogleg.optimization.functions;
 public interface FunctionNtoM extends FunctionInOut {
 
 	/**
-	 * Processes the input to compute the values found in the output array.
+	 * <p>>Processes the input to compute the values found in the output array.</p
 	 *
-	 * The output's meaning depends on the application.  For least-squares it is the residual error. See
+	 * The output's meaning depends on the application. For least-squares it is the residual error. See
 	 * {@link org.ddogleg.optimization.UnconstrainedLeastSquares}.
 	 *
 	 * <p>
@@ -41,5 +41,5 @@ public interface FunctionNtoM extends FunctionInOut {
 	 * @param input Parameters for input model.
 	 * @param output Storage for the output give the model.
 	 */
-	public void process(double input[], double[] output);
+	void process( double[] input, double[] output );
 }

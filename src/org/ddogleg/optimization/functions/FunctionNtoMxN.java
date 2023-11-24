@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,10 +26,9 @@ import org.ejml.data.DMatrix;
  * @author Peter Abeles
  */
 public interface FunctionNtoMxN<S extends DMatrix> extends FunctionInOut {
-
 	/**
 	 * <p>
-	 * Processes the input vector to output a 2D a matrix.  The matrix has a dimension of M rows and N columns
+	 * Processes the input vector to output a 2D a matrix. The matrix has a dimension of M rows and N columns
 	 * and is formatted as a row major 1D-array.
 	 * </p>
 	 *
@@ -40,10 +39,11 @@ public interface FunctionNtoMxN<S extends DMatrix> extends FunctionInOut {
 	 * @param input Vector with input parameters.
 	 * @param output Row major array with M rows and N columns.
 	 */
-	void process( double input[] , S output );
+	void process( double[] input, S output );
 
 	/**
 	 * Creates a matrix which can store the jacobian. Size is set by M and N
+	 *
 	 * @return new instance of a matrix
 	 */
 	S declareMatrixMxN();
