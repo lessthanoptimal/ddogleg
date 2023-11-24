@@ -106,9 +106,9 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 
-			LinearSolverSparse<DMatrixSparseCSC,DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
-			HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
-			UnconLeastSqLevenbergMarquardt_F64<DMatrixSparseCSC> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(),hessian);
+			LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
+			var hessian = new HessianLeastSquares_DSCC(solver);
+			var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(), hessian);
 			lm.configure(config);
 //			lm.setVerbose(true);
 			return lm;
@@ -124,8 +124,8 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			config.hessianScaling = true;
 
 			LinearSolverDense<DMatrixRMaj> solver = LinearSolverFactory_DDRM.chol(2);
-			HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM(solver);
-			UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(),hessian);
+			var hessian = new HessianLeastSquares_DDRM(solver);
+			var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(), hessian);
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;

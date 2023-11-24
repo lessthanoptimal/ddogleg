@@ -44,9 +44,8 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	protected FunctionNtoMxN<S> functionJacobian;
 
 	public UnconLeastSqLevenbergMarquardt_F64( MatrixMath<S> math,
-											   HessianLeastSquares<S> hessian ) {
+											   HessianLeastSquares<S> hessian) {
 		super(math, hessian);
-
 		this.jacobian = math.createMatrix();
 	}
 
@@ -93,8 +92,15 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 		if (!sameStateAsResiduals)
 			functionResiduals.process(x.data, residuals.data);
 		functionJacobian.process(x.data, jacobian);
+
 		hessian.updateHessian(jacobian);
-		math.multTransA(jacobian, residuals, gradient);
+		if (lossFuncGradient != null) {
+			lossFuncGradient.process(residuals.data, storageLossGradient.data);
+			math.multTransA(jacobian, storageLossGradient, gradient);
+		} else {
+			// Note: The residuals are the gradient of the squared error loss function
+			math.multTransA(jacobian, residuals, gradient);
+		}
 	}
 
 	@Override

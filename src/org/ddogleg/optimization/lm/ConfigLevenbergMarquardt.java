@@ -43,7 +43,7 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 	public double diagonal_min = 1e-6, diagonal_max = 1e32;
 
 	public ConfigLevenbergMarquardt copy() {
-		ConfigLevenbergMarquardt c = new ConfigLevenbergMarquardt();
+		var c = new ConfigLevenbergMarquardt();
 
 		c.dampeningInitial = dampeningInitial;
 		c.mixture = mixture;
