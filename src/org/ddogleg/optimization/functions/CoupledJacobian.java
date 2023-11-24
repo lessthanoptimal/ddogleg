@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,19 +26,19 @@ import org.ejml.data.DMatrix;
 public interface CoupledJacobian<S extends DMatrix> extends FunctionInOut {
 
 	/**
-	 * Specifies the input parameters.  The user can modify these values and they will be modified inside the
+	 * Specifies the input parameters. The user can modify these values and they will be modified inside the
 	 * optimization function too.
 	 *
 	 * @param x Optimization parameters.
 	 */
-	void setInput(double[] x);
-	
+	void setInput( double[] x );
+
 	void computeFunctions( double[] output );
 
 	/**
 	 * <p>
-	 * Processes the input parameters into the 2D Jacobian matrix.  The matrix has a dimension of M rows and N columns
-	 * and is formatted as a row major 1D-array.  EJML can be used to provide a matrix wrapper around
+	 * Processes the input parameters into the 2D Jacobian matrix. The matrix has a dimension of M rows and N columns
+	 * and is formatted as a row major 1D-array. EJML can be used to provide a matrix wrapper around
 	 * the output array: DenseMatrix J = DenseMatrix.wrap(m,n,output);
 	 * </p>
 	 *

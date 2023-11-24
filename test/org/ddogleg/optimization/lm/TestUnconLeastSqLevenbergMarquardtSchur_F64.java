@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,118 +36,96 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
-	@Test
-	public void functionGradientHessian() {
+	@Test void functionGradientHessian() {
 		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm = declare();
 
-		MockResiduals residuals = new MockResiduals();
-		MockJacobian jacobian = new MockJacobian();
-		lm.setFunction(residuals,jacobian);
+		var residuals = new MockResiduals();
+		var jacobian = new MockJacobian();
+		lm.setFunction(residuals, jacobian);
 
-		DMatrixRMaj x = new DMatrixRMaj(1,1);
-		DMatrixRMaj g = new DMatrixRMaj(1,1);
-		lm.functionGradientHessian(x,true,g,lm.hessian);
+		var x = new DMatrixRMaj(1, 1);
+		var g = new DMatrixRMaj(1, 1);
+		lm.functionGradientHessian(x, true, g, lm.hessian);
 		assertFalse(residuals.called);
 
 		MockHessian h = (MockHessian)lm.hessian;
 		assertTrue(h.hessian);
 		assertTrue(h.gradient);
 
-		lm.functionGradientHessian(x,false,g,lm.hessian);
+		lm.functionGradientHessian(x, false, g, lm.hessian);
 		assertTrue(residuals.called);
 	}
 
 	/**
 	 * Heavily lifting is done elsewhere. this just make sure the correct function is called.
 	 */
-	@Test
-	public void computeResiduals() {
+	@Test void computeResiduals() {
 		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm = declare();
 
-		MockResiduals residuals = new MockResiduals();
-		lm.setFunction(residuals,new MockJacobian());
+		var residuals = new MockResiduals();
+		lm.setFunction(residuals, new MockJacobian());
 
-		DMatrixRMaj x = new DMatrixRMaj(1,1);
-		DMatrixRMaj r = new DMatrixRMaj(1,1);
-		lm.computeResiduals(x,r);
+		var x = new DMatrixRMaj(1, 1);
+		var r = new DMatrixRMaj(1, 1);
+		lm.computeResiduals(x, r);
 		assertTrue(residuals.called);
 	}
 
 	private UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> declare() {
-		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		var config = new ConfigLevenbergMarquardt();
 
-		HessianSchurComplement_DSCC hessian = new MockHessian();
-		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
-				new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(), hessian);
+		var hessian = new MockHessian();
+		var lm = new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(), hessian);
 		lm.configure(config);
 		return lm;
 	}
 
 	public static class MockResiduals implements FunctionNtoM {
-
 		boolean called = false;
-		@Override
-		public void process(double[] input, double[] output) {
+
+		@Override public void process( double[] input, double[] output ) {
 			called = true;
 		}
 
-		@Override
-		public int getNumOfInputsN() {
-			return 2;
-		}
+		@Override public int getNumOfInputsN() {return 2;}
 
-		@Override
-		public int getNumOfOutputsM() {
-			return 3;
-		}
+		@Override public int getNumOfOutputsM() {return 3;}
 	}
 
 	private class MockJacobian implements SchurJacobian<DMatrixSparseCSC> {
 		boolean called = false;
-		@Override
-		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
+
+		@Override public void process( double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right ) {
 			called = true;
 		}
 
-		@Override
-		public int getNumOfInputsN() {
-			return 2;
-		}
+		@Override public int getNumOfInputsN() {return 2;}
 
-		@Override
-		public int getNumOfOutputsM() {
-			return 3;
-		}
+		@Override public int getNumOfOutputsM() {return 3;}
 	}
 
 	private class MockHessian extends HessianSchurComplement_DSCC {
 		boolean hessian = false;
 		boolean gradient = false;
 
-		@Override
-		public void computeHessian(DMatrixSparseCSC jacLeft, DMatrixSparseCSC jacRight) {
+		@Override public void computeHessian( DMatrixSparseCSC jacLeft, DMatrixSparseCSC jacRight ) {
 			this.hessian = true;
 		}
 
-		@Override
-		public void computeGradient(DMatrixSparseCSC jacLeft, DMatrixSparseCSC jacRight, DMatrixRMaj residuals, DMatrixRMaj gradient) {
+		@Override public void computeGradient( DMatrixSparseCSC jacLeft, DMatrixSparseCSC jacRight,
+											   DMatrixRMaj residuals, DMatrixRMaj gradient ) {
 			this.gradient = true;
 		}
 	}
 
 	@Nested
 	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
 
-			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
-					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+			var hessian = new HessianSchurComplement_DSCC();
+			var lm = new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(), hessian);
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;
@@ -156,16 +134,14 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 
 	@Nested
 	class LeastSquaresDSCC_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
 
 			config.dampeningInitial = 1e-8;
 			config.hessianScaling = true;
 
-			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm =
-					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(),hessian);
+			var hessian = new HessianSchurComplement_DSCC();
+			var lm = new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DSCC(), hessian);
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;
@@ -178,26 +154,22 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 			maxIterationsFast = 60;
 		}
 
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
-
-			return FactoryOptimization.levenbergMarquardtSchur(false,config);
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
+			return FactoryOptimization.levenbergMarquardtSchur(false, config);
 		}
 	}
 
 	@Nested
 	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
-			ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
+			var config = new ConfigLevenbergMarquardt();
 
 			config.dampeningInitial = 1e-8;
 			config.hessianScaling = true;
 
-			HessianSchurComplement_DDRM hessian = new HessianSchurComplement_DDRM();
-			UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixRMaj> lm =
-					new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DDRM(),hessian);
+			var hessian = new HessianSchurComplement_DDRM();
+			var lm = new UnconLeastSqLevenbergMarquardtSchur_F64<>(new MatrixMath_DDRM(), hessian);
 			lm.configure(config);
 //			lm.setVerbose(System.out,0);
 			return lm;

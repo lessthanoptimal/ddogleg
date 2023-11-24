@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ package org.ddogleg.optimization.functions;
 public interface FunctionNtoS {
 
 	/**
-	 * The number of inputs.  Typically the parameters you are optimizing.
+	 * The number of inputs. Typically the parameters you are optimizing.
 	 *
 	 * @return Number of inputs.
 	 */
@@ -38,5 +38,5 @@ public interface FunctionNtoS {
 	 * @param input Array containing input values
 	 * @return The output.
 	 */
-	double process( double input[] );
+	double process( double[] input );
 }

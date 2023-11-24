@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,9 +28,9 @@ import org.ejml.data.DMatrixRMaj;
  */
 public interface MatrixMath<S extends DMatrix> {
 
-	void divideColumns( DMatrixRMaj divisor , S A );
+	void divideColumns( DMatrixRMaj divisor, S A );
 
-	void multTransA(S A, DMatrixRMaj B , DMatrixRMaj output);
+	void multTransA( S A, DMatrixRMaj B, DMatrixRMaj output );
 
 	S createMatrix();
 }

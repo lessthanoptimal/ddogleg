@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,15 +23,14 @@ import org.ejml.data.DMatrix;
 /**
  * Jacobian calculation for use in Schur Complement.
  *
- * @see org.ddogleg.optimization.UnconstrainedLeastSquaresSchur
- *
  * @author Peter Abeles
+ * @see org.ddogleg.optimization.UnconstrainedLeastSquaresSchur
  */
 public interface SchurJacobian<S extends DMatrix> extends FunctionInOut {
 	/**
 	 * <p>
 	 * Processes the input vector to outputs two matrices. The matrices represent
-	 * the jacobian split along one of its columns
+	 * the Jacobian split along one of its columns
 	 * </p>
 	 *
 	 * <p>
@@ -39,8 +38,8 @@ public interface SchurJacobian<S extends DMatrix> extends FunctionInOut {
 	 * </p>
 	 *
 	 * @param input Vector with input parameters.
-	 * @param left (Output) left side of jacobian. Will be resized to fit.
-	 * @param right (Output) right side of jacobian. Will be resized to fit.
+	 * @param left (Output) left side of Jacobian. Will be resized to fit.
+	 * @param right (Output) right side of Jacobian. Will be resized to fit.
 	 */
-	void process(double[] input, S left , S right );
+	void process( double[] input, S left, S right );
 }

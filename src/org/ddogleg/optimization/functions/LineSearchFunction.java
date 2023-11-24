@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ package org.ddogleg.optimization.functions;
  */
 public interface LineSearchFunction extends CoupledDerivative {
 
-	void setLine( double []start , double[] direction );
+	void setLine( double[] start, double[] direction );
 
 	double[] getCurrentState();
 }

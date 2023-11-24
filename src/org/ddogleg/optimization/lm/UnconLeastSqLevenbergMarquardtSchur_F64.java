@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,9 +33,8 @@ import org.ejml.data.DMatrixRMaj;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
-		extends LevenbergMarquardt_F64<S,HessianSchurComplement<S>>
-		implements UnconstrainedLeastSquaresSchur<S>
-{
+		extends LevenbergMarquardt_F64<S, HessianSchurComplement<S>>
+		implements UnconstrainedLeastSquaresSchur<S> {
 	// Left and right side of the jacobian matrix
 	public S jacLeft;
 	public S jacRight;
@@ -43,61 +42,54 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	public FunctionNtoM functionResiduals;
 	public SchurJacobian<S> functionJacobian;
 
-	public UnconLeastSqLevenbergMarquardtSchur_F64(MatrixMath<S> math,
-												   HessianSchurComplement<S> hessian )
-	{
-		super(math,hessian);
+	public UnconLeastSqLevenbergMarquardtSchur_F64( MatrixMath<S> math,
+													HessianSchurComplement<S> hessian ) {
+		super(math, hessian);
 
 		this.jacLeft = math.createMatrix();
 		this.jacRight = math.createMatrix();
 	}
 
-	@Override
-	public void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian) {
+	@Override public void setFunction( FunctionNtoM function, SchurJacobian<S> jacobian ) {
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
 	}
 
-	@Override
-	public void initialize(double[] initial, double ftol, double gtol) {
+	@Override public void initialize( double[] initial, double ftol, double gtol ) {
 		config.ftol = ftol;
 		config.gtol = gtol;
 
 		super.initialize(initial, functionResiduals.getNumOfInputsN(), functionResiduals.getNumOfOutputsM());
 	}
 
-	@Override
-	public double[] getParameters() {
+	@Override public double[] getParameters() {
 		return x.data;
 	}
 
-	@Override
-	public double getFunctionValue() {
+	@Override public double getFunctionValue() {
 		return fx;
 	}
 
-	@Override
-	public boolean isUpdated() {
+	@Override public boolean isUpdated() {
 		return mode == Mode.COMPUTE_DERIVATIVES;
 	}
 
-	@Override
-	public boolean isConverged() {
+	@Override public boolean isConverged() {
 		return mode == Mode.CONVERGED;
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals,
-										   DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
-		if( !sameStateAsResiduals )
-			functionResiduals.process(x.data,residuals.data);
-		functionJacobian.process(x.data,jacLeft,jacRight);
-		hessian.computeHessian(jacLeft,jacRight);
-		hessian.computeGradient(jacLeft,jacRight,residuals,gradient);
+	protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsResiduals,
+											DMatrixRMaj gradient, HessianSchurComplement<S> hessian ) {
+		if (!sameStateAsResiduals)
+			functionResiduals.process(x.data, residuals.data);
+		functionJacobian.process(x.data, jacLeft, jacRight);
+		hessian.computeHessian(jacLeft, jacRight);
+		hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
 	}
 
 	@Override
-	protected void computeResiduals(DMatrixRMaj x, DMatrixRMaj residuals) {
-		functionResiduals.process(x.data,residuals.data);
+	protected void computeResiduals( DMatrixRMaj x, DMatrixRMaj residuals ) {
+		functionResiduals.process(x.data, residuals.data);
 	}
 }

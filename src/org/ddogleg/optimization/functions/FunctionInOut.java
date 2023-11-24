@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,14 +25,14 @@ package org.ddogleg.optimization.functions;
  */
 public interface FunctionInOut {
 	/**
-	 * Number of input elements.  Typically the parameters you are optimizing.
+	 * Number of input elements. Typically, the parameters you are optimizing.
 	 *
 	 * @return number of input elements
 	 */
 	int getNumOfInputsN();
 
 	/**
-	 * Number of output elements. Typically the functions that are being optimized.
+	 * Number of output elements. Typically, the functions that are being optimized.
 	 *
 	 * @return number of output elements
 	 */

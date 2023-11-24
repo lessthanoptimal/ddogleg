@@ -28,16 +28,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestLevenbergMarquardt_F64 {
-
-	@Test
-	public void computeStep_solve_failed() {
-		MockLevenbergMarquardt alg = new MockLevenbergMarquardt() {
-			@Override
-			protected boolean computeStep( double lambda, DMatrixRMaj gradient , DMatrixRMaj step ) {
+	@Test void computeStep_solve_failed() {
+		var alg = new MockLevenbergMarquardt() {
+			@Override protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {
 				return false;
 			}
 		};
@@ -45,24 +39,20 @@ public class TestLevenbergMarquardt_F64 {
 		alg.lambda = 2;
 
 		assertFalse(alg.computeStep());
-		assertEquals(8,alg.lambda, UtilEjml.TEST_F64);
+		assertEquals(8, alg.lambda, UtilEjml.TEST_F64);
 	}
 
 	/**
-	 * Makes sure sure hessian scaling is correctly handled
+	 * Makes sure hessian scaling is correctly handled
 	 */
-	@Test
-	public void computeStep_hessianScaling() {
+	@Test void computeStep_hessianScaling() {
 
-		MockLevenbergMarquardt alg = new MockLevenbergMarquardt() {
-
-			@Override
-			protected boolean computeStep( double lambda, DMatrixRMaj gradient , DMatrixRMaj step ) {
+		var alg = new MockLevenbergMarquardt() {
+			@Override protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {
 				return true;
 			}
 
-			@Override
-			protected void undoHessianScalingOnParameters(DMatrixRMaj p) {
+			@Override protected void undoHessianScalingOnParameters( DMatrixRMaj p ) {
 				undoCalled = true;
 			}
 		};
@@ -76,22 +66,20 @@ public class TestLevenbergMarquardt_F64 {
 		assertTrue(alg.undoCalled);
 	}
 
-	@Test
-	public void checkConvergenceFTest() {
-		MockLevenbergMarquardt alg = new MockLevenbergMarquardt();
+	@Test void checkConvergenceFTest() {
+		var alg = new MockLevenbergMarquardt();
 
 		alg.config.ftol = 1e-4;
 
-		assertTrue(alg.checkConvergenceFTest(2,2));
-		assertTrue(alg.checkConvergenceFTest(2,2*(1+1e-5)));
-		assertFalse(alg.checkConvergenceFTest(2,2*(1+9e-3)));
+		assertTrue(alg.checkConvergenceFTest(2, 2));
+		assertTrue(alg.checkConvergenceFTest(2, 2*(1 + 1e-5)));
+		assertFalse(alg.checkConvergenceFTest(2, 2*(1 + 9e-3)));
 	}
 
-	@Test
-	public void cost() {
-		MockLevenbergMarquardt alg = new MockLevenbergMarquardt();
+	@Test void cost() {
+		var alg = new MockLevenbergMarquardt();
 
-		Equation eq = new Equation();
+		var eq = new Equation();
 		eq.process("r = rand(10,1)");
 		eq.process("cost = 0.5*r'*r");
 		DMatrixRMaj residuals = eq.lookupDDRM("r");
@@ -102,22 +90,15 @@ public class TestLevenbergMarquardt_F64 {
 	}
 
 	private class MockLevenbergMarquardt extends LevenbergMarquardt_F64<DMatrixRMaj, HessianMath> {
-
-		boolean undoCalled=false;
+		boolean undoCalled = false;
 
 		public MockLevenbergMarquardt() {
 			super(new MatrixMath_DDRM(), new HessianMath_DDRM());
 		}
 
-		@Override
-		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsResiduals, DMatrixRMaj gradient, HessianMath hessian) {
+		@Override protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsResiduals,
+														  DMatrixRMaj gradient, HessianMath hessian ) {}
 
-		}
-
-		@Override
-		protected void computeResiduals(DMatrixRMaj x, DMatrixRMaj residuals) {
-
-		}
+		@Override protected void computeResiduals( DMatrixRMaj x, DMatrixRMaj residuals ) {}
 	}
-
 }

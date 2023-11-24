@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,12 +30,12 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 	/**
 	 * Initial value for the dampening parameter.
 	 */
-	public double dampeningInitial =1e-4;
+	public double dampeningInitial = 1e-4;
 
 	/**
-	 * Used to switch between Levenberg's and Marquardt's forumula. 1.0=levenberg 0.0=marquardt
+	 * Used to switch between Levenberg's and Marquardt's formula. 1.0=levenberg 0.0=marquardt
 	 */
-	public double mixture=1e-4;
+	public double mixture = 1e-4;
 
 	/**
 	 * Clamps the diagonal values of J'*J when constructing the LM formula.
