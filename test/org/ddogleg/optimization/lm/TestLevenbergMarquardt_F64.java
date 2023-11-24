@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -84,6 +84,8 @@ public class TestLevenbergMarquardt_F64 {
 		eq.process("cost = 0.5*r'*r");
 		DMatrixRMaj residuals = eq.lookupDDRM("r");
 		double expected = eq.lookupDouble("cost");
+
+		alg.initialize(new double[0], 0, residuals.numRows);
 		double found = alg.costFromResiduals(residuals);
 
 		assertEquals(expected, found, UtilEjml.TEST_F64);

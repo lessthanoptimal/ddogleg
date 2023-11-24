@@ -20,6 +20,9 @@ package org.ddogleg.optimization.lm;
 
 import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.OptimizationException;
+import org.ddogleg.optimization.loss.LossFunction;
+import org.ddogleg.optimization.loss.LossFunctionGradient;
+import org.ddogleg.optimization.loss.LossSquared;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.UtilEjml;
@@ -27,7 +30,7 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
-import org.ejml.dense.row.SpecializedOps_DDRM;
+import org.jetbrains.annotations.Nullable;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -84,6 +87,15 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	public DMatrixRMaj diagOrig = new DMatrixRMaj(1, 1);
 	public DMatrixRMaj diagStep = new DMatrixRMaj(1, 1);
 
+	/** Given the residuals it computes the "Loss" or cost */
+	protected LossFunction lossFunc = new LossSquared();
+
+	/** Gradient of the loss function. If null then squared error is assumed and this step can be skipped. */
+	protected @Nullable LossFunctionGradient lossFuncGradient;
+
+	// Storage for the loss gradient
+	protected DMatrixRMaj storageLossGradient = new DMatrixRMaj();
+
 	/**
 	 * Dampening parameter. Scalar that's adjusted at every step. smaller values for a Gauss-Newton step and larger
 	 * values for a gradient step
@@ -98,7 +110,14 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		super(hessian);
 		configure(new ConfigLevenbergMarquardt());
 		this.math = math;
-		this.hessian = hessian;
+	}
+
+	/**
+	 * Used to provide a specialized loss function. Squared error is the default.
+	 */
+	public void setLoss( LossFunction loss, LossFunctionGradient lossGradient ) {
+		this.lossFunc = loss;
+		this.lossFuncGradient = lossGradient;
 	}
 
 	/**
@@ -113,6 +132,11 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		lambda = config.dampeningInitial;
 		nu = NU_INITIAL;
 
+		lossFunc.setNumberOfFunctions(numberOfFunctions);
+		if (lossFuncGradient != null)
+			lossFuncGradient.setNumberOfFunctions(numberOfFunctions);
+
+		storageLossGradient.reshape(numberOfFunctions, 1);
 		residuals.reshape(numberOfFunctions, 1);
 
 		diagOrig.reshape(numberOfParameters, 1);
@@ -280,7 +304,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @return Least squares cost
 	 */
 	public double costFromResiduals( DMatrixRMaj residuals ) {
-		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
+		return lossFunc.process(residuals.data);
 	}
 
 	/**
@@ -292,7 +316,6 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 * @return true if solver could compute the next step
 	 */
 	protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {
-
 		final double mixture = config.mixture;
 		for (int i = 0; i < diagOrig.numRows; i++) {
 			double v = min(config.diagonal_max, max(config.diagonal_min, diagOrig.data[i]));

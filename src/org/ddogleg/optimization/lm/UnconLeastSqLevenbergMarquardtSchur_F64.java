@@ -42,10 +42,8 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	public FunctionNtoM functionResiduals;
 	public SchurJacobian<S> functionJacobian;
 
-	public UnconLeastSqLevenbergMarquardtSchur_F64( MatrixMath<S> math,
-													HessianSchurComplement<S> hessian ) {
+	public UnconLeastSqLevenbergMarquardtSchur_F64( MatrixMath<S> math, HessianSchurComplement<S> hessian ) {
 		super(math, hessian);
-
 		this.jacLeft = math.createMatrix();
 		this.jacRight = math.createMatrix();
 	}
@@ -84,8 +82,19 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 		if (!sameStateAsResiduals)
 			functionResiduals.process(x.data, residuals.data);
 		functionJacobian.process(x.data, jacLeft, jacRight);
+
+
 		hessian.computeHessian(jacLeft, jacRight);
-		hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
+
+		if (lossFuncGradient != null) {
+			lossFuncGradient.process(residuals.data, storageLossGradient.data);
+			hessian.computeGradient(jacLeft, jacRight, storageLossGradient, gradient);
+		} else {
+			// Note: The residuals are the gradient of the squared error loss function
+			hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
+		}
+
+
 	}
 
 	@Override
