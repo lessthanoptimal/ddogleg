@@ -23,7 +23,7 @@ package org.ddogleg.optimization.loss;
  *
  * <pre>L(a) = t<sup>2</sup>(sqrt(1+(a/t)<sup>2</sup>-1)</pre>, where 'a' is the residual, and 't' is the passed in
  * tuning. For small values it will approximate a<sup>2</sup>/2, but for large values it will be a line with slope
- * 't'
+ * 't'. The point of inflection where the functions begins to behave more linear is for values of 'a' > 't'.
  *
  * <ol>
  *     <li><a href="https://en.wikipedia.org/wiki/Huber_loss">Huber Loss - Wikipedia 2023</a></li>
@@ -34,61 +34,52 @@ package org.ddogleg.optimization.loss;
 public class LossSmoothHuber {
 	/** Threshold parameter that determines when errors become linear */
 	double threshold;
-	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
-	// These are mathematically the equivalent
-	double thresholdSq;
 
 	protected LossSmoothHuber( double threshold ) {
 		this.threshold = threshold;
-		this.thresholdSq = threshold*threshold;
 	}
 
 	/**
-	 * Implementation of the Huber loss function
+	 * Implementation of the smooth Huber loss function
 	 */
 	public static class Function extends LossFunction {
-		public LossSmoothHuber huber;
+		public LossSmoothHuber params;
 
 		public Function( double threshold ) {
-			this.huber = new LossSmoothHuber(threshold);
+			this.params = new LossSmoothHuber(threshold);
 		}
 
 		@Override public double process( double[] input ) {
-			final double threshold = huber.threshold;
-			final double thresholdSq = huber.thresholdSq;
+			final double threshold = params.threshold;
+			final double thresholdSq = threshold*threshold;
 
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
 				double r = input[i];
-				double rr = r*r;
-				if (rr <= thresholdSq) {
-					sum += 0.5*rr;
-				} else {
-					sum += threshold*(Math.abs(r) - 0.5*threshold);
-				}
+				double tmp = r/threshold;
+				sum += thresholdSq*(Math.sqrt(1 + tmp*tmp) - 1);
 			}
 			return sum;
 		}
 	}
 
 	/**
-	 * Implementation of the Huber Loss gradient
+	 * Implementation of the smooth Huber loss gradient
 	 */
 	public static class Gradient extends LossFunctionGradient {
-		public LossSmoothHuber huber;
+		public LossSmoothHuber params;
 
 		public Gradient( double threshold ) {
-			this.huber = new LossSmoothHuber(threshold);
+			this.params = new LossSmoothHuber(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = huber.threshold;
-			final double thresholdSq = huber.thresholdSq;
+			final double threshold = params.threshold;
 
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
-				double rr = r*r;
-				output[funcIdx] = (rr <= thresholdSq) ? r : threshold*Math.signum(r);
+				double tmp = r/threshold;
+				output[funcIdx] = r/Math.sqrt(1.0 + tmp*tmp);
 			}
 		}
 	}
