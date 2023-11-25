@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,8 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.loss.LossFunction;
+import org.ddogleg.optimization.loss.LossFunctionGradient;
 import org.ejml.data.DMatrix;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +72,11 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 * @param jacobian Computes the Jacobian of the M functions.  If null a numerical Jacobian will be used.
 	 */
 	void setFunction( FunctionNtoM function , @Nullable FunctionNtoMxN<S> jacobian );
+
+	/**
+	 * Specifies a specialized loss function, typically to improve robustness to outliers. Squared error is the default.
+	 */
+	void setLoss( LossFunction loss, LossFunctionGradient lossGradient );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after

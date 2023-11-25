@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,8 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
+import org.ddogleg.optimization.loss.LossFunction;
+import org.ddogleg.optimization.loss.LossFunctionGradient;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.data.DMatrix;
 
@@ -48,6 +50,11 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	 * @param jacobian Computes the Jacobian of the M functions and breaks it up into left and right components.
 	 */
 	void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian);
+
+	/**
+	 * Specifies a specialized loss function, typically to improve robustness to outliers. Squared error is the default.
+	 */
+	void setLoss( LossFunction loss, LossFunctionGradient lossGradient );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after

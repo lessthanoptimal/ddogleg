@@ -37,9 +37,8 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S, HessianSchurComplement<S>>
+		extends TrustRegionLeastSqBase_F64<S, HessianSchurComplement<S>>
 		implements UnconstrainedLeastSquaresSchur<S> {
-	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
 
 	protected FunctionNtoM functionResiduals;
 	protected SchurJacobian<S> functionJacobian;
@@ -83,7 +82,14 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 			functionResiduals.process(x.data, residuals.data);
 		functionJacobian.process(x.data, jacLeft, jacRight);
 		hessian.computeHessian(jacLeft, jacRight);
-		hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
+
+		if (lossFuncGradient != null) {
+			lossFuncGradient.process(residuals.data, storageLossGradient.data);
+			hessian.computeGradient(jacLeft, jacRight, storageLossGradient, gradient);
+		} else {
+			// Note: The residuals are the gradient of the squared error loss function
+			hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
+		}
 	}
 
 	@Override
