@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,10 +37,9 @@ import org.ejml.dense.row.SpecializedOps_DDRM;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S,HessianSchurComplement<S>>
-		implements UnconstrainedLeastSquaresSchur<S>
-{
-	protected DMatrixRMaj residuals = new DMatrixRMaj(1,1);
+		extends TrustRegionBase_F64<S, HessianSchurComplement<S>>
+		implements UnconstrainedLeastSquaresSchur<S> {
+	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
 
 	protected FunctionNtoM functionResiduals;
 	protected SchurJacobian<S> functionJacobian;
@@ -49,43 +48,42 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 	protected S jacLeft;
 	protected S jacRight;
 
-	public UnconLeastSqTrustRegionSchur_F64( ParameterUpdate<S> update ,
-											 HessianSchurComplement<S> hessian )
-	{
-		super(update,hessian);
+	public UnconLeastSqTrustRegionSchur_F64( ParameterUpdate<S> update,
+											 HessianSchurComplement<S> hessian ) {
+		super(update, hessian);
 
 		jacLeft = hessian.createMatrix();
 		jacRight = hessian.createMatrix();
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, SchurJacobian<S> jacobian) {
+	public void setFunction( FunctionNtoM function, SchurJacobian<S> jacobian ) {
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
-		residuals.reshape(jacobian.getNumOfOutputsM(),1);
+		residuals.reshape(jacobian.getNumOfOutputsM(), 1);
 	}
 
 	@Override
-	public void initialize(double[] initial, double ftol, double gtol) {
-		this.initialize(initial,functionResiduals.getNumOfInputsN(),0);
+	public void initialize( double[] initial, double ftol, double gtol ) {
+		this.initialize(initial, functionResiduals.getNumOfInputsN(), 0);
 		config.ftol = ftol;
 		config.gtol = gtol;
 	}
 
 	@Override
-	protected double cost(DMatrixRMaj x) {
-		functionResiduals.process(x.data,residuals.data);
+	protected double cost( DMatrixRMaj x ) {
+		functionResiduals.process(x.data, residuals.data);
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost,
-										   DMatrixRMaj gradient, HessianSchurComplement<S> hessian) {
-		if( !sameStateAsCost )
-			functionResiduals.process(x.data,residuals.data);
-		functionJacobian.process(x.data,jacLeft,jacRight);
-		hessian.computeHessian(jacLeft,jacRight);
-		hessian.computeGradient(jacLeft,jacRight,residuals,gradient);
+	protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsCost,
+											DMatrixRMaj gradient, HessianSchurComplement<S> hessian ) {
+		if (!sameStateAsCost)
+			functionResiduals.process(x.data, residuals.data);
+		functionJacobian.process(x.data, jacLeft, jacRight);
+		hessian.computeHessian(jacLeft, jacRight);
+		hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
 	}
 
 	@Override
@@ -111,5 +109,4 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 	public DMatrixRMaj getResiduals() {
 		return residuals;
 	}
-
 }

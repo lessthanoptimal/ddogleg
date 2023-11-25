@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,23 +34,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestUnconMinTrustRegionBFGS_F64 extends GenericUnconstrainedMinimizationTests_F64 {
 
-	@Test
-	public void wolfeCondition() {
+	@Test void wolfeCondition() {
 		UnconMinTrustRegionBFGS_F64 alg = createAlg();
 
 		alg.fx = 1;
 		alg.f_prev = 1.1;
 
-		DMatrixRMaj s = new DMatrixRMaj(new double[][]{{1},{2}});
-		DMatrixRMaj y = new DMatrixRMaj(new double[][]{{2},{4}});
-		DMatrixRMaj g = new DMatrixRMaj(new double[][]{{0.1},{0.4}});
+		var s = new DMatrixRMaj(new double[][]{{1}, {2}});
+		var y = new DMatrixRMaj(new double[][]{{2}, {4}});
+		var g = new DMatrixRMaj(new double[][]{{0.1}, {0.4}});
 
-		assertTrue(alg.wolfeCondition(s,y,g));
+		assertTrue(alg.wolfeCondition(s, y, g));
 
 		// if the change in state is perpendicular to change in gradient it should fail
-		s = new DMatrixRMaj(new double[][]{{1},{2}});
-		y = new DMatrixRMaj(new double[][]{{2},{-4}});
-		assertFalse(alg.wolfeCondition(s,y,g));
+		s = new DMatrixRMaj(new double[][]{{1}, {2}});
+		y = new DMatrixRMaj(new double[][]{{2}, {-4}});
+		assertFalse(alg.wolfeCondition(s, y, g));
 	}
 
 	@Override
@@ -59,8 +58,8 @@ public class TestUnconMinTrustRegionBFGS_F64 extends GenericUnconstrainedMinimiz
 	}
 
 	protected UnconMinTrustRegionBFGS_F64 createAlg() {
-		TrustRegionUpdateDogleg_F64 dogleg = new TrustRegionUpdateDogleg_F64();
-		HessianBFGS_DDRM hessian = new HessianBFGS_DDRM(true);
-		return new UnconMinTrustRegionBFGS_F64(dogleg,hessian);
+		var dogleg = new TrustRegionUpdateDogleg_F64<DMatrixRMaj>();
+		var hessian = new HessianBFGS_DDRM(true);
+		return new UnconMinTrustRegionBFGS_F64(dogleg, hessian);
 	}
 }

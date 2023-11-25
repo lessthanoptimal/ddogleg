@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -56,89 +56,81 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
 
-	DMatrixSparseCSC jacLeft = RandomMatrices_DSCC.rectangle(M,split,50,-1,1,rand);
-	DMatrixSparseCSC jacRight = RandomMatrices_DSCC.rectangle(M,N-split,30,-1,1,rand);
+	DMatrixSparseCSC jacLeft = RandomMatrices_DSCC.rectangle(M, split, 50, -1, 1, rand);
+	DMatrixSparseCSC jacRight = RandomMatrices_DSCC.rectangle(M, N - split, 30, -1, 1, rand);
 
-	DMatrixSparseCSC J = new DMatrixSparseCSC(M,N,1);
-	DMatrixSparseCSC H = new DMatrixSparseCSC(N,N,1);
+	DMatrixSparseCSC J = new DMatrixSparseCSC(M, N, 1);
+	DMatrixSparseCSC H = new DMatrixSparseCSC(N, N, 1);
 
-	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M,1,-1,1,rand);
+	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M, 1, -1, 1, rand);
 
 	public TestUnconLeastSqTrustRegionSchur_F64() {
-		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
-		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J,null,gw);
-		CommonOps_DSCC.mult(J,J_t,H,gw,gx);
+		CommonOps_DSCC.concatColumns(jacLeft, jacRight, J);
+		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J, null, gw);
+		CommonOps_DSCC.mult(J, J_t, H, gw, gx);
 
 		H.sortIndices(null);
 	}
 
-	@Test
-	public void cost() {
-		double expected = 0.5*VectorVectorMult_DDRM.innerProd(residuals,residuals);
+	@Test void cost() {
+		double expected = 0.5*VectorVectorMult_DDRM.innerProd(residuals, residuals);
 
-		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
-		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
-		alg.setFunction(new MockFunction(),new MockJacobian());
-		alg.initialize(new double[N],1e-6,1e-8);
+		var dogleg = new TrustRegionUpdateDogleg_F64<DMatrixSparseCSC>();
+		var hessian = new HessianSchurComplement_DSCC();
+		var alg = new UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC>(dogleg, hessian);
+		alg.setFunction(new MockFunction(), new MockJacobian());
+		alg.initialize(new double[N], 1e-6, 1e-8);
 
-		double found = alg.cost(new DMatrixRMaj(N,1));
-		assertEquals(expected,found, UtilEjml.TEST_F64);
+		double found = alg.cost(new DMatrixRMaj(N, 1));
+		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void functionGradientHessian() {
-		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
-		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
-		alg.setFunction(new MockFunction(),new MockJacobian());
-		alg.initialize(new double[N],1e-6,1e-8);
+	@Test void functionGradientHessian() {
+		var dogleg = new TrustRegionUpdateDogleg_F64<DMatrixSparseCSC>();
+		var hessian = new HessianSchurComplement_DSCC();
+		var alg = new UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC>(dogleg, hessian);
+		alg.setFunction(new MockFunction(), new MockJacobian());
+		alg.initialize(new double[N], 1e-6, 1e-8);
 
-		DMatrixRMaj x = new DMatrixRMaj(1,1);
+		var x = new DMatrixRMaj(1, 1);
 
-		DMatrixRMaj g = new DMatrixRMaj(N,1);
-		alg.functionGradientHessian(x,false,g,hessian);
+		var g = new DMatrixRMaj(N, 1);
+		alg.functionGradientHessian(x, false, g, hessian);
 		// Only the gradient is computed and returned. The hessian is saved internally
 
-		DMatrixRMaj exp_g = new DMatrixRMaj(N,1);
-		CommonOps_DSCC.multTransA(J,residuals,exp_g,gx);
+		var exp_g = new DMatrixRMaj(N, 1);
+		CommonOps_DSCC.multTransA(J, residuals, exp_g, gx);
 
-		assertTrue(MatrixFeatures_DDRM.isIdentical(exp_g,g,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(exp_g, g, UtilEjml.TEST_F64));
 	}
 
 	public class MockFunction implements FunctionNtoM {
 
-		@Override
-		public void process(double[] input, double[] output) {
-			System.arraycopy(residuals.data,0,output,0,M);
+		@Override public void process( double[] input, double[] output ) {
+			System.arraycopy(residuals.data, 0, output, 0, M);
 		}
 
-		@Override
-		public int getNumOfInputsN() {
+		@Override public int getNumOfInputsN() {
 			return N;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return M;
 		}
 	}
 
 	public class MockJacobian implements SchurJacobian<DMatrixSparseCSC> {
 
-		@Override
-		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
+		@Override public void process( double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right ) {
 			left.setTo(jacLeft);
 			right.setTo(jacRight);
 		}
 
-		@Override
-		public int getNumOfInputsN() {
+		@Override public int getNumOfInputsN() {
 			return N;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return M;
 		}
 	}
@@ -150,14 +142,13 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 			// won't get stuck
 		}
 
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch(double minimumValue) {
-			ConfigTrustRegion config = new ConfigTrustRegion();
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
+			var config = new ConfigTrustRegion();
 
 //			config.regionInitial = 1;
 			config.hessianScaling = true;
 
-			return FactoryOptimization.doglegSchur(true,config);
+			return FactoryOptimization.doglegSchur(true, config);
 		}
 	}
 
@@ -170,17 +161,15 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 			checkFastConvergence = false;
 		}
 
-		@Override
-		protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch(double minimumValue) {
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 
 //			config.regionInitial = 1;
 			config.hessianScaling = true;
 
-			TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> dogleg = new TrustRegionUpdateDogleg_F64<>();
-			HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-			UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> tr =
-					new UnconLeastSqTrustRegionSchur_F64<>(dogleg,hessian);
+			var dogleg = new TrustRegionUpdateDogleg_F64<DMatrixSparseCSC>();
+			var hessian = new HessianSchurComplement_DSCC();
+			var tr = new UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC>(dogleg, hessian);
 			tr.configure(config);
 //			tr.setVerbose(true);
 			return tr;

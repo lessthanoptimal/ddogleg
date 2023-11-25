@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,9 +41,9 @@ import static java.lang.Math.min;
  * Report [2].</p>
  *
  * <p>
- *     Scaling can be optionally turned on. By default it is off. If scaling is turned on then a non symmetric
- *     trust region is used. The length of each axis is determined by the absolute value of diagonal elements in
- *     the hessian. Minimum and maximum possible scaling values are an important tuning parameter.
+ * Scaling can be optionally turned on. By default it is off. If scaling is turned on then a non symmetric
+ * trust region is used. The length of each axis is determined by the absolute value of diagonal elements in
+ * the hessian. Minimum and maximum possible scaling values are an important tuning parameter.
  * </p>
  *
  * <ul>
@@ -53,19 +53,17 @@ import static java.lang.Math.min;
  * <li>[3] Peter Abeles, "DDogleg Technical Report: Nonlinear Optimization R1", August 2018</li>
  * </ul>
  *
- * @see ConfigTrustRegion
- *
  * @author Peter Abeles
+ * @see ConfigTrustRegion
  */
 @SuppressWarnings("NullAway.Init")
 public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianMath>
-		extends GaussNewtonBase_F64<ConfigTrustRegion,HM>
-{
+		extends GaussNewtonBase_F64<ConfigTrustRegion, HM> {
 	// Technique used to compute the change in parameters
 	protected ParameterUpdate<S> parameterUpdate;
 
 	// Workspace for step
-	protected DMatrixRMaj tmp_p = new DMatrixRMaj(1,1);
+	protected DMatrixRMaj tmp_p = new DMatrixRMaj(1, 1);
 
 	// size of the current trust region
 	double regionRadius;
@@ -75,7 +73,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 */
 	public double gradientNorm;
 
-	protected TrustRegionBase_F64(ParameterUpdate<S> parameterUpdate, HM hessian ) {
+	protected TrustRegionBase_F64( ParameterUpdate<S> parameterUpdate, HM hessian ) {
 		super(hessian);
 		configure(new ConfigTrustRegion());
 		this.parameterUpdate = parameterUpdate;
@@ -89,26 +87,26 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * @param numberOfParameters Number many parameters are being optimized.
 	 * @param minimumFunctionValue The minimum possible value that the function can output
 	 */
-	public void initialize(double[] initial, int numberOfParameters , double minimumFunctionValue ) {
-		super.initialize(initial,numberOfParameters);
+	public void initialize( double[] initial, int numberOfParameters, double minimumFunctionValue ) {
+		super.initialize(initial, numberOfParameters);
 
-		tmp_p.reshape(numberOfParameters,1);
+		tmp_p.reshape(numberOfParameters, 1);
 
 		regionRadius = config.regionInitial;
 
 		fx = cost(x);
 
-		if( verbose != null ) {
+		if (verbose != null) {
 			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  region ");
 			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
-					totalSelectSteps, fx, 0.0,0.0,0.0,0.0, 0.0, regionRadius);
+					totalSelectSteps, fx, 0.0, 0.0, 0.0, 0.0, 0.0, regionRadius);
 		}
 
-		this.parameterUpdate.initialize(this,numberOfParameters, minimumFunctionValue);
+		this.parameterUpdate.initialize(this, numberOfParameters, minimumFunctionValue);
 
 		// a perfect initial guess is a pathological case. easiest to handle it here
-		if( fx <= minimumFunctionValue ) {
-			if( verbose != null ) {
+		if (fx <= minimumFunctionValue) {
+			if (verbose != null) {
 				verbose.println("Converged minimum value");
 			}
 			mode = TrustRegionBase_F64.Mode.CONVERGED;
@@ -119,29 +117,30 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 	/**
 	 * Computes all the derived data structures and attempts to update the parameters
+	 *
 	 * @return true if it has converged.
 	 */
 	@Override
 	protected boolean updateDerivates() {
-		functionGradientHessian(x,sameStateAsCost,gradient,hessian);
+		functionGradientHessian(x, sameStateAsCost, gradient, hessian);
 
-		if( config.hessianScaling ) {
+		if (config.hessianScaling) {
 			computeHessianScaling();
 			applyHessianScaling();
 		}
 
 		// Convergence should be tested on scaled variables to remove their arbitrary natural scale
 		// from influencing convergence
-		if( checkConvergenceGTest(gradient)) {
-			if( verbose != null ) {
+		if (checkConvergenceGTest(gradient)) {
+			if (verbose != null) {
 				verbose.println("Converged g-test");
 			}
 			return true;
 		}
 
 		gradientNorm = NormOps_DDRM.normF(gradient);
-		if(UtilEjml.isUncountable(gradientNorm))
-			throw new OptimizationException("Uncountable. gradientNorm="+gradientNorm);
+		if (UtilEjml.isUncountable(gradientNorm))
+			throw new OptimizationException("Uncountable. gradientNorm=" + gradientNorm);
 
 		parameterUpdate.initializeUpdate();
 		return false;
@@ -149,43 +148,43 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 	/**
 	 * Changes the trust region's size and attempts to do a step again
+	 *
 	 * @return true if it has converged.
 	 */
 	@Override
 	protected boolean computeStep() {
 		// If first iteration and automatic
-		if( regionRadius == -1 ) {
+		if (regionRadius == -1) {
 			// user has selected unconstrained method for initial step size
 			parameterUpdate.computeUpdate(p, Double.MAX_VALUE);
 			regionRadius = parameterUpdate.getStepLength();
 
-			if( regionRadius == Double.MAX_VALUE || UtilEjml.isUncountable(regionRadius)) {
-				if( verbose != null )
+			if (regionRadius == Double.MAX_VALUE || UtilEjml.isUncountable(regionRadius)) {
+				if (verbose != null)
 					verbose.println("unconstrained initialization failed. Using Cauchy initialization instead.");
 				regionRadius = -2;
 			} else {
-				if( verbose != null )
-					verbose.println("unconstrained initialization radius="+regionRadius);
+				if (verbose != null)
+					verbose.println("unconstrained initialization radius=" + regionRadius);
 			}
 		}
-		if( regionRadius == -2 ) {
+		if (regionRadius == -2) {
 			// User has selected Cauchy method for initial step size
 			regionRadius = solveCauchyStepLength()*10;
 			parameterUpdate.computeUpdate(p, regionRadius);
-			if( verbose != null )
-				verbose.println("cauchy initialization radius="+regionRadius);
-
+			if (verbose != null)
+				verbose.println("cauchy initialization radius=" + regionRadius);
 		} else {
 			parameterUpdate.computeUpdate(p, regionRadius);
 		}
 
-		if(  config.hessianScaling )
+		if (config.hessianScaling)
 			undoHessianScalingOnParameters(p);
-		CommonOps_DDRM.add(x,p,x_next);
+		CommonOps_DDRM.add(x, p, x_next);
 		double fx_candidate = cost(x_next);
 
-		if( UtilEjml.isUncountable(fx_candidate)) {
-			throw new OptimizationException("Uncountable candidate cost. "+fx_candidate);
+		if (UtilEjml.isUncountable(fx_candidate)) {
+			throw new OptimizationException("Uncountable candidate cost. " + fx_candidate);
 		}
 
 		// this notes that the cost was computed at x_next for the Hessian calculation.
@@ -194,12 +193,12 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		sameStateAsCost = true;
 
 		// NOTE: step length was computed using the weighted/scaled version of 'p', which is correct
-		return considerCandidate(fx_candidate,fx,
+		return considerCandidate(fx_candidate, fx,
 				parameterUpdate.getPredictedReduction(),
 				parameterUpdate.getStepLength());
 	}
 
-	protected boolean acceptNewState(boolean converged , double fx_candidate) {
+	protected boolean acceptNewState( boolean converged, double fx_candidate ) {
 		// Assign values from candidate to current state
 		fx = fx_candidate;
 
@@ -208,7 +207,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		x_next = tmp;
 
 		// Update the state
-		if( converged ) {
+		if (converged) {
 			mode = Mode.CONVERGED;
 			return true;
 		} else {
@@ -228,46 +227,46 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 * be accepted if the cost function increases.
 	 *
 	 * @param fx_candidate Actual score at the candidate 'x'
-	 * @param fx_prev  Score at the current 'x'
+	 * @param fx_prev Score at the current 'x'
 	 * @param predictedReduction Reduction in score predicted by quadratic model
 	 * @param stepLength The length of the step, i.e. |p|
 	 * @return true if it should update the state or false if it should try agian
 	 */
-	protected boolean considerCandidate(double fx_candidate, double fx_prev,
-											double predictedReduction, double stepLength ) {
+	protected boolean considerCandidate( double fx_candidate, double fx_prev,
+										 double predictedReduction, double stepLength ) {
 
 		// compute model prediction accuracy
-		double actualReduction = fx_prev-fx_candidate;
+		double actualReduction = fx_prev - fx_candidate;
 
-		if( actualReduction == 0 || predictedReduction == 0 ) {
-			if( verbose != null )
-				verbose.println(totalFullSteps+" reduction of zero");
+		if (actualReduction == 0 || predictedReduction == 0) {
+			if (verbose != null)
+				verbose.println(totalFullSteps + " reduction of zero");
 			return true;
 		}
 
 		double ratio = actualReduction/predictedReduction;
 
-		if( fx_candidate > fx_prev || ratio < 0.25 ) {
+		if (fx_candidate > fx_prev || ratio < 0.25) {
 			// if the improvement is too small (or not an improvement) reduce the region size
 			regionRadius = 0.5*regionRadius;
 		} else {
-			if( ratio > 0.75 ) {
-				regionRadius = min(max(3*stepLength,regionRadius),config.regionMaximum);
+			if (ratio > 0.75) {
+				regionRadius = min(max(3*stepLength, regionRadius), config.regionMaximum);
 			}
 		}
 
 		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
-		if( fx_candidate < fx_prev && ratio > 0 ) {
-			boolean converged = checkConvergenceFTest(fx_candidate,fx_prev);
-			if( verbose != null ) {
+		if (fx_candidate < fx_prev && ratio > 0) {
+			boolean converged = checkConvergenceFTest(fx_candidate, fx_prev);
+			if (verbose != null) {
 				verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
-						totalSelectSteps, fx_candidate, fx_candidate-fx_prev,stepLength,ftest_val,gtest_val, ratio, regionRadius);
-				if( converged ) {
+						totalSelectSteps, fx_candidate, fx_candidate - fx_prev, stepLength, ftest_val, gtest_val, ratio, regionRadius);
+				if (converged) {
 					System.out.println("Converged f-test");
 				}
 			}
 
-			return acceptNewState(converged,fx_candidate);
+			return acceptNewState(converged, fx_candidate);
 		} else {
 			mode = Mode.DETERMINE_STEP;
 			return false;
@@ -276,6 +275,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 	/**
 	 * Computes the function's value at x
+	 *
 	 * @param x parameters
 	 * @return function value
 	 */
@@ -288,17 +288,17 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 	 *
 	 * @return true if converged or false if it hasn't converged
 	 */
-	protected boolean checkConvergenceFTest(double fx, double fx_prev ) {
+	protected boolean checkConvergenceFTest( double fx, double fx_prev ) {
 		// something really bad has happened if this gets triggered before it thinks it converged
-		if( UtilEjml.isUncountable(regionRadius) || regionRadius <= 0 )
-			throw new OptimizationException("Failing to converge. Region size hit a wall. r="+regionRadius);
+		if (UtilEjml.isUncountable(regionRadius) || regionRadius <= 0)
+			throw new OptimizationException("Failing to converge. Region size hit a wall. r=" + regionRadius);
 
-		if( fx > fx_prev )
+		if (fx > fx_prev)
 			throw new RuntimeException("BUG! Shouldn't have gotten this far");
 
 		// f-test. avoid potential divide by zero errors
 		ftest_val = 1.0 - fx/fx_prev;
-		return config.ftol * fx_prev >= fx_prev - fx;
+		return config.ftol*fx_prev >= fx_prev - fx;
 	}
 
 	public interface ParameterUpdate<S extends DMatrix> {
@@ -308,8 +308,8 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		 *
 		 * @param minimumFunctionValue The minimum possible value that the function can output
 		 */
-		void initialize ( TrustRegionBase_F64<S,?> base , int numberOfParameters,
-						  double minimumFunctionValue );
+		void initialize( TrustRegionBase_F64<S, ?> base, int numberOfParameters,
+						 double minimumFunctionValue );
 
 		/**
 		 * Initialize the parameter update. This is typically where all the expensive computations take place
@@ -331,17 +331,16 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		 * @param p (Output) change in state
 		 * @param regionRadius (Input) Radius of the region
 		 */
-		void computeUpdate(DMatrixRMaj p , double regionRadius );
+		void computeUpdate( DMatrixRMaj p, double regionRadius );
 
 		/**
 		 * <p>
-		 *     Returns the predicted reduction from the quadratic model.<br><br>
-		 * 	   reduction = m(0) - m(p) = -g(0)*p - 0.5*p<sup>T</sup>*H(0)*p
+		 * Returns the predicted reduction from the quadratic model.<br><br>
+		 * reduction = m(0) - m(p) = -g(0)*p - 0.5*p<sup>T</sup>*H(0)*p
 		 * </p>
 		 *
 		 * <p>This computation is done inside the update because it can often be done more
 		 * efficiently without repeating previous computations</p>
-		 *
 		 */
 		double getPredictedReduction();
 
@@ -350,28 +349,29 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		 *
 		 * <p>This computation is done inside the update because it can often be done more
 		 * efficiently without repeating previous computations</p>
+		 *
 		 * @return step length
 		 */
 		double getStepLength();
 
-		void setVerbose( @Nullable PrintStream out , int level );
+		void setVerbose( @Nullable PrintStream out, int level );
 	}
 
 	/**
 	 * Turns on printing of debug messages.
+	 *
 	 * @param out Stream that is printed to. Set to null to disable
 	 * @param level 0=Debug from solver. {@code > 0} is debug from solver and update
 	 */
 	@Override
-	public void setVerbose(@Nullable PrintStream out, int level) {
+	public void setVerbose( @Nullable PrintStream out, int level ) {
 		super.setVerbose(out, level);
-		if( level > 0 )
-			this.parameterUpdate.setVerbose(verbose,level);
+		if (level > 0)
+			this.parameterUpdate.setVerbose(verbose, level);
 	}
 
-
-	public void configure(ConfigTrustRegion config) {
-		if( config.regionInitial <= 0 && (config.regionInitial != -1 && config.regionInitial != -2 ))
+	public void configure( ConfigTrustRegion config ) {
+		if (config.regionInitial <= 0 && (config.regionInitial != -1 && config.regionInitial != -2))
 			throw new IllegalArgumentException("Invalid regionInitial. Read javadoc and try again.");
 		this.config = config.copy();
 	}

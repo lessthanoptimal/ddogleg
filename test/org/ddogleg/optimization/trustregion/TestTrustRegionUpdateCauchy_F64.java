@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,109 +34,102 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestTrustRegionUpdateCauchy_F64 {
 
 	Random rand = new Random(234);
 
-	@Test
-	public void initializeUpdate() {
-		MockOwner owner = new MockOwner(null);
-		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
+	@Test void initializeUpdate() {
+		var owner = new MockOwner(null);
+		var alg = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
 
-		owner.gradient.set(new double[][]{{1},{2}});
+		owner.gradient.set(new double[][]{{1}, {2}});
 		owner.gradientNorm = NormOps_DDRM.normF(owner.gradient);
-		owner.hessian().reshape(2,2);
-		RandomMatrices_DDRM.fillUniform(owner.hessian(),-1,1,rand);
-		alg.initialize(owner,2,-1);
+		owner.hessian().reshape(2, 2);
+		RandomMatrices_DDRM.fillUniform(owner.hessian(), -1, 1, rand);
+		alg.initialize(owner, 2, -1);
 		alg.initializeUpdate();
 
-		assertTrue( alg.gBg != 0 );
+		assertTrue(alg.gBg != 0);
 	}
 
-	@Test
-	public void initializeUpdate_catchNaN() {
-		MockOwner owner = new MockOwner(null);
-		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
+	@Test void initializeUpdate_catchNaN() {
+		var owner = new MockOwner(null);
+		var alg = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
 
-		owner.gradient.set(new double[][]{{1},{2}});
+		owner.gradient.set(new double[][]{{1}, {2}});
 		owner.gradientNorm = NormOps_DDRM.normF(owner.gradient);
-		owner.hessian().reshape(2,2);
-		RandomMatrices_DDRM.fillUniform(owner.hessian(),-1,1,rand);
+		owner.hessian().reshape(2, 2);
+		RandomMatrices_DDRM.fillUniform(owner.hessian(), -1, 1, rand);
 		owner.hessian().data[1] = Double.NaN;
-		alg.initialize(owner,2,-1);
+		alg.initialize(owner, 2, -1);
 
 		try {
 			alg.initializeUpdate();
 			fail("Exception should have been thrown");
-		} catch( OptimizationException ignore){}
+		} catch (OptimizationException ignore) {
+		}
 	}
 
-
-	@Test
-	public void computeUpdate_positiveDefinite() {
+	@Test void computeUpdate_positiveDefinite() {
 		double radius = 2;
-		MockOwner owner = new MockOwner(null);
-		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
-		alg.initialize(owner,2,-1);
-		DMatrixRMaj p = new DMatrixRMaj(2,1);
+		var owner = new MockOwner(null);
+		var alg = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
+		alg.initialize(owner, 2, -1);
+		var p = new DMatrixRMaj(2, 1);
 
 		// Unconstrained solution is way outside the region bounds. Make sure this contrains it
-		owner.hessian().set(new double[][]{{2,0.1},{0.1,1.5}});
+		owner.hessian().set(new double[][]{{2, 0.1}, {0.1, 1.5}});
 		owner.gradientNorm = 1000;
-		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
-		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
+		setGradient(owner.gradient, 0.1, 0.4, owner.gradientNorm);
+		CommonOps_DDRM.divide(owner.gradient, owner.gradientNorm, alg.direction);
 		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
-		alg.computeUpdate(p,radius);
-		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
+		alg.computeUpdate(p, radius);
+		assertEquals(owner.computePredictedReduction(p), alg.getPredictedReduction(), UtilEjml.TEST_F64);
 		assertEquals(radius, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(radius, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
 
 		// should be inside the bounds
 		owner.gradientNorm = 0.1;
-		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
-		alg.computeUpdate(p,radius);
+		setGradient(owner.gradient, 0.1, 0.4, owner.gradientNorm);
+		alg.computeUpdate(p, radius);
 		double n = NormOps_DDRM.normF(p);
 		assertTrue(n > 0 && n < radius);
 
 		double expectedRadius = owner.gradientNorm/alg.gBg;
-		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
+		assertEquals(owner.computePredictedReduction(p), alg.getPredictedReduction(), UtilEjml.TEST_F64);
 		assertEquals(expectedRadius, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(expectedRadius, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
 	}
 
-	public static void setGradient( DMatrixRMaj gradient ,
-									double dirX , double dirY , double norm ) {
+	public static void setGradient( DMatrixRMaj gradient,
+									double dirX, double dirY, double norm ) {
 		double r = Math.sqrt(dirX*dirX + dirY*dirY);
-		gradient.set(new double[][]{{norm*dirX/r},{norm*dirY/r}});
+		gradient.set(new double[][]{{norm*dirX/r}, {norm*dirY/r}});
 	}
 
-	@Test
-	public void computeUpdate_negativeDefinite() {
-		MockOwner owner = new MockOwner(null);
-		TrustRegionUpdateCauchy_F64<DMatrixRMaj> alg = new TrustRegionUpdateCauchy_F64<>();
-		alg.initialize(owner,2,-1);
+	@Test void computeUpdate_negativeDefinite() {
+		var owner = new MockOwner(null);
+		var alg = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
+		alg.initialize(owner, 2, -1);
 		owner.gradientNorm = 0.1;
-		setGradient(owner.gradient,0.1,0.4,owner.gradientNorm);
-		CommonOps_DDRM.divide(owner.gradient,owner.gradientNorm,alg.direction);
-		owner.hessian().set(new double[][]{{-2,0.1},{0.1,-1.5}});
+		setGradient(owner.gradient, 0.1, 0.4, owner.gradientNorm);
+		CommonOps_DDRM.divide(owner.gradient, owner.gradientNorm, alg.direction);
+		owner.hessian().set(new double[][]{{-2, 0.1}, {0.1, -1.5}});
 		alg.gBg = owner.hessian.innerVectorHessian(alg.direction);
-		DMatrixRMaj p = new DMatrixRMaj(2,1);
+		var p = new DMatrixRMaj(2, 1);
 
 		// should hit the boundary
 		owner.fx = 1000;
-		alg.computeUpdate(p,2);
-		assertEquals(owner.computePredictedReduction(p),alg.getPredictedReduction(),UtilEjml.TEST_F64);
+		alg.computeUpdate(p, 2);
+		assertEquals(owner.computePredictedReduction(p), alg.getPredictedReduction(), UtilEjml.TEST_F64);
 		assertEquals(2, alg.getStepLength(), UtilEjml.TEST_F64);
 		assertEquals(2, NormOps_DDRM.normF(p), UtilEjml.TEST_F64);
 	}
 
 	@SuppressWarnings({"NullAway"})
-	private static class MockOwner extends TrustRegionBase_F64<DMatrixRMaj,HessianMath> {
+	private static class MockOwner extends TrustRegionBase_F64<DMatrixRMaj, HessianMath> {
 
-		public MockOwner( @Nullable ParameterUpdate<DMatrixRMaj> parameterUpdate) {
+		public MockOwner( @Nullable ParameterUpdate<DMatrixRMaj> parameterUpdate ) {
 			super(parameterUpdate, new HessianMath_DDRM());
 		}
 
@@ -144,20 +137,16 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			return ((HessianMath_DDRM)hessian).getHessian();
 		}
 
-		@Override
-		protected boolean checkConvergenceFTest(double fx, double fx_prev) {
+		@Override protected boolean checkConvergenceFTest( double fx, double fx_prev ) {
 			return false;
 		}
 
-		@Override
-		protected double cost(DMatrixRMaj x) {
+		@Override protected double cost( DMatrixRMaj x ) {
 			return 0;
 		}
 
-		@Override
-		protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, HessianMath hessian) {
-
-		}
+		@Override protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, 
+												HessianMath hessian ) {}
 	}
 
 	@Nested
@@ -167,8 +156,7 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			this.maxIteration = 10000;
 		}
 
-		@Override
-		protected UnconstrainedMinimization createSearch() {
+		@Override protected UnconstrainedMinimization createSearch() {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
 					new TrustRegionUpdateCauchy_F64(), new HessianBFGS_DDRM(false));
@@ -176,26 +164,23 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			return tr;
 		}
 
-		@Override
-		public void checkBadlyScaledBrown() {
+		@Override public void checkBadlyScaledBrown() {
 			// it just can't handle this scenario
 		}
 	}
 
 	@Nested
 	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
-
 		public LeastSquaresDDRM() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
 		}
 
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			TrustRegionUpdateCauchy_F64<DMatrixRMaj> cauchy = new TrustRegionUpdateCauchy_F64<>();
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-					cauchy, new HessianLeastSquares_DDRM(),new MatrixMath_DDRM());
+					cauchy, new HessianLeastSquares_DDRM(), new MatrixMath_DDRM());
 			tr.configure(config);
 			return tr;
 		}
@@ -203,26 +188,22 @@ public class TestTrustRegionUpdateCauchy_F64 {
 
 	@Nested
 	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
-
 		public LeastSquaresDDRM_Scaling() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
 		}
 
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch(double minimumValue) {
+		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 			config.hessianScaling = true;
 			TrustRegionUpdateCauchy_F64<DMatrixRMaj> cauchy = new TrustRegionUpdateCauchy_F64<>();
 			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
-					cauchy, new HessianLeastSquares_DDRM(),new MatrixMath_DDRM());
+					cauchy, new HessianLeastSquares_DDRM(), new MatrixMath_DDRM());
 			tr.configure(config);
 			return tr;
 		}
 
-		@Override
-		public void checkPowell() {
-		}
+		@Override public void checkPowell() {}
 	}
 
 	@Nested
@@ -233,13 +214,12 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			this.maxIteration = 10000;
 		}
 
-		@Override
-		protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch(double minimumValue) {
+		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			ConfigTrustRegion config = new ConfigTrustRegion();
 
 			TrustRegionUpdateCauchy_F64<DMatrixSparseCSC> cauchy = new TrustRegionUpdateCauchy_F64<>();
 			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
-					cauchy, new HessianLeastSquares_DSCC(),new MatrixMath_DSCC());
+					cauchy, new HessianLeastSquares_DSCC(), new MatrixMath_DSCC());
 			tr.configure(config);
 			return tr;
 		}

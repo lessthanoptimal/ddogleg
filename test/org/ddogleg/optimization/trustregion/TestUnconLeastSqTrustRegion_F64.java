@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,33 +38,30 @@ public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSq
 	/**
 	 * Makes sure the specified tolerances are copied into the configuration
 	 */
-	@Test
-	public void initialize() {
+	@Test void initialize() {
 		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = createAlg();
-		alg.functionResiduals = new MockFunctionNtoM(new double[]{1,2,3},3);
-		alg.initialize(new double[]{1,2,3},2e-3,6e-12);
+		alg.functionResiduals = new MockFunctionNtoM(new double[]{1, 2, 3}, 3);
+		alg.initialize(new double[]{1, 2, 3}, 2e-3, 6e-12);
 
-		assertEquals(2e-3,alg.config.ftol, UtilEjml.TEST_F64);
-		assertEquals(6e-12,alg.config.gtol, UtilEjml.TEST_F64);
+		assertEquals(2e-3, alg.config.ftol, UtilEjml.TEST_F64);
+		assertEquals(6e-12, alg.config.gtol, UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void costFunction() {
+	@Test void costFunction() {
 		UnconLeastSqTrustRegion_F64<DMatrixRMaj> alg = createAlg();
-		alg.functionResiduals = new MockFunctionNtoM(new double[]{-1,2,-3},1);
-		alg.residuals.reshape(3,1);
+		alg.functionResiduals = new MockFunctionNtoM(new double[]{-1, 2, -3}, 1);
+		alg.residuals.reshape(3, 1);
 
-		double expected = 0.5*(1+4+9);
-		double found = alg.cost(new DMatrixRMaj(1,1));
-		assertEquals(expected,found, UtilEjml.TEST_F64);
+		double expected = 0.5*(1 + 4 + 9);
+		double found = alg.cost(new DMatrixRMaj(1, 1));
+		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
-
 
 	protected UnconLeastSqTrustRegion_F64<DMatrixRMaj> createAlg() {
-		TrustRegionUpdateCauchy_F64<DMatrixRMaj> update = new TrustRegionUpdateCauchy_F64<>();
-		HessianLeastSquares_DDRM hessian = new HessianLeastSquares_DDRM();
-		MatrixMath_DDRM math = new MatrixMath_DDRM();
-		return new UnconLeastSqTrustRegion_F64<>(update,hessian,math);
+		var update = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
+		var hessian = new HessianLeastSquares_DDRM();
+		var math = new MatrixMath_DDRM();
+		return new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
 	}
 
 	@Override
