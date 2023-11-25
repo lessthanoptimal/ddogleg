@@ -52,7 +52,7 @@ public class FactoryOptimization {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegionSchur_F64
 	 */
-	public static UnconstrainedLeastSquaresSchur<DMatrixRMaj> doglegSchur( boolean robust, @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegionSchur_F64<DMatrixRMaj> doglegSchur( boolean robust, @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
@@ -112,7 +112,7 @@ public class FactoryOptimization {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegion_F64
 	 */
-	public static UnconstrainedLeastSquares<DMatrixRMaj> dogleg( @Nullable ConfigTrustRegion config, boolean robust ) {
+	public static UnconLeastSqTrustRegion_F64<DMatrixRMaj> dogleg( @Nullable ConfigTrustRegion config, boolean robust ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
@@ -137,7 +137,7 @@ public class FactoryOptimization {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegion_F64
 	 */
-	public static UnconstrainedLeastSquares<DMatrixRMaj> cauchy( @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegion_F64<DMatrixRMaj> cauchy( @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
@@ -155,7 +155,7 @@ public class FactoryOptimization {
 	 * @param config Trust region configuration
 	 * @return The new optimization routine
 	 */
-	public static UnconstrainedMinimization doglegBFGS( @Nullable ConfigTrustRegion config ) {
+	public static UnconMinTrustRegionBFGS_F64 doglegBFGS( @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
@@ -166,7 +166,7 @@ public class FactoryOptimization {
 		return alg;
 	}
 
-	public static UnconstrainedLeastSquares<DMatrixRMaj> levenbergMarquardt(
+	public static UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> levenbergMarquardt(
 			@Nullable ConfigLevenbergMarquardt config, boolean robust ) {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
@@ -190,7 +190,7 @@ public class FactoryOptimization {
 	 * @param config configuration for LM
 	 * @return the solver
 	 */
-	public static UnconstrainedLeastSquaresSchur<DMatrixRMaj> levenbergMarquardtSchur(
+	public static UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixRMaj> levenbergMarquardtSchur(
 			boolean robust,
 			@Nullable ConfigLevenbergMarquardt config ) {
 		if (config == null)

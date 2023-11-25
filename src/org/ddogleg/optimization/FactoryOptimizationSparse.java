@@ -48,13 +48,13 @@ public class FactoryOptimizationSparse {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegionSchur_F64
 	 */
-	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> doglegSchur( @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> doglegSchur( @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
-		HessianSchurComplement_DSCC hessian = new HessianSchurComplement_DSCC();
-		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> update = new TrustRegionUpdateDogleg_F64<>();
-		UnconLeastSqTrustRegionSchur_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegionSchur_F64<>(update, hessian);
+		var hessian = new HessianSchurComplement_DSCC();
+		var update = new TrustRegionUpdateDogleg_F64<DMatrixSparseCSC>();
+		var alg = new UnconLeastSqTrustRegionSchur_F64<>(update, hessian);
 		alg.configure(config);
 		return alg;
 	}
@@ -66,16 +66,16 @@ public class FactoryOptimizationSparse {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegion_F64
 	 */
-	public static UnconstrainedLeastSquares<DMatrixSparseCSC> dogleg( @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> dogleg( @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
 		LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver = LinearSolverFactory_DSCC.cholesky(FillReducing.NONE);
 
-		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC(solver);
-		MatrixMath_DSCC math = new MatrixMath_DSCC();
-		TrustRegionUpdateDogleg_F64<DMatrixSparseCSC> update = new TrustRegionUpdateDogleg_F64<>();
-		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
+		var hessian = new HessianLeastSquares_DSCC(solver);
+		var math = new MatrixMath_DSCC();
+		var update = new TrustRegionUpdateDogleg_F64<DMatrixSparseCSC>();
+		var alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
 		alg.configure(config);
 		return alg;
 	}
@@ -87,19 +87,19 @@ public class FactoryOptimizationSparse {
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegion_F64
 	 */
-	public static UnconstrainedLeastSquares<DMatrixSparseCSC> cauchy( @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> cauchy( @Nullable ConfigTrustRegion config ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
-		HessianLeastSquares_DSCC hessian = new HessianLeastSquares_DSCC();
-		MatrixMath_DSCC math = new MatrixMath_DSCC();
-		TrustRegionUpdateCauchy_F64<DMatrixSparseCSC> update = new TrustRegionUpdateCauchy_F64<>();
-		UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
+		var hessian = new HessianLeastSquares_DSCC();
+		var math = new MatrixMath_DSCC();
+		var update = new TrustRegionUpdateCauchy_F64<DMatrixSparseCSC>();
+		var alg = new UnconLeastSqTrustRegion_F64<>(update, hessian, math);
 		alg.configure(config);
 		return alg;
 	}
 
-	public static UnconstrainedLeastSquares<DMatrixSparseCSC> levenbergMarquardt(
+	public static UnconLeastSqLevenbergMarquardt_F64<DMatrixSparseCSC> levenbergMarquardt(
 			@Nullable ConfigLevenbergMarquardt config ) {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
@@ -112,7 +112,7 @@ public class FactoryOptimizationSparse {
 		return lm;
 	}
 
-	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> levenbergMarquardtSchur(
+	public static UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> levenbergMarquardtSchur(
 			@Nullable ConfigLevenbergMarquardt config ) {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
