@@ -19,46 +19,54 @@
 package org.ddogleg.optimization.loss;
 
 /**
- * Huber Loss is a robust loss function that is less sensitive to outliers than the squared error loss. For values
- * less than a threshold it returns the squared error, for values greater than it returns an error that grows linearly
- * instead of quadratic.
+ * Tukey loss (Tukey's biweight function) has similar behavior to {@link LossHuber} but is less sensitive to outliers
+ * because they contribute nothing to the loss.
+ *
+ * <pre>
+ * l(c) = c<sup>2</sup>/6(1 - [1 - (r/c)**2]**3)   if |r| <= c
+ *        c<sup>2</sup>/6                          otherwise
+ * </pre>
+ *
  *
  * @author Peter Abeles
  */
-public class LossHuber {
+public class LossTukey {
 	/** Threshold parameter that determines when errors become linear */
 	double threshold;
 	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
 	// These are mathematically the equivalent
 	double thresholdSq;
 
-	protected LossHuber( double threshold ) {
+	protected LossTukey( double threshold ) {
 		this.threshold = threshold;
 		this.thresholdSq = threshold*threshold;
 	}
 
 	/**
-	 * Implementation of the Huber loss function
+	 * Implementation of the Tukey loss function
 	 */
 	public static class Function extends LossFunction {
-		public LossHuber params;
+		public LossTukey params;
 
 		public Function( double threshold ) {
-			this.params = new LossHuber(threshold);
+			this.params = new LossTukey(threshold);
 		}
 
 		@Override public double process( double[] input ) {
 			final double threshold = params.threshold;
 			final double thresholdSq = params.thresholdSq;
 
+			double coef = threshold*threshold/6.0;
+
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
 				double r = input[i];
 				double rr = r*r;
 				if (rr <= thresholdSq) {
-					sum += 0.5*rr;
+					double tmp = 1 - (r/threshold)*(r/threshold);
+					sum += coef*(1 - tmp*tmp*tmp);
 				} else {
-					sum += threshold*(Math.abs(r) - 0.5*threshold);
+					sum += coef;
 				}
 			}
 			return sum;
@@ -66,13 +74,13 @@ public class LossHuber {
 	}
 
 	/**
-	 * Implementation of the Huber Loss gradient
+	 * Implementation of the Tukey Loss gradient
 	 */
 	public static class Gradient extends LossFunctionGradient {
-		public LossHuber params;
+		public LossTukey params;
 
 		public Gradient( double threshold ) {
-			this.params = new LossHuber(threshold);
+			this.params = new LossTukey(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
@@ -82,7 +90,12 @@ public class LossHuber {
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
 				double rr = r*r;
-				output[funcIdx] = (rr <= thresholdSq) ? r : threshold*Math.signum(r);
+				if (rr <= thresholdSq) {
+					double tmp = 1 - (r/threshold)*(r/threshold);
+					output[funcIdx] = r*tmp*tmp;
+				} else {
+					output[funcIdx] = 0.0;
+				}
 			}
 		}
 	}

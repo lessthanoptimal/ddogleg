@@ -34,6 +34,8 @@ public abstract class CommonChecksLossJacobian {
 
 	protected Random rand = new Random(243);
 
+	double tolerance = 1e-4;
+
 	public abstract LossFunction createFunction();
 
 	public abstract LossFunctionGradient createGradient();
@@ -84,7 +86,7 @@ public abstract class CommonChecksLossJacobian {
 		function.setNumberOfFunctions(residuals.length);
 		gradient.setNumberOfFunctions(residuals.length);
 
-		assertTrue(DerivativeChecker.gradient(function, gradient, residuals, 1e-4));
+		assertTrue(DerivativeChecker.gradient(function, gradient, residuals, tolerance));
 	}
 
 	public static double[] randomArray(int count, double radius, Random rand ) {

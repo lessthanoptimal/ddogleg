@@ -19,70 +19,69 @@
 package org.ddogleg.optimization.loss;
 
 /**
- * Huber Loss is a robust loss function that is less sensitive to outliers than the squared error loss. For values
- * less than a threshold it returns the squared error, for values greater than it returns an error that grows linearly
- * instead of quadratic.
+ * <p>Loss function inspired by the Cauchy distribution, a.k.a Lorentzian loss function.</p>
+ *
+ * <pre>L(x) = a<sup>2</sup>(log(1+(x/a)<sup>2</sup>)</pre>, where 'x' is the residual and 'a' is a scale
+ * parameter. Smaller values of the tuning parameter 'a' make it behave more similar to the L2 loss while
+ * larger values make it more robust to outliers.
+ *
+ * <ol>
+ *     <li>Black, Michael J., and Paul Anandan. "The robust estimation of multiple motions: Parametric and
+ *     piecewise-smooth flow fields." Computer vision and image understanding 63.1 (1996): 75-104.</li>
+ * </ol>
  *
  * @author Peter Abeles
  */
-public class LossHuber {
-	/** Threshold parameter that determines when errors become linear */
-	double threshold;
-	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
-	// These are mathematically the equivalent
-	double thresholdSq;
+public class LossCauchy {
+	protected double alpha;
 
-	protected LossHuber( double threshold ) {
-		this.threshold = threshold;
-		this.thresholdSq = threshold*threshold;
+	/**
+	 * @param alpha scale parameter that changes sensitivity to outliers
+	 */
+	protected LossCauchy( double alpha ) {
+		this.alpha = alpha;
 	}
 
 	/**
-	 * Implementation of the Huber loss function
+	 * Implementation of the smooth Cauchy loss function
 	 */
 	public static class Function extends LossFunction {
-		public LossHuber params;
+		public LossCauchy params;
 
 		public Function( double threshold ) {
-			this.params = new LossHuber(threshold);
+			this.params = new LossCauchy(threshold);
 		}
 
 		@Override public double process( double[] input ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
+			final double alpha = params.alpha;
 
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
 				double r = input[i];
-				double rr = r*r;
-				if (rr <= thresholdSq) {
-					sum += 0.5*rr;
-				} else {
-					sum += threshold*(Math.abs(r) - 0.5*threshold);
-				}
+				double tmp = r/alpha;
+				sum += alpha*alpha*Math.log(1 + tmp*tmp);
 			}
 			return sum;
 		}
 	}
 
 	/**
-	 * Implementation of the Huber Loss gradient
+	 * Implementation of the smooth Cauchy loss gradient
 	 */
 	public static class Gradient extends LossFunctionGradient {
-		public LossHuber params;
+		public LossCauchy params;
 
 		public Gradient( double threshold ) {
-			this.params = new LossHuber(threshold);
+			this.params = new LossCauchy(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
+			final double threshold = params.alpha;
 
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
-				double rr = r*r;
-				output[funcIdx] = (rr <= thresholdSq) ? r : threshold*Math.signum(r);
+				double tmp = r/threshold;
+				output[funcIdx] = 2.0*r/(1.0 + tmp*tmp);
 			}
 		}
 	}
