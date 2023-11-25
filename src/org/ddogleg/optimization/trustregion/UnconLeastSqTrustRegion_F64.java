@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,68 +37,67 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S,HessianLeastSquares<S>>
-		implements UnconstrainedLeastSquares<S>
-{
+		extends TrustRegionBase_F64<S, HessianLeastSquares<S>>
+		implements UnconstrainedLeastSquares<S> {
 	protected MatrixMath<S> math;
 
 	// difference between observations and estimate value from model
-	protected DMatrixRMaj residuals = new DMatrixRMaj(1,1);
+	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
 	// storage for the Jacobian
 	protected S jacobian;
 
 	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
-	public UnconLeastSqTrustRegion_F64(ParameterUpdate<S> parameterUpdate,
-									   HessianLeastSquares<S> hessian ,
-									   MatrixMath<S> math) {
+	public UnconLeastSqTrustRegion_F64( ParameterUpdate<S> parameterUpdate,
+										HessianLeastSquares<S> hessian,
+										MatrixMath<S> math ) {
 		super(parameterUpdate, hessian);
 		this.math = math;
 		jacobian = math.createMatrix();
 	}
 
 	@Override
-	public void setFunction(FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian) {
+	public void setFunction( FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian ) {
 		this.functionResiduals = function;
 
-		if( jacobian == null )
-			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function,(Class)this.jacobian.getClass());
+		if (jacobian == null)
+			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function, (Class)this.jacobian.getClass());
 		else
 			this.functionJacobian = jacobian;
 	}
 
 	@Override
-	public void initialize(double[] initial, double ftol, double gtol) {
-		this.initialize(initial,functionResiduals.getNumOfInputsN(),0);
+	public void initialize( double[] initial, double ftol, double gtol ) {
+		this.initialize(initial, functionResiduals.getNumOfInputsN(), 0);
 		config.ftol = ftol;
 		config.gtol = gtol;
 	}
 
 	@Override
-	public void initialize(double[] initial, int numberOfParameters, double minimumFunctionValue) {
+	public void initialize( double[] initial, int numberOfParameters, double minimumFunctionValue ) {
 		int M = functionResiduals.getNumOfOutputsM();
 		int N = functionResiduals.getNumOfInputsN();
-		residuals.reshape(M,1);
+		residuals.reshape(M, 1);
 
 		// Set the hessian to identity. There are other potentially better methods
 		hessian.init(numberOfParameters);
-		((ReshapeMatrix)jacobian).reshape(M,N);
+		((ReshapeMatrix)jacobian).reshape(M, N);
 
 		super.initialize(initial, numberOfParameters, minimumFunctionValue);
 	}
 
 	@Override
-	protected double cost(DMatrixRMaj x) {
-		functionResiduals.process(x.data,residuals.data);
+	protected double cost( DMatrixRMaj x ) {
+		functionResiduals.process(x.data, residuals.data);
 		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	@Override
-	protected void functionGradientHessian(DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, HessianLeastSquares<S> hessian) {
-		if( !sameStateAsCost )
-			functionResiduals.process(x.data,residuals.data);
-		functionJacobian.process(x.data,jacobian);
+	protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, HessianLeastSquares<S> hessian ) {
+		if (!sameStateAsCost)
+			functionResiduals.process(x.data, residuals.data);
+		functionJacobian.process(x.data, jacobian);
 		hessian.updateHessian(jacobian);
 		math.multTransA(jacobian, residuals, gradient);
 	}
