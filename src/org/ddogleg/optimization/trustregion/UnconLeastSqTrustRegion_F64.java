@@ -37,12 +37,11 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("NullAway.Init")
 public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
-		extends TrustRegionBase_F64<S, HessianLeastSquares<S>>
+		extends TrustRegionLeastSqBase_F64<S, HessianLeastSquares<S>>
 		implements UnconstrainedLeastSquares<S> {
+
 	protected MatrixMath<S> math;
 
-	// difference between observations and estimate value from model
-	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
 	// storage for the Jacobian
 	protected S jacobian;
 
@@ -99,7 +98,14 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 			functionResiduals.process(x.data, residuals.data);
 		functionJacobian.process(x.data, jacobian);
 		hessian.updateHessian(jacobian);
-		math.multTransA(jacobian, residuals, gradient);
+
+		if (lossFuncGradient != null) {
+			lossFuncGradient.process(residuals.data, storageLossGradient.data);
+			math.multTransA(jacobian, storageLossGradient, gradient);
+		} else {
+			// Note: The residuals are the gradient of the squared error loss function
+			math.multTransA(jacobian, residuals, gradient);
+		}
 	}
 
 	@Override

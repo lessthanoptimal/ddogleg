@@ -113,7 +113,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	}
 
 	/**
-	 * Used to provide a specialized loss function. Squared error is the default.
+	 * Specifies the loss function.
 	 */
 	public void setLoss( LossFunction loss, LossFunctionGradient lossGradient ) {
 		this.lossFunc = loss;

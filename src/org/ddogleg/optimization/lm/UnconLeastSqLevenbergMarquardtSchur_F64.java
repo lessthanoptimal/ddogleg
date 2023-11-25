@@ -83,7 +83,6 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 			functionResiduals.process(x.data, residuals.data);
 		functionJacobian.process(x.data, jacLeft, jacRight);
 
-
 		hessian.computeHessian(jacLeft, jacRight);
 
 		if (lossFuncGradient != null) {
@@ -93,8 +92,6 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 			// Note: The residuals are the gradient of the squared error loss function
 			hessian.computeGradient(jacLeft, jacRight, residuals, gradient);
 		}
-
-
 	}
 
 	@Override
