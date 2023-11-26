@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base class for all least squares trust region implementations.
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends HessianMath>
 		extends TrustRegionBase_F64<S, HM> {
 

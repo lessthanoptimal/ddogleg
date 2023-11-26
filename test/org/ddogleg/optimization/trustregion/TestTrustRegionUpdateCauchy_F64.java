@@ -145,8 +145,8 @@ public class TestTrustRegionUpdateCauchy_F64 {
 			return 0;
 		}
 
-		@Override protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient, 
-												HessianMath hessian ) {}
+		@Override protected void functionGradientHessian( DMatrixRMaj x, boolean sameStateAsCost, DMatrixRMaj gradient,
+														  HessianMath hessian ) {}
 	}
 
 	@Nested
@@ -157,9 +157,9 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		}
 
 		@Override protected UnconstrainedMinimization createSearch() {
-			ConfigTrustRegion config = new ConfigTrustRegion();
-			UnconMinTrustRegionBFGS_F64 tr = new UnconMinTrustRegionBFGS_F64(
-					new TrustRegionUpdateCauchy_F64(), new HessianBFGS_DDRM(false));
+			var config = new ConfigTrustRegion();
+			var tr = new UnconMinTrustRegionBFGS_F64(new TrustRegionUpdateCauchy_F64<DMatrixRMaj>(),
+					new HessianBFGS_DDRM(false));
 			tr.configure(config);
 			return tr;
 		}
@@ -177,9 +177,9 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		}
 
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
-			ConfigTrustRegion config = new ConfigTrustRegion();
-			TrustRegionUpdateCauchy_F64<DMatrixRMaj> cauchy = new TrustRegionUpdateCauchy_F64<>();
-			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
+			var config = new ConfigTrustRegion();
+			var cauchy = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
+			var tr = new UnconLeastSqTrustRegion_F64<DMatrixRMaj>(
 					cauchy, new HessianLeastSquares_DDRM(), new MatrixMath_DDRM());
 			tr.configure(config);
 			return tr;
@@ -194,10 +194,10 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		}
 
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
-			ConfigTrustRegion config = new ConfigTrustRegion();
+			var config = new ConfigTrustRegion();
 			config.hessianScaling = true;
-			TrustRegionUpdateCauchy_F64<DMatrixRMaj> cauchy = new TrustRegionUpdateCauchy_F64<>();
-			UnconLeastSqTrustRegion_F64<DMatrixRMaj> tr = new UnconLeastSqTrustRegion_F64<>(
+			var cauchy = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();
+			var tr = new UnconLeastSqTrustRegion_F64<DMatrixRMaj>(
 					cauchy, new HessianLeastSquares_DDRM(), new MatrixMath_DDRM());
 			tr.configure(config);
 			return tr;
@@ -215,10 +215,10 @@ public class TestTrustRegionUpdateCauchy_F64 {
 		}
 
 		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
-			ConfigTrustRegion config = new ConfigTrustRegion();
+			var config = new ConfigTrustRegion();
 
-			TrustRegionUpdateCauchy_F64<DMatrixSparseCSC> cauchy = new TrustRegionUpdateCauchy_F64<>();
-			UnconLeastSqTrustRegion_F64<DMatrixSparseCSC> tr = new UnconLeastSqTrustRegion_F64<>(
+			var cauchy = new TrustRegionUpdateCauchy_F64<DMatrixSparseCSC>();
+			var tr = new UnconLeastSqTrustRegion_F64<DMatrixSparseCSC>(
 					cauchy, new HessianLeastSquares_DSCC(), new MatrixMath_DSCC());
 			tr.configure(config);
 			return tr;
