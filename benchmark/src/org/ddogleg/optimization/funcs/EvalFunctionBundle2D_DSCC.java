@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,22 +33,19 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSparseCSC>
-{
+public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSparseCSC> {
 	public EvalFunctionBundle2D_DSCC() {
 	}
 
-	public EvalFunctionBundle2D_DSCC(long seed, double length, double depth, int numCamera, int numLandmarks) {
+	public EvalFunctionBundle2D_DSCC( long seed, double length, double depth, int numCamera, int numLandmarks ) {
 		super(seed, length, depth, numCamera, numLandmarks);
 	}
 
-	@Override
-	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
+	@Override public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
 		return new SchurJacobian_to_NtoMxN.DSCC(getJacobianSchur());
 	}
 
-	@Override
-	public SchurJacobian<DMatrixSparseCSC> getJacobianSchur() {
+	@Override public SchurJacobian<DMatrixSparseCSC> getJacobianSchur() {
 		return new Jacobian();
 	}
 
@@ -56,30 +53,29 @@ public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSpars
 		List<Point2D> cameras = new ArrayList<>();
 		List<Point2D> landmarks = new ArrayList<>();
 
-		@Override
-		public void process(double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right) {
-			decode(input,cameras, landmarks);
+		@Override public void process( double[] input, DMatrixSparseCSC left, DMatrixSparseCSC right ) {
+			decode(input, cameras, landmarks);
 
 			int N = numCamera*numLandmarks;
-			DMatrixSparseTriplet tripletLeft = new DMatrixSparseTriplet(N,2*numCamera,1);
-			DMatrixSparseTriplet tripletRight = new DMatrixSparseTriplet(N,2*numLandmarks,1);
+			DMatrixSparseTriplet tripletLeft = new DMatrixSparseTriplet(N, 2*numCamera, 1);
+			DMatrixSparseTriplet tripletRight = new DMatrixSparseTriplet(N, 2*numLandmarks, 1);
 
 			int output = 0;
 			for (int i = 0; i < numCamera; i++) {
 				Point2D c = cameras.get(i);
 				for (int j = 0; j < numLandmarks; j++, output++) {
 					Point2D l = landmarks.get(j);
-					double top = l.y-c.y;
-					double bottom = l.x-c.x;
+					double top = l.y - c.y;
+					double bottom = l.x - c.x;
 					double slope = top/bottom;
 
-					double a = 1.0/(1.0+slope*slope);
+					double a = 1.0/(1.0 + slope*slope);
 
 					double dx = top/(bottom*bottom);
 					double dy = -1.0/bottom;
 
-					tripletLeft.addItemCheck(output,i*2+0,a*dx);
-					tripletLeft.addItemCheck(output,i*2+1,a*dy);
+					tripletLeft.addItemCheck(output, i*2, a*dx);
+					tripletLeft.addItemCheck(output, i*2 + 1, a*dy);
 				}
 			}
 
@@ -87,32 +83,30 @@ public class EvalFunctionBundle2D_DSCC extends EvalFunctionBundle2D<DMatrixSpars
 				Point2D l = landmarks.get(i);
 				for (int j = 0; j < numCamera; j++) {
 					Point2D c = cameras.get(j);
-					double top = l.y-c.y;
-					double bottom = l.x-c.x;
+					double top = l.y - c.y;
+					double bottom = l.x - c.x;
 					double slope = top/bottom;
 
-					double a = 1.0/(1.0+slope*slope);
+					double a = 1.0/(1.0 + slope*slope);
 
 					double dx = -top/(bottom*bottom);
 					double dy = 1.0/bottom;
 
 					output = j*numLandmarks + i;
-					tripletRight.addItemCheck(output,i*2+0,a*dx);
-					tripletRight.addItemCheck(output,i*2+1,a*dy);
+					tripletRight.addItemCheck(output, i*2, a*dx);
+					tripletRight.addItemCheck(output, i*2 + 1, a*dy);
 				}
 			}
 
-			DConvertMatrixStruct.convert(tripletLeft,left);
-			DConvertMatrixStruct.convert(tripletRight,right);
+			DConvertMatrixStruct.convert(tripletLeft, left);
+			DConvertMatrixStruct.convert(tripletRight, right);
 		}
 
-		@Override
-		public int getNumOfInputsN() {
+		@Override public int getNumOfInputsN() {
 			return 2*numCamera + 2*numLandmarks;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return numCamera*numLandmarks;
 		}
 	}

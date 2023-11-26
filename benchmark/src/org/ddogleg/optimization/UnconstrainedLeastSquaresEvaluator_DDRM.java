@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,8 +27,8 @@ import org.ejml.data.DMatrixRMaj;
 public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 		UnconstrainedLeastSquaresEvaluator<DMatrixRMaj> {
 
-	protected UnconstrainedLeastSquaresEvaluator_DDRM(boolean verbose, boolean printSummary) {
-		super(verbose,printSummary,true);
+	protected UnconstrainedLeastSquaresEvaluator_DDRM( boolean verbose, boolean printSummary ) {
+		super(verbose, printSummary, true);
 	}
 
 	public NonlinearResults helicalValley() {
@@ -50,6 +50,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 	public NonlinearResults trigonometric() {
 		return performTest(new EvalFuncTrigonometric<>(10));
 	}
+
 	public NonlinearResults badlyScaledBrown() {
 		return performTest(new EvalFuncBadlyScaledBrown_DDRM());
 	}

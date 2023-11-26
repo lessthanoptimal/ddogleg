@@ -32,8 +32,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 	protected int maxIteration = 500;
 	protected boolean dense;
 
-	protected UnconstrainedLeastSquaresEvaluator( boolean verbose, boolean printSummary,
-												  boolean dense ) {
+	protected UnconstrainedLeastSquaresEvaluator( boolean verbose, boolean printSummary, boolean dense ) {
 		this.verbose = verbose;
 		this.printSummary = printSummary;
 		this.dense = dense;

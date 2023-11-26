@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,18 +30,16 @@ public class CallCounterNtoN implements FunctionNtoN {
 	public int count;
 	public FunctionNtoN func;
 
-	public CallCounterNtoN(FunctionNtoN func) {
+	public CallCounterNtoN( FunctionNtoN func ) {
 		this.func = func;
 	}
 
-	@Override
-	public int getN() {
+	@Override public int getN() {
 		return func.getN();
 	}
 
-	@Override
-	public void process(double[] input, double[] output) {
+	@Override public void process( double[] input, double[] output ) {
 		count++;
-		func.process(input,output);
+		func.process(input, output);
 	}
 }

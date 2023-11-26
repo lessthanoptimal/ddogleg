@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,23 +30,20 @@ public class CallCounterNtoM implements FunctionNtoM {
 	public int count;
 	public FunctionNtoM func;
 
-	public CallCounterNtoM(FunctionNtoM func) {
+	public CallCounterNtoM( FunctionNtoM func ) {
 		this.func = func;
 	}
 
-	@Override
-	public int getNumOfInputsN() {
+	@Override public int getNumOfInputsN() {
 		return func.getNumOfInputsN();
 	}
 
-	@Override
-	public int getNumOfOutputsM() {
+	@Override public int getNumOfOutputsM() {
 		return func.getNumOfOutputsM();
 	}
 
-	@Override
-	public void process(double[] input, double[] output) {
+	@Override public void process( double[] input, double[] output ) {
 		count++;
-		func.process(input,output);
+		func.process(input, output);
 	}
 }

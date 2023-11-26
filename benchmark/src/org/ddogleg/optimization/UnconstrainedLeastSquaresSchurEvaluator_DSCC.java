@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,12 +21,9 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.funcs.EvalFunctionBundle2D_DSCC;
 import org.ejml.data.DMatrixSparseCSC;
 
-/**
- * @author Peter Abeles
- */
 public abstract class UnconstrainedLeastSquaresSchurEvaluator_DSCC
 		extends UnconstrainedLeastSquaresSchurEvaluator<DMatrixSparseCSC> {
-	protected UnconstrainedLeastSquaresSchurEvaluator_DSCC(boolean verbose, boolean printSummary) {
+	protected UnconstrainedLeastSquaresSchurEvaluator_DSCC( boolean verbose, boolean printSummary ) {
 		super(verbose, printSummary, false);
 	}
 

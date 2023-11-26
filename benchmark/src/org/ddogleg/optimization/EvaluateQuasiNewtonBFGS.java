@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,19 +21,18 @@ package org.ddogleg.optimization;
 /**
  * @author Peter Abeles
  */
-public class EvaluateQuasiNewtonBFGS extends UnconstrainedMinimizationEvaluator{
+public class EvaluateQuasiNewtonBFGS extends UnconstrainedMinimizationEvaluator {
 
-	public EvaluateQuasiNewtonBFGS(boolean verbose, boolean printScore ) {
-		super(verbose,printScore);
+	public EvaluateQuasiNewtonBFGS( boolean verbose, boolean printScore ) {
+		super(verbose, printScore);
 	}
 
-	@Override
-	protected UnconstrainedMinimization createSearch() {
+	@Override protected UnconstrainedMinimization createSearch() {
 		return FactoryOptimization.quasiNewtonBfgs(null);
 	}
-	
-	public static void main( String args[] ) {
-		EvaluateQuasiNewtonBFGS eval = new EvaluateQuasiNewtonBFGS(false,true);
+
+	public static void main( String[] args ) {
+		var eval = new EvaluateQuasiNewtonBFGS(false, true);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();

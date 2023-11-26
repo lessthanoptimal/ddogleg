@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,13 +26,12 @@ import org.ejml.data.DMatrixRMaj;
  */
 public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
-	public EvaluateTrustRegionLeastSquares(boolean verbose) {
+	public EvaluateTrustRegionLeastSquares( boolean verbose ) {
 		super(verbose, true);
 	}
 
-	@Override
-	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
-		ConfigTrustRegion config = new ConfigTrustRegion();
+	@Override protected UnconstrainedLeastSquares createSearch( double minimumValue ) {
+		var config = new ConfigTrustRegion();
 		config.regionInitial = 1;
 //		config.scalingMinimum = .1;
 //		config.scalingMaximum = 1e6;
@@ -40,15 +39,15 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		UnconstrainedLeastSquares<DMatrixRMaj> tr;
 
 //		tr = FactoryOptimization.cauchy(config);
-		tr = FactoryOptimization.dogleg(config,false);
+		tr = FactoryOptimization.dogleg(config, false);
 //		tr = FactoryOptimization.dogleg(config,true);
 
 //		tr.setVerbose(true);
 		return tr;
 	}
 
-	public static void main(String args[]) {
-		EvaluateTrustRegionLeastSquares eval = new EvaluateTrustRegionLeastSquares(false);
+	public static void main( String[] args ) {
+		var eval = new EvaluateTrustRegionLeastSquares(false);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();
@@ -59,7 +58,7 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		System.out.println("Rosenbrock          ----------------");
 		eval.rosenbrock();
 		System.out.println("Rosenbrock Mod      ----------------");
-		eval.rosenbrockMod(Math.sqrt(2 * 1e6));
+		eval.rosenbrockMod(Math.sqrt(2*1e6));
 		System.out.println("variably            ----------------");
 		eval.variably();
 		System.out.println("trigonometric       ----------------");

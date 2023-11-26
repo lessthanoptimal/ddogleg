@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,17 +30,15 @@ public class CallCounterNtoS implements FunctionNtoS {
 	public int count;
 	public FunctionNtoS func;
 
-	public CallCounterNtoS(FunctionNtoS func) {
+	public CallCounterNtoS( FunctionNtoS func ) {
 		this.func = func;
 	}
 
-	@Override
-	public int getNumOfInputsN() {
+	@Override public int getNumOfInputsN() {
 		return func.getNumOfInputsN();
 	}
 
-	@Override
-	public double process(double[] input) {
+	@Override public double process( double[] input ) {
 		count++;
 		return func.process(input);
 	}

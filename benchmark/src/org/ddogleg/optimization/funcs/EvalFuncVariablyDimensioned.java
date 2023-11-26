@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrix;
 
 /**
- *
  * <p>
  * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
  * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
@@ -32,67 +31,58 @@ import org.ejml.data.DMatrix;
  * @author Peter Abeles
  */
 public class EvalFuncVariablyDimensioned<S extends DMatrix> implements EvalFuncLeastSquares<S> {
-	
+
 	int N;
 
-	public EvalFuncVariablyDimensioned(int n) {
+	public EvalFuncVariablyDimensioned( int n ) {
 		N = n;
 	}
 
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<S> getJacobian() {
+	@Override public FunctionNtoMxN<S> getJacobian() {
 		return null;
 	}
 
-	@Override
-	public double[] getInitial() {
-		double x[] = new double[N];
-		
-		for( int i = 0; i < N; i++ ) {
-			x[i] = 1-((double)i/(double)N);
+	@Override public double[] getInitial() {
+		double[] x = new double[N];
+
+		for (int i = 0; i < N; i++) {
+			x[i] = 1 - ((double)i/(double)N);
 		}
-		
+
 		return x;
 	}
 
-	@Override
-	public double[] getOptimal() {
-		double x[] = new double[N];
-		for( int i = 0; i < N; i++ )
+	@Override public double[] getOptimal() {
+		double[] x = new double[N];
+		for (int i = 0; i < N; i++)
 			x[i] = 1;
 		return x;
 	}
 
-	public class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {
+	public class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {
 			return N;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
-			return N+2;
+		@Override public int getNumOfOutputsM() {
+			return N + 2;
 		}
 
-		@Override
-		public void process(double[] input, double[] output) {
-			for( int i = 0; i < N; i++ ) {
-				output[i] = input[i]-1;
+		@Override public void process( double[] input, double[] output ) {
+			for (int i = 0; i < N; i++) {
+				output[i] = input[i] - 1;
 			}
 			double sum = 0;
-			for( int i = 0; i < N; i++ ) {
-				sum += (i+1)*(input[i]-1);
+			for (int i = 0; i < N; i++) {
+				sum += (i + 1)*(input[i] - 1);
 			}
-			
+
 			output[N] = sum;
-			output[N+1] = sum*sum;
+			output[N + 1] = sum*sum;
 		}
 	}
-
 }

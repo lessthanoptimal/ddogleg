@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,12 +30,11 @@ public class CallCounterStoS implements FunctionStoS {
 	public int count;
 	public FunctionStoS func;
 
-	public CallCounterStoS(FunctionStoS func) {
+	public CallCounterStoS( FunctionStoS func ) {
 		this.func = func;
 	}
 
-	@Override
-	public double process(double input) {
+	@Override public double process( double input ) {
 		count++;
 		return func.process(input);
 	}

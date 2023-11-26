@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,24 +25,23 @@ import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
  */
 public class EvaluateLevenbergMarquardt extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
-	public EvaluateLevenbergMarquardt(boolean verbose) {
+	public EvaluateLevenbergMarquardt( boolean verbose ) {
 		super(verbose, true);
 	}
 
-	@Override
-	protected UnconstrainedLeastSquares createSearch(double minimumValue) {
+	@Override protected UnconstrainedLeastSquares createSearch( double minimumValue ) {
 
-		ConfigLevenbergMarquardt config = new ConfigLevenbergMarquardt();
+		var config = new ConfigLevenbergMarquardt();
 		config.dampeningInitial = 1e-8;
 		config.hessianScaling = true;
 
 		boolean robust = false;
 
-		return FactoryOptimization.levenbergMarquardt(config,robust);
+		return FactoryOptimization.levenbergMarquardt(config, robust);
 	}
 
-	public static void main( String args[] ) {
-		EvaluateLevenbergMarquardt eval = new EvaluateLevenbergMarquardt(false);
+	public static void main( String[] args ) {
+		var eval = new EvaluateLevenbergMarquardt(false);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();

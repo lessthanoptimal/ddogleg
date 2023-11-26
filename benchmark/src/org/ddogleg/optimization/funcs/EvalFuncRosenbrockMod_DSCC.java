@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,77 +31,64 @@ public class EvalFuncRosenbrockMod_DSCC implements EvalFuncLeastSquares<DMatrixS
 
 	double lambda;
 
-	public EvalFuncRosenbrockMod_DSCC(double lambda) {
+	public EvalFuncRosenbrockMod_DSCC( double lambda ) {
 		this.lambda = lambda;
 	}
 
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
+	@Override public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
 		return new Deriv();
 	}
 
-	@Override
-	public double[] getInitial() {
-		return new double[]{-1.2,1};
+	@Override public double[] getInitial() {
+		return new double[]{-1.2, 1};
 	}
 
-	@Override
-	public double[] getOptimal() {
-		return new double[]{1,1};
+	@Override public double[] getOptimal() {
+		return new double[]{1, 1};
 	}
-	
-	public class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {
+
+	public class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 3;
 		}
 
-		@Override
-		public void process(double[] input, double[] output) {
+		@Override public void process( double[] input, double[] output ) {
 			double x1 = input[0];
 			double x2 = input[1];
-			
-			output[0] = 10.0*(x2-x1*x1);
+
+			output[0] = 10.0*(x2 - x1*x1);
 			output[1] = 1.0 - x1;
 			output[2] = lambda;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
-	{
-		@Override
-		public int getNumOfInputsN() {
+	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC> {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 3;
 		}
 
-		@Override
-		public void process(double[] input, DMatrixSparseCSC J) {
+		@Override public void process( double[] input, DMatrixSparseCSC J ) {
 			double x1 = input[0];
-			
-			J.set(0,0,-20*x1);
-			J.set(0,1,10);
-			J.set(1,0,-1);
+
+			J.set(0, 0, -20*x1);
+			J.set(0, 1, 10);
+			J.set(1, 0, -1);
 		}
 
-		@Override
-		public DMatrixSparseCSC declareMatrixMxN() {
-			return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
+		@Override public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(getNumOfOutputsM(), getNumOfInputsN());
 		}
 	}
 }

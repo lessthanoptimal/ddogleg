@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,17 +21,14 @@ package org.ddogleg.optimization.funcs;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 
-/**
- * @author Peter Abeles
- */
 public interface EvalFuncMinimization {
-	public FunctionNtoS getFunction();
+	FunctionNtoS getFunction();
 
-	public FunctionNtoN getGradient();
+	FunctionNtoN getGradient();
 
-	public double[] getInitial();
+	double[] getInitial();
 
-	public double[] getOptimal();
+	double[] getOptimal();
 
-	public double getMinimum();
+	double getMinimum();
 }

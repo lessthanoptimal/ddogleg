@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrixRMaj;
 
 /**
- *
  * <p>
  * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
  * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
@@ -32,73 +31,60 @@ import org.ejml.data.DMatrixRMaj;
  * @author Peter Abeles
  */
 public class EvalFuncRosenbrock_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+	@Override public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
 		return new Deriv();
 	}
 
-	@Override
-	public double[] getInitial() {
-		return new double[]{-1.2,1};
+	@Override public double[] getInitial() {
+		return new double[]{-1.2, 1};
 	}
 
-	@Override
-	public double[] getOptimal() {
-		return new double[]{1,1};
+	@Override public double[] getOptimal() {
+		return new double[]{1, 1};
 	}
-	
-	public static class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {
+
+	public static class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 2;
 		}
 
-		@Override
-		public void process(double[] input, double[] output) {
+		@Override public void process( double[] input, double[] output ) {
 			double x1 = input[0];
 			double x2 = input[1];
-			
-			output[0] = 10.0*(x2-x1*x1);
+
+			output[0] = 10.0*(x2 - x1*x1);
 			output[1] = 1.0 - x1;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
-	{
-		@Override
-		public int getNumOfInputsN() {
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj> {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 2;
 		}
 
-		@Override
-		public void process(double[] input, DMatrixRMaj J) {
+		@Override public void process( double[] input, DMatrixRMaj J ) {
 			double x1 = input[0];
-			
-			J.set(0,0,-20*x1);
-			J.set(0,1,10);
-			J.set(1,0,-1);
-			J.set(1,1,0);
+
+			J.set(0, 0, -20*x1);
+			J.set(0, 1, 10);
+			J.set(1, 0, -1);
+			J.set(1, 1, 0);
 		}
 
-		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return new DMatrixRMaj(2,2);
+		@Override public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(2, 2);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,15 +23,14 @@ import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
 /**
  * @author Peter Abeles
  */
-public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
+public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator {
 
-	public EvaluateTrustRegionBFGS(boolean verbose, boolean printScore ) {
-		super(verbose,printScore);
+	public EvaluateTrustRegionBFGS( boolean verbose, boolean printScore ) {
+		super(verbose, printScore);
 	}
 
-	@Override
-	protected UnconstrainedMinimization createSearch() {
-		ConfigTrustRegion config = new ConfigTrustRegion();
+	@Override protected UnconstrainedMinimization createSearch() {
+		var config = new ConfigTrustRegion();
 //		config.regionInitial = 1;
 //		config.scalingMinimum = 1e-6;
 //		config.scalingMaximum = 1e4;
@@ -40,9 +39,9 @@ public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator{
 		tr = FactoryOptimization.doglegBFGS(config);
 		return tr;
 	}
-	
-	public static void main( String args[] ) {
-		EvaluateTrustRegionBFGS eval = new EvaluateTrustRegionBFGS(false,true);
+
+	public static void main( String[] args ) {
+		var eval = new EvaluateTrustRegionBFGS(false, true);
 
 		System.out.println("Powell              ----------------");
 		eval.powell();

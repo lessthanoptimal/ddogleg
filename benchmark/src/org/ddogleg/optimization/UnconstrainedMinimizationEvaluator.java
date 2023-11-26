@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,7 +38,7 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	protected double ftol = 1e-12;
 	protected double gtol = 1e-12;
 
-	protected UnconstrainedMinimizationEvaluator(boolean verbose, boolean printSummary) {
+	protected UnconstrainedMinimizationEvaluator( boolean verbose, boolean printSummary ) {
 		this.verbose = verbose;
 		this.printSummary = printSummary;
 	}
@@ -58,10 +58,9 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	 * @param initial Initial point
 	 * @return statics
 	 */
-	private NonlinearResults performTest( FunctionNtoS func , FunctionNtoN deriv ,
-										  double initial[] , double optimal[] , double minimValue)
-	{
-		if( deriv == null ) {
+	private NonlinearResults performTest( FunctionNtoS func, FunctionNtoN deriv,
+										  double[] initial, double[] optimal, double minimValue ) {
+		if (deriv == null) {
 			deriv = new NumericalGradientForward(func);
 		}
 
@@ -69,24 +68,24 @@ public abstract class UnconstrainedMinimizationEvaluator {
 		CallCounterNtoN d = new CallCounterNtoN(deriv);
 
 		UnconstrainedMinimization alg = createSearch();
-		alg.setFunction(f,d,minimValue);
+		alg.setFunction(f, d, minimValue);
 //		alg.setVerbose(System.out,0);
 
 		double initialValue = func.process(initial);
 
-		alg.initialize(initial,ftol, gtol);
+		alg.initialize(initial, ftol, gtol);
 		int iter;
-		for( iter = 0; iter < maxIteration && !alg.iterate() ; iter++ ){
+		for (iter = 0; iter < maxIteration && !alg.iterate(); iter++) {
 			printError(optimal, alg);
 		}
 		printError(optimal, alg);
-		if( verbose )
-			System.out.println("*** total iterations = "+iter);
-		double found[] = alg.getParameters();
+		if (verbose)
+			System.out.println("*** total iterations = " + iter);
+		double[] found = alg.getParameters();
 
 		double finalValue = func.process(found);
 
-		if( printSummary ) {
+		if (printSummary) {
 			System.out.printf("value{ init %4.1e final = %6.2e} count f = %2d d = %2d\n",
 					initialValue, finalValue, f.count, d.count);
 		}
@@ -100,16 +99,16 @@ public abstract class UnconstrainedMinimizationEvaluator {
 		return ret;
 	}
 
-	private void printError(double[] optimal, UnconstrainedMinimization alg) {
-		if( optimal != null ) {
-			double x[] = alg.getParameters();
+	private void printError( double[] optimal, UnconstrainedMinimization alg ) {
+		if (optimal != null) {
+			double[] x = alg.getParameters();
 			double n = 0;
-			for( int j = 0; j < x.length; j++ ) {
-				double dx = x[j]-optimal[j];
+			for (int j = 0; j < x.length; j++) {
+				double dx = x[j] - optimal[j];
 				n += dx*dx;
 			}
-			if( verbose )
-				System.out.println("||x(k)-x(*)|| = "+Math.sqrt(n));
+			if (verbose)
+				System.out.println("||x(k)-x(*)|| = " + Math.sqrt(n));
 		}
 	}
 
@@ -118,23 +117,23 @@ public abstract class UnconstrainedMinimizationEvaluator {
 		double[] initial = func.getInitial();
 
 		FunctionNtoMxN jacobian = func.getJacobian();
-		FunctionNtoN gradient = jacobian == null ? null : new LsToNonLinearDeriv(func.getFunction(),jacobian);
+		FunctionNtoN gradient = jacobian == null ? null : new LsToNonLinearDeriv(func.getFunction(), jacobian);
 
-		if( verbose && func.getOptimal() != null )
-			System.out.println("optimal = "+nl.process(func.getOptimal()));
+		if (verbose && func.getOptimal() != null)
+			System.out.println("optimal = " + nl.process(func.getOptimal()));
 
-		return performTest(nl,gradient,initial,func.getOptimal(),0);
+		return performTest(nl, gradient, initial, func.getOptimal(), 0);
 	}
 
 	private NonlinearResults performTest( EvalFuncMinimization func ) {
 		double[] initial = func.getInitial();
-		
+
 		FunctionNtoS nl = func.getFunction();
 
-		if( verbose && func.getOptimal() != null )
-			System.out.println("optimal = "+nl.process(func.getOptimal()));
+		if (verbose && func.getOptimal() != null)
+			System.out.println("optimal = " + nl.process(func.getOptimal()));
 
-		return performTest(nl,func.getGradient(),initial,func.getOptimal(),func.getMinimum());
+		return performTest(nl, func.getGradient(), initial, func.getOptimal(), func.getMinimum());
 	}
 
 	public NonlinearResults helicalValley() {
@@ -150,7 +149,7 @@ public abstract class UnconstrainedMinimizationEvaluator {
 	}
 
 	public NonlinearResults dodcfg() {
-		return performTest(new EvalFuncDodcfg(50,50,8.0e-3));
+		return performTest(new EvalFuncDodcfg(50, 50, 8.0e-3));
 	}
 
 	public NonlinearResults variably() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,14 +32,13 @@ import java.util.Random;
  * @author Peter Abeles
  */
 public abstract class EvalFunctionBundle2D<S extends DMatrix> implements
-		EvalFuncLeastSquaresSchur<S> ,
-		EvalFuncLeastSquares<S>
-{
+		EvalFuncLeastSquaresSchur<S>,
+		EvalFuncLeastSquares<S> {
 
 	Random rand;
 
-	double length,depth;
-	int numCamera,numLandmarks;
+	double length, depth;
+	int numCamera, numLandmarks;
 
 	double[] observations;
 
@@ -47,12 +46,11 @@ public abstract class EvalFunctionBundle2D<S extends DMatrix> implements
 	double[] initial;
 
 	protected EvalFunctionBundle2D() {
-		this(0xDEADBEF,20,10,20,10);
+		this(0xDEADBEF, 20, 10, 20, 10);
 	}
 
-	protected EvalFunctionBundle2D(long seed , double length, double depth,
-								   int numCamera, int numLandmarks)
-	{
+	protected EvalFunctionBundle2D( long seed, double length, double depth,
+									int numCamera, int numLandmarks ) {
 		this.length = length;
 		this.depth = depth;
 		this.numCamera = numCamera;
@@ -62,23 +60,23 @@ public abstract class EvalFunctionBundle2D<S extends DMatrix> implements
 
 		observations = new double[numCamera*numLandmarks];
 
-		optimal = new double[2*(numCamera+numLandmarks)];
-		initial = new double[2*(numCamera+numLandmarks)];
+		optimal = new double[2*(numCamera + numLandmarks)];
+		initial = new double[2*(numCamera + numLandmarks)];
 
 		List<Point2D> cameras = new ArrayList<>();
 		List<Point2D> landmarks = new ArrayList<>();
 
 		int index = 0;
 		for (int i = 0; i < numCamera; i++) {
-			double x = 2*(rand.nextDouble()-0.5)*length;
-			cameras.add( new Point2D(0,x) );
+			double x = 2*(rand.nextDouble() - 0.5)*length;
+			cameras.add(new Point2D(0, x));
 
 			optimal[index++] = 0;
 			optimal[index++] = x;
 		}
 		for (int i = 0; i < numLandmarks; i++) {
-			double y = 2*(rand.nextDouble()-0.5)*length;
-			landmarks.add( new Point2D(depth,y) );
+			double y = 2*(rand.nextDouble() - 0.5)*length;
+			landmarks.add(new Point2D(depth, y));
 
 			optimal[index++] = depth;
 			optimal[index++] = y;
@@ -93,79 +91,71 @@ public abstract class EvalFunctionBundle2D<S extends DMatrix> implements
 			Point2D c = cameras.get(i);
 			for (int j = 0; j < numLandmarks; j++, index++) {
 				Point2D l = landmarks.get(j);
-				observations[index] = Math.atan((l.y-c.y)/(l.x-c.x));
+				observations[index] = Math.atan((l.y - c.y)/(l.x - c.x));
 
-				if(UtilEjml.isUncountable(observations[index]))
+				if (UtilEjml.isUncountable(observations[index]))
 					throw new RuntimeException("Egads");
 			}
 		}
 	}
 
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public double[] getInitial() {
+	@Override public double[] getInitial() {
 		return initial;
 	}
 
-	@Override
-	public double[] getOptimal() {
+	@Override public double[] getOptimal() {
 		return optimal;
 	}
 
-
-	public class Func implements FunctionNtoM
-	{
+	public class Func implements FunctionNtoM {
 		List<Point2D> cameras = new ArrayList<>();
 		List<Point2D> landmarks = new ArrayList<>();
 
-		@Override
-		public void process(double[] input, double[] output) {
-			decode(input,cameras, landmarks);
+		@Override public void process( double[] input, double[] output ) {
+			decode(input, cameras, landmarks);
 
 			int index = 0;
 			for (int i = 0; i < numCamera; i++) {
 				Point2D c = cameras.get(i);
 				for (int j = 0; j < numLandmarks; j++, index++) {
 					Point2D l = landmarks.get(j);
-					output[index] = Math.atan((l.y-c.y)/(l.x-c.x))-observations[index];
+					output[index] = Math.atan((l.y - c.y)/(l.x - c.x)) - observations[index];
 
-					if(UtilEjml.isUncountable(output[index]))
+					if (UtilEjml.isUncountable(output[index]))
 						throw new RuntimeException("Egads");
 				}
 			}
 		}
 
-		@Override
-		public int getNumOfInputsN() {
+		@Override public int getNumOfInputsN() {
 			return 2*numCamera + 2*numLandmarks;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return numCamera*numLandmarks;
 		}
 	}
 
-	protected void decode(double[] input, List<Point2D> cameras , List<Point2D> landmarks ) {
+	protected void decode( double[] input, List<Point2D> cameras, List<Point2D> landmarks ) {
 		cameras.clear();
 		landmarks.clear();
 		int index = 0;
 		for (int i = 0; i < numCamera; i++) {
-			cameras.add( new Point2D(input[index++],input[index++]) );
+			cameras.add(new Point2D(input[index++], input[index++]));
 		}
 		for (int i = 0; i < numLandmarks; i++) {
-			landmarks.add( new Point2D(input[index++],input[index++]) );
+			landmarks.add(new Point2D(input[index++], input[index++]));
 		}
 	}
 
 	protected static class Point2D {
-		double x,y;
+		double x, y;
 
-		public Point2D(double x, double y) {
+		public Point2D( double x, double y ) {
 			this.x = x;
 			this.y = y;
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,71 +27,62 @@ import java.util.List;
  */
 public class EvaluateLineSearchFletcher86 extends LineSearchEvaluator {
 
-	double c1,c2;
+	double c1, c2;
 
-	public EvaluateLineSearchFletcher86(boolean verbose) {
+	public EvaluateLineSearchFletcher86( boolean verbose ) {
 		super(verbose);
 	}
 
-	@Override
-	protected LineSearch createSearch() {
+	@Override protected LineSearch createSearch() {
 		LineSearchFletcher86 s = new LineSearchFletcher86();
-		s.setConvergence(c1,c2);
+		s.setConvergence(c1, c2);
 		return s;
 	}
 
-
-	@Override
-	public List<Results> fletcher1() {
-		c1=1e-3;
-		c2=0.1;
+	@Override public List<Results> fletcher1() {
+		c1 = 1e-3;
+		c2 = 0.1;
 		return super.fletcher1();
 	}
 
-	@Override
-	public List<Results> more1() {
-		c1=1e-4;
-		c2=0.1;
+	@Override public List<Results> more1() {
+		c1 = 1e-4;
+		c2 = 0.1;
 		return super.more1();
 	}
 
-	@Override
-	public List<Results> more2() {
-		c1=1e-4;
-		c2=0.1;
+	@Override public List<Results> more2() {
+		c1 = 1e-4;
+		c2 = 0.1;
 		return super.more2();
 	}
 
-	@Override
-	public List<Results> more3() {
-		c1=0.1;
-		c2=0.1;
+	@Override public List<Results> more3() {
+		c1 = 0.1;
+		c2 = 0.1;
 		return super.more3();
 	}
 
-	@Override
-	public List<Results> more4() {
-		c1=0.001;
-		c2=0.001;
+	@Override public List<Results> more4() {
+		c1 = 0.001;
+		c2 = 0.001;
 		return super.more4();
 	}
 
-	@Override
-	public List<Results> more5() {
-		c1=0.001;
-		c2=0.001;
+	@Override public List<Results> more5() {
+		c1 = 0.001;
+		c2 = 0.001;
 		return super.more5();
 	}
 
-	@Override
-	public List<Results> more6() {
-		c1=0.001;
-		c2=0.001;
+	@Override public List<Results> more6() {
+		c1 = 0.001;
+		c2 = 0.001;
 		return super.more6();
 	}
 
-	public static void main( String []args ) {
-		EvaluateLineSearchFletcher86 eval = new EvaluateLineSearchFletcher86(true);
+	public static void main( String[] args ) {
+		var eval = new EvaluateLineSearchFletcher86(true);
 		eval.fletcher1();
 		System.out.println("----------------- More 1");
 		eval.more1();
