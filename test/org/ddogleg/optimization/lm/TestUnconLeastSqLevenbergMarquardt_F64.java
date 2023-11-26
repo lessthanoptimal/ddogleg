@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -110,7 +110,6 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			var hessian = new HessianLeastSquares_DSCC(solver);
 			var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DSCC(), hessian);
 			lm.configure(config);
-//			lm.setVerbose(true);
 			return lm;
 		}
 	}
@@ -127,7 +126,6 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 			var hessian = new HessianLeastSquares_DDRM(solver);
 			var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(), hessian);
 			lm.configure(config);
-//			lm.setVerbose(System.out,0);
 			return lm;
 		}
 	}

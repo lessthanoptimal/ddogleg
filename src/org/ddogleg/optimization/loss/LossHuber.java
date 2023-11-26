@@ -25,12 +25,12 @@ package org.ddogleg.optimization.loss;
  *
  * @author Peter Abeles
  */
-public class LossHuber {
+public abstract class LossHuber extends LossFunctionBase {
 	/** Threshold parameter that determines when errors become linear */
-	double threshold;
+	final double threshold;
 	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
 	// These are mathematically the equivalent
-	double thresholdSq;
+	final double thresholdSq;
 
 	protected LossHuber( double threshold ) {
 		this.threshold = threshold;
@@ -40,17 +40,12 @@ public class LossHuber {
 	/**
 	 * Implementation of the Huber loss function
 	 */
-	public static class Function extends LossFunction {
-		public LossHuber params;
-
+	public static class Function extends LossHuber implements LossFunction {
 		public Function( double threshold ) {
-			this.params = new LossHuber(threshold);
+			super(threshold);
 		}
 
 		@Override public double process( double[] input ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
-
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
 				double r = input[i];
@@ -68,17 +63,12 @@ public class LossHuber {
 	/**
 	 * Implementation of the Huber Loss gradient
 	 */
-	public static class Gradient extends LossFunctionGradient {
-		public LossHuber params;
-
+	public static class Gradient extends LossHuber implements LossFunctionGradient {
 		public Gradient( double threshold ) {
-			this.params = new LossHuber(threshold);
+			super(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
-
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
 				double rr = r*r;
