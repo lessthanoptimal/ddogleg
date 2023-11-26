@@ -255,9 +255,11 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 			}
 		}
 
-		// The new state has been accepted. See if it has converged and change the candidate state to the actual state
+		// If the solution got better accept the new state
 		if (fx_candidate < fx_prev && ratio > 0) {
+			// The new state has been accepted. See if it has converged and change the candidate state to the actual state
 			boolean converged = checkConvergenceFTest(fx_candidate, fx_prev);
+
 			if (verbose != null) {
 				verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f   %6.2E\n",
 						totalSelectSteps, fx_candidate, fx_candidate - fx_prev, stepLength, ftest_val, gtest_val, ratio, regionRadius);

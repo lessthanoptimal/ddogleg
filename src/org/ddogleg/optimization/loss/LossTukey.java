@@ -27,15 +27,14 @@ package org.ddogleg.optimization.loss;
  *        c<sup>2</sup>/6                          otherwise
  * </pre>
  *
- *
  * @author Peter Abeles
  */
-public class LossTukey {
+public abstract class LossTukey extends LossFunctionBase {
 	/** Threshold parameter that determines when errors become linear */
-	double threshold;
+	final double threshold;
 	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
 	// These are mathematically the equivalent
-	double thresholdSq;
+	final double thresholdSq;
 
 	protected LossTukey( double threshold ) {
 		this.threshold = threshold;
@@ -45,17 +44,12 @@ public class LossTukey {
 	/**
 	 * Implementation of the Tukey loss function
 	 */
-	public static class Function extends LossFunction {
-		public LossTukey params;
-
+	public static class Function extends LossTukey implements LossFunction {
 		public Function( double threshold ) {
-			this.params = new LossTukey(threshold);
+			super(threshold);
 		}
 
 		@Override public double process( double[] input ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
-
 			double coef = threshold*threshold/6.0;
 
 			double sum = 0.0;
@@ -76,17 +70,12 @@ public class LossTukey {
 	/**
 	 * Implementation of the Tukey Loss gradient
 	 */
-	public static class Gradient extends LossFunctionGradient {
-		public LossTukey params;
-
+	public static class Gradient extends LossTukey implements LossFunctionGradient {
 		public Gradient( double threshold ) {
-			this.params = new LossTukey(threshold);
+			super(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = params.threshold;
-			final double thresholdSq = params.thresholdSq;
-
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
 				double rr = r*r;

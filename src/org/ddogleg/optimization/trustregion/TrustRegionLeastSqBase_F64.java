@@ -57,6 +57,8 @@ public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends H
 	}
 
 	@Override public void initialize( double[] initial, int numberOfParameters, double minimumFunctionValue ) {
+		// Need to initialize the loss function just in case it's dynamic before the cost is computed
+		lossFunc.fixate(initial);
 		super.initialize(initial, numberOfParameters, minimumFunctionValue);
 
 		int numberOfFunctions = residuals.numRows;
@@ -64,5 +66,13 @@ public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends H
 		lossFunc.setNumberOfFunctions(numberOfFunctions);
 		if (lossFuncGradient != null)
 			lossFuncGradient.setNumberOfFunctions(numberOfFunctions);
+	}
+
+	@Override protected boolean acceptNewState( boolean converged, double fx_candidate ) {
+		// If the loss function is dynamic then update the cost function and the cost it will try to beat next time
+		if (lossFunc.fixate(residuals.data)) {
+			fx_candidate = lossFunc.process(residuals.data);
+		}
+		return super.acceptNewState(converged, fx_candidate);
 	}
 }

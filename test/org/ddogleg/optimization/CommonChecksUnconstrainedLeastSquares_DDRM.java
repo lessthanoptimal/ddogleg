@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,9 +23,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	protected boolean checkFastConvergence = true;
@@ -34,8 +31,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		super(false, false);
 	}
 
-	@Test
-	public void checkPowell() {
+	@Test public void checkPowell() {
 		NonlinearResults results = powell();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -51,8 +47,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkHelicalValley() {
+	@Test public void checkHelicalValley() {
 		NonlinearResults results = helicalValley();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -66,8 +61,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkRosenbrock() {
+	@Test public void checkRosenbrock() {
 		NonlinearResults results = rosenbrock();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -80,8 +74,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkBadlyScaledBrown() {
+	@Test public void checkBadlyScaledBrown() {
 		NonlinearResults results = badlyScaledBrown();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -94,8 +87,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkTrigonometric() {
+	@Test public void checkTrigonometric() {
 		NonlinearResults results = trigonometric();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -103,11 +95,11 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
+		
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkBundle2D() {
+	@Test public void checkBundle2D() {
 		NonlinearResults results = bundle2D();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -118,5 +110,4 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 
 		assertEquals(0, results.f, 1e-4);
 	}
-
 }

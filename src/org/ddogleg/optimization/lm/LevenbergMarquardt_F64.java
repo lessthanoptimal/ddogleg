@@ -143,6 +143,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 		diagStep.reshape(numberOfParameters, 1);
 
 		computeResiduals(x, residuals);
+		lossFunc.fixate(residuals.data);
 		fx = costFromResiduals(residuals);
 
 		mode = Mode.COMPUTE_DERIVATIVES;
@@ -159,8 +160,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 *
 	 * @return true if it has converged or false if it has not
 	 */
-	@Override
-	protected boolean updateDerivates() {
+	@Override protected boolean updateDerivates() {
 		functionGradientHessian(x, true, gradient, hessian);
 
 		if (config.hessianScaling) {
@@ -187,9 +187,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 *
 	 * @return true if it has converged or false if it has not
 	 */
-	@Override
-	protected boolean computeStep() {
-
+	@Override protected boolean computeStep() {
 		// compute the new location and it's score
 		if (!computeStep(lambda, gradient, p)) {
 			if (config.mixture == 0.0) {
@@ -263,9 +261,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			}
 
 			acceptNewState(fx_candidate);
-			return maximumLambdaNu() || converged;
-		} else
-			return false;
+			return converged || maximumLambdaNu();
+		}
+		return false;
 	}
 
 	/**
@@ -273,12 +271,18 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 *
 	 * @param fx_candidate The new state
 	 */
-	private void acceptNewState( double fx_candidate ) {
+	protected void acceptNewState( double fx_candidate ) {
 		DMatrixRMaj tmp = x;
 		x = x_next;
 		x_next = tmp;
 
-		fx = fx_candidate;
+		// Now that a new state has been excepted, pass in the new residuals to the loss function. If the cost
+		// function has dynamically changed then recompute the cost as a result
+		if (lossFunc.fixate(residuals.data)) {
+			fx = lossFunc.process(residuals.data);
+		} else {
+			fx = fx_candidate;
+		}
 
 		mode = Mode.COMPUTE_DERIVATIVES;
 	}

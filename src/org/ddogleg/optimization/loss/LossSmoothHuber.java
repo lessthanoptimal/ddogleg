@@ -31,9 +31,9 @@ package org.ddogleg.optimization.loss;
  *
  * @author Peter Abeles
  */
-public class LossSmoothHuber {
+public abstract class LossSmoothHuber extends LossFunctionBase {
 	/** Threshold parameter that determines when errors become linear */
-	double threshold;
+	final double threshold;
 
 	protected LossSmoothHuber( double threshold ) {
 		this.threshold = threshold;
@@ -42,15 +42,12 @@ public class LossSmoothHuber {
 	/**
 	 * Implementation of the smooth Huber loss function
 	 */
-	public static class Function extends LossFunction {
-		public LossSmoothHuber params;
-
+	public static class Function extends LossSmoothHuber implements LossFunction {
 		public Function( double threshold ) {
-			this.params = new LossSmoothHuber(threshold);
+			super(threshold);
 		}
 
 		@Override public double process( double[] input ) {
-			final double threshold = params.threshold;
 			final double thresholdSq = threshold*threshold;
 
 			double sum = 0.0;
@@ -66,16 +63,12 @@ public class LossSmoothHuber {
 	/**
 	 * Implementation of the smooth Huber loss gradient
 	 */
-	public static class Gradient extends LossFunctionGradient {
-		public LossSmoothHuber params;
-
+	public static class Gradient extends LossSmoothHuber implements LossFunctionGradient {
 		public Gradient( double threshold ) {
-			this.params = new LossSmoothHuber(threshold);
+			super(threshold);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = params.threshold;
-
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
 				double tmp = r/threshold;

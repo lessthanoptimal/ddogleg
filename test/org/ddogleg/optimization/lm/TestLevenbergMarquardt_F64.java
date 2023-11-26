@@ -46,7 +46,6 @@ public class TestLevenbergMarquardt_F64 {
 	 * Makes sure hessian scaling is correctly handled
 	 */
 	@Test void computeStep_hessianScaling() {
-
 		var alg = new MockLevenbergMarquardt() {
 			@Override protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {
 				return true;

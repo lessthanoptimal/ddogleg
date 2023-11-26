@@ -18,20 +18,23 @@
 
 package org.ddogleg.optimization.loss;
 
-/**
- * Squared error loss function. This is the typical least squares error function. Gradient isnt defined
- * since it will be set to null and that step skipped.
- *
- * @author Peter Abeles
- */
-public class LossSquared extends LossFunctionBase implements LossFunction {
-	@Override public double process( double[] input ) {
-		double sum = 0.0;
-		for (int i = 0; i < numberOfFunctions; i++) {
-			double r = input[i];
-			sum += r*r;
-		}
+class TestLossIRLS extends CommonChecksLossJacobian {
 
-		return 0.5*sum;
+	LossIRLS function = new LossIRLS();
+
+	{
+		function.computeOp = ( residuals, weight ) -> {
+			for (int i = 0; i < weight.length; i++) {
+				weight[i] = i/(double)weight.length;
+			}
+		};
+	}
+
+	@Override public LossFunction createFunction() {
+		return function;
+	}
+
+	@Override public LossFunctionGradient createGradient() {
+		return function;
 	}
 }

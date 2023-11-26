@@ -18,8 +18,6 @@
 
 package org.ddogleg.optimization.loss;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 
 /**
@@ -27,11 +25,13 @@ import org.ddogleg.optimization.functions.FunctionNtoN;
  *
  * @author Peter Abeles
  */
-public abstract class LossFunctionGradient implements FunctionNtoN {
-	/** Number of parameters that can be expected in the residual */
-	protected @Getter @Setter int numberOfFunctions;
+public interface LossFunctionGradient extends FunctionNtoN {
+	/** Number of elements in the residual */
+	int getNumberOfFunctions();
 
-	@Override public int getN() {
-		return numberOfFunctions;
+	void setNumberOfFunctions(int value);
+
+	@Override default int getN() {
+		return getNumberOfFunctions();
 	}
 }

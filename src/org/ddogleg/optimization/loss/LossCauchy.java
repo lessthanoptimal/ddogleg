@@ -32,7 +32,7 @@ package org.ddogleg.optimization.loss;
  *
  * @author Peter Abeles
  */
-public class LossCauchy {
+public abstract class LossCauchy extends LossFunctionBase{
 	protected double alpha;
 
 	/**
@@ -45,16 +45,12 @@ public class LossCauchy {
 	/**
 	 * Implementation of the smooth Cauchy loss function
 	 */
-	public static class Function extends LossFunction {
-		public LossCauchy params;
-
-		public Function( double threshold ) {
-			this.params = new LossCauchy(threshold);
+	public static class Function extends LossCauchy implements LossFunction {
+		public Function( double alpha ) {
+			super(alpha);
 		}
 
 		@Override public double process( double[] input ) {
-			final double alpha = params.alpha;
-
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
 				double r = input[i];
@@ -68,19 +64,15 @@ public class LossCauchy {
 	/**
 	 * Implementation of the smooth Cauchy loss gradient
 	 */
-	public static class Gradient extends LossFunctionGradient {
-		public LossCauchy params;
-
-		public Gradient( double threshold ) {
-			this.params = new LossCauchy(threshold);
+	public static class Gradient extends LossCauchy implements LossFunctionGradient {
+		public Gradient( double alpha ) {
+			super(alpha);
 		}
 
 		@Override public void process( double[] input, double[] output ) {
-			final double threshold = params.alpha;
-
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
-				double tmp = r/threshold;
+				double tmp = r/alpha;
 				output[funcIdx] = 2.0*r/(1.0 + tmp*tmp);
 			}
 		}

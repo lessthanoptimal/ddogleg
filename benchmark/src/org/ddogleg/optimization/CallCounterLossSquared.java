@@ -16,22 +16,18 @@
  * limitations under the License.
  */
 
-package org.ddogleg.optimization.loss;
+package org.ddogleg.optimization;
+
+import org.ddogleg.optimization.loss.LossSquared;
 
 /**
- * Squared error loss function. This is the typical least squares error function. Gradient isnt defined
- * since it will be set to null and that step skipped.
- *
- * @author Peter Abeles
+ * Used for unit tests. See how often different functions are called
  */
-public class LossSquared extends LossFunctionBase implements LossFunction {
-	@Override public double process( double[] input ) {
-		double sum = 0.0;
-		for (int i = 0; i < numberOfFunctions; i++) {
-			double r = input[i];
-			sum += r*r;
-		}
+public class CallCounterLossSquared extends LossSquared {
+	public int countFixate;
 
-		return 0.5*sum;
+	@Override public boolean fixate( double[] residuals ) {
+		countFixate++;
+		return super.fixate(residuals);
 	}
 }

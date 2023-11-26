@@ -18,8 +18,6 @@
 
 package org.ddogleg.optimization.loss;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 
 /**
@@ -33,11 +31,22 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
  *
  * @author Peter Abeles
  */
-public abstract class LossFunction implements FunctionNtoS {
-	/** Number of parameters that can be expected in the residual */
-	protected @Getter @Setter int numberOfFunctions;
+public interface LossFunction extends FunctionNtoS {
 
-	@Override public int getNumOfInputsN() {
-		return numberOfFunctions;
+	/**
+	 * Passes in the current residuals at the start of an iteration. If a loss function is dynamically computed
+	 * and conditional on the residuals, here's where it should be done
+	 *
+	 * @return true if the loss function has changed and the cost needs to be recomputed.
+	 */
+	default boolean fixate( double[] residuals ) {return false;}
+
+	/** Number of elements in the residual */
+	int getNumberOfFunctions();
+
+	void setNumberOfFunctions( int value );
+
+	@Override default int getNumOfInputsN() {
+		return getNumberOfFunctions();
 	}
 }
