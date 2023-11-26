@@ -94,7 +94,7 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 
 		regionRadius = config.regionInitial;
 
-		fx = cost(x);
+		fx = computeCostAtInitialization();
 
 		if (verbose != null) {
 			verbose.println("Steps     fx        change      |step|   f-test     g-test    tr-ratio  region ");
@@ -113,6 +113,13 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		} else {
 			mode = TrustRegionBase_F64.Mode.COMPUTE_DERIVATIVES;
 		}
+	}
+
+	/**
+	 * This function was created for least squares which requires special set up due to the Loss function
+	 */
+	protected double computeCostAtInitialization() {
+		return cost(x);
 	}
 
 	/**

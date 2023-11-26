@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.loss.LossFunction;
 import org.ddogleg.optimization.loss.LossFunctionGradient;
 import org.ddogleg.optimization.loss.LossSquared;
@@ -31,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends HessianMath>
 		extends TrustRegionBase_F64<S, HM> {
+
+	protected FunctionNtoM functionResiduals;
 
 	// difference between observations and estimate value from model
 	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
@@ -56,16 +59,17 @@ public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends H
 		this.lossFuncGradient = lossGradient;
 	}
 
-	@Override public void initialize( double[] initial, int numberOfParameters, double minimumFunctionValue ) {
-		// Need to initialize the loss function just in case it's dynamic before the cost is computed
-		lossFunc.fixate(initial);
-		super.initialize(initial, numberOfParameters, minimumFunctionValue);
+	@Override protected double computeCostAtInitialization() {
+		// need residuals to fixate and compute the cost
+		functionResiduals.process(x.data, residuals.data);
 
 		int numberOfFunctions = residuals.numRows;
 		storageLossGradient.reshape(numberOfFunctions, 1);
 		lossFunc.setNumberOfFunctions(numberOfFunctions);
 		if (lossFuncGradient != null)
 			lossFuncGradient.setNumberOfFunctions(numberOfFunctions);
+		lossFunc.fixate(residuals.data);
+		return lossFunc.process(residuals.data);
 	}
 
 	@Override protected boolean acceptNewState( boolean converged, double fx_candidate ) {
@@ -74,5 +78,11 @@ public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends H
 			fx_candidate = lossFunc.process(residuals.data);
 		}
 		return super.acceptNewState(converged, fx_candidate);
+	}
+
+	@Override
+	protected double cost( DMatrixRMaj x ) {
+		functionResiduals.process(x.data, residuals.data);
+		return lossFunc.process(residuals.data);
 	}
 }

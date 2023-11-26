@@ -31,4 +31,9 @@ public interface EvalFuncLeastSquares<S extends DMatrix> {
 	double[] getInitial();
 
 	double[] getOptimal();
+
+	/** If true a robust loss function will be passed in */
+	default boolean requireRobustLoss() {
+		return false;
+	}
 }
