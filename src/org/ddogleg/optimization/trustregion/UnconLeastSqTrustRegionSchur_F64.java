@@ -25,7 +25,6 @@ import org.ddogleg.optimization.math.HessianSchurComplement;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.SpecializedOps_DDRM;
 
 /**
  * Implementations of {@link UnconstrainedLeastSquaresSchur}. Uses {@link HessianSchurComplement_DSCC}
@@ -40,7 +39,6 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 		extends TrustRegionLeastSqBase_F64<S, HessianSchurComplement<S>>
 		implements UnconstrainedLeastSquaresSchur<S> {
 
-	protected FunctionNtoM functionResiduals;
 	protected SchurJacobian<S> functionJacobian;
 
 	// Left and right side of the jacobian matrix
@@ -67,12 +65,6 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 		this.initialize(initial, functionResiduals.getNumOfInputsN(), 0);
 		config.ftol = ftol;
 		config.gtol = gtol;
-	}
-
-	@Override
-	protected double cost( DMatrixRMaj x ) {
-		functionResiduals.process(x.data, residuals.data);
-		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	@Override

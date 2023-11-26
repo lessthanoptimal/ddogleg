@@ -21,9 +21,6 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.funcs.*;
 import org.ejml.data.DMatrixRMaj;
 
-/**
- * @author Peter Abeles
- */
 public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 		UnconstrainedLeastSquaresEvaluator<DMatrixRMaj> {
 
@@ -69,5 +66,9 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DDRM extends
 
 	public NonlinearResults bundle2D() {
 		return performTest(new EvalFunctionBundle2D_DDRM());
+	}
+
+	public NonlinearResults lineOutlier() {
+		return performTest(new EvalFuncLineWithOutliers<>());
 	}
 }

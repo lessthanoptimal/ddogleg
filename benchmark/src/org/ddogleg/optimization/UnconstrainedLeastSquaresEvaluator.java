@@ -23,6 +23,7 @@ import org.ddogleg.optimization.derivative.NumericalJacobianForward_DSCC;
 import org.ddogleg.optimization.funcs.EvalFuncLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
+import org.ddogleg.optimization.loss.LossIRLS;
 import org.ejml.data.DMatrix;
 
 public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
@@ -54,7 +55,8 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 	 * @return Statistics
 	 */
 	private NonlinearResults performTest( FunctionNtoM func, FunctionNtoMxN<M> deriv,
-										  double[] initial, double[] optimal, double minimValue ) {
+										  double[] initial, double[] optimal, double minimValue,
+										  boolean robustLoss ) {
 		if (deriv == null) {
 			if (dense)
 				deriv = (FunctionNtoMxN)new NumericalJacobianForward_DDRM(func);
@@ -68,7 +70,24 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 
 		UnconstrainedLeastSquares<M> alg = createSearch(minimValue);
 		alg.setFunction(f, d);
-		alg.setLoss(loss, null);
+
+		if (robustLoss)  {
+			// tuning parameter is problem specific... should specify some other way
+
+			// One reason to test with IRLS is that it's the only loss function that needs fixate
+			// to be callled correctly
+			var lossIRLS = new LossIRLS();
+			double noise = 0.5;
+			lossIRLS.computeOp = ( residuals, weights ) -> {
+				for (int i = 0; i < weights.length; i++) {
+					// try to remove outliers completely by assuming everything over 3 sigma is an outlier
+					weights[i] = Math.abs(residuals[i]) > noise*3 ? 0.0 : 1.0;
+				}
+			};
+			alg.setLoss(lossIRLS, lossIRLS);
+		} else {
+			alg.setLoss(loss, null);
+		}
 
 		alg.initialize(initial, 1e-10, 1e-6);
 		double initialError = alg.getFunctionValue();
@@ -106,7 +125,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 
 		// Everytime the state is updated the Loss's fixate should be called.
 		// Tolerance of 2 comes from initialization and how it converges. Can't be bothered to take it all in account
-		if (Math.abs(updateCounter - loss.countFixate) > 2)
+		if (!robustLoss && Math.abs(updateCounter - loss.countFixate) > 2)
 			throw new RuntimeException("fixate in loss hasn't been called enough");
 
 		var ret = new NonlinearResults();
@@ -121,6 +140,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator<M extends DMatrix> {
 	NonlinearResults performTest( EvalFuncLeastSquares<M> func ) {
 		double[] initial = func.getInitial();
 
-		return performTest(func.getFunction(), func.getJacobian(), initial, func.getOptimal(), 0);
+		return performTest(func.getFunction(), func.getJacobian(),
+				initial, func.getOptimal(), 0, func.requireRobustLoss());
 	}
 }

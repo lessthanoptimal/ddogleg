@@ -27,7 +27,6 @@ import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.ReshapeMatrix;
-import org.ejml.dense.row.SpecializedOps_DDRM;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,7 +44,6 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	// storage for the Jacobian
 	protected S jacobian;
 
-	protected FunctionNtoM functionResiduals;
 	protected FunctionNtoMxN<S> functionJacobian;
 
 	public UnconLeastSqTrustRegion_F64( ParameterUpdate<S> parameterUpdate,
@@ -84,12 +82,6 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 		((ReshapeMatrix)jacobian).reshape(M, N);
 
 		super.initialize(initial, numberOfParameters, minimumFunctionValue);
-	}
-
-	@Override
-	protected double cost( DMatrixRMaj x ) {
-		functionResiduals.process(x.data, residuals.data);
-		return 0.5*SpecializedOps_DDRM.elementSumSq(residuals);
 	}
 
 	@Override

@@ -65,4 +65,8 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 	public NonlinearResults bundle2D() {
 		return performTest(new EvalFunctionBundle2D_DSCC());
 	}
+
+	public NonlinearResults lineOutlier() {
+		return performTest(new EvalFuncLineWithOutliers<>());
+	}
 }

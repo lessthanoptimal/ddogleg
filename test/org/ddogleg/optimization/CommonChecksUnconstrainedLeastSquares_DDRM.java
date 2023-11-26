@@ -35,7 +35,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = powell();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 300);
 			assertTrue(results.numGradient < 300);
 		}
@@ -51,7 +51,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = helicalValley();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -65,7 +65,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = rosenbrock();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -78,7 +78,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = badlyScaledBrown();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -91,11 +91,11 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = trigonometric();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
-		
+
 		assertEquals(0, results.f, 1e-4);
 	}
 
@@ -103,11 +103,24 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DDRM extends Unconst
 		NonlinearResults results = bundle2D();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 300);
 			assertTrue(results.numGradient < 300);
 		}
 
 		assertEquals(0, results.f, 1e-4);
+	}
+
+	@Test public void checkLineOutlier() {
+		NonlinearResults results = lineOutlier();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if (checkFastConvergence) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		assertEquals(-0.5, results.x[0], 0.02);
+		assertEquals(1.4, results.x[1], 0.02);
 	}
 }

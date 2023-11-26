@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,9 +23,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends UnconstrainedLeastSquaresEvaluator_DSCC {
 
 	protected boolean checkFastConvergence = true;
@@ -117,6 +114,19 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		}
 
 		assertEquals(0, results.f, 1e-4);
+	}
+
+	@Test public void checkLineOutlier() {
+		NonlinearResults results = lineOutlier();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if (checkFastConvergence) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		assertEquals(-0.5, results.x[0], 0.02);
+		assertEquals(1.4, results.x[1], 0.02);
 	}
 
 }
