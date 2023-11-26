@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,7 +26,7 @@ import org.ejml.data.DMatrixSparseCSC;
  */
 public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 		extends UnconstrainedLeastSquaresEvaluator<DMatrixSparseCSC> {
-	protected UnconstrainedLeastSquaresEvaluator_DSCC(boolean verbose, boolean printSummary) {
+	protected UnconstrainedLeastSquaresEvaluator_DSCC( boolean verbose, boolean printSummary ) {
 		super(verbose, printSummary, false);
 	}
 
@@ -38,7 +38,7 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 		return performTest(new EvalFuncRosenbrock_DSCC());
 	}
 
-	public NonlinearResults rosenbrockMod(double lambda) {
+	public NonlinearResults rosenbrockMod( double lambda ) {
 		return performTest(new EvalFuncRosenbrockMod_DSCC(lambda));
 	}
 
@@ -65,5 +65,4 @@ public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 	public NonlinearResults bundle2D() {
 		return performTest(new EvalFunctionBundle2D_DSCC());
 	}
-
 }

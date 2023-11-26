@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -31,28 +31,24 @@ public class CallCounterNtoMxN<S extends DMatrix> implements FunctionNtoMxN<S> {
 	public int count;
 	public FunctionNtoMxN<S> func;
 
-	public CallCounterNtoMxN(FunctionNtoMxN<S> func) {
+	public CallCounterNtoMxN( FunctionNtoMxN<S> func ) {
 		this.func = func;
 	}
 
-	@Override
-	public int getNumOfInputsN() {
+	@Override public int getNumOfInputsN() {
 		return func.getNumOfInputsN();
 	}
 
-	@Override
-	public int getNumOfOutputsM() {
+	@Override public int getNumOfOutputsM() {
 		return func.getNumOfOutputsM();
 	}
 
-	@Override
-	public void process(double[] input, S output) {
+	@Override public void process( double[] input, S output ) {
 		count++;
-		func.process(input,output);
+		func.process(input, output);
 	}
 
-	@Override
-	public S declareMatrixMxN() {
+	@Override public S declareMatrixMxN() {
 		return func.declareMatrixMxN();
 	}
 }

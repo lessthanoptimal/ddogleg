@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,68 +27,60 @@ import java.util.List;
  */
 public class EvaluateLineSearchMore94 extends LineSearchEvaluator {
 
-	double ftol, gtol,xtol=1e-10;
+	double ftol, gtol, xtol = 1e-10;
 
-	public EvaluateLineSearchMore94(boolean verbose) {
+	public EvaluateLineSearchMore94( boolean verbose ) {
 		super(verbose);
 	}
 
-	@Override
-	protected LineSearch createSearch() {
-		return new LineSearchMore94().setConvergence(ftol, gtol,xtol);
+	@Override protected LineSearch createSearch() {
+		return new LineSearchMore94().setConvergence(ftol, gtol, xtol);
 	}
 
-	@Override
-	public List<Results> fletcher1() {
+	@Override public List<Results> fletcher1() {
 		ftol = 1e-3;
 		gtol = 0.1;
 		return super.fletcher1();
 	}
 
-	@Override
-	public List<Results> more1() {
+	@Override public List<Results> more1() {
 		ftol = 1e-3;
 		gtol = 0.1;
 		return super.more1();
 	}
 
-	@Override
-	public List<Results> more2() {
+	@Override public List<Results> more2() {
 		ftol = 0.1;
 		gtol = 0.1;
 		return super.more2();
 	}
 
-	@Override
-	public List<Results> more3() {
+	@Override public List<Results> more3() {
 		ftol = 0.1;
 		gtol = 0.1;
 		return super.more3();
 	}
 
-	@Override
-	public List<Results> more4() {
+	@Override public List<Results> more4() {
 		ftol = 0.001;
 		gtol = 0.001;
 		return super.more4();
 	}
 
-	@Override
-	public List<Results> more5() {
+	@Override public List<Results> more5() {
 		ftol = 0.001;
 		gtol = 0.001;
 		return super.more5();
 	}
 
-	@Override
-	public List<Results> more6() {
+	@Override public List<Results> more6() {
 		ftol = 0.001;
 		gtol = 0.001;
 		return super.more6();
 	}
 
-	public static void main( String []args ) {
-		EvaluateLineSearchMore94 eval = new EvaluateLineSearchMore94(true);
+	public static void main( String[] args ) {
+		var eval = new EvaluateLineSearchMore94(true);
 		System.out.println("----------------- fletcher 1");
 		eval.fletcher1();
 		System.out.println("----------------- more 1");

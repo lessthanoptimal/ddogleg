@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrix;
 
 /**
- *
  * <p>
  * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
  * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
@@ -32,59 +31,51 @@ import org.ejml.data.DMatrix;
  * @author Peter Abeles
  */
 public class EvalFuncTrigonometric<S extends DMatrix> implements EvalFuncLeastSquares<S> {
-	
+
 	int N;
 
-	public EvalFuncTrigonometric(int n) {
+	public EvalFuncTrigonometric( int n ) {
 		N = n;
 	}
 
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<S> getJacobian() {
+	@Override public FunctionNtoMxN<S> getJacobian() {
 		return null;
 	}
 
-	@Override
-	public double[] getInitial() {
+	@Override public double[] getInitial() {
 		double[] x = new double[N];
-		for( int i = 0; i < N; i++ ) {
+		for (int i = 0; i < N; i++) {
 			x[i] = 1/(double)N;
 		}
 		return x;
 	}
 
-	@Override
-	public double[] getOptimal() {
+	@Override public double[] getOptimal() {
 		return null;
 	}
 
-	public class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {return N;}
+	public class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {return N;}
 
-		@Override
-		public int getNumOfOutputsM() {return N;}
+		@Override public int getNumOfOutputsM() {return N;}
 
-		@Override
-		public void process(double[] input, double[] output) {
-			for( int i = 0; i < input.length; i++ ) {
-				output[i] = F(input,i);
+		@Override public void process( double[] input, double[] output ) {
+			for (int i = 0; i < input.length; i++) {
+				output[i] = F(input, i);
 			}
 		}
 
-		public double F( double[]x , int degree ) {
+		public double F( double[] x, int degree ) {
 			double total = N;
-			for( int i = 0; i < N; i++ ) {
+			for (int i = 0; i < N; i++) {
 				total -= Math.cos(x[i]);
 			}
 
-			total += (degree+1)*(1-Math.cos(x[degree])) - Math.sin(x[degree]);
+			total += (degree + 1)*(1 - Math.cos(x[degree])) - Math.sin(x[degree]);
 
 			return total;
 		}

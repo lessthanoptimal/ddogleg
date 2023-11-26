@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrixRMaj;
 
 /**
- *
  * <p>
  * Powel 1970
  * </p>
@@ -31,74 +30,61 @@ import org.ejml.data.DMatrixRMaj;
  * @author Peter Abeles
  */
 public class EvalFuncPowell_DDRM implements EvalFuncLeastSquares<DMatrixRMaj> {
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
+	@Override public FunctionNtoMxN<DMatrixRMaj> getJacobian() {
 		return new Deriv();
 	}
 
-	@Override
-	public double[] getInitial() {
-		return new double[]{3,1};
+	@Override public double[] getInitial() {
+		return new double[]{3, 1};
 	}
 
-	@Override
-	public double[] getOptimal() {
-		return new double[]{0,0};
+	@Override public double[] getOptimal() {
+		return new double[]{0, 0};
 	}
-	
-	public static class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {
+
+	public static class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 2;
 		}
 
-		@Override
-		public void process(double[] input, double[] output) {
+		@Override public void process( double[] input, double[] output ) {
 			double x1 = input[0];
 			double x2 = input[1];
-			
+
 			output[0] = x1;
-			output[1] = 10*x1/(x1+0.1) + 2*x2*x2;
+			output[1] = 10*x1/(x1 + 0.1) + 2*x2*x2;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj>
-	{
-		@Override
-		public int getNumOfInputsN() {
+	public static class Deriv implements FunctionNtoMxN<DMatrixRMaj> {
+		@Override public int getNumOfInputsN() {
 			return 2;
 		}
 
-		@Override
-		public int getNumOfOutputsM() {
+		@Override public int getNumOfOutputsM() {
 			return 2;
 		}
 
-		@Override
-		public void process( double[] input, DMatrixRMaj J ) {
+		@Override public void process( double[] input, DMatrixRMaj J ) {
 			double x1 = input[0];
 			double x2 = input[1];
-			
-			J.set(0,0,1);
-			J.set(0,1,0);
-			J.set(1,0,1.0/Math.pow(x1 + 0.1, 2));
-			J.set(1,1,4*x2);
+
+			J.set(0, 0, 1);
+			J.set(0, 1, 0);
+			J.set(1, 0, 1.0/Math.pow(x1 + 0.1, 2));
+			J.set(1, 1, 4*x2);
 		}
 
-		@Override
-		public DMatrixRMaj declareMatrixMxN() {
-			return new DMatrixRMaj(getNumOfOutputsM(),getNumOfInputsN());
+		@Override public DMatrixRMaj declareMatrixMxN() {
+			return new DMatrixRMaj(getNumOfOutputsM(), getNumOfInputsN());
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrixSparseCSC;
 
 /**
- *
  * <p>
  * [1] J. More, B. Garbow, K. Hillstrom, "Testing Unconstrained Optimization Software"
  * 1981 ACM Transactions on Mathematical Software, Vol 7, No. 1, Match 1981, pages 17-41
@@ -33,67 +32,54 @@ import org.ejml.data.DMatrixSparseCSC;
  */
 public class EvalFuncBadlyScaledBrown_DSCC implements EvalFuncLeastSquares<DMatrixSparseCSC> {
 
-	@Override
-	public FunctionNtoM getFunction() {
+	@Override public FunctionNtoM getFunction() {
 		return new Func();
 	}
 
-	@Override
-	public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
+	@Override public FunctionNtoMxN<DMatrixSparseCSC> getJacobian() {
 		return new Deriv();
 	}
 
-	@Override
-	public double[] getInitial() {
-		return new double[]{1,1};
+	@Override public double[] getInitial() {
+		return new double[]{1, 1};
 	}
 
-	@Override
-	public double[] getOptimal() {
-		return new double[]{1e6,2e-6};
+	@Override public double[] getOptimal() {
+		return new double[]{1e6, 2e-6};
 	}
 
-	public static class Func implements FunctionNtoM
-	{
-		@Override
-		public int getNumOfInputsN() {return 2;}
+	public static class Func implements FunctionNtoM {
+		@Override public int getNumOfInputsN() {return 2;}
 
-		@Override
-		public int getNumOfOutputsM() {return 3;}
+		@Override public int getNumOfOutputsM() {return 3;}
 
-		@Override
-		public void process(double[] input, double[] output) {
+		@Override public void process( double[] input, double[] output ) {
 			double x1 = input[0];
 			double x2 = input[1];
 
-			output[0] = x1-1e6;
-			output[1] = x2-2e-6;
-			output[2] = x1*x2-2;
+			output[0] = x1 - 1e6;
+			output[1] = x2 - 2e-6;
+			output[2] = x1*x2 - 2;
 		}
 	}
 
-	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC>
-	{
-		@Override
-		public int getNumOfInputsN() {return 2;}
+	public static class Deriv implements FunctionNtoMxN<DMatrixSparseCSC> {
+		@Override public int getNumOfInputsN() {return 2;}
 
-		@Override
-		public int getNumOfOutputsM() {return 3;}
+		@Override public int getNumOfOutputsM() {return 3;}
 
-		@Override
-		public void process(double[] input, DMatrixSparseCSC output) {
+		@Override public void process( double[] input, DMatrixSparseCSC output ) {
 			double x1 = input[0];
 			double x2 = input[1];
 
-			output.set(0,0,1);
-			output.set(1,1,1);
-			output.set(2,0,x2);
-			output.set(2,1,x1);
+			output.set(0, 0, 1);
+			output.set(1, 1, 1);
+			output.set(2, 0, x2);
+			output.set(2, 1, x1);
 		}
 
-		@Override
-		public DMatrixSparseCSC declareMatrixMxN() {
-			return new DMatrixSparseCSC(getNumOfOutputsM(),getNumOfInputsN());
+		@Override public DMatrixSparseCSC declareMatrixMxN() {
+			return new DMatrixSparseCSC(getNumOfOutputsM(), getNumOfInputsN());
 		}
 	}
 }
