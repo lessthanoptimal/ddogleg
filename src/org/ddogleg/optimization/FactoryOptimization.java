@@ -46,13 +46,33 @@ import org.jetbrains.annotations.Nullable;
 public class FactoryOptimization {
 
 	/**
+	 * Generic factory for any unconstrained least squares solver using Schur decomposition
+	 */
+	public static UnconstrainedLeastSquaresSchur<DMatrixRMaj> leastSquaresSchur( ConfigNonLinearLeastSquares config ) {
+		return switch (config.type) {
+			case TRUST_REGION -> doglegSchur(config.trust, config.robustSolver);
+			case LEVENBERG_MARQUARDT -> levenbergMarquardtSchur(config.lm, config.robustSolver);
+		};
+	}
+
+	/**
+	 * Generic factory for any unconstrained least squares solver using Schur decomposition
+	 */
+	public static UnconstrainedLeastSquares<DMatrixRMaj> leastSquares( ConfigNonLinearLeastSquares config ) {
+		return switch (config.type) {
+			case TRUST_REGION -> dogleg( config.trust, config.robustSolver);
+			case LEVENBERG_MARQUARDT -> levenbergMarquardt(config.lm, config.robustSolver);
+		};
+	}
+
+	/**
 	 * Creates a sparse Schur Complement trust region optimization using dogleg steps.
 	 *
 	 * @param config Trust region configuration
 	 * @return The new optimization routine
 	 * @see UnconLeastSqTrustRegionSchur_F64
 	 */
-	public static UnconLeastSqTrustRegionSchur_F64<DMatrixRMaj> doglegSchur( boolean robust, @Nullable ConfigTrustRegion config ) {
+	public static UnconLeastSqTrustRegionSchur_F64<DMatrixRMaj> doglegSchur( @Nullable ConfigTrustRegion config, boolean robust ) {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
@@ -186,13 +206,12 @@ public class FactoryOptimization {
 	/**
 	 * LM with Schur Complement
 	 *
-	 * @param robust If true then a slow by robust solver is used. true = use SVD
 	 * @param config configuration for LM
+	 * @param robust If true then a slow by robust solver is used. true = use SVD
 	 * @return the solver
 	 */
 	public static UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixRMaj> levenbergMarquardtSchur(
-			boolean robust,
-			@Nullable ConfigLevenbergMarquardt config ) {
+			@Nullable ConfigLevenbergMarquardt config, boolean robust ) {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
 

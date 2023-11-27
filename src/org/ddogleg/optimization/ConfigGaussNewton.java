@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,12 +27,12 @@ public class ConfigGaussNewton {
 	/**
 	 * tolerance for termination. magnitude of gradient. absolute
 	 */
-	public double gtol=1e-8;
+	public double gtol = 1e-8;
 
 	/**
 	 * tolerance for termination, change in function value.  relative
 	 */
-	public double ftol=1e-12;
+	public double ftol = 1e-12;
 
 	/**
 	 * Optional scaling of Jacobian to make the Hessian matrix better suited for decomposition by improving
@@ -42,11 +42,18 @@ public class ConfigGaussNewton {
 	 *
 	 * For Least-Squares B = J'*J
 	 */
-	public boolean hessianScaling =false;
+	public boolean hessianScaling = false;
 
-	public void set( ConfigGaussNewton config ) {
+	public ConfigGaussNewton setTo( ConfigGaussNewton config ) {
 		gtol = config.gtol;
 		ftol = config.ftol;
 		hessianScaling = config.hessianScaling;
+		return this;
+	}
+
+	public void reset() {
+		gtol = 1e-8;
+		gtol = 1e-12;
+		hessianScaling = false;
 	}
 }
