@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,7 @@ import org.ddogleg.solver.PolynomialOps;
  * @author Peter Abeles
  */
 public class ExamplePolynomialArithmetic {
-	public static void main( String args[] ) {
+	public static void main( String[] args ) {
 		Polynomial a = Polynomial.wrap(5,-2,3,0.5,30.4);
 		Polynomial b = Polynomial.wrap(-0.4,8.4,-2.3);
 

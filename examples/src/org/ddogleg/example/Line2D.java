@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -38,10 +38,10 @@ public class Line2D {
 	/**
 	 * Coordinate of the closest point on the line to the origin.
 	 */
-	double x,y;
+	double x, y;
 
 	@Override
 	public String toString() {
-		return "Line2D( x="+x+" y="+y+" )";
+		return "Line2D( x=" + x + " y=" + y + " )";
 	}
 }

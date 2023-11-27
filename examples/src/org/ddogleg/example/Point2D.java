@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,19 +20,18 @@ package org.ddogleg.example;
 
 /**
  * Point in 2D space.  Used in example code.
- * @author Peter Abeles
  */
 public class Point2D {
-	double x,y;
+	double x, y;
 
-	public Point2D(double x, double y) {
+	public Point2D( double x, double y ) {
 		this.x = x;
 		this.y = y;
 	}
 
 	public Point2D() {}
 
-	public void setTo(double x, double y) {
+	public void setTo( double x, double y ) {
 		this.x = x;
 		this.y = y;
 	}

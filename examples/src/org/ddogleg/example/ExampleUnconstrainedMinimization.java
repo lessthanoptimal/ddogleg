@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,31 +34,31 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
  * @author Peter Abeles
  */
 public class ExampleUnconstrainedMinimization {
-	public static void main(String[] args) {
+	public static void main( String[] args ) {
 
 		UnconstrainedMinimization optimizer = FactoryOptimization.quasiNewtonBfgs(null);
 
 		// Send to standard out progress information
-		optimizer.setVerbose(System.out,0);
+		optimizer.setVerbose(System.out, 0);
 
 		// Provide an analytical gradient to the Rosenbrock function.
-		optimizer.setFunction(new Rosenbrock(),new Gradient(),0);
+		optimizer.setFunction(new Rosenbrock(), new Gradient(), 0);
 
 		// [-1.2,  1] is the recommended starting point for testing
-		optimizer.initialize(new double[]{-1.2,1},1e-12,1e-12);
+		optimizer.initialize(new double[]{-1.2, 1}, 1e-12, 1e-12);
 
 		// iterate 500 times or until it converges.
 		// Manually iteration is possible too if more control over is required
-		UtilOptimize.process(optimizer,500);
+		UtilOptimize.process(optimizer, 500);
 
-		double found[] = optimizer.getParameters();
+		double[] found = optimizer.getParameters();
 
 		// see how accurately it found the solution
-		System.out.println("Final Error = "+optimizer.getFunctionValue());
+		System.out.println("Final Error = " + optimizer.getFunctionValue());
 
 		// Compare the actual parameters to the found parameters
-		System.out.printf("x[0]: expected=1.00  found=%5.2f\n",found[0]);
-		System.out.printf("x[1]: expected=1.00  found=%5.2f\n",found[1]);
+		System.out.printf("x[0]: expected=1.00  found=%5.2f\n", found[0]);
+		System.out.printf("x[1]: expected=1.00  found=%5.2f\n", found[1]);
 	}
 
 	/**
@@ -67,14 +67,14 @@ public class ExampleUnconstrainedMinimization {
 	public static class Rosenbrock implements FunctionNtoS {
 
 		@Override
-		public int getNumOfInputsN() { return 2; }
+		public int getNumOfInputsN() {return 2;}
 
 		@Override
-		public double process(double[] input) {
+		public double process( double[] input ) {
 			double x1 = input[0];
 			double x2 = input[1];
 			double f1 = 10*(x2 - x1*x1);
-			double f2 = 1-x1;
+			double f2 = 1 - x1;
 			return f1*f1 + f2*f2;
 		}
 	}
@@ -85,15 +85,15 @@ public class ExampleUnconstrainedMinimization {
 	public static class Gradient implements FunctionNtoN {
 
 		@Override
-		public int getN() { return 2; }
+		public int getN() {return 2;}
 
 		@Override
-		public void process(double[] input, double[] output) {
+		public void process( double[] input, double[] output ) {
 			double x1 = input[0];
 			double x2 = input[1];
 
-			output[0] = -400*(x2-x1*x1)*x1 - 2*(1-x1);
-			output[1] = 200*(x2-x1*x1);
+			output[0] = -400*(x2 - x1*x1)*x1 - 2*(1 - x1);
+			output[1] = 200*(x2 - x1*x1);
 		}
 	}
 }

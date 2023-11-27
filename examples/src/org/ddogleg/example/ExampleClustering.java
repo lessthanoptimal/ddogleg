@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -50,13 +50,13 @@ public class ExampleClustering {
 	public static Random rand = new Random(324);
 	public static boolean clicked = false;
 
-	public static void main(String[] args) {
+	public static void main( String[] args ) {
 		int dof = 2; // degree of freedom of the 2D point
-		List<double[]> points = new ArrayList<>();
+		var points = new ArrayList<double[]>();
 
 		// Accessor is used instead of a list directly because it becomes more efficient in very large datasets
-		ListAccessor<double[]> accessor = new ListAccessor<>(points,
-				(src, dst) -> System.arraycopy(src, 0, dst, 0, dof), double[].class);
+		var accessor = new ListAccessor<>(points,
+				( src, dst ) -> System.arraycopy(src, 0, dst, 0, dof), double[].class);
 
 		// create 3 clusters drawn from a uniform square distribution
 		points.addAll(createCluster(5, 7, 2, 100));
@@ -72,9 +72,9 @@ public class ExampleClustering {
 		cluster.initialize(rand.nextLong());
 
 		// visualization stuff
-		Gui gui = new Gui(points);
+		var gui = new Gui(points);
 
-		JFrame frame = new JFrame();
+		var frame = new JFrame();
 		frame.add(gui, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
@@ -96,7 +96,7 @@ public class ExampleClustering {
 		}
 	}
 
-	public static List<double[]> createCluster(double x, double y, double width, int N) {
+	public static List<double[]> createCluster( double x, double y, double width, int N ) {
 
 		List<double[]> points = new ArrayList<>();
 
@@ -104,11 +104,11 @@ public class ExampleClustering {
 			double[] p = new double[2];
 
 			if (gaussian) {
-				p[0] = rand.nextGaussian() * width / 3 + x;
-				p[1] = rand.nextGaussian() * width / 3 + y;
+				p[0] = rand.nextGaussian()*width/3 + x;
+				p[1] = rand.nextGaussian()*width/3 + y;
 			} else {
-				p[0] = rand.nextDouble() * width - width / 2 + x;
-				p[1] = rand.nextDouble() * width - width / 2 + y;
+				p[0] = rand.nextDouble()*width - width/2 + x;
+				p[1] = rand.nextDouble()*width - width/2 + y;
 			}
 
 			points.add(p);
@@ -125,7 +125,7 @@ public class ExampleClustering {
 		List<double[]> points;
 		Color[] colors;
 
-		public Gui(List<double[]> points) {
+		public Gui( List<double[]> points ) {
 
 			this.points = points;
 
@@ -135,7 +135,7 @@ public class ExampleClustering {
 			addMouseListener(this);
 		}
 
-		public synchronized void update(AssignCluster<double[]> assignment) {
+		public synchronized void update( AssignCluster<double[]> assignment ) {
 			this.assignment = assignment;
 			colors = new Color[assignment.getNumberOfClusters()];
 			for (int i = 0; i < colors.length; i++) {
@@ -145,21 +145,21 @@ public class ExampleClustering {
 		}
 
 		@Override
-		public synchronized void paintComponent(Graphics g) {
+		public synchronized void paintComponent( Graphics g ) {
 			if (assignment == null)
 				return;
 
 			super.paintComponent(g);
 
-			Graphics2D g2 = (Graphics2D) g;
+			Graphics2D g2 = (Graphics2D)g;
 
-			double scaleX = getWidth() / 10.0;
-			double scaleY = getHeight() / 10.0;
+			double scaleX = getWidth()/10.0;
+			double scaleY = getHeight()/10.0;
 
 			for (int i = 0; i < points.size(); i++) {
 				double[] p = points.get(i);
-				int x = (int) (p[0] * scaleX + 0.5);
-				int y = (int) (p[1] * scaleY + 0.5);
+				int x = (int)(p[0]*scaleX + 0.5);
+				int y = (int)(p[1]*scaleY + 0.5);
 
 				g2.setColor(colors[assignment.assign(p)]);
 				g2.fillOval(x - 2, y - 2, 5, 5);
@@ -167,24 +167,24 @@ public class ExampleClustering {
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseClicked( MouseEvent e ) {
 			clicked = true;
 		}
 
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed( MouseEvent e ) {
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
+		public void mouseReleased( MouseEvent e ) {
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent e) {
+		public void mouseEntered( MouseEvent e ) {
 		}
 
 		@Override
-		public void mouseExited(MouseEvent e) {
+		public void mouseExited( MouseEvent e ) {
 		}
 	}
 }

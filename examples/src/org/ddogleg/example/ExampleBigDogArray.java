@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,7 +57,7 @@ public class ExampleBigDogArray {
 
 		// If you for some reason need to process a range of values (10 to 20) but need to access the raw
 		// block array, then processByBlock is your friend
-		array.processByBlock(10,20, (block, idx0, idx1, offset)->{
+		array.processByBlock(10, 20, ( block, idx0, idx1, offset ) -> {
 			// block is the raw array that composes the block
 			// idx0 is the first element in the block that you should process
 			// idx1 is the upper extent, exclusive

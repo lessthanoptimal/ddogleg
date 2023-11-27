@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,9 +20,6 @@ package org.ddogleg.example;
 
 import org.ddogleg.fitting.modelset.ModelManager;
 
-/**
- * @author Peter Abeles
- */
 public class LineManager implements ModelManager<Line2D> {
 	@Override
 	public Line2D createModelInstance() {
@@ -30,7 +27,7 @@ public class LineManager implements ModelManager<Line2D> {
 	}
 
 	@Override
-	public void copyModel(Line2D src, Line2D dst) {
+	public void copyModel( Line2D src, Line2D dst ) {
 		dst.x = src.x;
 		dst.y = src.y;
 	}
