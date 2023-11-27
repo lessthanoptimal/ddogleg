@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
+ * Base class for loss functions. Provides an implementation of accessors for numberOfFunctions.
  */
 public abstract class LossFunctionBase {
 	/** Number of parameters that can be expected in the residual */

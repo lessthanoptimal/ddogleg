@@ -29,7 +29,7 @@ public interface LossFunctionGradient extends FunctionNtoN {
 	/** Number of elements in the residual */
 	int getNumberOfFunctions();
 
-	void setNumberOfFunctions(int value);
+	void setNumberOfFunctions( int value );
 
 	@Override default int getN() {
 		return getNumberOfFunctions();
