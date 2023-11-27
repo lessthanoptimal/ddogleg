@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -134,8 +134,6 @@ public class QuickSortComparable<T extends Comparable<T>> {
 		T a;
 
 		ir = length - 1;
-
-		T temp;
 
 		for (; ; ) {
 			if (ir - l < M) {

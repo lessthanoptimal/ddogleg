@@ -168,6 +168,7 @@ tasks.withType(JavaCompile).configureEach {
             "HidingField", // this is sometimes done when the specific type is known by child. Clean up later.
             "ClassNewInstance", // yes it's deprecated, but new version is more verbose with ignored errors
             "FloatingPointLiteralPrecision", // too many false positives in test code
+            "SameNameButDifferent", // false positives. Nullable is confusing it
             "MissingSummary", "UnescapedEntity", "EmptyBlockTag")
     options.errorprone.error("MissingOverride", "MissingCasesInEnumSwitch", "BadInstanceof",
             "PublicConstructorForAbstractClass", "EmptyCatch", "NarrowingCompoundAssignment", "JdkObsolete")
