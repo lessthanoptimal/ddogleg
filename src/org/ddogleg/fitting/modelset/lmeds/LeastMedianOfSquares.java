@@ -63,7 +63,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	protected int sampleSize;
 	// if the best model has more than this error then it is considered a bad match
 	protected final double maxMedianError;
-	protected final ModelManager<Model> ModelManager;
+	protected final ModelManager<Model> modelManager;
 
 	/** Used to create model generators for each thread */
 	@Getter @Nullable Factory<ModelGenerator<Model, Point>> factoryGenerator;
@@ -113,7 +113,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		this.maxMedianError = maxMedianError;
 		this.inlierFrac = inlierFraction;
 		this.pointType = pointType;
-		this.ModelManager = modelManager;
+		this.modelManager = modelManager;
 
 		this.modelType = (Class)modelManager.createModelInstance().getClass();
 
@@ -246,9 +246,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		final List<Point> initialSample = new ArrayList<>();
 
 		// the best model found so far
-		Model bestParam = ModelManager.createModelInstance();
+		Model bestParam = modelManager.createModelInstance();
 		// the current model being considered
-		Model candidate = ModelManager.createModelInstance();
+		Model candidate = modelManager.createModelInstance();
 
 		// Which indexes were selected
 		protected final DogArray_I32 selectedIdx = new DogArray_I32();
