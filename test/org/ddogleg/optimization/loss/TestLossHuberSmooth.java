@@ -18,12 +18,12 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossSmoothHuber extends CommonChecksLossJacobian {
+class TestLossHuberSmooth extends CommonChecksLossJacobian {
 	@Override public LossFunction createFunction() {
-		return new LossSmoothHuber.Function(2);
+		return new LossHuberSmooth.Function(2);
 	}
 
 	@Override public LossFunctionGradient createGradient() {
-		return new LossSmoothHuber.Gradient(2);
+		return new LossHuberSmooth.Gradient(2);
 	}
 }

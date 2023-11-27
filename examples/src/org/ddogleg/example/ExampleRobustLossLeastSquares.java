@@ -18,10 +18,12 @@
 
 package org.ddogleg.example;
 
+import org.ddogleg.optimization.FactoryLossFunctions;
+import org.ddogleg.optimization.FactoryLossFunctions.Funcs;
 import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.UtilOptimize;
-import org.ddogleg.optimization.loss.*;
+import org.ddogleg.optimization.loss.LossIRLS;
 import org.ejml.data.DMatrixRMaj;
 
 import java.util.ArrayList;
@@ -63,26 +65,26 @@ public class ExampleRobustLossLeastSquares {
 		// Now compare it to several robust loss functions. Be sure to tune them for your application!
 		// NOTE: You must call setLoss() before initialize or else the initial cost will be computed incorrectly
 
-		double thresholdHuber = 0.5;
-		optimizer.setLoss(new LossHuber.Function(thresholdHuber), new LossHuber.Gradient(thresholdHuber));
+		Funcs huber = FactoryLossFunctions.huber(0.25);
+		optimizer.setLoss(huber.function, huber.gradient);
 		optimizer.initialize(new double[]{-0.5, 0.5}, 1e-12, 1e-12);
 		UtilOptimize.process(optimizer, 500);
 		printModelError("Huber", lineX, lineY, optimizer.getParameters());
 
-		double thresholdSmoothHuber = 0.25;
-		optimizer.setLoss(new LossSmoothHuber.Function(thresholdSmoothHuber), new LossSmoothHuber.Gradient(thresholdSmoothHuber));
+		Funcs huberSmooth = FactoryLossFunctions.huberSmooth(0.15);
+		optimizer.setLoss(huberSmooth.function, huberSmooth.gradient);
 		optimizer.initialize(new double[]{-0.5, 0.5}, 1e-12, 1e-12);
 		UtilOptimize.process(optimizer, 500);
-		printModelError("Smooth-Huber", lineX, lineY, optimizer.getParameters());
+		printModelError("Huber-Smooth", lineX, lineY, optimizer.getParameters());
 
-		double alphaCauchy = 1.0;
-		optimizer.setLoss(new LossCauchy.Function(alphaCauchy), new LossCauchy.Gradient(alphaCauchy));
+		Funcs cauchy = FactoryLossFunctions.cauchy(1.0);
+		optimizer.setLoss(cauchy.function, cauchy.gradient);
 		optimizer.initialize(new double[]{-0.5, 0.5}, 1e-12, 1e-12);
 		UtilOptimize.process(optimizer, 500);
 		printModelError("Cauchy", lineX, lineY, optimizer.getParameters());
 
-		double thresholdTukey = 3.0;
-		optimizer.setLoss(new LossTukey.Function(thresholdTukey), new LossTukey.Gradient(thresholdTukey));
+		Funcs tukey = FactoryLossFunctions.tukey(3.0);
+		optimizer.setLoss(tukey.function, tukey.gradient);
 		optimizer.initialize(new double[]{-0.5, 0.5}, 1e-12, 1e-12);
 		UtilOptimize.process(optimizer, 500);
 		printModelError("Tukey", lineX, lineY, optimizer.getParameters());

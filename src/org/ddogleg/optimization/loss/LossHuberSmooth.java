@@ -31,18 +31,18 @@ package org.ddogleg.optimization.loss;
  *
  * @author Peter Abeles
  */
-public abstract class LossSmoothHuber extends LossFunctionBase {
+public abstract class LossHuberSmooth extends LossFunctionBase {
 	/** Threshold parameter that determines when errors become linear */
 	final double threshold;
 
-	protected LossSmoothHuber( double threshold ) {
+	protected LossHuberSmooth( double threshold ) {
 		this.threshold = threshold;
 	}
 
 	/**
 	 * Implementation of the smooth Huber loss function
 	 */
-	public static class Function extends LossSmoothHuber implements LossFunction {
+	public static class Function extends LossHuberSmooth implements LossFunction {
 		public Function( double threshold ) {
 			super(threshold);
 		}
@@ -63,7 +63,7 @@ public abstract class LossSmoothHuber extends LossFunctionBase {
 	/**
 	 * Implementation of the smooth Huber loss gradient
 	 */
-	public static class Gradient extends LossSmoothHuber implements LossFunctionGradient {
+	public static class Gradient extends LossHuberSmooth implements LossFunctionGradient {
 		public Gradient( double threshold ) {
 			super(threshold);
 		}
