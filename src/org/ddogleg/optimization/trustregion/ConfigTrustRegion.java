@@ -53,12 +53,26 @@ public class ConfigTrustRegion extends ConfigGaussNewton {
 	 */
 	public double regionMaximum = Double.MAX_VALUE;
 
+	@Deprecated
 	public ConfigTrustRegion copy() {
 		ConfigTrustRegion out = new ConfigTrustRegion();
 		out.regionInitial = regionInitial;
 		out.regionMaximum = regionMaximum;
-		out.set(this);
+		out.setTo(this);
 
 		return out;
+	}
+
+	public ConfigTrustRegion setTo( ConfigTrustRegion src ) {
+		super.setTo(src);
+		this.regionInitial = src.regionInitial;
+		this.regionMaximum = src.regionMaximum;
+		return this;
+	}
+
+	@Override public void reset() {
+		super.reset();
+		this.regionInitial = -2;
+		this.regionMaximum = Double.MAX_VALUE;
 	}
 }

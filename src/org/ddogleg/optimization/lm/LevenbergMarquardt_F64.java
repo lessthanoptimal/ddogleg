@@ -322,7 +322,7 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {
 		final double mixture = config.mixture;
 		for (int i = 0; i < diagOrig.numRows; i++) {
-			double v = min(config.diagonal_max, max(config.diagonal_min, diagOrig.data[i]));
+			double v = min(config.diagonalMax, max(config.diagonalMin, diagOrig.data[i]));
 			diagStep.data[i] = v + lambda*(mixture + (1.0 - mixture)*v);
 		}
 		hessian.setDiagonals(diagStep);

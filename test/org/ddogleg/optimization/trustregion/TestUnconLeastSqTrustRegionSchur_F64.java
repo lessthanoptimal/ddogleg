@@ -148,7 +148,7 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 //			config.regionInitial = 1;
 			config.hessianScaling = true;
 
-			return FactoryOptimization.doglegSchur(true, config);
+			return FactoryOptimization.doglegSchur(config, true);
 		}
 	}
 

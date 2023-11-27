@@ -42,6 +42,28 @@ import org.jetbrains.annotations.Nullable;
 public class FactoryOptimizationSparse {
 
 	/**
+	 * Generic factory for any unconstrained least squares solver using Schur decomposition
+	 */
+	public static UnconstrainedLeastSquaresSchur<DMatrixSparseCSC>
+	leastSquaresSchur( ConfigNonLinearLeastSquares config ) {
+		return switch (config.type) {
+			case TRUST_REGION -> doglegSchur(config.trust);
+			case LEVENBERG_MARQUARDT -> levenbergMarquardtSchur(config.lm);
+		};
+	}
+
+	/**
+	 * Generic factory for any unconstrained least squares solver
+	 */
+	public static UnconstrainedLeastSquares<DMatrixSparseCSC>
+	leastSquares( ConfigNonLinearLeastSquares config ) {
+		return switch (config.type) {
+			case TRUST_REGION -> dogleg(config.trust);
+			case LEVENBERG_MARQUARDT -> levenbergMarquardt(config.lm);
+		};
+	}
+
+	/**
 	 * Creates a sparse Schur Complement trust region optimization using dogleg steps.
 	 *
 	 * @param config Trust region configuration
