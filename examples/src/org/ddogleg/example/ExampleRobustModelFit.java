@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class ExampleRobustModelFit {
 
-	public static void main( String args[] ) {
+	public static void main( String[] args ) {
 		Random rand = new Random(234);
 
 		//------------------------ Create Observations

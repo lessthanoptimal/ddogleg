@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ public class FunctionLineDistanceEuclidean implements FunctionNtoM {
 	// Data which the line is being fit too
 	List<Point2D> data;
 
-	public FunctionLineDistanceEuclidean(List<Point2D> data) {
+	public FunctionLineDistanceEuclidean( List<Point2D> data ) {
 		this.data = data;
 	}
 
@@ -54,27 +54,29 @@ public class FunctionLineDistanceEuclidean implements FunctionNtoM {
 	}
 
 	@Override
-	public void process(double[] input, double[] output) {
+	public void process( double[] input, double[] output ) {
 
 		// tangent equation
 		double tanX = input[0], tanY = input[1];
 
 		// convert into parametric equation
-		double lineX = tanX; double lineY = tanY;
-		double slopeX = -tanY; double slopeY = tanX;
+		double lineX = tanX;
+		double lineY = tanY;
+		double slopeX = -tanY;
+		double slopeY = tanX;
 
 		// compute the residual error for each point in the data set
-		for( int i = 0; i < data.size(); i++ ) {
+		for (int i = 0; i < data.size(); i++) {
 			Point2D p = data.get(i);
 
-			double t = slopeX * ( p.x - lineX ) + slopeY * ( p.y - lineY );
-			t /= slopeX * slopeX + slopeY * slopeY;
+			double t = slopeX*(p.x - lineX) + slopeY*(p.y - lineY);
+			t /= slopeX*slopeX + slopeY*slopeY;
 
 			double closestX = lineX + t*slopeX;
 			double closestY = lineY + t*slopeY;
 
-			output[i*2]   = p.x-closestX;
-			output[i*2+1] = p.y-closestY;
+			output[i*2] = p.x - closestX;
+			output[i*2 + 1] = p.y - closestY;
 		}
 	}
 }

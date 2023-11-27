@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class ExamplePolynomialRoot {
 
-	public static void main( String args[] ) {
+	public static void main( String[] args ) {
 		// Select which algorithm to use
 		PolynomialRoots finder = PolynomialOps.createRootFinder(6, RootFinderType.EVD);
 

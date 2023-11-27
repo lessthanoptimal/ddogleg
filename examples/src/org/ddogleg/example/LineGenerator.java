@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,8 +24,6 @@ import java.util.List;
 
 /**
  * Estimate the parameters of a line using two points
- *
- * @author Peter Abeles
  */
 public class LineGenerator implements ModelGenerator<Line2D, Point2D> {
 
