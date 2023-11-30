@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization.loss;
 
+import org.ddogleg.optimization.UtilOptimize;
+
 /**
  * Huber Loss is a robust loss function that is less sensitive to outliers than the squared error loss. For values
  * less than a threshold it returns the squared error, for values greater than it returns an error that grows linearly
@@ -28,13 +30,9 @@ package org.ddogleg.optimization.loss;
 public abstract class LossHuber extends LossFunctionBase {
 	/** Threshold parameter that determines when errors become linear */
 	final double threshold;
-	// to speed up the computation slightly we check for |a| <= threshold using a**2 <= thresholdSq instead.
-	// These are mathematically the equivalent
-	final double thresholdSq;
 
 	protected LossHuber( double threshold ) {
 		this.threshold = threshold;
-		this.thresholdSq = threshold*threshold;
 	}
 
 	/**
@@ -46,17 +44,25 @@ public abstract class LossHuber extends LossFunctionBase {
 		}
 
 		@Override public double process( double[] input ) {
+			// Avoid numerical overflow by ensuring values are around one
+			double max = UtilOptimize.maxAbs(input, 0, numberOfFunctions);
+			if (max == 0.0)
+				return 0.0;
+
+			double scaleThreshold = threshold/max;
+			double scaleThresholdSq = scaleThreshold*scaleThreshold;
+
 			double sum = 0.0;
 			for (int i = 0; i < numberOfFunctions; i++) {
-				double r = input[i];
+				double r = input[i]/max;
 				double rr = r*r;
-				if (rr <= thresholdSq) {
+				if (rr <= scaleThresholdSq) {
 					sum += 0.5*rr;
 				} else {
-					sum += threshold*(Math.abs(r) - 0.5*threshold);
+					sum += scaleThreshold*(Math.abs(r) - 0.5*scaleThreshold);
 				}
 			}
-			return sum;
+			return max*sum*max;
 		}
 	}
 
@@ -69,6 +75,8 @@ public abstract class LossHuber extends LossFunctionBase {
 		}
 
 		@Override public void process( double[] input, double[] output ) {
+			final double thresholdSq = threshold*threshold;
+
 			for (int funcIdx = 0; funcIdx < numberOfFunctions; funcIdx++) {
 				double r = input[funcIdx];
 				double rr = r*r;

@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization.loss;
 
+import org.ddogleg.optimization.UtilOptimize;
+
 /**
  * Iteratively Reweighted Least-Squares (IRLS) allows the weights to be recomputed every iteration. At the start
  * of an internation the weights are computed and saved. This is to ensure the cost function doesn't change as the
@@ -43,13 +45,18 @@ public class LossIRLS implements LossFunction, LossFunctionGradient {
 	 * Computes the lost function
 	 */
 	@Override public double process( double[] input ) {
+		// Avoid numerical overflow by ensuring values are around one
+		double max = UtilOptimize.maxAbs(input, 0, weights.length);
+		if (max == 0.0)
+			return 0.0;
+
 		double sum = 0.0;
 		for (int i = 0; i < weights.length; i++) {
-			double r = weights[i]*input[i];
+			double r = weights[i]*(input[i]/max);
 			sum += r*r;
 		}
 
-		return 0.5*sum;
+		return 0.5*max*sum*max;
 	}
 
 	/**

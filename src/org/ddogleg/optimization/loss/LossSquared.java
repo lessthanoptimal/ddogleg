@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization.loss;
 
+import org.ddogleg.optimization.UtilOptimize;
+
 /**
  * Squared error loss function. This is the typical least squares error function. Gradient isnt defined
  * since it will be set to null and that step skipped.
@@ -26,12 +28,17 @@ package org.ddogleg.optimization.loss;
  */
 public class LossSquared extends LossFunctionBase implements LossFunction {
 	@Override public double process( double[] input ) {
+		// Avoid numerical overflow by ensuring values are around one
+		double max = UtilOptimize.maxAbs(input, 0, numberOfFunctions);
+		if (max == 0.0)
+			return 0.0;
+
 		double sum = 0.0;
 		for (int i = 0; i < numberOfFunctions; i++) {
-			double r = input[i];
+			double r = input[i]/max;
 			sum += r*r;
 		}
 
-		return 0.5*sum;
+		return 0.5*sum*max*max;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,10 +35,10 @@ public class UtilOptimize {
 	 * @param maxSteps Maximum number of steps.
 	 * @return Value returned by {@link IterativeOptimization#iterate}
 	 */
-	public static boolean process( IterativeOptimization search , int maxSteps ) {
-		for( int i = 0; i < maxSteps; i++ ) {
+	public static boolean process( IterativeOptimization search, int maxSteps ) {
+		for (int i = 0; i < maxSteps; i++) {
 			boolean converged = step(search);
-			if( converged ) {
+			if (converged) {
 				return search.isConverged();
 			}
 		}
@@ -53,12 +53,25 @@ public class UtilOptimize {
 	 * @return Value returned by {@link IterativeOptimization#iterate}
 	 */
 	public static boolean step( IterativeOptimization search ) {
-		for( int i = 0; i < 10000; i++ ) {
+		for (int i = 0; i < 10000; i++) {
 			boolean converged = search.iterate();
-			if( converged || !search.isUpdated() ) {
+			if (converged || !search.isUpdated()) {
 				return converged;
 			}
 		}
 		throw new RuntimeException("After 10,000 iterations it failed to take a step! Probably a bug.");
+	}
+
+	/**
+	 * Returns the largest absolute value of an element in array within the specified range
+	 */
+	public static double maxAbs( double[] array, int idx0, int idx1 ) {
+		double max = 0;
+		for (int i = idx0; i < idx1; i++) {
+			double r = Math.abs(array[i]);
+			if (max < r)
+				max = r;
+		}
+		return max;
 	}
 }
