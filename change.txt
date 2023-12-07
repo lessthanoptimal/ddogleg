@@ -11,6 +11,7 @@ Date:     2023/
   * Fixed bug when max distance was set to MAX_VALUE
 - BigDogArray
   * Added isEquivalent()
+- Robust and Weighted Non-Linear Least Squares via Loss Functions
 
 ------------------------------------------------------
 Version:  0.23.1
