@@ -321,6 +321,33 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 		}
 	}
 
+	@Test void isEquivalent() {
+		// both arrays will have different block sizes
+		var a = new BigDogArray_B(10, 5, BigDogGrowth.GROW);
+		var b = new BigDogArray_B(10, 4, BigDogGrowth.GROW);
+
+		// see if it handles an empty array correctly
+		assertTrue(a.isEquivalent(b));
+
+		// They will have the same values
+		for (int i = 0; i < 21; i++) {
+			a.append(i%2==0);
+			b.append(i%2==0);
+		}
+
+		assertTrue(a.isEquivalent(b));
+
+		// adjust an element so that it's out of spec
+		a.set(4, false);
+		assertFalse(a.isEquivalent(b));
+		assertFalse(b.isEquivalent(a));
+
+		// make the shapes not match
+		b.append(true);
+		assertFalse(a.isEquivalent(b));
+		assertFalse(b.isEquivalent(a));
+	}
+
 	@Override
 	public BigDogArrayBase<boolean[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		return new BigDogArray_B(initialAllocation, blockSize, growth);

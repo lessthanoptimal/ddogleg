@@ -9,6 +9,8 @@ Date:     2023/
 
 - LeastMedianOfSquares
   * Fixed bug when max distance was set to MAX_VALUE
+- BigDogArray
+  * Added isEquivalent()
 
 ------------------------------------------------------
 Version:  0.23.1

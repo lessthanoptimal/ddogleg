@@ -202,4 +202,29 @@ public class BigDogArray_I32 extends BigDogArrayBase<int[]> {
 			}
 		});
 	}
+
+	/**
+	 * Returns true if both arrays have the same number of elements and the elements are within the specified tolerance
+	 * of each other.
+	 */
+	public boolean isEquivalent( BigDogArray_I32 o ) {
+		if (size != o.size)
+			return false;
+
+		for (int i = 0; i < size; i++) {
+			// compute the coordinate for both arrays
+			int blockA = i/blockSize;
+			int idxA = i%blockSize;
+			int blockB = i/o.blockSize;
+			int idxB = i%o.blockSize;
+
+			// compare the values
+			if (blocks.data[blockA][idxA] != o.blocks.data[blockB][idxB])
+				return false;
+
+			// NOTE: This could be more efficient but much more complex by seeing how many elements until a block
+			//       border is encountered
+		}
+		return true;
+	}
 }

@@ -20,8 +20,7 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -320,6 +319,33 @@ public class TestBigDogArray_I32 extends ChecksBigDogArray<int[]> {
 				assertEquals(0, alg.get(i));
 			}
 		}
+	}
+
+	@Test void isEquivalent() {
+		// both arrays will have different block sizes
+		var a = new BigDogArray_I32(10, 5, BigDogGrowth.GROW);
+		var b = new BigDogArray_I32(10, 4, BigDogGrowth.GROW);
+
+		// see if it handles an empty array correctly
+		assertTrue(a.isEquivalent(b));
+
+		// They will have the same values
+		for (int i = 0; i < 21; i++) {
+			a.append(i);
+			b.append(i);
+		}
+
+		assertTrue(a.isEquivalent(b));
+
+		// adjust an element so that it's out of spec
+		a.set(4, 5);
+		assertFalse(a.isEquivalent(b));
+		assertFalse(b.isEquivalent(a));
+
+		// make the shapes not match
+		b.append(4);
+		assertFalse(a.isEquivalent(b));
+		assertFalse(b.isEquivalent(a));
 	}
 
 	@Override public BigDogArrayBase<int[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {

@@ -20,8 +20,7 @@ package org.ddogleg.struct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Peter Abeles
@@ -237,8 +236,8 @@ public class TestBigDogArray_F64 extends ChecksBigDogArray<double[]> {
 			assertEquals(i + 1, alg.getTail(i));
 		}
 
-		assertEquals(alg.get(alg.size-1), alg.getTail(0));
-		assertEquals(alg.get(alg.size-2), alg.getTail(1));
+		assertEquals(alg.get(alg.size - 1), alg.getTail(0));
+		assertEquals(alg.get(alg.size - 2), alg.getTail(1));
 	}
 
 	@Test void getArray() {
@@ -322,7 +321,39 @@ public class TestBigDogArray_F64 extends ChecksBigDogArray<double[]> {
 		}
 	}
 
-	@Override public BigDogArrayBase<double[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
+	@Test void isEquivalent() {
+		// both arrays will have different block sizes
+		var a = new BigDogArray_F64(10, 5, BigDogGrowth.GROW);
+		var b = new BigDogArray_F64(10, 4, BigDogGrowth.GROW);
+
+		// see if it handles an empty array correctly
+		assertTrue(a.isEquivalent(b, 0.0));
+
+		// They will have the same values
+		for (int i = 0; i < 21; i++) {
+			a.append(i);
+			b.append(i);
+		}
+
+		assertTrue(a.isEquivalent(b, 0.0));
+
+		// adjust an element so that it's out of spec
+		a.set(4, 4 + 0.1);
+		assertFalse(a.isEquivalent(b, 0.0));
+		assertFalse(b.isEquivalent(a, 0.0));
+
+		// increase tolerance
+		assertTrue(a.isEquivalent(b, 0.1));
+		assertTrue(b.isEquivalent(a, 0.1));
+
+		// make the shapes not match
+		b.append(4);
+		assertFalse(a.isEquivalent(b, 0.1));
+		assertFalse(b.isEquivalent(a, 0.1));
+	}
+
+	@Override
+	public BigDogArrayBase<double[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		return new BigDogArray_F64(initialAllocation, blockSize, growth);
 	}
 
