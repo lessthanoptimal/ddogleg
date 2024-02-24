@@ -5,7 +5,7 @@ DDogleg Numerics is a high performance Java library for non-linear optimization,
 
 ===================   =====================
 **Latest Version**    v\ |ddogleg_version|
-**Released**          September 23, 2023
+**Released**          February 24, 2024
 **Source Code**       `GitHub <https://github.com/lessthanoptimal/ddogleg>`_
 **License**           `Apache 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_
 ===================   =====================
