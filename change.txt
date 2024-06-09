@@ -2,6 +2,11 @@ Change log for DDogleg Numerics
 
 Date Format: YEAR-MONTH-DAY
 
+------------------------------------------------------
+Version:  0.23.3
+Date:     2024/XXX/YY
+
+- isEmpty() and isNotEmpty() are consistently implemented in array type containers
 
 ------------------------------------------------------
 Version:  0.23.2

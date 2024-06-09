@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -383,6 +383,16 @@ public abstract class BigDogArrayBase<Array> {
 		}
 
 		return true;
+	}
+
+	/** True if the array is empty */
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	/** True if the array has elements */
+	public boolean isNotEmpty() {
+		return size > 0;
 	}
 
 	/**

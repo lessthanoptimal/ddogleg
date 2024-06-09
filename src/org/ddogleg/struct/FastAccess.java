@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -89,6 +89,11 @@ public abstract class FastAccess<T> implements Serializable {
 	/** True if the container has no elements */
 	public boolean isEmpty() {
 		return size == 0;
+	}
+
+	/** True if the container has elements */
+	boolean isNotEmpty() {
+		return size > 0;
 	}
 
 	/**

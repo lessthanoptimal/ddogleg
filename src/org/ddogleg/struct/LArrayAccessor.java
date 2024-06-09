@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,13 +35,23 @@ public interface LArrayAccessor<P> {
 	P getTemp( int index );
 
 	/** Copies the element at 'index' into 'dst'. Only use if a copy is required. */
-	void getCopy( int index , P dst );
+	void getCopy( int index, P dst );
 
 	/** Copies src into dst */
-	void copy(P src, P dst);
+	void copy( P src, P dst );
 
 	/** Number of elements in the set */
 	int size();
+
+	/** True if the array is empty */
+	default boolean isEmpty() {
+		return size() == 0;
+	}
+
+	/** True if the array has elements */
+	default boolean isNotEmpty() {
+		return size() > 0;
+	}
 
 	/**
 	 * Data type of element

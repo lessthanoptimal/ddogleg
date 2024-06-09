@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -215,6 +215,21 @@ public abstract class ChecksBigDogArray<Array> {
 				removeSwap(growth, N);
 			}
 		}
+	}
+
+	@Test void isEmpty() {
+		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
+
+		alg.resize(5);
+
+		assertFalse(alg.isEmpty());
+		assertTrue(alg.isNotEmpty());
+
+		alg.resize(0);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
 	}
 
 	void removeSwap( BigDogGrowth growth, int N ) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,11 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	protected Random rand = new Random(0xfeed);
@@ -130,5 +127,20 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 		alg.reserve(1);
 		check(alg,0,3);
 		assertEquals(3, alg.size());
+	}
+
+	@Test void isEmpty() {
+		T alg = declare(2);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
+
+		alg.resize(5);
+
+		assertFalse(alg.isEmpty());
+		assertTrue(alg.isNotEmpty());
+
+		alg.resize(0);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
 	}
 }

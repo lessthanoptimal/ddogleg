@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -111,5 +111,10 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	/** True if the container has no elements */
 	default boolean isEmpty() {
 		return size() == 0;
+	}
+
+	/** True if the container has elements in it */
+	default boolean isNotEmpty() {
+		return size() > 0;
 	}
 }

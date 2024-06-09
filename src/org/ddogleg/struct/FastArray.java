@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -57,8 +57,7 @@ public class FastArray<T> extends FastAccess<T> {
 		data[size++] = value;
 	}
 
-	@Override
-	public T remove( int index ) {
+	@Override public T remove( int index ) {
 		T removed = data[index];
 		for (int i = index + 1; i < size; i++) {
 			data[i - 1] = data[i];
@@ -68,8 +67,7 @@ public class FastArray<T> extends FastAccess<T> {
 		return removed;
 	}
 
-	@Override
-	public T removeSwap( int index ) {
+	@Override public T removeSwap( int index ) {
 		if (index < 0 || index >= size)
 			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
 		T ret = data[index];
@@ -216,8 +214,7 @@ public class FastArray<T> extends FastAccess<T> {
 	 *
 	 * @return List wrapper.
 	 */
-	@Override
-	public List<T> toList() {
+	@Override public List<T> toList() {
 		return list;
 	}
 }

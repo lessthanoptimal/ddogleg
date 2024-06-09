@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,9 +25,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestFastAccess {
 	@Test void find() {
 		var alg = new DogArray<>(DummyData::new);
@@ -163,5 +160,20 @@ public class TestFastAccess {
 
 		assertEquals(0, alg.count((o)->o.value==0));
 		assertEquals(3, alg.count((o)->o.value==2));
+	}
+
+	@Test void isEmpty() {
+		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
+
+		alg.resize(5);
+
+		assertFalse(alg.isEmpty());
+		assertTrue(alg.isNotEmpty());
+
+		alg.resize(0);
+		assertTrue(alg.isEmpty());
+		assertFalse(alg.isNotEmpty());
 	}
 }
