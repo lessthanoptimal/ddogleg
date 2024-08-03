@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -291,7 +291,7 @@ class TestDogArray {
 		try {
 			alg.get(0);
 			fail("Didn't fail");
-		} catch (IllegalArgumentException ignore) {
+		} catch (IndexOutOfBoundsException ignore) {
 		}
 
 		alg.grow();
