@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -77,7 +77,7 @@ public class DogLinkedList<T> {
 	@SuppressWarnings("NullAway")
 	public Element<T> getElement( int index , boolean fromFront ) {
 		if( index > size || index < 0 ) {
-			throw new IllegalArgumentException("index is out of bounds");
+			throw new IndexOutOfBoundsException("index is out of bounds");
 		}
 		if( fromFront ) {
 			Element<T> e = first;

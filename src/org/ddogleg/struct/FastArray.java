@@ -46,7 +46,7 @@ public class FastArray<T> extends FastAccess<T> {
 
 	public void set( int index, T value ) {
 		if (index < 0 || index >= size)
-			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
+			throw new IndexOutOfBoundsException(index+" < 0 or " + index + " >=" + size);
 		data[index] = value;
 	}
 
@@ -69,7 +69,7 @@ public class FastArray<T> extends FastAccess<T> {
 
 	@Override public T removeSwap( int index ) {
 		if (index < 0 || index >= size)
-			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
+			throw new IndexOutOfBoundsException(index+" < 0 or " + index + " >=" + size);
 		T ret = data[index];
 		size -= 1;
 		data[index] = data[size];

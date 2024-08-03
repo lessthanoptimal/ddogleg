@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -211,7 +211,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		if (last < first)
 			throw new IllegalArgumentException("first <= last. first=" + first + " last=" + last);
 		if (last >= size)
-			throw new IllegalArgumentException("last must be less than the max size. last=" + last + " size=" + size);
+			throw new IndexOutOfBoundsException("last=" + last + " >= size=" + size);
 
 		int delta = last - first + 1;
 		for (int i = last + 1; i < size; i++) {
@@ -249,7 +249,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 */
 	public int removeSwap( int index ) {
 		if (index < 0 || index >= size)
-			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
+			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
 		int ret = data[index];
 		size -= 1;
 		data[index] = data[size];

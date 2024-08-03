@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -250,7 +250,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 */
 	public double removeSwap( int index ) {
 		if (index < 0 || index >= size)
-			throw new IllegalArgumentException("Out of bounds. index=" + index + " max size " + size);
+			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
 		double ret = data[index];
 		size -= 1;
 		data[index] = data[size];

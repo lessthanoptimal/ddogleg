@@ -42,7 +42,7 @@ public abstract class FastAccess<T> implements Serializable {
 
 	public T get( int index ) {
 		if( index < 0 || index >= size )
-			throw new IllegalArgumentException("Out of bounds. index="+index+" max size "+size);
+			throw new IndexOutOfBoundsException( index + " < 0 or " + index + " >=" + size);
 		return data[index];
 	}
 
@@ -238,7 +238,7 @@ public abstract class FastAccess<T> implements Serializable {
 	 */
 	public void forIdx(int idx0 , int idx1, FunctionEachIdx<T> function ) {
 		if( idx1 > size )
-			throw new IllegalArgumentException("idx1 is out of range");
+			throw new IndexOutOfBoundsException("idx1 > "+size);
 
 		for (int i = idx0; i < idx1; i++) {
 			function.process(i,data[i]);
@@ -271,7 +271,7 @@ public abstract class FastAccess<T> implements Serializable {
 	 */
 	public void forEach(int idx0 , int idx1, FunctionEach<T> function ) {
 		if( idx1 > size )
-			throw new IllegalArgumentException("idx1 is out of range");
+			throw new IndexOutOfBoundsException("idx1 > "+size);
 
 		for (int i = idx0; i < idx1; i++) {
 			function.process(data[i]);
