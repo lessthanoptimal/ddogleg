@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -253,7 +253,7 @@ public class TestDogArray_B {
 		int N = 20;
 		var alg = new DogArray_B(N);
 		for (int i = 0; i < N; i++) {
-			alg.add(i>= N/2);
+			alg.add(i >= N/2);
 		}
 		alg.shuffle(rand);
 		int changed = 0;
@@ -284,6 +284,18 @@ public class TestDogArray_B {
 		alg.applyIdx(( idx, value ) -> false);
 		for (int i = 0; i < alg.size; i++) {
 			assertFalse(alg.get(i));
+		}
+	}
+
+	@Test void get_array() {
+		var dst = new boolean[8];
+		DogArray_B alg = DogArray_B.array(true, false, true, false, true, true, true);
+		alg.get(1, dst, 2, 3);
+		for (int i = 0; i < 2; i++) {
+			assertEquals(false, dst[i]);
+		}
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i + 1), dst[2 + i]);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,59 +30,59 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestFastArray {
 	@Test
 	void toList() {
-		FastArray<DummyData> alg = new FastArray<>(DummyData.class,10);
+		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
+		assertEquals(0, l.size());
 
-		alg.add( new DummyData(1) );
-		alg.add( new DummyData(1) );
-		alg.add( new DummyData(2) );
+		alg.add(new DummyData(1));
+		alg.add(new DummyData(1));
+		alg.add(new DummyData(2));
 		alg.removeTail();
 
 		l = alg.toList();
-		assertEquals(2,l.size());
-		assertEquals(1,l.get(0).value);
-		assertEquals(1,l.get(1).value);
+		assertEquals(2, l.size());
+		assertEquals(1, l.get(0).value);
+		assertEquals(1, l.get(1).value);
 	}
 
 	@Test
 	void removeTail() {
-		FastArray<DummyData> alg = new FastArray<>(DummyData.class,10);
+		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
-		alg.add( new DummyData() );
-		assertEquals(1,alg.size);
+		alg.add(new DummyData());
+		assertEquals(1, alg.size);
 		alg.removeTail();
-		assertEquals(0,alg.size);
+		assertEquals(0, alg.size);
 	}
 
 	@Test
 	void remove() {
-		FastArray<DummyData> alg = new FastArray<>(DummyData.class,10);
+		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
+		assertEquals(0, l.size());
 
-		alg.add( new DummyData(1) );
-		alg.add( new DummyData(2) );
-		alg.add( new DummyData(3) );
+		alg.add(new DummyData(1));
+		alg.add(new DummyData(2));
+		alg.add(new DummyData(3));
 
 		alg.remove(1);
 
-		assertEquals(2,alg.size());
-		assertEquals(1,alg.get(0).value);
-		assertEquals(3,alg.get(1).value);
+		assertEquals(2, alg.size());
+		assertEquals(1, alg.get(0).value);
+		assertEquals(3, alg.get(1).value);
 		// make sure the data was shifted to the end
 		assertNull(alg.data[2]);
 
 		alg.remove(1);
-		assertEquals(1,alg.size());
-		assertEquals(1,alg.get(0).value);
+		assertEquals(1, alg.size());
+		assertEquals(1, alg.get(0).value);
 		assertNull(alg.data[1]);
 		assertNull(alg.data[2]);
 
 		alg.remove(0);
-		assertEquals(0,alg.size());
+		assertEquals(0, alg.size());
 		assertNull(alg.data[0]);
 		assertNull(alg.data[1]);
 		assertNull(alg.data[2]);
@@ -90,33 +90,33 @@ class TestFastArray {
 
 	@Test
 	void removeSwap() {
-		FastArray<DummyData> alg = new FastArray<>(DummyData.class,10);
+		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
-		assertEquals(0,l.size());
+		assertEquals(0, l.size());
 
-		alg.add( new DummyData(1) );
+		alg.add(new DummyData(1));
 		DummyData d = alg.get(0);
-		assertSame(d,alg.removeSwap(0));
-		assertEquals(0,alg.size());
+		assertSame(d, alg.removeSwap(0));
+		assertEquals(0, alg.size());
 
-		alg.add( new DummyData(1) );
-		alg.add( new DummyData(2) );
-		alg.add( new DummyData(3) );
-		alg.add( new DummyData(4) );
+		alg.add(new DummyData(1));
+		alg.add(new DummyData(2));
+		alg.add(new DummyData(3));
+		alg.add(new DummyData(4));
 
 		alg.removeSwap(1);
 
-		assertEquals(3,alg.size());
-		assertEquals(1,alg.get(0).value);
-		assertEquals(4,alg.get(1).value);
-		assertEquals(3,alg.get(2).value);
+		assertEquals(3, alg.size());
+		assertEquals(1, alg.get(0).value);
+		assertEquals(4, alg.get(1).value);
+		assertEquals(3, alg.get(2).value);
 		assertNull(alg.data[3]);
 	}
 
 	@Test
 	void reverse() {
-		DogArray<DummyData> alg = new DogArray<>(2,DummyData::new);
+		DogArray<DummyData> alg = new DogArray<>(2, DummyData::new);
 
 		// 0 items
 		alg.reverse();
@@ -145,8 +145,8 @@ class TestFastArray {
 		alg.reverse();
 
 		assertEquals(3, alg.get(0).value);
-		assertEquals(2,alg.get(1).value);
-		assertEquals(1,alg.get(2).value);
+		assertEquals(2, alg.get(1).value);
+		assertEquals(1, alg.get(2).value);
 
 		// 4 items (even)
 		alg.reset();
@@ -158,17 +158,17 @@ class TestFastArray {
 
 		alg.reverse();
 
-		assertEquals(4,alg.get(0).value);
-		assertEquals(3,alg.get(1).value);
-		assertEquals(2,alg.get(2).value);
-		assertEquals(1,alg.get(3).value);
+		assertEquals(4, alg.get(0).value);
+		assertEquals(3, alg.get(1).value);
+		assertEquals(2, alg.get(2).value);
+		assertEquals(1, alg.get(3).value);
 
 		// double reverse = original
 		alg.reverse();
-		assertEquals(1,alg.get(0).value);
-		assertEquals(2,alg.get(1).value);
-		assertEquals(3,alg.get(2).value);
-		assertEquals(4,alg.get(3).value);
+		assertEquals(1, alg.get(0).value);
+		assertEquals(2, alg.get(1).value);
+		assertEquals(3, alg.get(2).value);
+		assertEquals(4, alg.get(3).value);
 	}
 
 	@Test
@@ -204,12 +204,12 @@ class TestFastArray {
 		}
 
 		DummyData data1 = new DummyData();
-		alg.resize(6,data1);
-		assertEquals(6,alg.size);
-		assertTrue(alg.data.length>=6);
+		alg.resize(6, data1);
+		assertEquals(6, alg.size);
+		assertTrue(alg.data.length >= 6);
 
 		for (int i = 0; i < alg.size; i++) {
-			assertSame(data1,alg.get(i));
+			assertSame(data1, alg.get(i));
 		}
 	}
 }

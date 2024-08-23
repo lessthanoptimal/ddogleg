@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,7 +30,7 @@ public class RecycleManager<T> {
 	protected Class<T> targetClass;
 	protected ArrayDeque<T> unused = new ArrayDeque<>();
 
-	public RecycleManager(Class<T> targetClass) {
+	public RecycleManager( Class<T> targetClass ) {
 		this.targetClass = targetClass;
 	}
 
@@ -39,7 +39,7 @@ public class RecycleManager<T> {
 	 */
 	public T requestInstance() {
 		T a;
-		if( unused.size() > 0 ) {
+		if (unused.size() > 0) {
 			a = unused.removeLast();
 		} else {
 			a = createInstance();

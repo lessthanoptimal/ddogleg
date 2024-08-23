@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -236,8 +236,8 @@ public class TestBigDogArray_F32 extends ChecksBigDogArray<float[]> {
 			assertEquals(i + 1, alg.getTail(i));
 		}
 
-		assertEquals(alg.get(alg.size-1), alg.getTail(0));
-		assertEquals(alg.get(alg.size-2), alg.getTail(1));
+		assertEquals(alg.get(alg.size - 1), alg.getTail(0));
+		assertEquals(alg.get(alg.size - 2), alg.getTail(1));
 	}
 
 	@Test void getArray() {
@@ -352,7 +352,8 @@ public class TestBigDogArray_F32 extends ChecksBigDogArray<float[]> {
 		assertFalse(b.isEquivalent(a, 0.1f));
 	}
 
-	@Override public BigDogArrayBase<float[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
+	@Override
+	public BigDogArrayBase<float[]> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth ) {
 		return new BigDogArray_F32(initialAllocation, blockSize, growth);
 	}
 

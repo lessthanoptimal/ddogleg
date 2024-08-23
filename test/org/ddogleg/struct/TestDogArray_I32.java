@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2022, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -428,6 +428,18 @@ public class TestDogArray_I32 extends ChecksDogArrayPrimitive<DogArray_I32> {
 		}
 		for (int i = 2; i < alg.size; i++) {
 			assertEquals(i + 1, alg.get(i));
+		}
+	}
+
+	@Test void get_array() {
+		var dst = new int[8];
+		DogArray_I32 alg = DogArray_I32.array(1, 2, 3, 4, 5);
+		alg.get(1, dst, 2, 3);
+		for (int i = 0; i < 2; i++) {
+			assertEquals(0.0, dst[i]);
+		}
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i + 1), dst[2 + i]);
 		}
 	}
 }

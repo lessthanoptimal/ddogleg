@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -26,13 +26,13 @@ import java.io.Serializable;
  * @author Peter Abeles
  */
 public interface DProcess<T> {
-	void process(T o);
+	void process( T o );
 
 	/**
 	 * Default implementation which does nothing
 	 */
 	class DoNothing<T> implements DProcess<T>, Serializable {
 		@Override
-		public void process(T o) {}
+		public void process( T o ) {}
 	}
 }

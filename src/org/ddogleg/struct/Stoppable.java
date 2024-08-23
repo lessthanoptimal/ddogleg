@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -41,6 +41,7 @@ public interface Stoppable {
 	 * True if a request to stop has been sent. If a stopped process is invoked again this
 	 * flag might not be immediately reset. This bit of amiguity is done to greatly simplify
 	 * implementation of this interface.
+	 *
 	 * @return true if a stop request has been sent
 	 */
 	boolean isStopRequested();
@@ -52,7 +53,7 @@ public interface Stoppable {
 		public Stopped() {
 		}
 
-		public Stopped(String message) {
+		public Stopped( String message ) {
 			super(message);
 		}
 	}

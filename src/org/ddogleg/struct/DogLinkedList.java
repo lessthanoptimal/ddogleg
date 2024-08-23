@@ -47,10 +47,10 @@ public class DogLinkedList<T> {
 	 */
 	public void reset() {
 		Element<T> e = first;
-		while( e != null ) {
+		while (e != null) {
 			Element<T> n = e.next;
 			e.clear();
-			available.add( e );
+			available.add(e);
 			e = n;
 			// This is possible if the list is cyclical
 			if (e == first)
@@ -62,6 +62,7 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Checks to see if there are no elements in the list
+	 *
 	 * @return true if empty or false if not
 	 */
 	public boolean isEmpty() {
@@ -75,23 +76,23 @@ public class DogLinkedList<T> {
 	 * @return if true then the number of elements will be from first otherwise last
 	 */
 	@SuppressWarnings("NullAway")
-	public Element<T> getElement( int index , boolean fromFront ) {
-		if( index > size || index < 0 ) {
+	public Element<T> getElement( int index, boolean fromFront ) {
+		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("index is out of bounds");
 		}
-		if( fromFront ) {
+		if (fromFront) {
 			Element<T> e = first;
-			for( int i = 0; i < index; i++ ) {
-				if( e == null )
-					throw new IllegalArgumentException("Element "+i+" is null");
+			for (int i = 0; i < index; i++) {
+				if (e == null)
+					throw new IllegalArgumentException("Element " + i + " is null");
 				e = e.next;
 			}
 			return e;
 		} else {
 			Element<T> e = last;
-			for( int i = 0; i < index; i++ ) {
-				if( e == null )
-					throw new IllegalArgumentException("Element "+i+" is null");
+			for (int i = 0; i < index; i++) {
+				if (e == null)
+					throw new IllegalArgumentException("Element " + i + " is null");
 				e = e.prev;
 			}
 			return e;
@@ -108,7 +109,7 @@ public class DogLinkedList<T> {
 		Element<T> e = requestNew();
 		e.object = object;
 
-		if( first == null ) {
+		if (first == null) {
 			first = last = e;
 		} else {
 			e.next = first;
@@ -130,7 +131,7 @@ public class DogLinkedList<T> {
 		Element<T> e = requestNew();
 		e.object = object;
 
-		if( last == null ) {
+		if (last == null) {
 			first = last = e;
 		} else {
 			e.prev = last;
@@ -149,12 +150,12 @@ public class DogLinkedList<T> {
 	 * @param object The object which goes into the new element
 	 * @return The new element
 	 */
-	public Element<T> insertAfter( Element<T> previous , T object ) {
+	public Element<T> insertAfter( Element<T> previous, T object ) {
 		Element<T> e = requestNew();
 		e.object = object;
 		e.prev = previous;
 		e.next = previous.next;
-		if( e.next != null ) {
+		if (e.next != null) {
 			e.next.prev = e;
 		} else {
 			last = e;
@@ -171,13 +172,13 @@ public class DogLinkedList<T> {
 	 * @param object The object which goes into the new element
 	 * @return The new element
 	 */
-	public Element<T> insertBefore( Element<T> next , T object ) {
+	public Element<T> insertBefore( Element<T> next, T object ) {
 		Element<T> e = requestNew();
 		e.object = object;
 		e.prev = next.prev;
 		e.next = next;
 
-		if( e.prev != null ) {
+		if (e.prev != null) {
 			e.prev.next = e;
 		} else {
 			first = e;
@@ -193,12 +194,12 @@ public class DogLinkedList<T> {
 	 * @param a Element
 	 * @param b Element
 	 */
-	public void swap( Element<T> a , Element<T> b ) {
+	public void swap( Element<T> a, Element<T> b ) {
 		if (a.next == b) {
-			if( a.prev != null ) {
+			if (a.prev != null) {
 				a.prev.next = b;
 			}
-			if( b.next != null ) {
+			if (b.next != null) {
 				b.next.prev = a;
 			}
 			Element<T> tmp = a.prev;
@@ -206,15 +207,15 @@ public class DogLinkedList<T> {
 			a.next = b.next;
 			b.prev = tmp;
 			b.next = a;
-			if( first == a )
+			if (first == a)
 				first = b;
-			if( last == b )
+			if (last == b)
 				last = a;
 		} else if (a.prev == b) {
-			if( a.next != null ) {
+			if (a.next != null) {
 				a.next.prev = b;
 			}
-			if( b.prev != null ) {
+			if (b.prev != null) {
 				b.prev.next = a;
 			}
 			Element<T> tmp = a.next;
@@ -223,9 +224,9 @@ public class DogLinkedList<T> {
 			b.prev = a;
 			b.next = tmp;
 
-			if( first == b )
+			if (first == b)
 				first = a;
-			if( last == a )
+			if (last == a)
 				last = b;
 		} else {
 			if (a.next != null) {
@@ -260,15 +261,16 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Removes the element from the list and saves the element data structure for later reuse.
+	 *
 	 * @param element The item which is to be removed from the list
 	 */
 	public void remove( Element<T> element ) {
-		if( element.next == null ) {
+		if (element.next == null) {
 			last = element.prev;
 		} else {
 			element.next.prev = element.prev;
 		}
-		if( element.prev == null ) {
+		if (element.prev == null) {
 			first = element.next;
 		} else {
 			element.prev.next = element.next;
@@ -280,17 +282,18 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Removes the first element from the list
+	 *
 	 * @return The object which was contained in the first element
 	 */
 	public T removeHead() {
-		if( first == null )
+		if (first == null)
 			throw new IllegalArgumentException("Empty list");
 
 		T ret = first.getObject();
 		Element<T> e = first;
 		available.add(first);
 
-		if( first.next != null ) {
+		if (first.next != null) {
 			first.next.prev = null;
 			first = first.next;
 		} else {
@@ -304,17 +307,18 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Removes the last element from the list
+	 *
 	 * @return The object which was contained in the last element
 	 */
 	public T removeTail() {
-		if( last == null )
+		if (last == null)
 			throw new IllegalArgumentException("Empty list");
 
 		T ret = last.getObject();
 		Element<T> e = last;
 		available.add(last);
 
-		if( last.prev != null ) {
+		if (last.prev != null) {
 			last.prev.next = null;
 			last = last.prev;
 		} else {
@@ -328,13 +332,14 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Returns the first element which contains 'object' starting from the head.
+	 *
 	 * @param object Object which is being searched for
 	 * @return First element which contains object or null if none can be found
 	 */
 	public @Nullable Element<T> find( T object ) {
 		Element<T> e = first;
-		while( e != null ) {
-			if( e.object == object ) {
+		while (e != null) {
+			if (e.object == object) {
 				return e;
 			}
 			e = e.next;
@@ -344,6 +349,7 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Returns the first element in the list
+	 *
 	 * @return first element
 	 */
 	public @Nullable Element<T> getHead() {
@@ -352,6 +358,7 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Returns the last element in the list
+	 *
 	 * @return last element
 	 */
 	public @Nullable Element<T> getTail() {
@@ -370,18 +377,19 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Add all elements in list into this linked list
+	 *
 	 * @param list List
 	 */
 	public void addAll( List<T> list ) {
-		if( list.isEmpty() )
+		if (list.isEmpty())
 			return;
 
 		Element<T> a = requestNew();
 		a.object = list.get(0);
 
-		if( first == null ) {
+		if (first == null) {
 			first = a;
-		} else if( last != null ) {
+		} else if (last != null) {
 			last.next = a;
 			a.prev = last;
 		}
@@ -401,27 +409,28 @@ public class DogLinkedList<T> {
 
 	/**
 	 * Adds the specified elements from array into this list
+	 *
 	 * @param array The array
 	 * @param first First element to be added
 	 * @param length The number of elements to be added
 	 */
-	public void addAll( T[] array , int first , int length ) {
-		if( length <= 0 )
+	public void addAll( T[] array, int first, int length ) {
+		if (length <= 0)
 			return;
 
 		Element<T> a = requestNew();
 		a.object = array[first];
 
-		if( this.first == null ) {
+		if (this.first == null) {
 			this.first = a;
-		} else if( last != null ) {
+		} else if (last != null) {
 			last.next = a;
 			a.prev = last;
 		}
 
 		for (int i = 1; i < length; i++) {
 			Element<T> b = requestNew();
-			b.object =  array[first+i];
+			b.object = array[first + i];
 
 			a.next = b;
 			b.prev = a;
@@ -444,8 +453,8 @@ public class DogLinkedList<T> {
 	 *
 	 * @return Unused element.
 	 */
-	protected Element<T> requestNew () {
-		if( available.isEmpty() ) {
+	protected Element<T> requestNew() {
+		if (available.isEmpty()) {
 			return new Element<>();
 		} else {
 			return available.pop();
@@ -453,8 +462,7 @@ public class DogLinkedList<T> {
 	}
 
 	@SuppressWarnings("NullAway")
-	public static class Element<T>
-	{
+	public static class Element<T> {
 		public @Nullable @Getter @Setter Element<T> next;
 		public @Nullable @Getter @Setter Element<T> prev;
 		public @Getter @Setter T object;

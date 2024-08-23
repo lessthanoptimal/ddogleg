@@ -30,9 +30,11 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 	public abstract T declare( int maxsize );
 
-	public abstract void push( T queue , double value );
-	public abstract void insert( T queue , int index, double value );
-	public abstract void check( T queue , int index , double value );
+	public abstract void push( T queue, double value );
+
+	public abstract void insert( T queue, int index, double value );
+
+	public abstract void check( T queue, int index, double value );
 
 	@Test void insert() {
 		T alg = declare(10);
@@ -45,12 +47,12 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 		insert(alg, 2, 6);
 
-		assertEquals(5,alg.size());
-		check(alg,0,1);
-		check(alg,1,3);
-		check(alg,2,6);
-		check(alg,3,4);
-		check(alg,4,5);
+		assertEquals(5, alg.size());
+		check(alg, 0, 1);
+		check(alg, 1, 3);
+		check(alg, 2, 6);
+		check(alg, 3, 4);
+		check(alg, 4, 5);
 
 		// insert with array resize
 
@@ -62,12 +64,12 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 		insert(alg, 2, 6);
 
-		assertEquals(5,alg.size());
-		check(alg,0,1);
-		check(alg,1,3);
-		check(alg,2,6);
-		check(alg,3,4);
-		check(alg,4,5);
+		assertEquals(5, alg.size());
+		check(alg, 0, 1);
+		check(alg, 1, 3);
+		check(alg, 2, 6);
+		check(alg, 3, 4);
+		check(alg, 4, 5);
 	}
 
 	@Test void extend() {
@@ -76,37 +78,37 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 		push(alg, 3);
 
 		alg.extend(4);
-		check(alg,0,1);
-		check(alg,1,3);
-		assertEquals(4,alg.size());
+		check(alg, 0, 1);
+		check(alg, 1, 3);
+		assertEquals(4, alg.size());
 
 		alg.extend(2);
-		assertEquals(2,alg.size());
+		assertEquals(2, alg.size());
 	}
 
 	@Test void flip() {
 		T alg = declare(10);
 
 		alg.flip();
-		assertEquals(0,alg.size());
+		assertEquals(0, alg.size());
 
 		push(alg, 1);
 		alg.flip();
-		assertEquals(1,alg.size());
-		check(alg,0,1);
+		assertEquals(1, alg.size());
+		check(alg, 0, 1);
 
 		push(alg, 2);
 		alg.flip();
-		assertEquals(2,alg.size());
-		check(alg,0,2);
-		check(alg,1,1);
+		assertEquals(2, alg.size());
+		check(alg, 0, 2);
+		check(alg, 1, 1);
 
 		push(alg, 3);
 		alg.flip();
-		assertEquals(3,alg.size());
-		check(alg,0,3);
-		check(alg,1,1);
-		check(alg,2,2);
+		assertEquals(3, alg.size());
+		check(alg, 0, 3);
+		check(alg, 1, 1);
+		check(alg, 2, 2);
 	}
 
 	@Test void reserve() {
@@ -118,14 +120,14 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 
 		// Change the reserve, which should leave the current values alone
 		alg.reserve(4);
-		check(alg,0,3);
-		check(alg,1,4);
+		check(alg, 0, 3);
+		check(alg, 1, 4);
 		assertEquals(2, alg.size());
 		push(alg, 5);
 		assertEquals(3, alg.size());
 
 		alg.reserve(1);
-		check(alg,0,3);
+		check(alg, 0, 3);
 		assertEquals(3, alg.size());
 	}
 

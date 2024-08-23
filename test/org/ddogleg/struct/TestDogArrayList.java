@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ public class TestDogArrayList {
 
 	@Test
 	public void size() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 
 		List<Dummy> list = queue.toList();
 
@@ -46,11 +46,11 @@ public class TestDogArrayList {
 
 	@Test
 	public void isEmpty() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 
 		List<Dummy> list = queue.toList();
 
-		assertTrue( list.isEmpty() );
+		assertTrue(list.isEmpty());
 
 		queue.grow().value = 1.0;
 
@@ -59,7 +59,7 @@ public class TestDogArrayList {
 
 	@Test
 	public void contains() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		List<Dummy> list = queue.toList();
 
 		assertFalse(list.contains(new Dummy(1.0)));
@@ -71,7 +71,7 @@ public class TestDogArrayList {
 
 	@Test
 	public void iterator() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
@@ -84,21 +84,20 @@ public class TestDogArrayList {
 		assertTrue(iterator.hasNext());
 		assertEquals(3.0, iterator.next().value);
 		assertFalse(iterator.hasNext());
-
 	}
 
 	@Test
 	public void toArray() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
 
 		Object[] array = queue.toList().toArray();
 		assertEquals(3, array.length);
-		assertEquals(1.0, ((Dummy) array[0]).value);
-		assertEquals(2.0, ((Dummy) array[1]).value);
-		assertEquals(3.0, ((Dummy) array[2]).value);
+		assertEquals(1.0, ((Dummy)array[0]).value);
+		assertEquals(2.0, ((Dummy)array[1]).value);
+		assertEquals(3.0, ((Dummy)array[2]).value);
 
 		// remove an element from the queue to make sure it isn't using array length
 		queue.removeTail();
@@ -108,7 +107,7 @@ public class TestDogArrayList {
 
 	@Test
 	public void containsAll() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 		queue.grow().value = 3.0;
@@ -125,7 +124,7 @@ public class TestDogArrayList {
 
 	@Test
 	public void get() {
-		DogArray<Dummy> queue = new DogArray<>(100,()->new Dummy(0));
+		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
 
@@ -135,7 +134,7 @@ public class TestDogArrayList {
 	public static class Dummy {
 		double value;
 
-		public Dummy(double value) {
+		public Dummy( double value ) {
 			this.value = value;
 		}
 	}

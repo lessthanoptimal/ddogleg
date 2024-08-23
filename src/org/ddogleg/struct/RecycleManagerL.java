@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class RecycleManagerL<T> extends RecycleManager<T> {
 	protected ArrayList<T> used = new ArrayList<T>();
 
-	public RecycleManagerL(Class<T> targetClass) {
+	public RecycleManagerL( Class<T> targetClass ) {
 		super(targetClass);
 	}
 
@@ -45,7 +45,7 @@ public class RecycleManagerL<T> extends RecycleManager<T> {
 	}
 
 	@Override
-	public void recycleInstance(T object) {
+	public void recycleInstance( T object ) {
 		throw new IllegalArgumentException("Can't recycle individual elements if keeping track of used list");
 	}
 

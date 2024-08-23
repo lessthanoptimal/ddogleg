@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,11 +33,11 @@ public class TestCircularArray_I32 {
 
 		alg.add(1);
 		alg.add(2);
-		assertEquals(1,alg.popHead());
-		assertEquals(1,alg.size());
+		assertEquals(1, alg.popHead());
+		assertEquals(1, alg.size());
 
-		assertEquals(2,alg.popHead());
-		assertEquals(0,alg.size());
+		assertEquals(2, alg.popHead());
+		assertEquals(0, alg.size());
 	}
 
 	@Test
@@ -46,10 +46,10 @@ public class TestCircularArray_I32 {
 
 		alg.add(1);
 		alg.add(2);
-		assertEquals(2,alg.popTail());
-		assertEquals(1,alg.size());
+		assertEquals(2, alg.popTail());
+		assertEquals(1, alg.size());
 
-		assertEquals(1,alg.popTail());
+		assertEquals(1, alg.popTail());
 		assertEquals(0, alg.size());
 	}
 
@@ -60,7 +60,7 @@ public class TestCircularArray_I32 {
 		alg.add(1);
 		assertEquals(1, alg.head());
 		alg.add(3);
-		assertEquals(1,alg.head());
+		assertEquals(1, alg.head());
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class TestCircularArray_I32 {
 		alg.add(1);
 		assertEquals(1, alg.head());
 		alg.add(3);
-		assertEquals(1,alg.head());
+		assertEquals(1, alg.head());
 	}
 
 	@Test
@@ -81,7 +81,7 @@ public class TestCircularArray_I32 {
 		CircularArray_I32 alg = new CircularArray_I32();
 
 		alg.add(1);
-		assertEquals(1,alg.tail());
+		assertEquals(1, alg.tail());
 		alg.add(3);
 		assertEquals(3, alg.tail());
 	}
@@ -94,7 +94,7 @@ public class TestCircularArray_I32 {
 		alg.size = 0;
 
 		alg.add(1);
-		assertEquals(1,alg.tail());
+		assertEquals(1, alg.tail());
 		alg.add(3);
 		assertEquals(3, alg.tail());
 	}
@@ -120,8 +120,8 @@ public class TestCircularArray_I32 {
 		alg.add(1);
 		alg.add(2);
 		alg.removeTail();
-		assertEquals(1,alg.head());
-		assertEquals(1,alg.size());
+		assertEquals(1, alg.head());
+		assertEquals(1, alg.size());
 
 		alg.removeTail();
 		assertEquals(0, alg.size());
@@ -130,98 +130,97 @@ public class TestCircularArray_I32 {
 	@Test
 	public void get() {
 		CircularArray_I32 alg = new CircularArray_I32(2);
-		assertEquals(2,alg.data.length);
+		assertEquals(2, alg.data.length);
 
 		// easy case
 		alg.add(1);
 		alg.add(2);
 
-		assertEquals(1,alg.get(0));
-		assertEquals(2,alg.get(1));
+		assertEquals(1, alg.get(0));
+		assertEquals(2, alg.get(1));
 
 		// make there be an offset
 		alg.removeHead();
 		alg.add(3);
-		assertEquals(2,alg.data.length); // sanity check
-		assertEquals(2,alg.get(0));
-		assertEquals(3,alg.get(1));
+		assertEquals(2, alg.data.length); // sanity check
+		assertEquals(2, alg.get(0));
+		assertEquals(3, alg.get(1));
 	}
 
 	@Test
 	public void add() {
 		CircularArray_I32 alg = new CircularArray_I32(3);
-		assertEquals(3,alg.data.length);
+		assertEquals(3, alg.data.length);
 
 		alg.add(1);
-		assertEquals(1,alg.data[0]);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.data[0]);
+		assertEquals(1, alg.size);
 
 		alg.add(2);
-		assertEquals(1,alg.data[0]);
-		assertEquals(2,alg.data[1]);
-		assertEquals(2,alg.size);
+		assertEquals(1, alg.data[0]);
+		assertEquals(2, alg.data[1]);
+		assertEquals(2, alg.size);
 
 		// see if it grows
 		alg.add(3);
 		alg.add(4);
-		assertEquals(1,alg.data[0]);
-		assertEquals(2,alg.data[1]);
-		assertEquals(3,alg.data[2]);
-		assertEquals(4,alg.data[3]);
-		assertEquals(4,alg.size);
+		assertEquals(1, alg.data[0]);
+		assertEquals(2, alg.data[1]);
+		assertEquals(3, alg.data[2]);
+		assertEquals(4, alg.data[3]);
+		assertEquals(4, alg.size);
 
 		// grows with offset
 		alg.start = 1;
-		alg.data = new int[]{1,2,3};
+		alg.data = new int[]{1, 2, 3};
 		alg.size = 3;
 		alg.add(4);
-		assertEquals(2,alg.data[0]);
-		assertEquals(3,alg.data[1]);
-		assertEquals(1,alg.data[2]);
-		assertEquals(4,alg.data[3]);
-		assertEquals(4,alg.size);
+		assertEquals(2, alg.data[0]);
+		assertEquals(3, alg.data[1]);
+		assertEquals(1, alg.data[2]);
+		assertEquals(4, alg.data[3]);
+		assertEquals(4, alg.size);
 
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
 		alg.data = new int[3];
 		alg.add(10);
-		assertEquals(10,alg.data[0]);
-		assertEquals(10,alg.data[0]);
-		assertEquals(3,alg.size);
-
+		assertEquals(10, alg.data[0]);
+		assertEquals(10, alg.data[0]);
+		assertEquals(3, alg.size);
 	}
 
 	@Test
 	public void addW() {
 		CircularArray_I32 alg = new CircularArray_I32(3);
-		assertEquals(3,alg.data.length);
+		assertEquals(3, alg.data.length);
 
 		alg.addW(1);
-		assertEquals(1,alg.data[0]);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.data[0]);
+		assertEquals(1, alg.size);
 
 		alg.addW(2);
-		assertEquals(1,alg.data[0]);
-		assertEquals(2,alg.data[1]);
-		assertEquals(2,alg.size);
+		assertEquals(1, alg.data[0]);
+		assertEquals(2, alg.data[1]);
+		assertEquals(2, alg.size);
 
 		// see if it over writes
 		alg.addW(3);
 		alg.addW(4);
-		assertEquals(4,alg.data[0]);
-		assertEquals(2,alg.data[1]);
-		assertEquals(3,alg.data[2]);
-		assertEquals(3,alg.size);
-		assertEquals(1,alg.start);
+		assertEquals(4, alg.data[0]);
+		assertEquals(2, alg.data[1]);
+		assertEquals(3, alg.data[2]);
+		assertEquals(3, alg.size);
+		assertEquals(1, alg.start);
 
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
 		alg.data = new int[3];
 		alg.addW(10);
-		assertEquals(10,alg.data[0]);
-		assertEquals(3,alg.size);
+		assertEquals(10, alg.data[0]);
+		assertEquals(3, alg.size);
 	}
 
 	@Test
@@ -233,7 +232,6 @@ public class TestCircularArray_I32 {
 		assertFalse(alg.isEmpty());
 		alg.removeTail();
 		assertTrue(alg.isEmpty());
-
 	}
 
 	@Test
@@ -245,9 +243,7 @@ public class TestCircularArray_I32 {
 
 		alg.reset();
 
-		assertEquals(0,alg.size);
-		assertEquals(0,alg.start);
+		assertEquals(0, alg.size);
+		assertEquals(0, alg.start);
 	}
-
-
 }

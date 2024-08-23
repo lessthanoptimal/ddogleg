@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,8 +37,8 @@ public class TestDogLinkedList {
 		alg.pushHead(1);
 		alg.pushHead(2);
 		alg.reset();
-		assertEquals(2,alg.available.size());
-		assertEquals(0,alg.size);
+		assertEquals(2, alg.available.size());
+		assertEquals(0, alg.size);
 		assertNull(alg.first);
 		assertNull(alg.last);
 
@@ -79,16 +79,16 @@ public class TestDogLinkedList {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushHead(1);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 		checkList(alg);
 		DogLinkedList.Element<Integer> e1 = alg.pushHead(2);
-		assertEquals(2,alg.size);
+		assertEquals(2, alg.size);
 		assertSame(e1, alg.first);
 		assertSame(e0, alg.last);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.pushHead(3);
-		assertEquals(3,alg.size);
+		assertEquals(3, alg.size);
 		assertSame(e2, alg.first);
 		assertSame(e0, alg.last);
 		checkList(alg);
@@ -99,17 +99,17 @@ public class TestDogLinkedList {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushTail(1);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e1 = alg.pushTail(2);
-		assertEquals(2,alg.size);
+		assertEquals(2, alg.size);
 		assertSame(e0, alg.first);
 		assertSame(e1, alg.last);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.pushTail(3);
-		assertEquals(3,alg.size);
+		assertEquals(3, alg.size);
 		assertSame(e0, alg.first);
 		assertSame(e2, alg.last);
 		checkList(alg);
@@ -123,14 +123,14 @@ public class TestDogLinkedList {
 		DogLinkedList.Element<Integer> e1 = alg.insertAfter(e0, 2);
 		assertSame(e0.next, e1);
 		assertSame(e1.prev, e0);
-		assertEquals(2,alg.size);
+		assertEquals(2, alg.size);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.insertAfter(e1, 2);
 		assertSame(e1.next, e2);
 		assertSame(e2.prev, e1);
 		assertSame(e2, alg.last);
-		assertEquals(3,alg.size);
+		assertEquals(3, alg.size);
 		checkList(alg);
 	}
 
@@ -142,14 +142,14 @@ public class TestDogLinkedList {
 		DogLinkedList.Element<Integer> e1 = alg.insertBefore(e0, 2);
 		assertSame(e0.prev, e1);
 		assertSame(e1.next, e0);
-		assertEquals(2,alg.size);
+		assertEquals(2, alg.size);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.insertBefore(e1, 2);
 		assertSame(e1.prev, e2);
 		assertSame(e2.next, e1);
 		assertSame(e2, alg.first);
-		assertEquals(3,alg.size);
+		assertEquals(3, alg.size);
 		checkList(alg);
 	}
 
@@ -160,75 +160,74 @@ public class TestDogLinkedList {
 		DogLinkedList.Element<Integer> e0 = alg.pushTail(1);
 		DogLinkedList.Element<Integer> e1 = alg.pushTail(2);
 
-		alg.swap(e0,e1);
+		alg.swap(e0, e1);
 		assertSame(alg.first, e1);
 		assertSame(alg.last, e0);
 		checkList(alg);
-		alg.swap(e0,e1);
+		alg.swap(e0, e1);
 		assertSame(alg.first, e0);
 		assertSame(alg.last, e1);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e2 = alg.pushTail(3);
-		alg.swap(e0,e1);
+		alg.swap(e0, e1);
 		assertSame(alg.first, e1);
 		assertSame(alg.last, e2);
 		checkList(alg);
-		alg.swap(e0,e1);
+		alg.swap(e0, e1);
 		assertSame(alg.first, e0);
 		checkList(alg);
-		alg.swap(e1,e2);
+		alg.swap(e1, e2);
 		assertSame(alg.last, e1);
 		checkList(alg);
-		alg.swap(e1,e2);
+		alg.swap(e1, e2);
 		assertSame(alg.last, e2);
 		checkList(alg);
 
 		DogLinkedList.Element<Integer> e3 = alg.pushTail(4);
-		alg.swap(e0,e2);
+		alg.swap(e0, e2);
 		assertSame(alg.first, e2);
 		assertSame(alg.last, e3);
 		checkList(alg);
-		alg.swap(e0,e2);
+		alg.swap(e0, e2);
 		checkList(alg);
 		assertSame(alg.first, e0);
 		assertSame(alg.last, e3);
-
 	}
 
 	@Test
 	public void remove() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
-		DogLinkedList.Element<Integer> e0,e1;
+		DogLinkedList.Element<Integer> e0, e1;
 
 		e0 = alg.pushTail(1);
 		alg.remove(e0);
-		assertEquals(0,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(0, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 
 		e0 = alg.pushTail(1);
 		e1 = alg.pushTail(2);
 		alg.remove(e1);
 		assertSame(e0, alg.first);
-		assertEquals(1,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 
 		e1 = alg.pushTail(2);
 		alg.remove(e0);
 		assertSame(e1, alg.first);
-		assertEquals(1,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 
 		e0 = alg.pushHead(1);
 		alg.pushTail(3);
 		alg.remove(e1);
 		assertSame(e0, alg.first);
-		assertEquals(2,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(2, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 	}
 
@@ -237,16 +236,16 @@ public class TestDogLinkedList {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		alg.pushHead(1);
-		assertEquals((int) alg.removeHead(), 1);
-		assertEquals(0,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals((int)alg.removeHead(), 1);
+		assertEquals(0, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 
 		alg.pushTail(1);
 		alg.pushTail(2);
-		assertEquals((int) alg.removeHead(), 1);
-		assertEquals(1,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals((int)alg.removeHead(), 1);
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 	}
 
@@ -256,15 +255,15 @@ public class TestDogLinkedList {
 
 		alg.pushHead(1);
 		assertEquals(alg.removeTail(), 1);
-		assertEquals(0,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(0, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 
 		alg.pushTail(1);
 		alg.pushTail(2);
 		assertEquals(alg.removeTail(), 2);
-		assertEquals(1,alg.size);
-		assertEquals(1,alg.available.size());
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.available.size());
 		checkList(alg);
 	}
 
@@ -291,7 +290,6 @@ public class TestDogLinkedList {
 		assertNull(alg.getHead());
 		DogLinkedList.Element<Integer> e = alg.pushHead(1);
 		assertSame(e, alg.getHead());
-
 	}
 
 	@Test
@@ -313,22 +311,22 @@ public class TestDogLinkedList {
 		List<Integer> list1 = new ArrayList<>();
 
 		alg.addAll(list0);
-		assertEquals(0,alg.size);
+		assertEquals(0, alg.size);
 		checkList(alg);
 
 		list0.add(1);
 		alg.addAll(list0);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 		checkList(alg);
 
 		alg.addAll(list1);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.size);
 		checkList(alg);
 
 		list1.add(2);
 		list1.add(3);
 		alg.addAll(list1);
-		assertEquals(3,alg.size);
+		assertEquals(3, alg.size);
 		checkList(alg);
 		assertSame(1, alg.getHead().object);
 		assertSame(3, alg.getTail().object);
@@ -340,8 +338,8 @@ public class TestDogLinkedList {
 
 		Integer[] array0 = new Integer[0];
 
-		alg.addAll(array0,0,0);
-		assertEquals(0,alg.size);
+		alg.addAll(array0, 0, 0);
+		assertEquals(0, alg.size);
 		checkList(alg);
 
 		array0 = new Integer[3];
@@ -349,13 +347,13 @@ public class TestDogLinkedList {
 			array0[i] = i;
 		}
 
-		alg.addAll(array0,1,1);
-		assertEquals(1,alg.size);
+		alg.addAll(array0, 1, 1);
+		assertEquals(1, alg.size);
 		assertSame(1, alg.getHead().object);
 		checkList(alg);
 
-		alg.addAll(array0,0,3);
-		assertEquals(4,alg.size);
+		alg.addAll(array0, 0, 3);
+		assertEquals(4, alg.size);
 		assertSame(1, alg.getHead().object);
 		assertSame(0, alg.getElement(1, true).object);
 		assertSame(1, alg.getElement(2, true).object);
@@ -389,13 +387,13 @@ public class TestDogLinkedList {
 	 * Performs checks on the lists preconditions
 	 */
 	protected void checkList( DogLinkedList<Integer> queue ) {
-		for( var e : queue.available ) {
+		for (var e : queue.available) {
 			assertNull(e.prev);
 			assertNull(e.next);
 			assertNull(e.object);
 		}
 
-		if( queue.size == 0 ) {
+		if (queue.size == 0) {
 			assertNull(queue.first);
 			assertNull(queue.last);
 		} else {
@@ -403,29 +401,28 @@ public class TestDogLinkedList {
 			List<DogLinkedList.Element<Integer>> backwards = new ArrayList<>();
 
 			DogLinkedList.Element<Integer> e = queue.first;
-			while( e != null ) {
+			while (e != null) {
 				forwards.add(e);
 				e = e.next;
-				if( forwards.size() > queue.size() )
+				if (forwards.size() > queue.size())
 					fail("too many elements in forward direction");
 			}
 
 			e = queue.last;
-			while( e != null ) {
+			while (e != null) {
 				backwards.add(e);
 				e = e.prev;
-				if( backwards.size() > queue.size() )
+				if (backwards.size() > queue.size())
 					fail("too many elements in forward direction");
 			}
 
-			assertEquals(forwards.size(),backwards.size());
-			assertEquals(forwards.size(),queue.size());
+			assertEquals(forwards.size(), backwards.size());
+			assertEquals(forwards.size(), queue.size());
 
 			for (int i = 0; i < forwards.size(); i++) {
-				int j = forwards.size()-1-i;
+				int j = forwards.size() - 1 - i;
 				assertSame(forwards.get(i), backwards.get(j));
 			}
 		}
-
 	}
 }

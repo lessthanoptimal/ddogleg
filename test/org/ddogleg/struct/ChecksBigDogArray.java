@@ -177,10 +177,10 @@ public abstract class ChecksBigDogArray<Array> {
 	@Test void processByBlock_Invalid() {
 		BigDogArrayBase<Array> alg = createBigDog(1, 10, BigDogGrowth.FIXED);
 		alg.resize(12);
-		alg.processByBlock(12, 12, (block, idx0, idx1, offset) -> {
+		alg.processByBlock(12, 12, ( block, idx0, idx1, offset ) -> {
 			fail("Shouldn't be called");
 		});
-		alg.processByBlock(14, 10, (block, idx0, idx1, offset) -> {
+		alg.processByBlock(14, 10, ( block, idx0, idx1, offset ) -> {
 			fail("Shouldn't be called");
 		});
 	}

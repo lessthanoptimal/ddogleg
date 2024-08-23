@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -236,8 +236,8 @@ public class TestBigDogArray_I32 extends ChecksBigDogArray<int[]> {
 			assertEquals(i + 1, alg.getTail(i));
 		}
 
-		assertEquals(alg.get(alg.size-1), alg.getTail(0));
-		assertEquals(alg.get(alg.size-2), alg.getTail(1));
+		assertEquals(alg.get(alg.size - 1), alg.getTail(0));
+		assertEquals(alg.get(alg.size - 2), alg.getTail(1));
 	}
 
 	@Test void getArray() {

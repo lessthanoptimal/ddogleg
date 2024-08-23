@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -34,11 +34,11 @@ public class TestCircularArray_F64 {
 
 		alg.add(1);
 		alg.add(2);
-		assertEquals(1,alg.popHead(), UtilEjml.TEST_F64);
-		assertEquals(1,alg.size());
+		assertEquals(1, alg.popHead(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.size());
 
-		assertEquals(2,alg.popHead(), UtilEjml.TEST_F64);
-		assertEquals(0,alg.size());
+		assertEquals(2, alg.popHead(), UtilEjml.TEST_F64);
+		assertEquals(0, alg.size());
 	}
 
 	@Test
@@ -47,10 +47,10 @@ public class TestCircularArray_F64 {
 
 		alg.add(1);
 		alg.add(2);
-		assertEquals(2,alg.popTail(), UtilEjml.TEST_F64);
-		assertEquals(1,alg.size());
+		assertEquals(2, alg.popTail(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.size());
 
-		assertEquals(1,alg.popTail(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.popTail(), UtilEjml.TEST_F64);
 		assertEquals(0, alg.size());
 	}
 
@@ -61,7 +61,7 @@ public class TestCircularArray_F64 {
 		alg.add(1);
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 		alg.add(3);
-		assertEquals(1,alg.head(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class TestCircularArray_F64 {
 		alg.add(1);
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 		alg.add(3);
-		assertEquals(1,alg.head(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class TestCircularArray_F64 {
 		CircularArray_F64 alg = new CircularArray_F64();
 
 		alg.add(1);
-		assertEquals(1,alg.tail(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.tail(), UtilEjml.TEST_F64);
 		alg.add(3);
 		assertEquals(3, alg.tail(), UtilEjml.TEST_F64);
 	}
@@ -95,7 +95,7 @@ public class TestCircularArray_F64 {
 		alg.size = 0;
 
 		alg.add(1);
-		assertEquals(1,alg.tail(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.tail(), UtilEjml.TEST_F64);
 		alg.add(3);
 		assertEquals(3, alg.tail(), UtilEjml.TEST_F64);
 	}
@@ -121,8 +121,8 @@ public class TestCircularArray_F64 {
 		alg.add(1);
 		alg.add(2);
 		alg.removeTail();
-		assertEquals(1,alg.head(), UtilEjml.TEST_F64);
-		assertEquals(1,alg.size());
+		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
+		assertEquals(1, alg.size());
 
 		alg.removeTail();
 		assertEquals(0, alg.size());
@@ -131,53 +131,53 @@ public class TestCircularArray_F64 {
 	@Test
 	public void get() {
 		CircularArray_F64 alg = new CircularArray_F64(2);
-		assertEquals(2,alg.data.length);
+		assertEquals(2, alg.data.length);
 
 		// easy case
 		alg.add(1);
 		alg.add(2);
 
-		assertEquals(1,alg.get(0), UtilEjml.TEST_F64);
-		assertEquals(2,alg.get(1), UtilEjml.TEST_F64);
+		assertEquals(1, alg.get(0), UtilEjml.TEST_F64);
+		assertEquals(2, alg.get(1), UtilEjml.TEST_F64);
 
 		// make there be an offset
 		alg.removeHead();
 		alg.add(3);
-		assertEquals(2,alg.data.length); // sanity check
-		assertEquals(2,alg.get(0), UtilEjml.TEST_F64);
-		assertEquals(3,alg.get(1), UtilEjml.TEST_F64);
+		assertEquals(2, alg.data.length); // sanity check
+		assertEquals(2, alg.get(0), UtilEjml.TEST_F64);
+		assertEquals(3, alg.get(1), UtilEjml.TEST_F64);
 	}
 
 	@Test
 	public void add() {
 		CircularArray_F64 alg = new CircularArray_F64(3);
-		assertEquals(3,alg.data.length);
+		assertEquals(3, alg.data.length);
 
 		alg.add(1);
-		assertEquals(1,alg.data[0], UtilEjml.TEST_F64);
-		assertEquals(1,alg.size);
+		assertEquals(1, alg.data[0], UtilEjml.TEST_F64);
+		assertEquals(1, alg.size);
 
 		alg.add(2);
-		assertEquals(1,alg.data[0], UtilEjml.TEST_F64);
-		assertEquals(2,alg.data[1], UtilEjml.TEST_F64);
-		assertEquals(2,alg.size);
+		assertEquals(1, alg.data[0], UtilEjml.TEST_F64);
+		assertEquals(2, alg.data[1], UtilEjml.TEST_F64);
+		assertEquals(2, alg.size);
 
 		// see if it over writes
 		alg.add(3);
 		alg.add(4);
-		assertEquals(4,alg.data[0], UtilEjml.TEST_F64);
-		assertEquals(2,alg.data[1], UtilEjml.TEST_F64);
-		assertEquals(3,alg.data[2], UtilEjml.TEST_F64);
-		assertEquals(3,alg.size);
-		assertEquals(1,alg.start);
+		assertEquals(4, alg.data[0], UtilEjml.TEST_F64);
+		assertEquals(2, alg.data[1], UtilEjml.TEST_F64);
+		assertEquals(3, alg.data[2], UtilEjml.TEST_F64);
+		assertEquals(3, alg.size);
+		assertEquals(1, alg.start);
 
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
-		alg.data = new  double[3];
+		alg.data = new double[3];
 		alg.add(10);
-		assertEquals(10,alg.data[0], UtilEjml.TEST_F64);
-		assertEquals(3,alg.size);
+		assertEquals(10, alg.data[0], UtilEjml.TEST_F64);
+		assertEquals(3, alg.size);
 	}
 
 	@Test
@@ -189,7 +189,6 @@ public class TestCircularArray_F64 {
 		assertFalse(alg.isEmpty());
 		alg.removeTail();
 		assertTrue(alg.isEmpty());
-
 	}
 
 	@Test
@@ -201,8 +200,8 @@ public class TestCircularArray_F64 {
 
 		alg.reset();
 
-		assertEquals(0,alg.size);
-		assertEquals(0,alg.start);
+		assertEquals(0, alg.size);
+		assertEquals(0, alg.start);
 	}
 
 	@Test
@@ -216,12 +215,11 @@ public class TestCircularArray_F64 {
 		CircularArray_F64 b = new CircularArray_F64(10);
 		b.set(a);
 
-		assertEquals(3,b.queueSize());
+		assertEquals(3, b.queueSize());
 		for (int i = 0; i < a.data.length; i++) {
-			assertEquals(a.data[i],b.data[i], UtilEjml.TEST_F64);
+			assertEquals(a.data[i], b.data[i], UtilEjml.TEST_F64);
 		}
-		assertEquals(a.size,b.size);
-		assertEquals(a.start,b.start);
-
+		assertEquals(a.size, b.size);
+		assertEquals(a.start, b.start);
 	}
 }

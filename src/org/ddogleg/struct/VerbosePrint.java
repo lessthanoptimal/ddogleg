@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,5 +35,5 @@ public interface VerbosePrint {
 	 * @param out Stream that is printed to. Set to null to disable
 	 * @param configuration (Future use) Set which specifies flags that can be used to turn on and off different output
 	 */
-	void setVerbose(@Nullable PrintStream out , @Nullable Set<String> configuration );
+	void setVerbose( @Nullable PrintStream out, @Nullable Set<String> configuration );
 }

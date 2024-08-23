@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,7 +33,7 @@ public class TestRecycleManagerL {
 
 		Dummy first = manager.requestInstance();
 		Dummy second = manager.requestInstance();
-		assertEquals(2,manager.getUsed().size());
+		assertEquals(2, manager.getUsed().size());
 		Dummy third = manager.requestInstance();
 		assertEquals(3, manager.getUsed().size());
 		manager.recycleAll();

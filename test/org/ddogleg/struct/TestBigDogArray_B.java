@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -331,8 +331,8 @@ public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
 
 		// They will have the same values
 		for (int i = 0; i < 21; i++) {
-			a.append(i%2==0);
-			b.append(i%2==0);
+			a.append(i%2 == 0);
+			b.append(i%2 == 0);
 		}
 
 		assertTrue(a.isEquivalent(b));

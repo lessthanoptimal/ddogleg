@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -30,12 +30,12 @@ import java.util.Objects;
  * @author Peter Abeles
  */
 @Getter @Setter
-public class Tuple3<A,B,C> {
+public class Tuple3<A, B, C> {
 	public @Nullable A d0;
 	public @Nullable B d1;
 	public @Nullable C d2;
 
-	public Tuple3(@Nullable A d0, @Nullable B d1, @Nullable C d2) {
+	public Tuple3( @Nullable A d0, @Nullable B d1, @Nullable C d2 ) {
 		this.d0 = d0;
 		this.d1 = d1;
 		this.d2 = d2;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,7 +29,7 @@ import java.util.ListIterator;
  *
  * @author Peter Abeles
  */
-public class DogArrayList<T> implements List<T> , Serializable {
+public class DogArrayList<T> implements List<T>, Serializable {
 	DogArray<T> array;
 
 	public DogArrayList( DogArray<T> array ) {
@@ -47,7 +47,7 @@ public class DogArrayList<T> implements List<T> , Serializable {
 	}
 
 	@Override
-	public boolean contains(Object o) {
+	public boolean contains( Object o ) {
 		return array.contains(o);
 	}
 
@@ -60,53 +60,53 @@ public class DogArrayList<T> implements List<T> , Serializable {
 	public Object[] toArray() {
 		Object[] ret = new Object[array.size];
 
-		System.arraycopy(array.data,0,ret,0, array.size);
+		System.arraycopy(array.data, 0, ret, 0, array.size);
 
 		return ret;
 	}
 
 	@Override
-	public <A> A[] toArray(A[] a) {
-		System.arraycopy(array.data,0,a,0, array.size);
+	public <A> A[] toArray( A[] a ) {
+		System.arraycopy(array.data, 0, a, 0, array.size);
 		return a;
 	}
 
 	@Override
-	public boolean add(T t) {
+	public boolean add( T t ) {
 		throw new RuntimeException("Add is not supported by FastQueue. You need FastArray instead");
 	}
 
 	@Override
-	public boolean remove(Object o) {
+	public boolean remove( Object o ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
-		for( Object o : c ) {
-			if( !contains(o) )
+	public boolean containsAll( Collection<?> c ) {
+		for (Object o : c) {
+			if (!contains(o))
 				return false;
 		}
 		return true;
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends T> c) {
+	public boolean addAll( Collection<? extends T> c ) {
 		throw new RuntimeException("Add is not supported by FastQueue. You need FastArray instead");
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends T> c) {
+	public boolean addAll( int index, Collection<? extends T> c ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> c) {
+	public boolean removeAll( Collection<?> c ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll( Collection<?> c ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
@@ -116,34 +116,34 @@ public class DogArrayList<T> implements List<T> , Serializable {
 	}
 
 	@Override
-	public T get(int index) {
+	public T get( int index ) {
 		return array.data[index];
 	}
 
 	@Override
-	public T set(int index, T element) {
+	public T set( int index, T element ) {
 		throw new RuntimeException("Set is not supported by FastQueue. You need FastArray instead");
 	}
 
 	@Override
-	public void add(int index, T element) {
+	public void add( int index, T element ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
-	public T remove(int index) {
+	public T remove( int index ) {
 		throw new RuntimeException("Not all list operations are supposed.");
 	}
 
 	@Override
-	public int indexOf(Object o) {
+	public int indexOf( Object o ) {
 		return array.indexOf((T)o);
 	}
 
 	@Override
-	public int lastIndexOf(Object o) {
-		for(int i = array.size-1; i >= 0; i-- ) {
-			if( array.data[i].equals(o) )
+	public int lastIndexOf( Object o ) {
+		for (int i = array.size - 1; i >= 0; i--) {
+			if (array.data[i].equals(o))
 				return i;
 		}
 		return -1;
@@ -155,17 +155,16 @@ public class DogArrayList<T> implements List<T> , Serializable {
 	}
 
 	@Override
-	public ListIterator<T> listIterator(int index) {
+	public ListIterator<T> listIterator( int index ) {
 		throw new RuntimeException("Not supported");
 	}
 
 	@Override
-	public List<T> subList(int fromIndex, int toIndex) {
+	public List<T> subList( int fromIndex, int toIndex ) {
 		throw new RuntimeException("Not supported");
 	}
 
-	public class MyIterator implements ListIterator<T>
-	{
+	public class MyIterator implements ListIterator<T> {
 		int index = 0;
 
 		@Override
@@ -195,7 +194,7 @@ public class DogArrayList<T> implements List<T> , Serializable {
 
 		@Override
 		public int previousIndex() {
-			return index-1;
+			return index - 1;
 		}
 
 		@Override
@@ -204,12 +203,12 @@ public class DogArrayList<T> implements List<T> , Serializable {
 		}
 
 		@Override
-		public void set(T t) {
-			array.data[index-1] = t;
+		public void set( T t ) {
+			array.data[index - 1] = t;
 		}
 
 		@Override
-		public void add(T t) {
+		public void add( T t ) {
 			throw new RuntimeException("Add is not supported by FastQueue. Use FastArray instead");
 		}
 	}

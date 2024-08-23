@@ -36,13 +36,13 @@ public abstract class FastAccess<T> implements Serializable {
 	public int size;
 	public final Class<T> type;
 
-	protected FastAccess(Class<T> type ) {
+	protected FastAccess( Class<T> type ) {
 		this.type = type;
 	}
 
 	public T get( int index ) {
-		if( index < 0 || index >= size )
-			throw new IndexOutOfBoundsException( index + " < 0 or " + index + " >=" + size);
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException(index + " < 0 or " + index + " >=" + size);
 		return data[index];
 	}
 
@@ -55,6 +55,7 @@ public abstract class FastAccess<T> implements Serializable {
 
 	/**
 	 * The maximum number of elements before the 'data' array needs to grow
+	 *
 	 * @return length of 'data'
 	 */
 	public int getMaxSize() {
@@ -108,24 +109,25 @@ public abstract class FastAccess<T> implements Serializable {
 	public abstract List<T> toList();
 
 	public T getTail() {
-		return data[size-1];
+		return data[size - 1];
 	}
 
 	/**
 	 * Returns an element in the list relative to the tail
+	 *
 	 * @param index index relative to tail.  0 == the tail. size-1 = first element
 	 * @return element
 	 */
 	public T getTail( int index ) {
-		return data[size-1-index];
+		return data[size - 1 - index];
 	}
 
 	/**
 	 * Returns true if an object 'a' in the array returns true for 'a.equals(o)'
 	 */
-	public boolean contains(Object o) {
-		for( int i = 0; i < size; i++ ) {
-			if( data[i].equals(o) )
+	public boolean contains( Object o ) {
+		for (int i = 0; i < size; i++) {
+			if (data[i].equals(o))
 				return true;
 		}
 
@@ -140,7 +142,7 @@ public abstract class FastAccess<T> implements Serializable {
 	 */
 	public int indexOf( T obj ) {
 		for (int i = 0; i < size; i++) {
-			if( data[i].equals(obj) ) {
+			if (data[i].equals(obj)) {
 				return i;
 			}
 		}
@@ -151,7 +153,7 @@ public abstract class FastAccess<T> implements Serializable {
 	 * Reverse the item order in this queue.
 	 */
 	public void reverse() {
-		for (int i = 0; i < size / 2; i++) {
+		for (int i = 0; i < size/2; i++) {
 			T tmp = data[i];
 			data[i] = data[size - i - 1];
 			data[size - i - 1] = tmp;
@@ -160,17 +162,18 @@ public abstract class FastAccess<T> implements Serializable {
 
 	/**
 	 * Swaps the two elements in the array
+	 *
 	 * @param i index
 	 * @param j index
 	 */
-	public void swap( int i, int j) {
+	public void swap( int i, int j ) {
 		T tmp = data[i];
 		data[i] = data[j];
 		data[j] = tmp;
 	}
 
-	/** Returns the first instance's index which matches the function. -1 if no match is found*/
-	public int findIdx(FunctionMatches<T> function) {
+	/** Returns the first instance's index which matches the function. -1 if no match is found */
+	public int findIdx( FunctionMatches<T> function ) {
 		for (int i = 0; i < size; i++) {
 			if (function.process(data[i])) {
 				return i;
@@ -180,9 +183,9 @@ public abstract class FastAccess<T> implements Serializable {
 	}
 
 	/** Returns the first instance which matches the function. Null if no matches are found */
-	public @Nullable T find(FunctionMatches<T> function) {
+	public @Nullable T find( FunctionMatches<T> function ) {
 		int match = findIdx(function);
-		if (match<0)
+		if (match < 0)
 			return null;
 		return data[match];
 	}
@@ -190,7 +193,7 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * Finds the indexes of all elements which match. Returns true if at least one match was found
 	 */
-	public boolean findAllIdx( DogArray_I32 matches, FunctionMatches<T> function) {
+	public boolean findAllIdx( DogArray_I32 matches, FunctionMatches<T> function ) {
 		matches.reset();
 		for (int i = 0; i < size; i++) {
 			if (function.process(data[i])) {
@@ -203,7 +206,7 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * Finds the indexes of all elements which match. Returns true if at least one match was found
 	 */
-	public boolean findAll(List<T> matches, FunctionMatches<T> function) {
+	public boolean findAll( List<T> matches, FunctionMatches<T> function ) {
 		matches.clear();
 		for (int i = 0; i < size; i++) {
 			if (function.process(data[i])) {
@@ -216,7 +219,7 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * Same as {@link #findAll} but returns a new list.
 	 */
-	public List<T> filter( FunctionMatches<T> function) {
+	public List<T> filter( FunctionMatches<T> function ) {
 		List<T> list = new ArrayList<>();
 		findAll(list, function);
 		return list;
@@ -225,30 +228,31 @@ public abstract class FastAccess<T> implements Serializable {
 	/**
 	 * The passed in function is called once for each element in the list
 	 */
-	public void forIdx(FunctionEachIdx<T> function ) {
+	public void forIdx( FunctionEachIdx<T> function ) {
 		for (int i = 0; i < size; i++) {
-			function.process(i,data[i]);
+			function.process(i, data[i]);
 		}
 	}
 
 	/**
 	 * For each with a range of values specified
+	 *
 	 * @param idx0 lower extent, inclusive
 	 * @param idx1 upper extent, exclusive
 	 */
-	public void forIdx(int idx0 , int idx1, FunctionEachIdx<T> function ) {
-		if( idx1 > size )
-			throw new IndexOutOfBoundsException("idx1 > "+size);
+	public void forIdx( int idx0, int idx1, FunctionEachIdx<T> function ) {
+		if (idx1 > size)
+			throw new IndexOutOfBoundsException("idx1 > " + size);
 
 		for (int i = idx0; i < idx1; i++) {
-			function.process(i,data[i]);
+			function.process(i, data[i]);
 		}
 	}
 
 	/**
 	 * The passed in function is called once for each element in the list
 	 */
-	public void forEach(FunctionEach<T> function ) {
+	public void forEach( FunctionEach<T> function ) {
 		for (int i = 0; i < size; i++) {
 			function.process(data[i]);
 		}
@@ -266,12 +270,13 @@ public abstract class FastAccess<T> implements Serializable {
 
 	/**
 	 * For each with a range of values specified
+	 *
 	 * @param idx0 lower extent, inclusive
 	 * @param idx1 upper extent, exclusive
 	 */
-	public void forEach(int idx0 , int idx1, FunctionEach<T> function ) {
-		if( idx1 > size )
-			throw new IndexOutOfBoundsException("idx1 > "+size);
+	public void forEach( int idx0, int idx1, FunctionEach<T> function ) {
+		if (idx1 > size)
+			throw new IndexOutOfBoundsException("idx1 > " + size);
 
 		for (int i = idx0; i < idx1; i++) {
 			function.process(data[i]);

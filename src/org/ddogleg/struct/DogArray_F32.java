@@ -272,6 +272,20 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		return data[index];
 	}
 
+	/**
+	 * Copies a sequence of values into the specified array
+	 *
+	 * @param offset First index it will read from
+	 * @param dst Array it will copy the values into
+	 * @param dstOffset First index in dst array that it will write to
+	 * @param length Number of elements it will copy
+	 */
+	public void get( int offset, float[] dst, int dstOffset, int length ) {
+		if (offset < 0 || offset + length >= size)
+			throw new IndexOutOfBoundsException("range is out of bounds");
+		System.arraycopy(data, offset, dst, dstOffset, length);
+	}
+
 	public float getTail() {
 		if (size == 0)
 			throw new IndexOutOfBoundsException("Array is empty");
