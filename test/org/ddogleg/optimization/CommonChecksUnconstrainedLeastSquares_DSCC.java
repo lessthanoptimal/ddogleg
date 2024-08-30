@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,8 @@
 
 package org.ddogleg.optimization;
 
+import org.ejml.data.DMatrixSparseCSC;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +31,12 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 
 	protected CommonChecksUnconstrainedLeastSquares_DSCC() {
 		super(false, false);
+	}
+
+	@Nested class CommonChecks extends ChecksUnconstrainedLeastSquares<DMatrixSparseCSC> {
+		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
+			return CommonChecksUnconstrainedLeastSquares_DSCC.this.createSearch(minimumValue);
+		}
 	}
 
 	@Test

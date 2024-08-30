@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,10 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.optimization.funcs.EvalFunctionBundle2D;
+import org.ddogleg.optimization.funcs.EvalFunctionBundle2D_DDRM;
+import org.ejml.data.DMatrixRMaj;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +37,16 @@ public abstract class CommonChecksUnconstrainedLeastSquaresSchur_DDRM extends Un
 
 	protected CommonChecksUnconstrainedLeastSquaresSchur_DDRM() {
 		super(false, false);
+	}
+
+	@Nested class CommonChecks extends ChecksUnconstrainedLeastSquaresSchur<DMatrixRMaj> {
+		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
+			return CommonChecksUnconstrainedLeastSquaresSchur_DDRM.this.createSearch(minimumValue);
+		}
+
+		@Override protected EvalFunctionBundle2D<DMatrixRMaj> createEvalFunction() {
+			return new EvalFunctionBundle2D_DDRM();
+		}
 	}
 
 	@Test

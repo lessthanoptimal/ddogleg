@@ -10,6 +10,7 @@ Date:     2024-Sep-06
 - Primitive DogArray now has get() array
 - In many situations RuntimeException has been replaced by IndexOutOfBoundsException
 - More initialization type functions can be chained in DogArray and BigDogArray
+- Added postUpdateAdjuster to UnconstrainedLeastSquares
 
 ------------------------------------------------------
 Version:  0.23.2

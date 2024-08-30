@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -55,6 +55,16 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	 * Specifies a specialized loss function, typically to improve robustness to outliers. Squared error is the default.
 	 */
 	void setLoss( LossFunction loss, LossFunctionGradient lossGradient );
+
+	/**
+	 * After a step has been computed and applied this function is called with the new candidate state
+	 * passed in. It provides the user the opportunity to adjust the data in anyway which will not
+	 * change the score. For example, if a vector is scale invariant you can ensure it always has
+	 * a norm of 1.
+	 *
+	 * @param adjuster The new user provided adjuster
+	 */
+	void setPostUpdate( AdjustArray_F64 adjuster );
 
 	/**
 	 * Specify the initial set of parameters from which to start from. Call after

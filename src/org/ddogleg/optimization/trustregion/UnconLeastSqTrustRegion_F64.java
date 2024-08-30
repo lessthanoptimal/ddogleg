@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.optimization.AdjustArray_F64;
 import org.ddogleg.optimization.FactoryNumericalDerivative;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoM;
@@ -62,6 +63,10 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 			this.functionJacobian = FactoryNumericalDerivative.jacobianForwards(function, (Class)this.jacobian.getClass());
 		else
 			this.functionJacobian = jacobian;
+	}
+
+	@Override public void setPostUpdate( AdjustArray_F64 adjuster ) {
+		this.postUpdateAdjuster = adjuster;
 	}
 
 	@Override

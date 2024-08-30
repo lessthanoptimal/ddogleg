@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.optimization.AdjustArray_F64;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
@@ -51,6 +52,10 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 	@Override public void setFunction( FunctionNtoM function, SchurJacobian<S> jacobian ) {
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
+	}
+
+	@Override public void setPostUpdate( AdjustArray_F64 adjuster ) {
+		this.postUpdateAdjuster = adjuster;
 	}
 
 	@Override public void initialize( double[] initial, double ftol, double gtol ) {

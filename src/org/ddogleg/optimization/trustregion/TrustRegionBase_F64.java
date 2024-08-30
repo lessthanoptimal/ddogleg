@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -188,6 +188,10 @@ public abstract class TrustRegionBase_F64<S extends DMatrix, HM extends HessianM
 		if (config.hessianScaling)
 			undoHessianScalingOnParameters(p);
 		CommonOps_DDRM.add(x, p, x_next);
+
+		// Apply user adjustment function
+		postUpdateAdjuster.process(x_next.data, 0, x_next.numRows);
+
 		double fx_candidate = cost(x_next);
 
 		if (UtilEjml.isUncountable(fx_candidate)) {
