@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -35,8 +35,16 @@ import static java.lang.Math.sqrt;
  * @author Peter Abeles
  */
 @SuppressWarnings("NullAway.Init")
-public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends HessianMath>
-{
+public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton,HM extends HessianMath> {
+
+	/**
+	 * After the parameter array has been update this function is called with the array passed in. Here any
+	 * necessary adjustments can be made as long as they don't change the resulting residual errors. For example
+	 * this can ensure that a vector which has been parameterized has a norm of one to prevent it from scaling
+	 * to infinity.
+	 */
+	public AdjustArray_F64 postUpdateAdjuster = ( data, offset, length) ->{};
+
 	// Manipulating and extracting information from the Hessian
 	public HM hessian;
 

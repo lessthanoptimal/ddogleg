@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -204,6 +204,11 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 
 		// compute the potential new state
 		CommonOps_DDRM.add(x, p, x_next);
+
+		// Apply user adjustment function
+		postUpdateAdjuster.process(x_next.data, 0, x_next.numRows);
+
+		// Compute residuals and see if score improved or not
 		computeResiduals(x_next, residuals);
 		double fx_candidate = costFromResiduals(residuals);
 
