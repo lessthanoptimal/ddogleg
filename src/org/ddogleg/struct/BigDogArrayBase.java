@@ -111,16 +111,18 @@ public abstract class BigDogArrayBase<Array> {
 	/**
 	 * Sets the array size to zero. No memory is freed.
 	 */
-	public void reset() {
+	public BigDogArrayBase<Array> reset() {
 		this.size = 0;
+		return this;
 	}
 
 	/**
 	 * Ensures that the internal data can store up to this number of elements before needing to allocate more memory.
 	 * No extra data is added and this function is only recommended when the array has a known max size.
 	 */
-	public void reserve( int desiredSize ) {
+	public BigDogArrayBase<Array> reserve( int desiredSize ) {
 		allocate(desiredSize, false, false);
+		return this;
 	}
 
 	/**
@@ -222,9 +224,10 @@ public abstract class BigDogArrayBase<Array> {
 	 *
 	 * @param desiredSize (Input) New array size
 	 */
-	public void resize( int desiredSize ) {
+	public BigDogArrayBase<Array> resize( int desiredSize ) {
 		allocate(desiredSize, true, false);
 		this.size = desiredSize;
+		return this;
 	}
 
 	/**
@@ -234,11 +237,12 @@ public abstract class BigDogArrayBase<Array> {
 	 * @param offset (Input) First element in the array which is to be copied
 	 * @param length (Input) Number of elements which are to be copied
 	 */
-	public void append( Array array, int offset, int length ) {
+	public BigDogArrayBase<Array> append( Array array, int offset, int length ) {
 		// make sure enough memory has been allocated
 		allocate(this.size + length, true, true);
 		this.size = this.size + length;
 		setArray(this.size - length, array, offset, length);
+		return this;
 	}
 
 	/**

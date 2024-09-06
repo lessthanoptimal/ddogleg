@@ -397,9 +397,9 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	}
 
 	@SuppressWarnings("NullAway")
-	@Override public void reserve( int amount ) {
+	@Override public DogArray_B reserve( int amount ) {
 		if (data.length >= amount)
-			return;
+			return this;
 		if (size == 0) {
 			// In this special case we can dereference the old array and this might allow the GC to free up memory
 			// before declaring the new array. Could be useful if the arrays are very large.
@@ -410,6 +410,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 			System.arraycopy(data, 0, tmp, 0, this.size);
 			data = tmp;
 		}
+		return this;
 	}
 
 	@Override public int size() {
