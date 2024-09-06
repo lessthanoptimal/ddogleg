@@ -288,12 +288,9 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
-extlinks = {'gitexample': ('https://github.com/lessthanoptimal/ddogleg/tree/v'+version+'/examples/src/org/ddogleg/example/%s',
-                      ''),
-            'gitexampledir': ('https://github.com/lessthanoptimal/ddogleg/tree/v'+version+'/examples/',
-                           ''),
-            'sourceforge': ('https://sourceforge.net/projects/ddogleg/files/v'+version+'/ddogleg-v'+version+'-%s.zip/download/',
-                            '')}
+extlinks = {'gitexample': ("https://github.com/lessthanoptimal/ddogleg/tree/v"+version+"/examples/src/org/ddogleg/example/%s", None),
+            'gitexampledir': ("https://github.com/lessthanoptimal/ddogleg/tree/v"+version+"/examples/%s", None),
+            'sourceforge': ("https://sourceforge.net/projects/ddogleg/files/v"+version+"/ddogleg-v"+version+"-%s.zip/download/", None)}
 
 mathjax_config = {
     'extensions': ['tex2jax.js']
