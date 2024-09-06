@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -84,8 +84,9 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	}
 
 	/** Modify reserve so that it doesn't discard the already allocated objects */
-	@Override public void reserve( int desiredSize ) {
+	@Override public BigDogArray<T> reserve( int desiredSize ) {
 		allocate(desiredSize, true, false);
+		return this;
 	}
 
 	/**
@@ -116,8 +117,9 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	 *
 	 * @param desiredSize (Input) New array size
 	 */
-	@Override public void resize( int desiredSize ) {
+	@Override public BigDogArray<T> resize( int desiredSize ) {
 		resize(desiredSize, reset);
+		return this;
 	}
 
 	/**
@@ -126,11 +128,12 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	 * @param desiredSize New array size
 	 * @param configure Operator that the "new" element is passed in to.
 	 */
-	public void resize( int desiredSize, DProcess<T> configure ) {
+	public BigDogArray<T> resize( int desiredSize, DProcess<T> configure ) {
 		allocate(desiredSize, true, false);
 		int originalSize = size;
 		this.size = desiredSize;
 		fill(originalSize, desiredSize, configure);
+		return this;
 	}
 
 	/**
@@ -140,12 +143,13 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	 * @param idx1 (Input) last index, exclusive.
 	 * @param configure Operator that the "new" element is passed in to.
 	 */
-	public void fill( int idx0, int idx1, DProcess<T> configure ) {
+	public BigDogArray<T> fill( int idx0, int idx1, DProcess<T> configure ) {
 		processByBlock(idx0, idx1, ( block, block0, block1, offset ) -> {
 			for (int i = block0; i < block1; i++) {
 				configure.process(block[i]);
 			}
 		});
+		return this;
 	}
 
 	/**

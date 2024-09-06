@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -280,10 +280,10 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * @param length Requested minimum internal array length
 	 */
-	public void reserve( int length ) {
+	public DogArray<T> reserve( int length ) {
 		// now need to grow since it is already larger
 		if (this.data.length >= length)
-			return;
+			return this;
 
 		T[] data = (T[])Array.newInstance(type, length);
 		System.arraycopy(this.data, 0, data, 0, this.data.length);
@@ -294,6 +294,7 @@ public class DogArray<T> extends FastAccess<T> {
 			}
 		}
 		this.data = data;
+		return this;
 	}
 
 	/**
@@ -307,8 +308,10 @@ public class DogArray<T> extends FastAccess<T> {
 	}
 
 	/**
+	 * <p>
 	 * Resize with a configuration operator. Equivalent to calling {@link #reserve} and this.size = N, then
 	 * applying the 'configure' operator to each new element.
+	 * </p>
 	 *
 	 * NOTE: The 'reset' operator is applied before the 'configure' operator.
 	 *

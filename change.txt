@@ -4,15 +4,16 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.23.3
-Date:     2024/XXX/YY
+Date:     2024-Sep-06
 
 - isEmpty() and isNotEmpty() are consistently implemented in array type containers
 - Primitive DogArray now has get() array
 - In many situations RuntimeException has been replaced by IndexOutOfBoundsException
+- More initialization type functions can be chained in DogArray and BigDogArray
 
 ------------------------------------------------------
 Version:  0.23.2
-Date:     2024/Feb/24
+Date:     2024-Feb-24
 
 - LeastMedianOfSquares
   * Fixed bug when max distance was set to MAX_VALUE
@@ -22,7 +23,7 @@ Date:     2024/Feb/24
 
 ------------------------------------------------------
 Version:  0.23.1
-Date:     2023/Sep/23
+Date:     2023-Sep-23
 
 - DogArray
   * Added reserveIncrease()
@@ -30,7 +31,7 @@ Date:     2023/Sep/23
 
 ------------------------------------------------------
 Version:  0.23
-Date:     2023/Feb/15
+Date:     2023-Feb-15
 
 - DogArray
   * Added shuffle(rand, int)
@@ -43,7 +44,7 @@ Date:     2023/Feb/15
 
 ------------------------------------------------------
 Version:  0.22
-Date:     2022/Aug/31
+Date:     2022-Aug-31
 
 - Build
   * Generates Java 11 bytecode but compiles with Java 17

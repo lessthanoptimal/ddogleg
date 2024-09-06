@@ -55,6 +55,7 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 * either resize(0) or call {@link #reset} first.
 	 *
 	 * @param size desired new size
+	 * @return Returns 'this' to allow chaining of operations.
 	 */
 	T resize( int size );
 
@@ -71,8 +72,9 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 * is not empty and it needs to grow then the existing array is copied into the new array.
 	 *
 	 * @param amount minimum size of internal array
+	 * @return Returns 'this' to allow chaining of operations.
 	 */
-	void reserve( int amount );
+	T reserve( int amount );
 
 	/**
 	 * Ensures that the reserve is at lease the current {@link #size} plus the specified amount. This is
@@ -80,9 +82,7 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 *
 	 * @param amount How much you wish the ensure the size is increased by
 	 */
-	default void reserveIncrease( int amount ) {
-		reserve(size() + amount);
-	}
+	default T reserveIncrease( int amount ) {return reserve(size() + amount);}
 
 	/**
 	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.
