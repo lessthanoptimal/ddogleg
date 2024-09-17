@@ -280,7 +280,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param length Number of elements it will copy
 	 */
 	public void get( int offset, int[] dst, int dstOffset, int length ) {
-		if (offset < 0 || offset + length >= size)
+		if (offset < 0 || offset + length > size)
 			throw new IndexOutOfBoundsException("range is out of bounds");
 		System.arraycopy(data, offset, dst, dstOffset, length);
 	}

@@ -443,4 +443,15 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 			assertEquals(alg.get(i + 1), dst[2 + i]);
 		}
 	}
+
+	/** Tests to see if it handles the maximum length as exclusive. This was a bug. */
+	@Test void get_array_exact() {
+		var dst = new double[3];
+		DogArray_F64 alg = DogArray_F64.array(1, 2, 3, 4, 5);
+		alg.get(2, dst, 0, 3);
+
+		for (int i = 0; i < 3; i++) {
+			assertEquals(alg.get(i + 2), dst[i]);
+		}
+	}
 }

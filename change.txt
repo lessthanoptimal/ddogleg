@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.23.4
+Date:     2024-Sep-XX
+
+- Bug fix in get( int offset, double[] dst, int dstOffset, int length )
+
+------------------------------------------------------
 Version:  0.23.3
 Date:     2024-Sep-06
 
