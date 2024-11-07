@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,7 +23,7 @@ import org.ddogleg.optimization.loss.LossSquared;
 /**
  * Used for unit tests. See how often different functions are called
  */
-public class CallCounterLossSquared extends LossSquared {
+public class CallCounterLossSquared extends LossSquared.Function {
 	public int countFixate;
 
 	@Override public boolean fixate( double[] residuals ) {

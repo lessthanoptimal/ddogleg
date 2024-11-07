@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -40,7 +40,7 @@ public abstract class TrustRegionLeastSqBase_F64<S extends DMatrix, HM extends H
 	protected DMatrixRMaj residuals = new DMatrixRMaj(1, 1);
 
 	/** Given the residuals it computes the "Loss" or cost */
-	protected LossFunction lossFunc = new LossSquared();
+	protected LossFunction lossFunc = new LossSquared.Function();
 
 	/** Gradient of the loss function. If null then squared error is assumed and this step can be skipped. */
 	protected @Nullable LossFunctionGradient lossFuncGradient;

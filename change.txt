@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.23.5
+Date:     2024-XXX-XX
+
+- Debugging Loss Functions
+
+------------------------------------------------------
 Version:  0.23.4
 Date:     2024-Oct-05
 

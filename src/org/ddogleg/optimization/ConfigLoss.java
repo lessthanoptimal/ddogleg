@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -76,5 +76,7 @@ public class ConfigLoss {
 		TUKEY,
 		/** @see org.ddogleg.optimization.loss.LossIRLS */
 		IRLS,
+		/** @see org.ddogleg.optimization.loss.LossIdentity */
+		IDENTITY,
 	}
 }

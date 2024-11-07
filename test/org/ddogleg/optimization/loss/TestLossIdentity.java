@@ -23,32 +23,26 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TestLossSquared extends CommonChecksLossJacobian {
-	{
-		// Seems to be an issue with build up in floating point error. Reducing number of sample points allowed it to
-		// pass
-		samplePoints = 50;
-	}
+class TestLossIdentity extends CommonChecksLossJacobian {
 	@Test void compareToManual() {
 		double[] residuals = randomArray(20, 5, rand);
 
 		double expected = 0.0;
 		for (double d : residuals) {
-			expected += d*d;
+			expected += d;
 		}
-		expected *= 0.5;
 
-		var alg = new LossSquared.Function();
+		var alg = new LossIdentity.Function();
 		alg.setNumberOfFunctions(residuals.length);
 
 		assertEquals(expected, alg.process(residuals), UtilEjml.TEST_F64);
 	}
 
 	@Override public LossFunction createFunction() {
-		return new LossSquared.Function();
+		return new LossIdentity.Function();
 	}
 
 	@Override public LossFunctionGradient createGradient() {
-		return new LossSquared.Gradient();
+		return new LossIdentity.Gradient();
 	}
 }

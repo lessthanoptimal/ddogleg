@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,6 +37,7 @@ public class FactoryLossFunctions {
 			case SQUARED -> squared();
 			case IRLS -> throw new IllegalArgumentException("Not supported in this factory. " +
 					"You need to create the weight function yourself");
+			case IDENTITY -> identity();
 		};
 	}
 
@@ -91,8 +92,18 @@ public class FactoryLossFunctions {
 	 */
 	public static Funcs squared() {
 		var funcs = new Funcs();
-		funcs.function = new LossSquared();
+		funcs.function = new LossSquared.Function();
 		funcs.gradient = null;
+		return funcs;
+	}
+
+	/**
+	 * @see LossIdentity
+	 */
+	public static Funcs identity() {
+		var funcs = new Funcs();
+		funcs.function = new LossIdentity.Function();
+		funcs.gradient = new LossIdentity.Gradient();
 		return funcs;
 	}
 
