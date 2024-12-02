@@ -112,6 +112,17 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		return true;
 	}
 
+	/** Checks for equality within the specified tolerance */
+	public boolean isEquals( DogArray_F64 values, double tol ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (Math.abs(data[i] - values.data[i]) > tol)
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public DogArray_F64 reset() {
 		size = 0;
