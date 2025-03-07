@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.23.5
-Date:     2024-XXX-XX
+Date:     2025-Mar-06
 
 - Debugging Loss Functions
 - DogArray_F64 - isEqual(array, tol)
