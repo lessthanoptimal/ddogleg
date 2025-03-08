@@ -22,6 +22,7 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.loss.LossFunction;
 import org.ddogleg.optimization.loss.LossFunctionGradient;
+import org.ddogleg.struct.VerbosePrint;
 import org.ejml.data.DMatrix;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,9 +62,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Peter Abeles
  */
-public interface UnconstrainedLeastSquares<S extends DMatrix>
-		extends IterativeOptimization
-{
+public interface UnconstrainedLeastSquares<S extends DMatrix> extends IterativeOptimization, VerbosePrint {
 	/**
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
 	 * on output data format.
@@ -71,7 +70,7 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 * @param function Computes the output of M functions f<sub>i</sub>(x) which take in N fit parameters as input.
 	 * @param jacobian Computes the Jacobian of the M functions.  If null a numerical Jacobian will be used.
 	 */
-	void setFunction( FunctionNtoM function , @Nullable FunctionNtoMxN<S> jacobian );
+	void setFunction( FunctionNtoM function, @Nullable FunctionNtoMxN<S> jacobian );
 
 	/**
 	 * Specifies a specialized loss function, typically to improve robustness to outliers. Squared error is the default.
@@ -95,9 +94,9 @@ public interface UnconstrainedLeastSquares<S extends DMatrix>
 	 * @param initial Initial parameters or guess with N elements..
 	 * @param ftol Relative threshold for change in function value between iterations. 0 &le; ftol &le; 1.  Try 1e-12
 	 * @param gtol Absolute threshold for convergence based on the gradient's norm. 0 disables test.  0 &le; gtol.
-	 *             Try 1e-12
+	 * Try 1e-12
 	 */
-	void initialize(double[] initial, double ftol , double gtol );
+	void initialize( double[] initial, double ftol, double gtol );
 	// TODO consider adding scaling vector
 
 	/**
