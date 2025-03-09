@@ -3,6 +3,15 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.24.0
+Date:     2025-XXX-YY
+
+- Flushed out support for concurrent linear algebra in NonLinearLeastSquares code
+- Added LeastSquaresSwitcher to let you switch between drastically different methods
+- Moved VerbosePrint utility classes from BoofCV into this project
+- Moving classes over to VerbosePrint
+
+------------------------------------------------------
 Version:  0.23.5
 Date:     2025-Mar-06
 
