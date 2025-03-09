@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,29 +18,37 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegConcurrency;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.CommonOps_MT_DSCC;
+import pabeles.concurrency.GrowArray;
 
 /**
  * @author Peter Abeles
  */
 public class MatrixMath_DSCC implements MatrixMath<DMatrixSparseCSC> {
 	DGrowArray workArray = new DGrowArray();
+	GrowArray<DGrowArray> concurrentArrays = new GrowArray<>(DGrowArray::new);
 
 	@Override
-	public void divideColumns(DMatrixRMaj divisor, DMatrixSparseCSC A) {
-		CommonOps_DSCC.divideColumns(A,divisor.data,0);
+	public void divideColumns( DMatrixRMaj divisor, DMatrixSparseCSC A ) {
+		CommonOps_DSCC.divideColumns(A, divisor.data, 0);
 	}
 
 	@Override
-	public void multTransA(DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output) {
-		CommonOps_DSCC.multTransA(A,B,output,workArray);
+	public void multTransA( DMatrixSparseCSC A, DMatrixRMaj B, DMatrixRMaj output ) {
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DSCC.multTransA(A, B, output, concurrentArrays);
+		} else {
+			CommonOps_DSCC.multTransA(A, B, output, workArray);
+		}
 	}
 
 	@Override
 	public DMatrixSparseCSC createMatrix() {
-		return new DMatrixSparseCSC(1,1);
+		return new DMatrixSparseCSC(1, 1);
 	}
 }
