@@ -26,6 +26,9 @@ import org.ddogleg.optimization.math.HessianSchurComplement;
 import org.ddogleg.optimization.math.MatrixMath;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Implementation of {@link LevenbergMarquardt_F64} for {@link UnconstrainedLeastSquaresSchur}.
@@ -49,7 +52,8 @@ public class UnconLeastSqLevenbergMarquardtSchur_F64<S extends DMatrix>
 		this.jacRight = math.createMatrix();
 	}
 
-	@Override public void setFunction( FunctionNtoM function, SchurJacobian<S> jacobian ) {
+	@Override public void setFunction( FunctionNtoM function, @Nullable SchurJacobian<S> jacobian ) {
+		Objects.requireNonNull(jacobian);
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
 	}

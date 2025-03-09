@@ -26,6 +26,9 @@ import org.ddogleg.optimization.math.HessianSchurComplement;
 import org.ddogleg.optimization.math.HessianSchurComplement_DSCC;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Implementations of {@link UnconstrainedLeastSquaresSchur}. Uses {@link HessianSchurComplement_DSCC}
@@ -55,7 +58,8 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 	}
 
 	@Override
-	public void setFunction( FunctionNtoM function, SchurJacobian<S> jacobian ) {
+	public void setFunction( FunctionNtoM function, @Nullable SchurJacobian<S> jacobian ) {
+		Objects.requireNonNull(jacobian);
 		this.functionResiduals = function;
 		this.functionJacobian = jacobian;
 		residuals.reshape(jacobian.getNumOfOutputsM(), 1);
