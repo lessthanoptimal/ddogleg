@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,8 +18,10 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegConcurrency;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.CommonOps_MT_DDRM;
 
 /**
  * @author Peter Abeles
@@ -32,7 +34,11 @@ public class MatrixMath_DDRM implements MatrixMath<DMatrixRMaj> {
 
 	@Override
 	public void multTransA(DMatrixRMaj A, DMatrixRMaj B, DMatrixRMaj output) {
-		CommonOps_DDRM.multTransA(A,B,output);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DDRM.multTransA(A, B, output);
+		} else {
+			CommonOps_DDRM.multTransA(A, B, output);
+		}
 	}
 
 	@Override
