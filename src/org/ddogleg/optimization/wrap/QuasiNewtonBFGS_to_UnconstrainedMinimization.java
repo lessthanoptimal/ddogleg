@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -28,6 +28,7 @@ import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
+import java.util.Set;
 
 /**
  * Wrapper around {@link QuasiNewtonBFGS} for {@link UnconstrainedMinimization}.  For a description of what
@@ -39,26 +40,26 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 
 	QuasiNewtonBFGS alg;
 
-	public QuasiNewtonBFGS_to_UnconstrainedMinimization(QuasiNewtonBFGS alg) {
+	public QuasiNewtonBFGS_to_UnconstrainedMinimization( QuasiNewtonBFGS alg ) {
 		this.alg = alg;
 	}
 
 	@Override
-	public void setFunction(FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue) {
+	public void setFunction( FunctionNtoS function, FunctionNtoN gradient, double minFunctionValue ) {
 		GradientLineFunction gradLine;
 
-		if( gradient == null ) {
+		if (gradient == null) {
 			gradLine = new CachedNumericalGradientLineFunction(function);
 		} else {
-			gradLine = new CachedGradientLineFunction(function,gradient);
+			gradLine = new CachedGradientLineFunction(function, gradient);
 		}
 
-		alg.setFunction(gradLine,minFunctionValue);
+		alg.setFunction(gradLine, minFunctionValue);
 	}
 
 	@Override
-	public void initialize(double[] initial, double ftol, double gtol) {
-		alg.setConvergence(ftol,gtol);
+	public void initialize( double[] initial, double ftol, double gtol ) {
+		alg.setConvergence(ftol, gtol);
 		alg.initialize(initial);
 	}
 
@@ -78,8 +79,8 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	}
 
 	@Override
-	public void setVerbose(@Nullable PrintStream verbose, int level) {
-		alg.setVerbose(verbose,level);
+	public void setVerbose( @Nullable PrintStream verbose, int level ) {
+		alg.setVerbose(verbose, level);
 	}
 
 	@Override
@@ -90,5 +91,9 @@ public class QuasiNewtonBFGS_to_UnconstrainedMinimization implements Unconstrain
 	@Override
 	public boolean isUpdated() {
 		return alg.isUpdatedParameters();
+	}
+
+	@Override public void setVerbose( @Nullable PrintStream out, @Nullable Set<String> configuration ) {
+		alg.setVerbose(out, configuration);
 	}
 }

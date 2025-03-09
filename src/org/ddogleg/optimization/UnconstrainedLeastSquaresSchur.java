@@ -93,4 +93,9 @@ public interface UnconstrainedLeastSquaresSchur<S extends DMatrix>
 	 * @return Objective function's value.
 	 */
 	double getFunctionValue();
+
+	/**
+	 * Returns the {@link Class} used to store Jacobian matrices
+	 */
+	Class<S> getJacobianType();
 }

@@ -22,7 +22,6 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.loss.LossFunction;
 import org.ddogleg.optimization.loss.LossFunctionGradient;
-import org.ddogleg.struct.VerbosePrint;
 import org.ejml.data.DMatrix;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +61,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Peter Abeles
  */
-public interface UnconstrainedLeastSquares<S extends DMatrix> extends IterativeOptimization, VerbosePrint {
+public interface UnconstrainedLeastSquares<S extends DMatrix> extends IterativeOptimization {
 	/**
 	 * Specifies a set of functions and their Jacobian.  See class description for documentation
 	 * on output data format.
@@ -112,4 +111,9 @@ public interface UnconstrainedLeastSquares<S extends DMatrix> extends IterativeO
 	 * @return Objective function's value.
 	 */
 	double getFunctionValue();
+
+	/**
+	 * Returns the {@link Class} used to store Jacobian matrices
+	 */
+	Class<S> getJacobianType();
 }

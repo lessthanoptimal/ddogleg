@@ -96,6 +96,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	// Storage for the loss gradient
 	protected DMatrixRMaj storageLossGradient = new DMatrixRMaj();
 
+	// Type of matrix it will write the Jacobian to
+	protected Class<S> jacobianType;
+
 	/**
 	 * Dampening parameter. Scalar that's adjusted at every step. smaller values for a Gauss-Newton step and larger
 	 * values for a gradient step
@@ -106,10 +109,12 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	protected double nu;
 	private final static double NU_INITIAL = 2;
 
+	@SuppressWarnings("unchecked")
 	protected LevenbergMarquardt_F64( MatrixMath<S> math, HM hessian ) {
 		super(hessian);
 		configure(new ConfigLevenbergMarquardt());
 		this.math = math;
+		this.jacobianType = (Class<S>)math.createMatrix().getClass();
 	}
 
 	/**
@@ -368,5 +373,9 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 	 */
 	public void configure( ConfigLevenbergMarquardt config ) {
 		this.config = config.copy();
+	}
+
+	public Class<S> getJacobianType() {
+		return jacobianType;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.struct.VerbosePrint;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
@@ -38,11 +39,10 @@ import java.io.Serializable;
  * resumed.
  * </p>
  *
- * @see UtilOptimize
- *
  * @author Peter Abeles
+ * @see UtilOptimize
  */
-public interface IterativeOptimization extends Serializable {
+public interface IterativeOptimization extends Serializable, VerbosePrint {
 
 	/**
 	 * <p>
@@ -51,9 +51,10 @@ public interface IterativeOptimization extends Serializable {
 	 * converged to or if it stopped for some other reason.
 	 * </p>
 	 * <p>
-	 * NOTE: The optimization parameters might not be modified after iterate() is called.  An internal book keeping
+	 * NOTE: The optimization parameters might not be modified after iterate() is called.  An internal bookkeeping
 	 * step might have been done.  To see if parameters have changed call {@link #isUpdated()}.
 	 * </p>
+	 *
 	 * @return true if it has converged or that no more progress can be made.
 	 */
 	boolean iterate() throws OptimizationException;
@@ -78,5 +79,6 @@ public interface IterativeOptimization extends Serializable {
 	 * @param out Stream that is printed to. Set to null to disable
 	 * @param level (Future use) Parameter which can be used to specify level of verbose output. Set to zero for now.
 	 */
-	void setVerbose(@Nullable PrintStream out , int level );
+	@Deprecated
+	void setVerbose( @Nullable PrintStream out, int level );
 }

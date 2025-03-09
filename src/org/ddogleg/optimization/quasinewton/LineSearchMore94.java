@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -21,9 +21,11 @@ package org.ddogleg.optimization.quasinewton;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.functions.CoupledDerivative;
+import org.ddogleg.util.VerboseUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
+import java.util.Set;
 
 /**
  * <p>
@@ -448,6 +450,10 @@ public class LineSearchMore94 implements LineSearch {
 	@Override
 	public void setVerbose(@Nullable PrintStream out, int level) {
 		this.verbose = out;
+	}
+
+	@Override public void setVerbose( @Nullable PrintStream out, @Nullable Set<String> configuration ) {
+		this.verbose = VerboseUtils.addPrefix(this, out);
 	}
 
 	@Override
