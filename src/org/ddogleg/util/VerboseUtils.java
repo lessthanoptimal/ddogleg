@@ -47,6 +47,10 @@ public class VerboseUtils {
 		if (out == null || out instanceof PrintStreamInjectIndent)
 			return out;
 
+		// Temporary work around for duplicated code in BoofCV. Once the migration is done delete the line below
+		if (out.getClass().getSimpleName().equals("PrintStreamInjectIndent"))
+			return out;
+
 		String simpleName = owner.getClass().getSimpleName();
 		String pre = nameToShort(simpleName, VERBOSE_PREFIX_LENGTH);
 		if (VERBOSE_PRINT_TABLE)
