@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,12 +18,16 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegConcurrency;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.IGrowArray;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.sparse.csc.CommonOps_MT_DSCC;
+import org.ejml.sparse.csc.mult.Workspace_MT_DSCC;
+import pabeles.concurrency.GrowArray;
 
 /**
  * @author Peter Abeles
@@ -34,8 +38,10 @@ public class HessianLeastSquares_DSCC extends HessianMath_DSCC
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
 	DMatrixSparseCSC transpose = new DMatrixSparseCSC(1,1);
-	public HessianLeastSquares_DSCC() {
-	}
+
+	protected GrowArray<Workspace_MT_DSCC> concurrentWork = new GrowArray<>(Workspace_MT_DSCC::new);
+
+	public HessianLeastSquares_DSCC() {}
 
 	public HessianLeastSquares_DSCC(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver) {
 		super(solver);
@@ -43,7 +49,12 @@ public class HessianLeastSquares_DSCC extends HessianMath_DSCC
 
 	@Override
 	public void updateHessian(DMatrixSparseCSC jacobian) {
-		CommonOps_DSCC.transpose(jacobian,transpose,gw);
-		CommonOps_DSCC.mult(transpose,jacobian, hessian,gw,gx);
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_DSCC.transpose(jacobian, transpose, gw);
+			CommonOps_MT_DSCC.mult(transpose, jacobian, hessian, concurrentWork);
+		} else {
+			CommonOps_DSCC.transpose(jacobian, transpose, gw);
+			CommonOps_DSCC.mult(transpose, jacobian, hessian, gw, gx);
+		}
 	}
 }
