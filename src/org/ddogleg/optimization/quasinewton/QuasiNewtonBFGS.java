@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,12 +20,15 @@ package org.ddogleg.optimization.quasinewton;
 
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
+import org.ddogleg.struct.VerbosePrint;
+import org.ddogleg.util.VerboseUtils;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
+import java.util.Set;
 
 /**
  * <p>
@@ -45,11 +48,11 @@ import java.io.PrintStream;
  * <p>
  * [1] Jorge Nocedal, Stephen J. Wright, "Numerical Optimization" 2nd Ed, 2006 Springer
  * </p>
+ *
  * @author Peter Abeles
  */
 @SuppressWarnings("NullAway.Init")
-public class QuasiNewtonBFGS
-{
+public class QuasiNewtonBFGS implements VerbosePrint {
 	// number of inputs
 	private int N;
 
@@ -78,7 +81,7 @@ public class QuasiNewtonBFGS
 	private DMatrixRMaj s;
 	// difference between current and previous gradient
 	private DMatrixRMaj y;
-	
+
 	// current set of parameters being considered
 	private DMatrixRMaj x;
 	// function value at x(k)
@@ -111,32 +114,32 @@ public class QuasiNewtonBFGS
 	 *
 	 * @param lineSearch Line search that selects a solution that meets the Wolfe condition.
 	 */
-	public QuasiNewtonBFGS( LineSearch lineSearch )
-	{
+	public QuasiNewtonBFGS( LineSearch lineSearch ) {
 		this.lineSearch = lineSearch;
 	}
 
 	/**
 	 * Specify the function being optimized
+	 *
 	 * @param function Function to optimize
 	 * @param funcMinValue Minimum possible function value. E.g. 0 for least squares.
 	 */
-	public void setFunction( GradientLineFunction function , double funcMinValue ) {
+	public void setFunction( GradientLineFunction function, double funcMinValue ) {
 		this.function = function;
 		this.funcMinValue = funcMinValue;
 
-		lineSearch.setFunction(function,funcMinValue);
+		lineSearch.setFunction(function, funcMinValue);
 		N = function.getN();
 
-		B = new DMatrixRMaj(N,N);
-		searchVector = new DMatrixRMaj(N,1);
-		g = new DMatrixRMaj(N,1);
-		s = new DMatrixRMaj(N,1);
-		y = new DMatrixRMaj(N,1);
-		x = new DMatrixRMaj(N,1);
+		B = new DMatrixRMaj(N, N);
+		searchVector = new DMatrixRMaj(N, 1);
+		g = new DMatrixRMaj(N, 1);
+		s = new DMatrixRMaj(N, 1);
+		y = new DMatrixRMaj(N, 1);
+		x = new DMatrixRMaj(N, 1);
 
-		temp0_Nx1 = new DMatrixRMaj(N,1);
-		temp1_Nx1 = new DMatrixRMaj(N,1);
+		temp0_Nx1 = new DMatrixRMaj(N, 1);
+		temp1_Nx1 = new DMatrixRMaj(N, 1);
 	}
 
 	/**
@@ -145,10 +148,10 @@ public class QuasiNewtonBFGS
 	 * @param ftol Relative error tolerance for function value  0 {@code <=} ftol {@code <=} 1
 	 * @param gtol Absolute convergence based on gradient norm  0 {@code <=} gtol
 	 */
-	public void setConvergence( double ftol , double gtol ) {
-		if( ftol < 0 )
+	public void setConvergence( double ftol, double gtol ) {
+		if (ftol < 0)
 			throw new IllegalArgumentException("ftol < 0");
-		if( gtol < 0 )
+		if (gtol < 0)
 			throw new IllegalArgumentException("gtol < 0");
 
 		this.ftol = ftol;
@@ -157,13 +160,14 @@ public class QuasiNewtonBFGS
 
 	/**
 	 * Manually specify the initial inverse hessian approximation.
+	 *
 	 * @param Hinverse Initial hessian approximation
 	 */
-	public void setInitialHInv( DMatrixRMaj Hinverse) {
+	public void setInitialHInv( DMatrixRMaj Hinverse ) {
 		B.setTo(Hinverse);
 	}
 
-	public void initialize(double[] initial) {
+	public void initialize( double[] initial ) {
 		this.mode = 0;
 		this.hasConverged = false;
 		this.iterations = 0;
@@ -181,18 +185,16 @@ public class QuasiNewtonBFGS
 		fx = function.computeFunction();
 		updated = false;
 
-		if( verbose != null ) {
+		if (verbose != null) {
 			verbose.println("Steps     fx        change      |step|   f-test     g-test    max-step ");
 			verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.2f\n",
-					iterations, fx, 0.0,0.0,0.0,0.0, 0.0);
+					iterations, fx, 0.0, 0.0, 0.0, 0.0, 0.0);
 		}
 	}
-
 
 	public double[] getParameters() {
 		return x.data;
 	}
-
 
 	/**
 	 * Perform one iteration in the optimization.
@@ -202,7 +204,7 @@ public class QuasiNewtonBFGS
 	public boolean iterate() {
 		updated = false;
 //		System.out.println("QN iterations "+iterations);
-		if( mode == 0 ) {
+		if (mode == 0) {
 			return computeSearchDirection();
 		} else {
 			return performLineSearch();
@@ -217,34 +219,34 @@ public class QuasiNewtonBFGS
 		function.computeGradient(temp0_Nx1.data);
 
 		// compute the change in gradient
-		for( int i = 0; i < N; i++ ) {
+		for (int i = 0; i < N; i++) {
 			y.data[i] = temp0_Nx1.data[i] - g.data[i];
 			g.data[i] = temp0_Nx1.data[i];
 		}
 
 		// Update the inverse Hessian matrix
-		if( iterations != 0 ) {
+		if (iterations != 0) {
 			EquationsBFGS.inverseUpdate(B, s, y, temp0_Nx1, temp1_Nx1);
 		}
 
 		// compute the search direction
-		CommonOps_DDRM.mult(-1,B,g, searchVector);
+		CommonOps_DDRM.mult(-1, B, g, searchVector);
 
 		// use the line search to find the next x
-		if( !setupLineSearch(fx, x.data, g.data, searchVector.data) ) {
+		if (!setupLineSearch(fx, x.data, g.data, searchVector.data)) {
 			// the search direction has a positive derivative, meaning the B matrix is
 			// no longer SPD.  Attempt to fix the situation by resetting the matrix
 			resetMatrixB();
 			// do the search again, it can't fail this time
-			CommonOps_DDRM.mult(-1,B,g, searchVector);
+			CommonOps_DDRM.mult(-1, B, g, searchVector);
 			setupLineSearch(fx, x.data, g.data, searchVector.data);
-		} else if(Math.abs(derivAtZero) <= gtol ) {
-			if( verbose != null ) {
-				verbose.printf("finished select direction, gtest=%e\n",Math.abs(derivAtZero));
+		} else if (Math.abs(derivAtZero) <= gtol) {
+			if (verbose != null) {
+				verbose.printf("finished select direction, gtest=%e\n", Math.abs(derivAtZero));
 			}
 
 			// the input might have been modified by the function.  So copy it
-			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
+			System.arraycopy(function.getCurrentState(), 0, x.data, 0, N);
 			return terminateSearch(true);
 		}
 
@@ -261,47 +263,47 @@ public class QuasiNewtonBFGS
 	private void resetMatrixB() {
 		// find the magnitude of the largest diagonal element
 		double maxDiag = 0;
-		for( int i = 0; i < N; i++ ) {
-			double d = Math.abs(B.get(i,i));
-			if( d > maxDiag )
+		for (int i = 0; i < N; i++) {
+			double d = Math.abs(B.get(i, i));
+			if (d > maxDiag)
 				maxDiag = d;
 		}
 
 		B.zero();
-		for( int i = 0; i < N; i++ ) {
-			B.set(i,i,maxDiag);
+		for (int i = 0; i < N; i++) {
+			B.set(i, i, maxDiag);
 		}
 	}
 
-	private boolean setupLineSearch( double funcAtStart , double[] startPoint , double[] startDeriv,
+	private boolean setupLineSearch( double funcAtStart, double[] startPoint, double[] startDeriv,
 									 double[] direction ) {
 		// derivative of the line search is the dot product of the gradient and search direction
 		derivAtZero = 0;
-		for( int i = 0; i < N; i++ ) {
+		for (int i = 0; i < N; i++) {
 			derivAtZero += startDeriv[i]*direction[i];
 		}
 
 		// degenerate case
-		if( derivAtZero > 0 )
+		if (derivAtZero > 0)
 			return false;
-		else if( derivAtZero == 0 )
+		else if (derivAtZero == 0)
 			return true;
 
 		// setup line functions
 		function.setLine(startPoint, direction);
 
 		// use wolfe condition to set the maximum step size
-		maxStep = (funcMinValue-funcAtStart)/(lineSearch.getGTol()*derivAtZero);
+		maxStep = (funcMinValue - funcAtStart)/(lineSearch.getGTol()*derivAtZero);
 		initialStep = 1 < maxStep ? 1 : maxStep;
-		invokeLineInitialize(funcAtStart,maxStep);
+		invokeLineInitialize(funcAtStart, maxStep);
 
 		return true;
 	}
 
-	private void invokeLineInitialize(double funcAtStart, double maxStep) {
+	private void invokeLineInitialize( double funcAtStart, double maxStep ) {
 		function.setInput(initialStep);
 		double funcAtInit = function.computeFunction();
-		lineSearch.init(funcAtStart,derivAtZero,funcAtInit,initialStep,0,maxStep);
+		lineSearch.init(funcAtStart, derivAtZero, funcAtInit, initialStep, 0, maxStep);
 		firstStep = true;
 	}
 
@@ -313,18 +315,18 @@ public class QuasiNewtonBFGS
 	 */
 	private boolean performLineSearch() {
 		// if true then it can't iterate any more
-		if( lineSearch.iterate() ) {
+		if (lineSearch.iterate()) {
 			// see if the line search failed
-			if( !lineSearch.isConverged() ) {
-				if( firstStep ) {
+			if (!lineSearch.isConverged()) {
+				if (firstStep) {
 					// if it failed on the very first step then it might have been too large
 					// try halving the step size
 					initialStep /= 2;
-					if( initialStep != 0 ) {
+					if (initialStep != 0) {
 						invokeLineInitialize(fx, maxStep);
 						return false;
 					} else {
-						if( verbose != null && verboseLevel != 0 ) {
+						if (verbose != null && verboseLevel != 0) {
 							verbose.println("Initial step reduced to zero");
 						}
 						return terminateSearch(false);
@@ -340,35 +342,35 @@ public class QuasiNewtonBFGS
 			double step = lineSearch.getStep();
 
 			// save the new x
-			System.arraycopy(function.getCurrentState(),0,x.data,0,N);
+			System.arraycopy(function.getCurrentState(), 0, x.data, 0, N);
 			// compute the change in the x
-			for( int i = 0; i < N; i++ )
-				s.data[i] = step * searchVector.data[i];
+			for (int i = 0; i < N; i++)
+				s.data[i] = step*searchVector.data[i];
 			updated = true;
 
 			// convergence tests
 			// function value at end of line search
 			double fstp = lineSearch.getFunction();
 
-			if( verbose != null ) {
+			if (verbose != null) {
 				double actualStep = NormOps_DDRM.fastNormF(s);
-				double ftest_val = Math.abs(fstp-fx)/Math.abs(fx);
+				double ftest_val = Math.abs(fstp - fx)/Math.abs(fx);
 				double gtest_val = Math.abs(derivAtZero);
 
 				verbose.printf("%-4d  %9.3E  %10.3E  %9.3E  %9.3E  %9.3E  %6.3f\n",
-						iterations, fstp, fstp - fx,actualStep,ftest_val,gtest_val, maxStep);
+						iterations, fstp, fstp - fx, actualStep, ftest_val, gtest_val, maxStep);
 			}
 
 			// see if the actual different and predicted differences are smaller than the
 			// error tolerance
-			if( Math.abs(fstp-fx) <= ftol*Math.abs(fx) || Math.abs(derivAtZero) < gtol ) {
-				if( verbose != null ) {
+			if (Math.abs(fstp - fx) <= ftol*Math.abs(fx) || Math.abs(derivAtZero) < gtol) {
+				if (verbose != null) {
 					verbose.println("converged after line search.");
 				}
 				return terminateSearch(true);
 			}
 
-			if( fstp > fx ) {
+			if (fstp > fx) {
 				throw new RuntimeException("Bug! Worse results!");
 			}
 
@@ -404,10 +406,10 @@ public class QuasiNewtonBFGS
 		return updated;
 	}
 
-	public void setVerbose(@Nullable PrintStream out , int level ) {
+	public void setVerbose( @Nullable PrintStream out, int level ) {
 		this.verbose = out;
-		if( level != 0 )
-			this.lineSearch.setVerbose(out,level);
+		if (level != 0)
+			this.lineSearch.setVerbose(out, level);
 	}
 
 	public LineSearch getLineSearch() {
@@ -416,5 +418,13 @@ public class QuasiNewtonBFGS
 
 	public double getFuncMinValue() {
 		return funcMinValue;
+	}
+
+	@Override public void setVerbose( @Nullable PrintStream out, @Nullable Set<String> configuration ) {
+		this.verbose = VerboseUtils.addPrefix(this, out);
+
+		if (configuration != null && configuration.contains(VerboseUtils.RECURSIVE)) {
+			VerboseUtils.verboseChildren(verbose, configuration, lineSearch);
+		}
 	}
 }

@@ -132,4 +132,8 @@ public class UnconLeastSqTrustRegion_F64<S extends DMatrix>
 	public S getJacobian() {
 		return jacobian;
 	}
+
+	@SuppressWarnings("unchecked") @Override public Class<S> getJacobianType() {
+		return (Class<S>)jacobian.getClass();
+	}
 }

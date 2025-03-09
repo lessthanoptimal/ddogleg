@@ -112,4 +112,8 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 	public DMatrixRMaj getResiduals() {
 		return residuals;
 	}
+
+	@SuppressWarnings("unchecked") @Override public Class<S> getJacobianType() {
+		return (Class<S>)jacLeft.getClass();
+	}
 }
