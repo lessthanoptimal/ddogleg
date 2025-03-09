@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,25 +18,27 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegConcurrency;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.CommonOps_MT_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverDense;
 
 /**
  * @author Peter Abeles
  */
 public class HessianLeastSquares_DDRM extends HessianMath_DDRM
-		implements HessianLeastSquares<DMatrixRMaj>
-{
-	public HessianLeastSquares_DDRM() {
-	}
+		implements HessianLeastSquares<DMatrixRMaj> {
+	public HessianLeastSquares_DDRM() {}
 
-	public HessianLeastSquares_DDRM(LinearSolverDense<DMatrixRMaj> solver) {
-		super(solver);
-	}
+	public HessianLeastSquares_DDRM( LinearSolverDense<DMatrixRMaj> solver ) {super(solver);}
 
 	@Override
-	public void updateHessian(DMatrixRMaj jacobian) {
-		CommonOps_DDRM.multInner(jacobian, hessian);
+	public void updateHessian( DMatrixRMaj jacobian ) {
+		if (DDoglegConcurrency.isUseConcurrent()) {
+			CommonOps_MT_DDRM.multInner(jacobian, hessian);
+		} else {
+			CommonOps_DDRM.multInner(jacobian, hessian);
+		}
 	}
 }
