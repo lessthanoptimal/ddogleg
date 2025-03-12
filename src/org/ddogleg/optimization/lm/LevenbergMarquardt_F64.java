@@ -256,8 +256,10 @@ public abstract class LevenbergMarquardt_F64<S extends DMatrix, HM extends Hessi
 			accepted = false;
 		}
 
-		if (UtilEjml.isUncountable(lambda) || UtilEjml.isUncountable(nu))
-			throw new OptimizationException("BUG! lambda=" + lambda + "  nu=" + nu);
+		if (Double.isInfinite(lambda) || Double.isInfinite(nu)) {
+			if (verbose != null) verbose.println("Failed to improve. lambda=" + lambda + " nu=" + nu);
+			return true;
+		}
 
 		if (accepted) {
 			boolean converged = checkConvergenceFTest(fx_candidate, fx);
