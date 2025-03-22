@@ -115,7 +115,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core', 'ejml-fdense', 'ejml-ddense', 'ejml-simple', 'ejml-dsparse'].each { String a ->
-        api group: 'org.ejml', name: a, version: '0.43.2-SNAPSHOT'
+        api group: 'org.ejml', name: a, version: '0.44.0'
     }
 
     compileOnly "org.projectlombok:lombok:${project.lombok_version}"
