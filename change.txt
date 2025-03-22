@@ -4,7 +4,7 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.24.0
-Date:     2025-XXX-YY
+Date:     2025-Mar-21
 
 - Flushed out support for concurrent linear algebra in NonLinearLeastSquares code
 - Added LeastSquaresSwitcher to let you switch between drastically different methods
