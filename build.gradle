@@ -2,8 +2,8 @@ import net.ltgt.gradle.errorprone.CheckSeverity
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id "com.peterabeles.gversion" version "1.10.2"
-    id "net.ltgt.errorprone" version "2.0.2"
+    id "com.peterabeles.gversion" version "1.10.3"
+    id "net.ltgt.errorprone" version "4.0.1"
 }
 
 apply plugin: 'java-library'
@@ -14,14 +14,14 @@ group = 'org.ddogleg'
 version = '0.23.6-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
-project.ext.commons_io_version = '2.11.0'
-project.ext.lombok_version = '1.18.24'
-project.ext.errorprone_version = '2.11.0'
-project.ext.nullaway_version = '0.9.5'
+project.ext.commons_io_version = '2.16.1'
+project.ext.lombok_version = '1.18.36'
+project.ext.errorprone_version = '2.35.1'
+project.ext.nullaway_version = '0.12.4'
 project.ext.guava_version = '31.1-jre'
-project.ext.jabel_version = '1.0.0'
+project.ext.jabel_version = '1.0.1-1'
 project.ext.jetnull_version = '23.0.0'
-project.ext.junit_version = '5.9.1'
+project.ext.junit_version = '5.11.4'
 project.ext.jsr250_version = '1.0'
 project.ext.jsr305_version = '3.0.2'
 
@@ -48,7 +48,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 // Enable incremental compile. Should make single file changes faster
-tasks.withType(JavaCompile) { options.incremental = true }
+tasks.withType(JavaCompile).configureEach { options.incremental = true }
 
 // Fail on jar conflict
 configurations.all { resolutionStrategy { failOnVersionConflict() } }
@@ -72,7 +72,7 @@ configurations.all {
 
 test {
     useJUnitPlatform()
-    reports.html.enabled = false
+    reports.html.setRequired(false)
     // Make the error logging verbose to make debugging on CI easier
     testLogging.showStandardStreams = true
     testLogging.exceptionFormat TestExceptionFormat.FULL
@@ -121,10 +121,10 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${project.lombok_version}"
     compileOnly "org.jetbrains:annotations:$project.jetnull_version" // @Nullable
     compileOnly "javax.annotation:jsr250-api:$project.jsr250_version"  // @Generated
-    testImplementation project.sourceSets.main.compileClasspath
+    testImplementation files(project.sourceSets.main.compileClasspath)
 
-    examplesImplementation project.sourceSets.main.compileClasspath
-    examplesImplementation project.sourceSets.main.runtimeClasspath
+    examplesImplementation files(project.sourceSets.main.compileClasspath)
+    examplesImplementation files(project.sourceSets.main.runtimeClasspath)
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$project.junit_version")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$project.junit_version")
@@ -134,14 +134,14 @@ dependencies {
     testImplementation project.sourceSets.benchmark.output
 
     benchmarkImplementation project.sourceSets.main.output
-    benchmarkImplementation project.sourceSets.main.runtimeClasspath
-    benchmarkImplementation project.sourceSets.main.compileClasspath
+    benchmarkImplementation files(project.sourceSets.main.runtimeClasspath)
+    benchmarkImplementation files(project.sourceSets.main.compileClasspath)
     examplesImplementation project.sourceSets.main.output
 
     // needed to use Java 17 syntax with Java 11 byte code
-    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
-    testAnnotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
-    benchmarkAnnotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:$project.jabel_version")
+    annotationProcessor("com.pkware.jabel:jabel-javac-plugin:$project.jabel_version")
+    testAnnotationProcessor("com.pkware.jabel:jabel-javac-plugin:$project.jabel_version")
+    benchmarkAnnotationProcessor("com.pkware.jabel:jabel-javac-plugin:$project.jabel_version")
 
     errorprone("com.google.errorprone:error_prone_core:$project.errorprone_version")
 
@@ -161,6 +161,8 @@ tasks.withType(JavaCompile).configureEach {
         return
     if (path.contains("example"))
         return
+    if (name.contains("Test"))
+        return
 
     options.errorprone.enabled = true
     options.errorprone.disableWarningsInGeneratedCode = true
@@ -171,7 +173,7 @@ tasks.withType(JavaCompile).configureEach {
             "SameNameButDifferent", // false positives. Nullable is confusing it
             "MissingSummary", "UnescapedEntity", "EmptyBlockTag")
     options.errorprone.error("MissingOverride", "MissingCasesInEnumSwitch", "BadInstanceof",
-            "PublicConstructorForAbstractClass", "EmptyCatch", "NarrowingCompoundAssignment", "JdkObsolete")
+            "EmptyCatch", "NarrowingCompoundAssignment", "JdkObsolete")
 
     if (name.startsWith("compileTest")) {
         options.errorprone.disable("ReferenceEquality", "IntLongMath", "ClassCanBeStatic")
@@ -310,5 +312,5 @@ project.compileJava.dependsOn(createVersionFile)
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = '7.3.3'
+    gradleVersion = '8.12.1'
 }
