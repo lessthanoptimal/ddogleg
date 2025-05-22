@@ -20,6 +20,7 @@ package org.ddogleg.struct;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -180,6 +181,11 @@ public class FastArray<T> extends FastAccess<T> {
 		for (int i = 0; i < list.size; i++) {
 			add(list.data[i]);
 		}
+		return this;
+	}
+
+	public FastArray<T> addAll( Collection<T> list ) {
+		list.forEach(this::add);
 		return this;
 	}
 
