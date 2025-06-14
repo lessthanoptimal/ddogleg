@@ -30,4 +30,12 @@ public class DummyData {
 
 	public DummyData() {
 	}
+
+	@Override public boolean equals( Object obj ) {
+		try {
+			return value == ((DummyData)obj).value;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

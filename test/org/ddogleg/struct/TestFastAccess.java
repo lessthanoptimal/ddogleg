@@ -162,6 +162,22 @@ public class TestFastAccess {
 		assertEquals(3, alg.count(( o ) -> o.value == 2));
 	}
 
+	@Test void removeSwapVal() {
+		var alg = new DogArray<>(DummyData::new);
+		for (int i = 0; i < 10; i++) {
+			alg.grow().value = i;
+		}
+
+		assertTrue(alg.removeSwapVal(new DummyData(7)));
+		assertFalse(alg.removeSwapVal(new DummyData(17)));
+
+		var expected = new int[]{0, 1, 2, 3, 4, 5, 6, 9, 8};
+		assertEquals(expected.length, alg.size());
+		for (int i = 0; i < expected.length; i++) {
+			assertEquals(expected[i], alg.get(i).value);
+		}
+	}
+
 	@Test void isEmpty() {
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		assertTrue(alg.isEmpty());

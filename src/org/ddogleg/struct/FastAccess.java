@@ -81,6 +81,20 @@ public abstract class FastAccess<T> implements Serializable {
 	public abstract T removeSwap( int index );
 
 	/**
+	 * Finds the first index of the specified value and removes it from the list by swapping it out. Search
+	 * takes O(n) time and swap takes O(1) time.
+	 *
+	 * @return true if the value was found and the list modified
+	 */
+	public boolean removeSwapVal( T value ) {
+		int index = indexOf(value);
+		if (index == -1)
+			return false;
+		removeSwap(index);
+		return true;
+	}
+
+	/**
 	 * Number of elements in the array
 	 */
 	public int size() {
