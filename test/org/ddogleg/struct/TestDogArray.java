@@ -167,7 +167,7 @@ class TestDogArray {
 		alg.copyAll(data, ( src, dst ) -> dst.value = src.value);
 
 		for (int i = 0; i < 10; i++) {
-			assertNotEquals(data.get(i), alg.get(i));
+			assertFalse(data.get(i) == alg.get(i));
 			assertEquals(i, alg.get(i).value);
 		}
 	}
@@ -311,7 +311,7 @@ class TestDogArray {
 
 	@Test void contains() {
 		var alg = new DogArray<>(DummyData::new);
-		alg.grow();
+		alg.grow().value = -1;
 
 		assertFalse(alg.contains(new DummyData()));
 
