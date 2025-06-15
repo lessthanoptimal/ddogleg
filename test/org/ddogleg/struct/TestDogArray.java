@@ -26,17 +26,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 class TestDogArray {
-
 	/**
 	 * makes sure reset function is called when the grow command is used
 	 */
-	@Test
-	void reset_grow() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+	@Test void reset_grow() {
+		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		for (int i = 0; i < 5; i++) {
 			DummyData d = alg.grow();
@@ -48,9 +43,8 @@ class TestDogArray {
 	/**
 	 * makes sure reset function is called when the grow command is used
 	 */
-	@Test
-	void reset_resize() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+	@Test void reset_resize() {
+		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		alg.resize(3);
 		for (int i = 0; i < alg.size; i++) {
@@ -67,9 +61,8 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void resize_Initialize() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+	@Test void resize_Initialize() {
+		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		alg.resize(3, ( o ) -> o.value = 100);
 		alg.resize(10, ( o ) -> o.value = 200);
@@ -82,9 +75,8 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void resize_InitializeIdx() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
+	@Test void resize_InitializeIdx() {
+		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
 		alg.resize(3, ( idx, o ) -> o.value = 100 + idx);
 		alg.resize(10, ( idx, o ) -> o.value = 200 + idx);
@@ -97,17 +89,15 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void checkDeclareInstance() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+	@Test void checkDeclareInstance() {
+		var alg = new DogArray<>(DummyData::new);
 
 		assertTrue(alg.getMaxSize() > 0);
 		assertNotNull(alg.data[0]);
 	}
 
-	@Test
-	void toList() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+	@Test void toList() {
+		var alg = new DogArray<>(DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0, l.size());
@@ -123,14 +113,13 @@ class TestDogArray {
 		assertEquals(1, l.get(1).value);
 	}
 
-	@Test
-	void remove_indexes() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void remove_indexes() {
+		var alg = new DogArray<>(10, DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
 
-		int[] indexes = new int[]{0, 1, 4, 2, 6, 8, 9};
+		var indexes = new int[]{0, 1, 4, 2, 6, 8, 9};
 		alg.remove(indexes, 2, 6, null);
 		assertEquals(6, alg.size());
 		assertEquals(0, alg.get(0).value);
@@ -148,20 +137,18 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void remove_indexes_RemoveNothing() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void remove_indexes_RemoveNothing() {
+		var alg = new DogArray<>(10, DummyData::new);
 		for (int i = 0; i < 10; i++) {
 			alg.grow().value = i;
 		}
-		int[] indexes = new int[]{};
+		var indexes = new int[]{};
 		alg.remove(indexes, 2, 2, null);
 		assertEquals(10, alg.size());
 	}
 
-	@Test
-	void removeTail() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void removeTail() {
+		var alg = new DogArray<>(10, DummyData::new);
 
 		alg.grow();
 		assertEquals(1, alg.size);
@@ -169,15 +156,14 @@ class TestDogArray {
 		assertEquals(0, alg.size);
 	}
 
-	@Test
-	void copyAll() {
-		List<DummyData> data = new ArrayList<>();
+	@Test void copyAll() {
+		var data = new ArrayList<DummyData>();
 		for (int i = 0; i < 10; i++) {
 			DummyData d = new DummyData();
 			d.value = i;
 			data.add(d);
 		}
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+		var alg = new DogArray<>(DummyData::new);
 		alg.copyAll(data, ( src, dst ) -> dst.value = src.value);
 
 		for (int i = 0; i < 10; i++) {
@@ -186,9 +172,8 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void remove_index() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void remove_index() {
+		var alg = new DogArray<>(10, DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0, l.size());
@@ -218,9 +203,8 @@ class TestDogArray {
 		assertEquals(2, alg.data[2].value);
 	}
 
-	@Test
-	void remove_object() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+	@Test void remove_object() {
+		var alg = new DogArray<>(DummyData::new);
 
 		alg.grow().value = 10;
 		alg.grow().value = 11;
@@ -234,9 +218,8 @@ class TestDogArray {
 		assertEquals(12, alg.get(1).value);
 	}
 
-	@Test
-	void removeSwap() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void removeSwap() {
+		var alg = new DogArray<>(10, DummyData::new);
 
 		List<DummyData> l = alg.toList();
 		assertEquals(0, l.size());
@@ -261,9 +244,8 @@ class TestDogArray {
 		assertEquals(2, alg.data[3].value);
 	}
 
-	@Test
-	void getTail() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void getTail() {
+		var alg = new DogArray<>(10, DummyData::new);
 
 		alg.grow();
 		alg.grow();
@@ -271,9 +253,8 @@ class TestDogArray {
 		assertSame(alg.data[1], alg.getTail());
 	}
 
-	@Test
-	void getTail_index() {
-		DogArray<DummyData> alg = new DogArray<>(10, DummyData::new);
+	@Test void getTail_index() {
+		var alg = new DogArray<>(10, DummyData::new);
 
 		alg.grow();
 		alg.grow();
@@ -283,9 +264,8 @@ class TestDogArray {
 		}
 	}
 
-	@Test
-	void get_pop() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+	@Test void get_pop() {
+		var alg = new DogArray<>(DummyData::new);
 
 		// test a failure case
 		try {
@@ -298,9 +278,8 @@ class TestDogArray {
 		alg.get(0);
 	}
 
-	@Test
-	void size() {
-		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
+	@Test void size() {
+		var alg = new DogArray<>(DummyData::new);
 		assertEquals(0, alg.size);
 		alg.grow();
 		assertEquals(1, alg.size);
@@ -309,9 +288,8 @@ class TestDogArray {
 	/**
 	 * Checks to see if pop automatically grows correctly
 	 */
-	@Test
-	void pop_grow() {
-		DogArray<DummyData> alg = new DogArray<>(1, DummyData::new);
+	@Test void pop_grow() {
+		var alg = new DogArray<>(1, DummyData::new);
 
 		int before = alg.getMaxSize();
 		for (int i = 0; i < 20; i++) {
@@ -322,9 +300,8 @@ class TestDogArray {
 		assertTrue(after > before);
 	}
 
-	@Test
-	void reserve() {
-		DogArray<DummyData> alg = new DogArray<>(1, DummyData::new);
+	@Test void reserve() {
+		var alg = new DogArray<>(1, DummyData::new);
 
 		alg.grow().value = 10;
 		int before = alg.getMaxSize();
@@ -332,43 +309,40 @@ class TestDogArray {
 		assertEquals(10, alg.get(0).value);
 	}
 
-	@Test
-	void contains() {
-		DogArray<DummyData> queue = new DogArray<>(DummyData::new);
-		queue.grow();
+	@Test void contains() {
+		var alg = new DogArray<>(DummyData::new);
+		alg.grow();
 
-		assertFalse(queue.contains(new DummyData()));
+		assertFalse(alg.contains(new DummyData()));
 
-		assertTrue(queue.contains(queue.get(0)));
+		assertTrue(alg.contains(alg.get(0)));
 	}
 
-	@Test
-	void indexOf() {
-		DogArray<DummyData> queue = new DogArray<>(100, DummyData::new);
-		queue.grow().value = 1;
-		queue.grow().value = 3;
-		queue.grow().value = 2;
+	@Test void indexOf() {
+		var alg = new DogArray<>(100, DummyData::new);
+		alg.grow().value = 1;
+		alg.grow().value = 3;
+		alg.grow().value = 2;
 
-		assertEquals(-1, queue.indexOf(new DummyData()), UtilEjml.TEST_F64);
-		assertEquals(0, queue.indexOf(queue.get(0)), UtilEjml.TEST_F64);
-		assertEquals(1, queue.indexOf(queue.get(1)), UtilEjml.TEST_F64);
-		assertEquals(2, queue.indexOf(queue.get(2)), UtilEjml.TEST_F64);
+		assertEquals(-1, alg.indexOf(new DummyData()), UtilEjml.TEST_F64);
+		assertEquals(0, alg.indexOf(alg.get(0)), UtilEjml.TEST_F64);
+		assertEquals(1, alg.indexOf(alg.get(1)), UtilEjml.TEST_F64);
+		assertEquals(2, alg.indexOf(alg.get(2)), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	void swap() {
-		DogArray<DummyData> queue = new DogArray<>(100, DummyData::new);
-		queue.grow().value = 1;
-		queue.grow().value = 2;
-		queue.grow().value = 3;
-		queue.grow().value = 4;
+	@Test void swap() {
+		var alg = new DogArray<>(100, DummyData::new);
+		alg.grow().value = 1;
+		alg.grow().value = 2;
+		alg.grow().value = 3;
+		alg.grow().value = 4;
 
-		queue.swap(0, 3);
-		queue.swap(0, 1);
+		alg.swap(0, 3);
+		alg.swap(0, 1);
 
-		assertEquals(2, queue.get(0).value);
-		assertEquals(4, queue.get(1).value);
-		assertEquals(3, queue.get(2).value);
-		assertEquals(1, queue.get(3).value);
+		assertEquals(2, alg.get(0).value);
+		assertEquals(4, alg.get(1).value);
+		assertEquals(3, alg.get(2).value);
+		assertEquals(1, alg.get(3).value);
 	}
 }
