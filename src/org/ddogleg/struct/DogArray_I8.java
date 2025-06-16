@@ -498,7 +498,18 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * @return index or -1 if it's not in the list
 	 */
 	public int indexOf( int value ) {
-		for (int i = 0; i < size; i++) {
+		return indexOf(value, 0);
+	}
+
+	/**
+	 * Searches for the first element which contains `value` starting at index `startIndex`
+	 *
+	 * @param value Value it's looking for
+	 * @param startIndex Index where it will start its search at
+	 * @return index that it found it at
+	 */
+	public int indexOf( int value, int startIndex ) {
+		for (int i = startIndex; i < size; i++) {
 			if (data[i] == value)
 				return i;
 		}
