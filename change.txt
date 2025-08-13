@@ -3,6 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.24.1
+Date:     ???
+
+- DogArray.reserve() checks for negative numbers and throws an exception
+
+------------------------------------------------------
 Version:  0.24.0
 Date:     2025-Mar-21
 

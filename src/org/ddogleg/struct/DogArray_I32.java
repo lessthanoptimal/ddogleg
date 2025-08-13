@@ -401,6 +401,8 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	@SuppressWarnings("NullAway")
 	@Override public DogArray_I32 reserve( int amount ) {
+		if (amount < 0)
+			throw new IllegalArgumentException("Amount is negative. Bug or overflow?");
 		if (data.length >= amount)
 			return this;
 		if (size == 0) {

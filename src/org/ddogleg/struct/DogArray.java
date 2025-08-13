@@ -281,6 +281,9 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param length Requested minimum internal array length
 	 */
 	public DogArray<T> reserve( int length ) {
+		if (length < 0)
+			throw new IllegalArgumentException("Amount is negative. Bug or overflow?");
+
 		// now need to grow since it is already larger
 		if (this.data.length >= length)
 			return this;
