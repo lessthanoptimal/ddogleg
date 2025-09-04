@@ -30,7 +30,7 @@ To post a SNAPSHOT:
 ./gradlew publish
 
 To post a full release:
-./gradlew assemble && ./gradlew publish -Dorg.gradle.parallel=false
+./gradlew assemble && ./gradlew publishToSonatype -Dorg.gradle.parallel=false && ./gradlew findSonatypeStagingRepository closeSonatypeStagingRepository && ./gradlew findSonatypeStagingRepository releaseSonatypeStagingRepository
 
 A SNAPSHOT is created if SNAPSHOT is in its name.
 

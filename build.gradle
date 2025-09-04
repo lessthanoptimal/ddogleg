@@ -4,6 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 plugins {
     id "com.peterabeles.gversion" version "1.10.3"
     id "net.ltgt.errorprone" version "4.0.1"
+    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
 }
 
 apply plugin: 'java-library'
@@ -30,6 +31,23 @@ gversion {
     classPackage = "org.ddogleg"
     className    = "DDoglegVersion"
     annotate     = true
+}
+
+if (!project.hasProperty('ossrhUsername')) {
+    ext.ossrhUsername = "dummy"
+    ext.ossrhPassword = "dummy"
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+
+            username = ossrhUsername
+            password = ossrhPassword
+        }
+    }
 }
 
 java {
@@ -241,8 +259,8 @@ publishing {
     }
     repositories {
         maven {
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/"
+            def snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             credentials {
                 username ossrhUsername
@@ -252,7 +270,7 @@ publishing {
     }
 }
 
-if (ext.ossrhPassword != "dummy") {
+if (project.hasProperty('ossrhUsername')) {
     signing { sign publishing.publications.mavenJava }
 }
 
