@@ -4,9 +4,12 @@ Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
 Version:  0.24.1
-Date:     ???
+Date:     2025-Sep-03
 
 - DogArray.reserve() checks for negative numbers and throws an exception
+- FastAccess added removeSwapVal
+- Primitive DogArray added indexOf(value, startIndex)
+- Primitive DogArray added abstract accessor to internal array
 
 ------------------------------------------------------
 Version:  0.24.0
