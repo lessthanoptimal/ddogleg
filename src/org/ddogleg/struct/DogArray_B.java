@@ -474,6 +474,8 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		throw new RuntimeException("Undefined for boolean");
 	}
 
+	@Override public <D> D getDataArray() {return (D)data;}
+
 	/** Shuffle elements by randomly swapping them */
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {

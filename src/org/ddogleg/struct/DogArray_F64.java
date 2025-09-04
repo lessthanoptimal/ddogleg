@@ -524,6 +524,8 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		Arrays.sort(data, 0, size);
 	}
 
+	@Override public <D> D getDataArray() {return (D)data;}
+
 	/**
 	 * Sort but with a re-usable sorter to avoid declaring new memory
 	 */

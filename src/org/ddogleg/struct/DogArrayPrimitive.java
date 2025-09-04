@@ -108,6 +108,9 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 */
 	void sort();
 
+	/** Returns the internal data array */
+	<D>D getDataArray();
+
 	/** True if the container has no elements */
 	default boolean isEmpty() {
 		return size() == 0;

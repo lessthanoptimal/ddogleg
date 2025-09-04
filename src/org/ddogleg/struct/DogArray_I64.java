@@ -510,6 +510,8 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		Arrays.sort(data, 0, size);
 	}
 
+	@Override public <D> D getDataArray() {return (D)data;}
+
 	/** Shuffle elements by randomly swapping them */
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {

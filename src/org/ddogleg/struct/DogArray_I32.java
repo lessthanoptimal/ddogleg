@@ -527,6 +527,8 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		Arrays.sort(data, 0, size);
 	}
 
+	@Override public <D> D getDataArray() {return (D)data;}
+
 	/**
 	 * Sort but with a re-usable sorter to avoid declaring new memory
 	 */
