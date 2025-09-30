@@ -33,23 +33,6 @@ gversion {
     annotate     = true
 }
 
-if (!project.hasProperty('ossrhUsername')) {
-    ext.ossrhUsername = "dummy"
-    ext.ossrhPassword = "dummy"
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-
-            username = ossrhUsername
-            password = ossrhPassword
-        }
-    }
-}
-
 java {
     withJavadocJar()
     withSourcesJar()
@@ -223,7 +206,19 @@ javadoc {
 }
 
 // if Maven central isn't setup in ~/.gradle/gradle.properties fill in these variables to make it happy
-if (!project.hasProperty('ossrhUsername')) {
+if (project.hasProperty('ossrhUsername')) {
+    nexusPublishing {
+        repositories {
+            sonatype {
+                nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+                snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
+} else {
     ext.ossrhUsername = "dummy"
     ext.ossrhPassword = "dummy"
 }
@@ -270,7 +265,7 @@ publishing {
     }
 }
 
-if (project.hasProperty('ossrhUsername')) {
+if (ext.ossrhUsername != 'dummy') {
     signing { sign publishing.publications.mavenJava }
 }
 
