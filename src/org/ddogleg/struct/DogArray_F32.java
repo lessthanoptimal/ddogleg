@@ -278,8 +278,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	}
 
 	public float get( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[index];
 	}
 
@@ -307,14 +306,12 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public float getTail( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[size - index - 1];
 	}
 
 	public void setTail( int index, float value ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		data[size - index - 1] = value;
 	}
 
@@ -333,6 +330,11 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	}
 
 	public void set( int index, float value ) {
+		checkBounds(index);
+		data[index] = value;
+	}
+
+	public void unsafe_set( int index, float value ) {
 		data[index] = value;
 	}
 
@@ -568,6 +570,11 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 				total++;
 		}
 		return total;
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface
