@@ -272,8 +272,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	}
 
 	public boolean get( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[index];
 	}
 
@@ -301,14 +300,12 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public boolean getTail( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[size - index - 1];
 	}
 
 	public void setTail( int index, boolean value ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		data[size - index - 1] = value;
 	}
 
@@ -317,6 +314,11 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	}
 
 	public void set( int index, boolean value ) {
+		checkBounds(index);
+		data[index] = value;
+	}
+
+	public void unsafe_set( int index, boolean value ) {
 		data[index] = value;
 	}
 
@@ -502,6 +504,11 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		for (int i = 0; i < size; i++) {
 			data[i] = func.process(i, data[i]);
 		}
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface

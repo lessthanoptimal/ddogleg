@@ -278,9 +278,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	}
 
 	public double get( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-		return data[index];
+		checkBounds(index);		return data[index];
 	}
 
 	/**
@@ -307,15 +305,11 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public double getTail( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-		return data[size - index - 1];
+		checkBounds(index);		return data[size - index - 1];
 	}
 
 	public void setTail( int index, double value ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-		data[size - index - 1] = value;
+		checkBounds(index);		data[size - index - 1] = value;
 	}
 
 	/**
@@ -333,6 +327,11 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	}
 
 	public void set( int index, double value ) {
+		checkBounds(index);
+		data[index] = value;
+	}
+
+	public void unsafe_set( int index, double value ) {
 		data[index] = value;
 	}
 
@@ -568,6 +567,11 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 				total++;
 		}
 		return total;
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface

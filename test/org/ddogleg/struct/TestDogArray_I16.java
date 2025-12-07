@@ -402,6 +402,17 @@ public class TestDogArray_I16 extends ChecksDogArrayPrimitive<DogArray_I16> {
 		}
 	}
 
+	@Test void set_get() {
+		var alg = new DogArray_I16();
+		alg.resize(10, (short)2);
+		for (int i = 0; i < alg.size; i++) {
+			alg.set(i, i);
+			assertEquals(i, alg.get(i));
+			alg.unsafe_set(i, 2*i);
+			assertEquals(2*i, alg.unsafe_get(i));
+		}
+	}
+
 	@Test void forIdx() {
 		var alg = DogArray_I16.array(1001, 1002, 1003, 1004, 1005);
 		alg.forIdx(( idx, value ) -> assertEquals(idx + 1001, value, 1e-8));

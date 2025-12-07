@@ -246,8 +246,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @return The removed object
 	 */
 	public long removeSwap( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
+		checkBounds(index);
 		long ret = data[index];
 		size -= 1;
 		data[index] = data[size];
@@ -264,8 +263,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	public long get( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[index];
 	}
 
@@ -293,14 +291,12 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public long getTail( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		return data[size - index - 1];
 	}
 
 	public void setTail( int index, long value ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+		checkBounds(index);
 		data[size - index - 1] = value;
 	}
 
@@ -319,6 +315,11 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	public void set( int index, long value ) {
+		checkBounds(index);
+		data[index] = value;
+	}
+
+	public void unsafe_set( int index, long value ) {
 		data[index] = value;
 	}
 
@@ -547,6 +548,11 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 				total++;
 		}
 		return total;
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface
