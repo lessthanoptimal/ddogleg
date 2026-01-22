@@ -3,13 +3,12 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.24.XX
-Date:     2025-XXX-YY
+Version:  0.24.2
+Date:     2026-Jan-22
 
 - Primitive DogArrays
   * Added bounds check on set()
   * Added function unset_set()
-
 
 ------------------------------------------------------
 Version:  0.24.1
