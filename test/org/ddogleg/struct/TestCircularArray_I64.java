@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCircularArray_I32 {
+public class TestCircularArray_I64 {
 	@Test void popHead() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		alg.add(2);
@@ -36,7 +36,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void popTail() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		alg.add(2);
@@ -48,7 +48,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void head() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		assertEquals(1, alg.head());
@@ -57,7 +57,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void head_offset() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -69,7 +69,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void tail() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		assertEquals(1, alg.tail());
@@ -78,7 +78,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void tail_offset() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -90,7 +90,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void removeHead() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		alg.add(2);
@@ -103,7 +103,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void removeTail() {
-		var alg = new CircularArray_I32();
+		var alg = new CircularArray_I64();
 
 		alg.add(1);
 		alg.add(2);
@@ -116,7 +116,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void get() {
-		var alg = new CircularArray_I32(2);
+		var alg = new CircularArray_I64(2);
 		assertEquals(2, alg.data.length);
 
 		// easy case
@@ -135,7 +135,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void add() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 		assertEquals(3, alg.data.length);
 
 		alg.add(1);
@@ -158,7 +158,7 @@ public class TestCircularArray_I32 {
 
 		// grows with offset
 		alg.start = 1;
-		alg.data = new int[]{1, 2, 3};
+		alg.data = new long[]{1, 2, 3};
 		alg.size = 3;
 		alg.add(4);
 		assertEquals(2, alg.data[0]);
@@ -170,7 +170,7 @@ public class TestCircularArray_I32 {
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
-		alg.data = new int[3];
+		alg.data = new long[3];
 		alg.add(10);
 		assertEquals(10, alg.data[0]);
 		assertEquals(10, alg.data[0]);
@@ -178,7 +178,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void addW() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 		assertEquals(3, alg.data.length);
 
 		alg.addW(1);
@@ -202,14 +202,14 @@ public class TestCircularArray_I32 {
 		// wrap around case
 		alg.start = 1;
 		alg.size = 2;
-		alg.data = new int[3];
+		alg.data = new long[3];
 		alg.addW(10);
 		assertEquals(10, alg.data[0]);
 		assertEquals(3, alg.size);
 	}
 
 	@Test void isEmpty() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 
 		assertTrue(alg.isEmpty());
 		alg.add(5);
@@ -219,7 +219,7 @@ public class TestCircularArray_I32 {
 	}
 
 	@Test void reset() {
-		var alg = new CircularArray_I32(3);
+		var alg = new CircularArray_I64(3);
 
 		alg.start = 2;
 		alg.size = 5;
