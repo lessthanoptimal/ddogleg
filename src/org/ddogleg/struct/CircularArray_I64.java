@@ -18,103 +18,88 @@
 
 package org.ddogleg.struct;
 
-/**
- * A circular queue which can grow as needed.
- *
- * @author Peter Abeles
- */
-public class CircularArray_I32 {
-	//
-	public int[] data;
+/// A circular array for primitive type long which can grow as needed.
+public class CircularArray_I64 {
+	/// Internal array that stores elements
+	public long[] data;
 
-	// index which is the start of the queue
+	/// index which is the start of the queue
 	public int start;
-	// number of elements in the queue
+
+	/// number of elements in the queue
 	public int size;
 
-	public CircularArray_I32() {
+	public CircularArray_I64() {
 		this(10);
 	}
 
-	public CircularArray_I32( int dataSize ) {
-		data = new int[dataSize];
+	public CircularArray_I64( int dataSize ) {
+		data = new long[dataSize];
 	}
 
 	public void reset() {
 		start = size = 0;
 	}
 
-	/**
-	 * Returns and removes the first element from the queue.
-	 *
-	 * @return first element in the queue
-	 */
-	public int popHead() {
-		int r = data[start];
+	/// Returns and removes the first element from the queue.
+	///
+	/// @return first element in the queue
+	public long popHead() {
+		long r = data[start];
 		removeHead();
 		return r;
 	}
 
-	/**
-	 * Returns and removes the last element from the queue.
-	 *
-	 * @return last element in the queue
-	 */
-	public int popTail() {
-		int r = tail();
+	/// Returns and removes the last element from the queue.
+	///
+	/// @return last element in the queue
+	public long popTail() {
+		long r = tail();
 		removeTail();
 		return r;
 	}
 
-	/**
-	 * Value of the first element in the queue
-	 */
-	public int head() {
+	/// Value of the first element in the queue
+	public long head() {
 		return data[start];
 	}
 
-	/**
-	 * Value of the last element in the queue
-	 */
-	public int tail() {
+	/// Value of the last element in the queue
+	public long tail() {
 		return data[(start + size - 1)%data.length];
 	}
 
-	/**
-	 * Removes the first element
-	 */
+	/// Removes the first element
 	public void removeHead() {
+		if (size == 0)
+			throw new ArrayIndexOutOfBoundsException("Already empty");
 		start = (start + 1)%data.length;
 		size--;
 	}
 
-	/**
-	 * Removes the last element
-	 */
+	/// Removes the last element
 	public void removeTail() {
+		if (size == 0)
+			throw new ArrayIndexOutOfBoundsException("Already empty");
 		size--;
 	}
 
-	/**
-	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
-	 *
-	 * @param index Which element in the queue you wish to access
-	 * @return the element's value
-	 */
-	public int get( int index ) {
+	/// Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
+	///
+	/// @param index Which element in the queue you wish to access
+	/// @return the element's value
+	public long get( int index ) {
 		return data[(start + index)%data.length];
 	}
 
-	/**
-	 * Adds a new element to the queue.  If the queue isn't large enough to store this value then its internal data
-	 * array will grow
-	 *
-	 * @param value Value which is to be added
-	 */
-	public void add( int value ) {
+	/// Adds a new element to the queue.  If the queue isn't large enough to store this value then its internal data
+	/// array will grow
+	///
+	/// @param value Value which is to be added
+	public void add( long value ) {
 		// see if it needs to grow the queue
 		if (size >= data.length) {
-			int a[] = new int[nextDataSize()];
+			long a[] = new long[nextDataSize()];
 
 			System.arraycopy(data, start, a, 0, data.length - start);
 			System.arraycopy(data, 0, a, data.length - start, start);
@@ -125,12 +110,10 @@ public class CircularArray_I32 {
 		size++;
 	}
 
-	/**
-	 * Adds a new element to the queue, but if the queue is full write over the oldest element.
-	 *
-	 * @param value Value which is to be added
-	 */
-	public void addW( int value ) {
+	/// Adds a new element to the queue, but if the queue is full write over the oldest element.
+	///
+	/// @param value Value which is to be added
+	public void addW( long value ) {
 		// see if it needs to grow the queue
 		if (size >= data.length) {
 			data[start] = value;
@@ -158,5 +141,6 @@ public class CircularArray_I32 {
 		return size == 0;
 	}
 
+	/// Returns true if all available elements in [#data] are used. Adding a new element will cause it to grow.
 	public boolean isFull() {return size == data.length;}
 }
