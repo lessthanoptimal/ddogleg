@@ -16,9 +16,9 @@ version = '0.24.3-SNAPSHOT'
 project.archivesBaseName = 'ddogleg'
 
 project.ext.commons_io_version = '2.16.1'
-project.ext.lombok_version = '1.18.36'
-project.ext.errorprone_version = '2.35.1'
-project.ext.nullaway_version = '0.12.4'
+project.ext.lombok_version = '1.18.42'
+project.ext.errorprone_version = '2.41.0'
+project.ext.nullaway_version = '0.12.10'
 project.ext.guava_version = '31.1-jre'
 project.ext.jabel_version = '1.0.1-1'
 project.ext.jetnull_version = '23.0.0'
@@ -36,7 +36,11 @@ gversion {
 java {
     withJavadocJar()
     withSourcesJar()
-    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+        // Specify vendor to get around a Github Java 25 issue
+        vendor.set(JvmVendorSpec.AZUL)
+    }
 }
 
 // Prevents tons of errors if someone is using ASCII
@@ -44,8 +48,14 @@ tasks.withType(JavaCompile).configureEach { options.encoding = "UTF-8" }
 
 // Creates Java 11 byte code but Java 17 syntax
 tasks.withType(JavaCompile).configureEach {
-    sourceCompatibility = 17
+    sourceCompatibility = 25
     options.release = 11
+}
+
+// Needed by ErrorProne
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.removeAll { it.startsWith('--should-stop=ifError') }
+    options.compilerArgs << '--should-stop=ifError=FLOW'
 }
 
 // Enable incremental compile. Should make single file changes faster
@@ -68,6 +78,10 @@ configurations.all {
         force "com.google.errorprone:error_prone_annotations:$project.errorprone_version"
         force "com.google.code.findbugs:jsr305:$project.jsr305_version"
         force 'org.checkerframework:checker-qual:2.10.0'
+
+        // Needed when updated to Java 25 and used by jabel
+        force "net.bytebuddy:byte-buddy:1.17.7"
+        force "net.bytebuddy:byte-buddy-agent:1.17.7"
     }
 }
 
