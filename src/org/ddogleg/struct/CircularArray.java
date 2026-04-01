@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -25,14 +25,9 @@ import java.lang.reflect.Array;
  *
  * @author Peter Abeles
  */
-public class CircularArray<T> {
+public class CircularArray<T> extends CircularArrayBase {
 	// inner data array
 	public T[] data;
-
-	// index which is the start of the queue
-	public int start;
-	// number of elements in the queue
-	public int size;
 
 	Class<T> type;
 
@@ -43,10 +38,6 @@ public class CircularArray<T> {
 	public CircularArray( Class<T> type, int maxSize ) {
 		this.type = type;
 		data = (T[])Array.newInstance(type, maxSize);
-	}
-
-	public void reset() {
-		start = size = 0;
 	}
 
 	/**
@@ -83,21 +74,6 @@ public class CircularArray<T> {
 	 */
 	public T tail() {
 		return data[(start + size - 1)%data.length];
-	}
-
-	/**
-	 * Removes the first element
-	 */
-	public void removeHead() {
-		start = (start + 1)%data.length;
-		size--;
-	}
-
-	/**
-	 * Removes the last element
-	 */
-	public void removeTail() {
-		size--;
 	}
 
 	/**
@@ -202,15 +178,17 @@ public class CircularArray<T> {
 			return data.length*6/5;
 	}
 
-	public int size() {
-		return size;
+	@Override protected void shiftElements( int src0, int dst0, int length ) {
+		throw new RuntimeException("Not implemented. Need to move elements to back of src");
 	}
 
-	public boolean isEmpty() {
-		return size == 0;
+	@Override public int getMaxSize() {
+		return data.length;
 	}
 
-	public boolean isFull() {return size == data.length;}
+	@Override public <A> A innerArray() {
+		return (A)data;
+	}
 
 	protected T createInstance() {
 		try {

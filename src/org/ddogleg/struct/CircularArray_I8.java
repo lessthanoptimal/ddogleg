@@ -19,15 +19,9 @@
 package org.ddogleg.struct;
 
 /// A circular array for primitive type long which can grow as needed.
-public class CircularArray_I8 {
+public class CircularArray_I8 extends CircularArrayBase {
 	/// Internal array that stores elements
 	public byte[] data;
-
-	/// index which is the start of the queue
-	public int start;
-
-	/// number of elements in the queue
-	public int size;
 
 	public CircularArray_I8() {
 		this(10);
@@ -35,10 +29,6 @@ public class CircularArray_I8 {
 
 	public CircularArray_I8( int initialMaxSize ) {
 		data = new byte[initialMaxSize];
-	}
-
-	public void reset() {
-		start = size = 0;
 	}
 
 	/// Returns and removes the first element from the queue.
@@ -67,21 +57,6 @@ public class CircularArray_I8 {
 	/// Value of the last element in the queue
 	public int tail() {
 		return data[(start + size - 1)%data.length];
-	}
-
-	/// Removes the first element
-	public void removeHead() {
-		if (size == 0)
-			throw new ArrayIndexOutOfBoundsException("Already empty");
-		start = (start + 1)%data.length;
-		size--;
-	}
-
-	/// Removes the last element
-	public void removeTail() {
-		if (size == 0)
-			throw new ArrayIndexOutOfBoundsException("Already empty");
-		size--;
 	}
 
 	/// Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
@@ -133,14 +108,27 @@ public class CircularArray_I8 {
 			return data.length*6/5;
 	}
 
-	public int size() {
-		return size;
+	public CircularArray_I8 setTo( CircularArray_I8 original ) {
+		if (this.data.length != original.data.length) {
+			this.data = new byte[original.data.length];
+		}
+		System.arraycopy(original.data, 0, this.data, 0, this.data.length);
+		this.size = original.size;
+		this.start = original.start;
+		return this;
 	}
 
-	public boolean isEmpty() {
-		return size == 0;
+	public CircularArray_I8 copy() {
+		return new CircularArray_I8().setTo(this);
 	}
 
-	/// Returns true if all available elements in [#data] are used. Adding a new element will cause it to grow.
-	public boolean isFull() {return size == data.length;}
+	@Override protected void shiftElements( int src0, int dst0, int length ) {
+		for (int i = 0; i < length; i++) {
+			data[arrayIndex(dst0 + i)] = data[arrayIndex(src0 + i)];
+		}
+	}
+
+	@Override public int getMaxSize() {return data.length;}
+
+	@Override public <T> T innerArray() {return (T)data;}
 }

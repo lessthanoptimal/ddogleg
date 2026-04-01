@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,14 +23,9 @@ package org.ddogleg.struct;
  *
  * @author Peter Abeles
  */
-public class CircularArray_F32 {
+public class CircularArray_F32 extends CircularArrayBase {
 	//
 	public float[] data;
-
-	// index which is the start of the queue
-	public int start;
-	// number of elements in the queue
-	public int size;
 
 	public CircularArray_F32() {
 		this(10);
@@ -38,10 +33,6 @@ public class CircularArray_F32 {
 
 	public CircularArray_F32( int dataSize ) {
 		data = new float[dataSize];
-	}
-
-	public void reset() {
-		start = size = 0;
 	}
 
 	/**
@@ -81,21 +72,6 @@ public class CircularArray_F32 {
 	}
 
 	/**
-	 * Removes the first element
-	 */
-	public void removeHead() {
-		start = (start + 1)%data.length;
-		size--;
-	}
-
-	/**
-	 * Removes the last element
-	 */
-	public void removeTail() {
-		size--;
-	}
-
-	/**
 	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
 	 *
 	 * @param index Which element in the queue you wish to access
@@ -103,6 +79,10 @@ public class CircularArray_F32 {
 	 */
 	public float get( int index ) {
 		return data[(start + index)%data.length];
+	}
+
+	public void set( int index, float value ) {
+		data[arrayIndex(index)] = value;
 	}
 
 	/**
@@ -121,19 +101,18 @@ public class CircularArray_F32 {
 		}
 	}
 
-	public void set( CircularArray_F32 original ) {
+	public CircularArray_F32 setTo( CircularArray_F32 original ) {
 		if (this.data.length != original.data.length) {
 			this.data = new float[original.data.length];
 		}
 		System.arraycopy(original.data, 0, this.data, 0, this.data.length);
 		this.size = original.size;
 		this.start = original.start;
+		return this;
 	}
 
 	public CircularArray_F32 copy() {
-		CircularArray_F32 r = new CircularArray_F32();
-		r.set(this);
-		return r;
+		return new CircularArray_F32().setTo(this);
 	}
 
 	public void resizeQueue( int maxSize ) {
@@ -142,17 +121,13 @@ public class CircularArray_F32 {
 		}
 	}
 
-	public int queueSize() {
-		return data.length;
+	@Override protected void shiftElements( int src0, int dst0, int length ) {
+		for (int i = 0; i < length; i++) {
+			data[arrayIndex(dst0 + i)] = data[arrayIndex(src0 + i)];
+		}
 	}
 
-	public int size() {
-		return size;
-	}
+	@Override public int getMaxSize() {return data.length;}
 
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	public boolean isFull() {return size == data.length;}
+	@Override public <T> T innerArray() {return (T)data;}
 }
