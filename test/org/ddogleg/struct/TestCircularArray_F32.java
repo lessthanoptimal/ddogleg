@@ -25,6 +25,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestCircularArray_F32 {
+	@Test void indexOf() {
+		// go through all possible start values to excite edge conditions in the loop
+		for (int i = 0; i < 5; i++) {
+			var alg = new CircularArray_F32(5);
+			alg.start = i;
+			alg.add(1);
+			alg.add(2);
+			alg.add(3);
+
+			assertEquals(0, alg.indexOf(0, value -> value == 1));
+			assertEquals(-1, alg.indexOf(1, value -> value == 1));
+			assertEquals(2, alg.indexOf(0, value -> value == 3));
+		}
+	}
+
 	@Test void popHead() {
 		var alg = new CircularArray_F32();
 
