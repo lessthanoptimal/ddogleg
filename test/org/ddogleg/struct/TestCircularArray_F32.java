@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -23,14 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
-public class TestCircularArray_F32 {
 
-	@Test
-	public void popHead() {
-		CircularArray_F32 alg = new CircularArray_F32();
+public class TestCircularArray_F32 {
+	@Test void popHead() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -41,9 +37,8 @@ public class TestCircularArray_F32 {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void popTail() {
-		CircularArray_F32 alg = new CircularArray_F32();
+	@Test void popTail() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -54,9 +49,8 @@ public class TestCircularArray_F32 {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void head() {
-		CircularArray_F32 alg = new CircularArray_F32();
+	@Test void head() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
@@ -64,9 +58,8 @@ public class TestCircularArray_F32 {
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void head_offset() {
-		CircularArray_F32 alg = new CircularArray_F32(3);
+	@Test void head_offset() {
+		var alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -77,9 +70,8 @@ public class TestCircularArray_F32 {
 		assertEquals(1, alg.head(), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void tail() {
-		CircularArray_F32 alg = new CircularArray_F32();
+	@Test void tail() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		assertEquals(1, alg.tail(), UtilEjml.TEST_F64);
@@ -87,9 +79,8 @@ public class TestCircularArray_F32 {
 		assertEquals(3, alg.tail(), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void tail_offset() {
-		CircularArray_F32 alg = new CircularArray_F32(3);
+	@Test void tail_offset() {
+		var alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 0;
@@ -100,9 +91,8 @@ public class TestCircularArray_F32 {
 		assertEquals(3, alg.tail(), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void removeHead() {
-		CircularArray_F32 alg = new CircularArray_F32();
+	@Test void removeHead() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -114,9 +104,8 @@ public class TestCircularArray_F32 {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void removeTail() {
-		CircularArray_F32 alg = new CircularArray_F32();
+	@Test void removeTail() {
+		var alg = new CircularArray_F32();
 
 		alg.add(1);
 		alg.add(2);
@@ -128,9 +117,31 @@ public class TestCircularArray_F32 {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void get() {
-		CircularArray_F32 alg = new CircularArray_F32(2);
+	@Test void remove() {
+		var alg = new CircularArray_F32(5);
+		// make it more interesting via wrapping around
+		alg.start = 3;
+		alg.add(1);
+		alg.remove(0);
+		assertEquals(0, alg.size);
+
+		for (int i = 0; i < 3; i++) {
+			alg.add(i+1);
+		}
+
+		alg.remove(1);
+		assertEquals(2, alg.size);
+		assertEquals(1, alg.get(0));
+		assertEquals(3, alg.get(1));
+
+		// Remove the tail. There's special logic for that
+		alg.remove(1);
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.get(0));
+	}
+
+	@Test void get() {
+		var alg = new CircularArray_F32(2);
 		assertEquals(2, alg.data.length);
 
 		// easy case
@@ -148,9 +159,8 @@ public class TestCircularArray_F32 {
 		assertEquals(3, alg.get(1), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void add() {
-		CircularArray_F32 alg = new CircularArray_F32(3);
+	@Test void add() {
+		var alg = new CircularArray_F32(3);
 		assertEquals(3, alg.data.length);
 
 		alg.add(1);
@@ -162,7 +172,7 @@ public class TestCircularArray_F32 {
 		assertEquals(2, alg.data[1], UtilEjml.TEST_F64);
 		assertEquals(2, alg.size);
 
-		// see if it over writes
+		// see if it overwrites
 		alg.add(3);
 		alg.add(4);
 		assertEquals(4, alg.data[0], UtilEjml.TEST_F64);
@@ -180,9 +190,8 @@ public class TestCircularArray_F32 {
 		assertEquals(3, alg.size);
 	}
 
-	@Test
-	public void isEmpty() {
-		CircularArray_F32 alg = new CircularArray_F32(3);
+	@Test void isEmpty() {
+		var alg = new CircularArray_F32(3);
 
 		assertTrue(alg.isEmpty());
 		alg.add(5);
@@ -191,9 +200,8 @@ public class TestCircularArray_F32 {
 		assertTrue(alg.isEmpty());
 	}
 
-	@Test
-	public void reset() {
-		CircularArray_F32 alg = new CircularArray_F32(3);
+	@Test void reset() {
+		var alg = new CircularArray_F32(3);
 
 		alg.start = 2;
 		alg.size = 5;
@@ -204,8 +212,7 @@ public class TestCircularArray_F32 {
 		assertEquals(0, alg.start);
 	}
 
-	@Test
-	public void set_queue() {
+	@Test void set_queue() {
 		CircularArray_F32 a = new CircularArray_F32(3);
 
 		for (int i = 0; i < 4; i++) {
@@ -213,9 +220,9 @@ public class TestCircularArray_F32 {
 		}
 
 		CircularArray_F32 b = new CircularArray_F32(10);
-		b.set(a);
+		b.setTo(a);
 
-		assertEquals(3, b.queueSize());
+		assertEquals(3, b.getMaxSize());
 		for (int i = 0; i < a.data.length; i++) {
 			assertEquals(a.data[i], b.data[i], UtilEjml.TEST_F64);
 		}

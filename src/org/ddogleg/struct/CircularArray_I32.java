@@ -23,14 +23,9 @@ package org.ddogleg.struct;
  *
  * @author Peter Abeles
  */
-public class CircularArray_I32 {
+public class CircularArray_I32 extends CircularArrayBase {
 	//
 	public int[] data;
-
-	// index which is the start of the queue
-	public int start;
-	// number of elements in the queue
-	public int size;
 
 	public CircularArray_I32() {
 		this(10);
@@ -38,10 +33,6 @@ public class CircularArray_I32 {
 
 	public CircularArray_I32( int dataSize ) {
 		data = new int[dataSize];
-	}
-
-	public void reset() {
-		start = size = 0;
 	}
 
 	/**
@@ -81,21 +72,6 @@ public class CircularArray_I32 {
 	}
 
 	/**
-	 * Removes the first element
-	 */
-	public void removeHead() {
-		start = (start + 1)%data.length;
-		size--;
-	}
-
-	/**
-	 * Removes the last element
-	 */
-	public void removeTail() {
-		size--;
-	}
-
-	/**
 	 * Returns the element in the queue at index.  No bounds check is performed and a garbage value might be returned.
 	 *
 	 * @param index Which element in the queue you wish to access
@@ -114,7 +90,7 @@ public class CircularArray_I32 {
 	public void add( int value ) {
 		// see if it needs to grow the queue
 		if (size >= data.length) {
-			int a[] = new int[nextDataSize()];
+			var a = new int[nextDataSize()];
 
 			System.arraycopy(data, start, a, 0, data.length - start);
 			System.arraycopy(data, 0, a, data.length - start, start);
@@ -150,13 +126,27 @@ public class CircularArray_I32 {
 			return data.length*6/5;
 	}
 
-	public int size() {
-		return size;
+	public CircularArray_I32 setTo( CircularArray_I32 original ) {
+		if (this.data.length != original.data.length) {
+			this.data = new int[original.data.length];
+		}
+		System.arraycopy(original.data, 0, this.data, 0, this.data.length);
+		this.size = original.size;
+		this.start = original.start;
+		return this;
 	}
 
-	public boolean isEmpty() {
-		return size == 0;
+	public CircularArray_I32 copy() {
+		return new CircularArray_I32().setTo(this);
 	}
 
-	public boolean isFull() {return size == data.length;}
+	@Override protected void shiftElements( int src0, int dst0, int length ) {
+		for (int i = 0; i < length; i++) {
+			data[arrayIndex(dst0 + i)] = data[arrayIndex(src0 + i)];
+		}
+	}
+
+	@Override public int getMaxSize() {return data.length;}
+
+	@Override public <T> T innerArray() {return (T)data;}
 }

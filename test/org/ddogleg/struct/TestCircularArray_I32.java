@@ -115,6 +115,29 @@ public class TestCircularArray_I32 {
 		assertEquals(0, alg.size());
 	}
 
+	@Test void remove() {
+		var alg = new CircularArray_I32(5);
+		// make it more interesting via wrapping around
+		alg.start = 3;
+		alg.add(1);
+		alg.remove(0);
+		assertEquals(0, alg.size);
+
+		for (int i = 0; i < 3; i++) {
+			alg.add(i+1);
+		}
+
+		alg.remove(1);
+		assertEquals(2, alg.size);
+		assertEquals(1, alg.get(0));
+		assertEquals(3, alg.get(1));
+
+		// Remove the tail. There's special logic for that
+		alg.remove(1);
+		assertEquals(1, alg.size);
+		assertEquals(1, alg.get(0));
+	}
+
 	@Test void get() {
 		var alg = new CircularArray_I32(2);
 		assertEquals(2, alg.data.length);
@@ -207,6 +230,7 @@ public class TestCircularArray_I32 {
 		assertEquals(10, alg.data[0]);
 		assertEquals(3, alg.size);
 	}
+
 
 	@Test void isEmpty() {
 		var alg = new CircularArray_I32(3);
