@@ -128,7 +128,9 @@ public class CircularArray_F32 extends CircularArrayBase {
 		return new CircularArray_F32().setTo(this);
 	}
 
+	/// Changes the size of the inner array. Does not save old values.
 	public void resizeQueue( int maxSize ) {
+		reset();
 		if (this.data.length != maxSize) {
 			this.data = new float[maxSize];
 		}
