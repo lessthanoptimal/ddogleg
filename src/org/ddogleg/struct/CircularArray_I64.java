@@ -31,6 +31,19 @@ public class CircularArray_I64 extends CircularArrayBase {
 		data = new long[dataSize];
 	}
 
+	/// Searches for the next element starting at index "offset" that the passed in condition is true for. Returns -1
+	/// if no match was found
+	public int indexOf( int offset, Match condition ) {
+		if (offset < 0 || offset >= size)
+			throw new IllegalArgumentException("Offset is out of bounds");
+
+		for (int i = offset; i < size; i++) {
+			if (condition.isMatch(data[(i + this.start)%data.length]))
+				return i;
+		}
+		return -1;
+	}
+
 	/// Returns and removes the first element from the queue.
 	///
 	/// @return first element in the queue
@@ -131,4 +144,8 @@ public class CircularArray_I64 extends CircularArrayBase {
 	@Override public int getMaxSize() {return data.length;}
 
 	@Override public <T> T innerArray() {return (T)data;}
+
+	public @FunctionalInterface interface Match {
+		boolean isMatch( long value );
+	}
 }
