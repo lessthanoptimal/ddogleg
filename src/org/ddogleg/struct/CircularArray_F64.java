@@ -125,6 +125,7 @@ public class CircularArray_F64 extends CircularArrayBase {
 	}
 
 	public void resizeQueue( int maxSize ) {
+		reset();
 		if (this.data.length != maxSize) {
 			this.data = new double[maxSize];
 		}

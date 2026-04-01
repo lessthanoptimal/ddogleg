@@ -135,6 +135,14 @@ public class CircularArray_I8 extends CircularArrayBase {
 		return new CircularArray_I8().setTo(this);
 	}
 
+	/// Changes the size of the inner array. Does not save old values.
+	public void resizeQueue( int maxSize ) {
+		reset();
+		if (this.data.length != maxSize) {
+			this.data = new byte[maxSize];
+		}
+	}
+
 	@Override protected void shiftElements( int src0, int dst0, int length ) {
 		for (int i = 0; i < length; i++) {
 			data[arrayIndex(dst0 + i)] = data[arrayIndex(src0 + i)];
