@@ -129,8 +129,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 *
 	 * @return List wrapper.
 	 */
-	@Override
-	public List<T> toList() {
+	@Override public List<T> toList() {
 		return list;
 	}
 
@@ -231,8 +230,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param index Index of the element being removed
 	 * @return The object removed.
 	 */
-	@Override
-	public T remove( int index ) {
+	@Override public T remove( int index ) {
 		T removed = data[index];
 		for (int i = index + 1; i < size; i++) {
 			data[i - 1] = data[i];
@@ -265,7 +263,7 @@ public class DogArray<T> extends FastAccess<T> {
 		// Swap elements down the array
 		int block = idx1 - idx0;
 		int idxSrc;
-		for (idxSrc = idx0 + block; idxSrc <= size - block;) {
+		for (idxSrc = idx0 + block; idxSrc <= size - block; ) {
 			int idxDst = idxSrc - block;
 			// Swap items in the block moving then down the array
 			for (int idxBlock = 0; idxBlock < block; idxBlock++) {
@@ -307,8 +305,7 @@ public class DogArray<T> extends FastAccess<T> {
 	 * @param index The index to be removed.
 	 * @return The removed object
 	 */
-	@Override
-	public T removeSwap( int index ) {
+	@Override public T removeSwap( int index ) {
 		T removed = data[index];
 		data[index] = data[size - 1];
 		data[size - 1] = removed;
