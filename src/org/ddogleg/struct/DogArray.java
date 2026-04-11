@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -240,6 +240,49 @@ public class DogArray<T> extends FastAccess<T> {
 		data[size - 1] = removed;
 		size--;
 		return removed;
+	}
+
+	/// Removes set of elements within the specified range. Order of elements will be preserved. O(N) operation.
+	/// The "M" at the end indicates that this has been optimized to reduce memory overhead and no additional
+	/// internal arrays are used. References are moved by swapping.
+	///
+	/// @param idx0 lower extent, inclusive
+	/// @param idx1 upper extent, exclusive
+	public void removeRangeM( int idx0, int idx1 ) {
+		if (idx1 < idx0)
+			throw new IllegalArgumentException("Upper extent can't be less than lower extent");
+
+		// See if there's nothing to remove
+		if (idx0 == idx1)
+			return;
+
+		// See if removing the tail has been requested
+		if (idx1 == size) {
+			size = idx0;
+			return;
+		}
+
+		// Swap elements down the array
+		int block = idx1 - idx0;
+		int idxSrc;
+		for (idxSrc = idx0 + block; idxSrc <= size - block;) {
+			int idxDst = idxSrc - block;
+			// Swap items in the block moving then down the array
+			for (int idxBlock = 0; idxBlock < block; idxBlock++) {
+				T dst = data[idxDst];
+				data[idxDst++] = data[idxSrc];
+				data[idxSrc++] = dst;
+			}
+		}
+		int remainder = size - idxSrc;
+		int idxDst = idxSrc - block;
+		for (int idxBlock = 0; idxBlock < remainder; idxBlock++) {
+			T dst = data[idxDst];
+			data[idxDst++] = data[idxSrc];
+			data[idxSrc++] = dst;
+		}
+
+		size -= block;
 	}
 
 	/**
