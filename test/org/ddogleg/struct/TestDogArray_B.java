@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -199,6 +199,41 @@ public class TestDogArray_B {
 		alg.removeSwap(1);
 		assertEquals(4, alg.size);
 		alg.forIdx(( i, v ) -> assertEquals((i == 1), v));
+	}
+
+	@Test void removeRangeM() {
+		var alg = new DogArray_B();
+		for (int i = 0; i < 15; i++) {
+			alg.add(i%2 == 0);
+		}
+
+		// This test will have a remainder
+		alg.removeRangeM(5, 9);
+		assertEquals(11, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((i < 5 ? i : (i + 4))%2 == 0, alg.get(i));
+		}
+
+		// No remainder in this test
+		for (int i = 0; i < alg.size; i++) {
+			alg.set(i, i%2 == 0);
+		}
+		alg.removeRangeM(3, 5);
+		assertEquals(9, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((i < 3 ? i : (i + 2))%2 == 0, alg.get(i));
+		}
+
+		// Do nothing
+		alg.removeRangeM(4, 4);
+		assertEquals(9, alg.size);
+
+		// Upper extent is at the very end
+		alg.removeRangeM(7, 9);
+		assertEquals(7, alg.size);
+		for (int i = 0; i < alg.size; i++) {
+			assertEquals((i < 3 ? i : (i + 2))%2 == 0, alg.get(i));
+		}
 	}
 
 	@Test void indexOf() {

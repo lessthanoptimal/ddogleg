@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -75,6 +75,14 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
 	 * @return Returns 'this' to allow chaining of operations.
 	 */
 	T reserve( int amount );
+
+	/// Removes set of elements within the specified range. Order of elements will be preserved. O(N) operation.
+	/// The "M" at the end indicates that this has been optimized to reduce memory overhead and no additional
+	/// internal arrays are used. References are moved by swapping.
+	///
+	/// @param idx0 lower extent, inclusive
+	/// @param idx1 upper extent, exclusive
+	void removeRangeM( int idx0, int idx1 );
 
 	/**
 	 * Ensures that the reserve is at lease the current {@link #size} plus the specified amount. This is
