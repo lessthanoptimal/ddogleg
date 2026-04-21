@@ -18,6 +18,8 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.MatrixPrintFormat;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -634,6 +636,22 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	private void checkBounds( int index ) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
+	}
+
+	/// Converts array into a string using the row format in a matrix
+	///
+	/// @param format Matrix format
+	/// @return formatted string
+	public String format( MatrixPrintFormat format ) {
+		var builder = new StringBuilder();
+		builder.append(format.rowPrefix);
+		for (int i = 0; i < size - 1; i++) {
+			builder.append(get(i));
+			builder.append(format.colSeparator);
+		}
+		builder.append(get(size - 1));
+		builder.append(format.rowSuffix);
+		return builder.toString();
 	}
 
 	@FunctionalInterface
