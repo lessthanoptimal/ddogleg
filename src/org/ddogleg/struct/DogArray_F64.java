@@ -19,6 +19,8 @@
 package org.ddogleg.struct;
 
 import org.ddogleg.sorting.QuickSort_F64;
+import org.ejml.MatrixPrintFormat;
+import org.ejml.UtilEjml;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -278,7 +280,8 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	}
 
 	public double get( int index ) {
-		checkBounds(index);		return data[index];
+		checkBounds(index);
+		return data[index];
 	}
 
 	/**
@@ -305,11 +308,13 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public double getTail( int index ) {
-		checkBounds(index);		return data[size - index - 1];
+		checkBounds(index);
+		return data[size - index - 1];
 	}
 
 	public void setTail( int index, double value ) {
-		checkBounds(index);		data[size - index - 1] = value;
+		checkBounds(index);
+		data[size - index - 1] = value;
 	}
 
 	/**
@@ -604,6 +609,24 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 				total++;
 		}
 		return total;
+	}
+
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
+	///
+	/// @param format Matrix format
+	/// @return formatted string
+	public String format( MatrixPrintFormat format ) {
+		char decimal = format.decimal;
+		var builder = new StringBuilder();
+		builder.append(format.rowPrefix);
+		for (int i = 0; i < size - 1; i++) {
+			builder.append(UtilEjml.fancyString2(get(i), format.getPrecision(), decimal));
+			builder.append(format.colSeparator);
+		}
+		builder.append(UtilEjml.fancyString2(getTail(), format.getPrecision(), decimal));
+		builder.append(format.rowSuffix);
+		return builder.toString();
 	}
 
 	private void checkBounds( int index ) {

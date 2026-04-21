@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.MatrixPrintFormat;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
@@ -506,5 +507,11 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 		for (int i = 0; i < 3; i++) {
 			assertEquals(alg.get(i + 2), dst[i]);
 		}
+	}
+
+	@Test void format() {
+		DogArray_F64 alg = DogArray_F64.array(1, 2.23, 3.001, 4.1234, 5);
+		String found = alg.format(new MatrixPrintFormat().fsetPrecision(2));
+		assertEquals("{1, 2.23, 3, 4.12, 5}", found);
 	}
 }
