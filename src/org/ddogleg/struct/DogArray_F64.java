@@ -20,7 +20,6 @@ package org.ddogleg.struct;
 
 import org.ddogleg.sorting.QuickSort_F64;
 import org.ejml.MatrixPrintFormat;
-import org.ejml.UtilEjml;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -617,14 +616,13 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	/// @param format Matrix format
 	/// @return formatted string
 	public String format( MatrixPrintFormat format ) {
-		char decimal = format.decimal;
 		var builder = new StringBuilder();
 		builder.append(format.rowPrefix);
 		for (int i = 0; i < size - 1; i++) {
-			builder.append(UtilEjml.fancyString2(get(i), format.getPrecision(), decimal));
+			builder.append(format.f(get(i)));
 			builder.append(format.colSeparator);
 		}
-		builder.append(UtilEjml.fancyString2(getTail(), format.getPrecision(), decimal));
+		builder.append(format.f(getTail()));
 		builder.append(format.rowSuffix);
 		return builder.toString();
 	}

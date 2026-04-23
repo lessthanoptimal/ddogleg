@@ -19,6 +19,7 @@
 package org.ddogleg.struct;
 
 import org.ddogleg.sorting.QuickSort_F32;
+import org.ejml.MatrixPrintFormat;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -607,6 +608,23 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 				total++;
 		}
 		return total;
+	}
+
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
+	///
+	/// @param format Matrix format
+	/// @return formatted string
+	public String format( MatrixPrintFormat format ) {
+		var builder = new StringBuilder();
+		builder.append(format.rowPrefix);
+		for (int i = 0; i < size - 1; i++) {
+			builder.append(format.f(get(i)));
+			builder.append(format.colSeparator);
+		}
+		builder.append(format.f(getTail()));
+		builder.append(format.rowSuffix);
+		return builder.toString();
 	}
 
 	private void checkBounds( int index ) {
