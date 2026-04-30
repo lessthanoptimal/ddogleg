@@ -598,7 +598,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	///
 	/// @param format Matrix format
 	/// @return formatted string
-	public String format( MatrixPrintFormat format ) {
+	@Override public String format( MatrixPrintFormat format ) {
 		var builder = new StringBuilder();
 		builder.append(format.rowPrefix);
 		for (int i = 0; i < size - 1; i++) {

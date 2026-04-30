@@ -18,12 +18,14 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.MatrixFormattable;
+
 /**
  * Interface for growable queues of primitive types
  *
  * @author Peter Abeles
  */
-public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> {
+public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> extends MatrixFormattable {
 
 	/**
 	 * Sets the size to zero.

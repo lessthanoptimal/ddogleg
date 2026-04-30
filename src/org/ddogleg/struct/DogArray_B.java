@@ -18,6 +18,8 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.MatrixPrintFormat;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -78,6 +80,23 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 				total++;
 		}
 		return total;
+	}
+
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
+	///
+	/// @param format Matrix format
+	/// @return formatted string
+	@Override public String format( MatrixPrintFormat format ) {
+		var builder = new StringBuilder();
+		builder.append(format.rowPrefix);
+		for (int i = 0; i < size - 1; i++) {
+			builder.append(get(i));
+			builder.append(format.colSeparator);
+		}
+		builder.append(getTail());
+		builder.append(format.rowSuffix);
+		return builder.toString();
 	}
 
 	/**

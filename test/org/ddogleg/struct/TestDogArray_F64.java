@@ -511,7 +511,7 @@ public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 
 	@Test void format() {
 		DogArray_F64 alg = DogArray_F64.array(1, 2.23, 3.001, 4.1234, 5);
-		String found = alg.format(new MatrixPrintFormat().fsetPrecision(2));
+		String found = alg.format(new MatrixPrintFormat().withPrecision(2));
 		assertEquals("{1, 2.23, 3, 4.12, 5}", found);
 	}
 }

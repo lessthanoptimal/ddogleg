@@ -615,7 +615,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	///
 	/// @param format Matrix format
 	/// @return formatted string
-	public String format( MatrixPrintFormat format ) {
+	@Override public String format( MatrixPrintFormat format ) {
 		var builder = new StringBuilder();
 		builder.append(format.rowPrefix);
 		for (int i = 0; i < size - 1; i++) {
