@@ -19,7 +19,7 @@
 package org.ddogleg.optimization.lm;
 
 import org.ddogleg.optimization.ConfigGaussNewton;
-import org.ejml.dense.row.factory.LinearSolverType;
+import org.ejml.LinearSolverType;
 
 /**
  * Configuration for {@link LevenbergMarquardt_F64}

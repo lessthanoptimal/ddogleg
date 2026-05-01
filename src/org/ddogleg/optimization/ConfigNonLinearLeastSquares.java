@@ -20,7 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
-import org.ejml.dense.row.factory.LinearSolverType;
+import org.ejml.LinearSolverType;
 
 /**
  * General configuration for unconstrained non-linear least squares solvers.

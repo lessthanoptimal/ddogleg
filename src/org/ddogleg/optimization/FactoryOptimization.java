@@ -31,9 +31,9 @@ import org.ddogleg.optimization.quasinewton.LineSearchMore94;
 import org.ddogleg.optimization.quasinewton.QuasiNewtonBFGS;
 import org.ddogleg.optimization.trustregion.*;
 import org.ddogleg.optimization.wrap.QuasiNewtonBFGS_to_UnconstrainedMinimization;
+import org.ejml.LinearSolverType;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
-import org.ejml.dense.row.factory.LinearSolverType;
 import org.ejml.interfaces.linsol.LinearSolverDense;
 import org.jetbrains.annotations.Nullable;
 

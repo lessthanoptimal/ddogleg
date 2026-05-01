@@ -19,8 +19,8 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
+import org.ejml.LinearSolverType;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.dense.row.factory.LinearSolverType;
 
 /**
  * @author Peter Abeles

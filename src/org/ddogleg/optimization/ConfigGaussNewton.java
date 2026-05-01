@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization;
 
-import org.ejml.dense.row.factory.LinearSolverType;
+import org.ejml.LinearSolverType;
 
 /**
  * Configuration for {@link GaussNewtonBase_F64}.
