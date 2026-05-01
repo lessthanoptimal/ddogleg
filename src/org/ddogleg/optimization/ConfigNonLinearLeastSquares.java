@@ -20,6 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
+import org.ejml.dense.row.factory.LinearSolverType;
 
 /**
  * General configuration for unconstrained non-linear least squares solvers.
@@ -33,6 +34,13 @@ public class ConfigNonLinearLeastSquares {
 	public ConfigTrustRegion trust = new ConfigTrustRegion();
 	public ConfigLevenbergMarquardt lm = new ConfigLevenbergMarquardt();
 
+	/// Returns the type of linear solver that has been selected based on non-linear solver type
+	public LinearSolverType getLinearSolverType() {
+		return switch (type) {
+			case LEVENBERG_MARQUARDT -> lm.solverType;
+			case TRUST_REGION -> lm.solverType;
+		};
+	}
 
 	public void reset() {
 		type = Type.LEVENBERG_MARQUARDT;
