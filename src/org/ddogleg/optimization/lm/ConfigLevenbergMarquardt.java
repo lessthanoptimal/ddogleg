@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.optimization.lm;
 
 import org.ddogleg.optimization.ConfigGaussNewton;
+import org.ejml.dense.row.factory.LinearSolverType;
 
 /**
  * Configuration for {@link LevenbergMarquardt_F64}
@@ -41,6 +42,10 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 	 * Clamps the diagonal values of J'*J when constructing the LM formula.
 	 */
 	public double diagonalMin = 1e-6, diagonalMax = 1e32;
+
+	/// Which linear solver should it use internally. Default will be what most people will use, but other choices
+	/// could be faster or more stable.
+	public LinearSolverType solverType = LinearSolverType.DEFAULT;
 
 	@Deprecated
 	public ConfigLevenbergMarquardt copy() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -17,6 +17,8 @@
  */
 
 package org.ddogleg.optimization;
+
+import org.ejml.dense.row.factory.LinearSolverType;
 
 /**
  * Configuration for {@link GaussNewtonBase_F64}.
@@ -44,16 +46,23 @@ public class ConfigGaussNewton {
 	 */
 	public boolean hessianScaling = false;
 
+	/// Which linear solver should it use internally. Default will be what most people will use, but other choices
+	/// could be faster or more stable. If the specific implementation does not use a linear solver this must
+	/// be default.
+	public LinearSolverType solverType = LinearSolverType.DEFAULT;
+
 	public ConfigGaussNewton setTo( ConfigGaussNewton config ) {
 		gtol = config.gtol;
 		ftol = config.ftol;
 		hessianScaling = config.hessianScaling;
+		solverType = config.solverType;
 		return this;
 	}
 
 	public void reset() {
 		gtol = 1e-8;
-		gtol = 1e-12;
+		ftol = 1e-12;
 		hessianScaling = false;
+		solverType = LinearSolverType.DEFAULT;
 	}
 }

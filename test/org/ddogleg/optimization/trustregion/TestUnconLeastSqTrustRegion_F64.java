@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -74,7 +74,7 @@ public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSq
 	@Nested
 	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
-			return FactoryOptimization.dogleg(null, false);
+			return FactoryOptimization.dogleg(null);
 		}
 	}
 

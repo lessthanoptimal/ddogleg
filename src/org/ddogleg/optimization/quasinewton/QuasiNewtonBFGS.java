@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,14 +33,14 @@ import java.util.Set;
 /**
  * <p>
  * Quasi-Newton nonlinear optimization using BFGS update on the approximate inverse Hessian with
- * a line search.  The function and its gradient is required.  If no gradient is available then a numerical
- * gradient will be used.  The line search must meet the Wolfe or strong Wolfe condition.  This
- * technique is automatically scale invariant and no scale matrix is required.  In most situations
+ * a line search. The function and its gradient is required. If no gradient is available then a numerical
+ * gradient will be used. The line search must meet the Wolfe or strong Wolfe condition. This
+ * technique is automatically scale invariant and no scale matrix is required. In most situations
  * super-linear convergence can be expected. Based on the description provided in [1].
  * </p>
  *
  * <p>
- * The inverse Hessian update requires only a rank-2 making it efficient.  Stability requires that the
+ * The inverse Hessian update requires only a rank-2 making it efficient. Stability requires that the
  * line search maintain the Wolfe or strong Wolfe condition or else the inverse Hessian matrix can stop
  * being symmetric positive definite.
  * </p>
@@ -175,7 +175,7 @@ public class QuasiNewtonBFGS implements VerbosePrint {
 		// set the change in x to be zero
 		s.zero();
 		// default to an initial inverse Hessian approximation as
-		// the identity matrix.  This can be overridden or improved by an heuristic below
+		// the identity matrix. This can be overridden or improved by an heuristic below
 		CommonOps_DDRM.setIdentity(B);
 
 		// save the initial value of x
@@ -235,7 +235,7 @@ public class QuasiNewtonBFGS implements VerbosePrint {
 		// use the line search to find the next x
 		if (!setupLineSearch(fx, x.data, g.data, searchVector.data)) {
 			// the search direction has a positive derivative, meaning the B matrix is
-			// no longer SPD.  Attempt to fix the situation by resetting the matrix
+			// no longer SPD. Attempt to fix the situation by resetting the matrix
 			resetMatrixB();
 			// do the search again, it can't fail this time
 			CommonOps_DDRM.mult(-1, B, g, searchVector);
@@ -245,7 +245,7 @@ public class QuasiNewtonBFGS implements VerbosePrint {
 				verbose.printf("finished select direction, gtest=%e\n", Math.abs(derivAtZero));
 			}
 
-			// the input might have been modified by the function.  So copy it
+			// the input might have been modified by the function. So copy it
 			System.arraycopy(function.getCurrentState(), 0, x.data, 0, N);
 			return terminateSearch(true);
 		}
@@ -256,8 +256,8 @@ public class QuasiNewtonBFGS implements VerbosePrint {
 	}
 
 	/**
-	 * This is a total hack.  Set B to a diagonal matrix where each diagonal element
-	 * is the value of the largest absolute value in B.  This will be SPD and hopefully
+	 * This is a total hack. Set B to a diagonal matrix where each diagonal element
+	 * is the value of the largest absolute value in B. This will be SPD and hopefully
 	 * not screw up the search.
 	 */
 	private void resetMatrixB() {

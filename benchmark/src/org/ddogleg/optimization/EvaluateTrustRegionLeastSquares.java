@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,7 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
 import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.LinearSolverType;
 
 /**
  * @author Peter Abeles
@@ -39,8 +40,9 @@ public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEv
 		UnconstrainedLeastSquares<DMatrixRMaj> tr;
 
 //		tr = FactoryOptimization.cauchy(config);
-		tr = FactoryOptimization.dogleg(config, false);
-//		tr = FactoryOptimization.dogleg(config,true);
+		tr = FactoryOptimization.dogleg(config);
+		config.solverType = LinearSolverType.QRP;
+//		tr = FactoryOptimization.dogleg(config);
 
 //		tr.setVerbose(true);
 		return tr;

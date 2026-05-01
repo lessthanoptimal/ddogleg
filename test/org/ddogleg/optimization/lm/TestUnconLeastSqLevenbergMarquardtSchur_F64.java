@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -156,7 +156,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
 
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
-			return FactoryOptimization.levenbergMarquardtSchur(config, false);
+			return FactoryOptimization.levenbergMarquardtSchur(config);
 		}
 	}
 

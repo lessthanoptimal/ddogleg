@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -36,11 +36,11 @@ import org.ejml.interfaces.linsol.LinearSolverDense;
 public class HessianSchurComplement_DDRM
 		extends HessianSchurComplement_Base<DMatrixRMaj> {
 	public HessianSchurComplement_DDRM() {
-		this(LinearSolverFactory_DDRM.chol(100), LinearSolverFactory_DDRM.chol(100));
+		this(LinearSolverFactory_DDRM.cholInner(true), LinearSolverFactory_DDRM.cholInner(true));
 	}
 
 	public HessianSchurComplement_DDRM( LinearSolverDense<DMatrixRMaj> solverA,
-										LinearSolverDense<DMatrixRMaj> solverD ) {
+	                                    LinearSolverDense<DMatrixRMaj> solverD ) {
 		super(new LinearSolverToSparse<>(solverA), new LinearSolverToSparse<>(solverD));
 	}
 

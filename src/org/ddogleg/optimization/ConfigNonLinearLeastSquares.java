@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,24 +33,17 @@ public class ConfigNonLinearLeastSquares {
 	public ConfigTrustRegion trust = new ConfigTrustRegion();
 	public ConfigLevenbergMarquardt lm = new ConfigLevenbergMarquardt();
 
-	/**
-	 * Should it use a robust linear solver internally. This can help it solve degenerate problems. Not always
-	 * available in every implementation.
-	 */
-	public boolean robustSolver = false;
 
 	public void reset() {
 		type = Type.LEVENBERG_MARQUARDT;
 		trust.reset();
 		lm.reset();
-		robustSolver = false;
 	}
 
 	public ConfigNonLinearLeastSquares setTo( ConfigNonLinearLeastSquares src ) {
 		this.type = src.type;
 		this.trust.setTo(src.trust);
 		this.lm.setTo(src.lm);
-		this.robustSolver = src.robustSolver;
 		return this;
 	}
 

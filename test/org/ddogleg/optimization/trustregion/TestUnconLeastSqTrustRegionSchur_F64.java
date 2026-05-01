@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -32,6 +32,7 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.IGrowArray;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
+import org.ejml.dense.row.factory.LinearSolverType;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.RandomMatrices_DSCC;
@@ -43,11 +44,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestUnconLeastSqTrustRegionSchur_F64 {
-
 	int M = 20;
 	int N = 8;
 	int split = 5;
@@ -147,8 +144,9 @@ public class TestUnconLeastSqTrustRegionSchur_F64 {
 
 //			config.regionInitial = 1;
 			config.hessianScaling = true;
+			config.solverType = LinearSolverType.QRP;
 
-			return FactoryOptimization.doglegSchur(config, true);
+			return FactoryOptimization.doglegSchur(config);
 		}
 	}
 
