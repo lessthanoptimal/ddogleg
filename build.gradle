@@ -12,11 +12,12 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '0.24.3-SNAPSHOT'
+version = '0.25.0'
 project.archivesBaseName = 'ddogleg'
 
 project.ext.commons_io_version = '2.16.1'
 project.ext.lombok_version = '1.18.42'
+project.ext.ejml_version = '0.45.0'
 project.ext.errorprone_version = '2.41.0'
 project.ext.nullaway_version = '0.12.10'
 project.ext.guava_version = '31.1-jre'
@@ -130,10 +131,10 @@ sourceSets {
 
 dependencies {
     ['ejml-core', 'ejml-fdense', 'ejml-ddense', 'ejml-simple', 'ejml-dsparse'].each { String a ->
-        api group: 'org.ejml', name: a, version: '0.44.1-SNAPSHOT'
+        api group: 'org.ejml', name: a, version: "$project.ejml_version"
     }
 
-    compileOnly "org.projectlombok:lombok:${project.lombok_version}"
+    compileOnly "org.projectlombok:lombok:$project.lombok_version"
     compileOnly "org.jetbrains:annotations:$project.jetnull_version" // @Nullable
     compileOnly "javax.annotation:jsr250-api:$project.jsr250_version"  // @Generated
     testImplementation files(project.sourceSets.main.compileClasspath)
@@ -204,7 +205,7 @@ tasks.withType(JavaCompile).configureEach {
 javadoc {
     configure(options) {
         links = ['https://docs.oracle.com/en/java/javase/11/docs/api/',
-                 'http://ejml.org/javadoc/']
+                 'https://ejml.org/javadoc/']
         failOnError = false
         enabled = !project.version.contains("SNAPSHOT") // disable to stop it from spamming stdout
     }
@@ -244,11 +245,11 @@ publishing {
             pom {
                 name = 'DDogleg'
                 description = 'DDogleg Numerics is a high performance Java library for non-linear optimization, robust model fitting, polynomial root finding, sorting, and more.'
-                url = 'http://ddogleg.org'
+                url = 'https://ddogleg.org'
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
                 developers {

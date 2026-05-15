@@ -3,9 +3,17 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.24.3
-Date:     2026-xxx-yy
+Version:  0.25.0
+Date:     2026-May-15
 
+- Support for format()
+  * Customizable and consistent string serialization of data types
+- CircularArray
+  * Added indexOf(), resizeQueue(), remove()
+  * More data types supported
+- Build
+  * Internal support for Java 25 language, still outputs Java 11  byte code
+- Added ConfigNonLinearLeastSquares
 
 ------------------------------------------------------
 Version:  0.24.2
