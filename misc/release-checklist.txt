@@ -1,4 +1,9 @@
 - updated website
+  * Set up venv for a reliable version of Sphinx
+    - cd docs
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
   * cd docs/website/
   * conf.py (version) and index.rst (date)
   * Examples:
@@ -22,6 +27,9 @@
 - Upload to sourceforge (src,libs)
 - Update Maven central repository
 
+Python Venv for Sphinx
+cd docs/website/
+python3 -m venv venv
 
 ----
 Releasing code to Maven Central
