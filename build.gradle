@@ -2,7 +2,7 @@ import net.ltgt.gradle.errorprone.CheckSeverity
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id "com.peterabeles.gversion" version "1.10.3"
+    id "com.peterabeles.gversion" version "1.11.0"
     id "net.ltgt.errorprone" version "4.0.1"
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
 }
