@@ -31,7 +31,7 @@ gversion {
     srcDir = "src"
     classPackage = "org.ddogleg"
     className = "DDoglegVersion"
-    annotate = true
+    annotate = "javax.annotation.Generated"
 }
 
 java {
