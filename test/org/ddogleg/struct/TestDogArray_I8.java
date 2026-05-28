@@ -148,7 +148,7 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals((double)1, alg.get(i));
+			assertEquals((byte)1, alg.get(i));
 		}
 
 		// If the size has been reduced then there are no new elements to initialize
@@ -440,6 +440,11 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 		}
 	}
 
+	@Test void forIdx() {
+		DogArray_I8 alg = DogArray_I8.array(1, 2, 3, 4, 5);
+		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value));
+	}
+
 	@Test void set_get() {
 		var alg = new DogArray_I8();
 		alg.resize(10, (byte)2);
@@ -449,11 +454,6 @@ public class TestDogArray_I8 extends ChecksDogArrayPrimitive<DogArray_I8> {
 			alg.unsafe_set(i, 2*i);
 			assertEquals(2*i, alg.unsafe_get(i));
 		}
-	}
-
-	@Test void forIdx() {
-		DogArray_I8 alg = DogArray_I8.array(1, 2, 3, 4, 5);
-		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value, 1e-8));
 	}
 
 	@Test void forEach() {

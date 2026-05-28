@@ -21,14 +21,12 @@ package org.ddogleg.struct;
 import org.ddogleg.sorting.QuickSort_F64;
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- * Growable array composed of doubles.
- *
- * @author Peter Abeles
- */
+/// Growable array composed of doubles.
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 
 	public double[] data;
@@ -142,7 +140,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 
 	public void addAll( double[] array, int startIndex, int endIndex ) {
 		if (endIndex > array.length)
-			throw new IllegalAccessError("endIndex is larger than input array. " + endIndex + " > " + array.length);
+			throw new IndexOutOfBoundsException("endIndex is larger than input array. " + endIndex + " > " + array.length);
 
 		int arraySize = endIndex - startIndex;
 
@@ -224,7 +222,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 		if (last < first)
 			throw new IllegalArgumentException("first <= last. first=" + first + " last=" + last);
 		if (last >= size)
-			throw new IllegalArgumentException("last must be less than the max size. last=" + last + " size=" + size);
+			throw new IndexOutOfBoundsException("last=" + last + " >= size=" + size);
 
 		int delta = last - first + 1;
 		for (int i = last + 1; i < size; i++) {
@@ -261,8 +259,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	 * @return The removed object
 	 */
 	public double removeSwap( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
+		checkBounds(index);
 		double ret = data[index];
 		size -= 1;
 		data[index] = data[size];
@@ -476,7 +473,7 @@ public class DogArray_F64 implements DogArrayPrimitive<DogArray_F64> {
 	}
 
 	@Override public void zero() {
-		Arrays.fill(data, 0, size, (double)0);
+		Arrays.fill(data, 0, size, 0.0);
 	}
 
 	@Override public DogArray_F64 copy() {

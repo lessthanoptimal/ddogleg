@@ -21,14 +21,14 @@ package org.ddogleg.struct;
 import org.ddogleg.sorting.QuickSort_S32;
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Growable array composed of ints.
- *
- * @author Peter Abeles
  */
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 
 	public int[] data;
@@ -113,6 +113,17 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		return true;
 	}
 
+	/** Checks for equality within the specified tolerance */
+	public boolean isEquals( DogArray_I32 values, int tol ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (Math.abs(data[i] - values.data[i]) > tol)
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public DogArray_I32 reset() {
 		size = 0;
@@ -170,9 +181,10 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( int[] array, int offset, int length ) {
+	public DogArray_I32 setTo( int[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
+		return this;
 	}
 
 	/**
@@ -373,12 +385,13 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	 * @param size New sie
 	 * @param op Assigns default values
 	 */
-	public void resize( int size, DogLambdas.AssignIdx_I32 op ) {
+	public DogArray_I32 resize( int size, DogLambdas.AssignIdx_I32 op ) {
 		int priorSize = this.size;
 		resize(size);
 		for (int i = priorSize; i < size; i++) {
 			data[i] = op.assign(i);
 		}
+		return this;
 	}
 
 	public void fill( int value ) {
@@ -463,7 +476,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	}
 
 	@Override public void zero() {
-		Arrays.fill(data, 0, size, (int)0);
+		Arrays.fill(data, 0, size, 0);
 	}
 
 	@Override public DogArray_I32 copy() {
@@ -579,7 +592,7 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 	/** Shuffle elements by randomly swapping them */
 	public void shuffle( Random rand ) {
 		for (int i = 0; i < size; i++) {
-			int src = rand.nextInt(size - i);
+			int src = rand.nextInt(size - i) + i;
 			int tmp = data[i];
 			data[i] = data[src];
 			data[src] = tmp;
@@ -613,12 +626,8 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		return total;
 	}
 
-	private void checkBounds( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-	}
-
-	/// Converts array into a string using the row format in a matrix
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
 	///
 	/// @param format Matrix format
 	/// @return formatted string
@@ -632,6 +641,11 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		builder.append(get(size - 1));
 		builder.append(format.rowSuffix);
 		return builder.toString();
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface

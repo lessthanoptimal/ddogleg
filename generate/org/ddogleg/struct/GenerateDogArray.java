@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -29,14 +29,11 @@ import java.util.List;
 
 /**
  * Uses the double[] implementation as a template to create all the others
- *
- * @author Peter Abeles
  */
 public class GenerateDogArray {
 	public static String[] templates = new String[]{
 			"src/org/ddogleg/struct/DogArray_F64.java",
 			"test/org/ddogleg/struct/TestDogArray_F64.java"};
-
 
 	public static class WordSwaps {
 		public String dataType;
@@ -50,26 +47,27 @@ public class GenerateDogArray {
 
 	public static void main( String[] args ) {
 		List<WordSwaps> swaps = new ArrayList<>();
-		swaps.add( new WordSwaps("float","_F32"));
-		swaps.add( new WordSwaps("byte","_I8"));
-		swaps.add( new WordSwaps("int","_I32"));
-		swaps.add( new WordSwaps("long","_I64"));
-		swaps.add( new WordSwaps("boolean","_B"));
+		swaps.add(new WordSwaps("float", "_F32"));
+		swaps.add(new WordSwaps("byte", "_I8"));
+		swaps.add(new WordSwaps("short", "_I16"));
+		swaps.add(new WordSwaps("int", "_I32"));
+		swaps.add(new WordSwaps("long", "_I64"));
+		swaps.add(new WordSwaps("boolean", "_B"));
 
-		for (String template : templates ) {
+		for (String template : templates) {
 			File templateFile = new File(template);
 
 			try {
 				String templateString = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-				for( WordSwaps swap : swaps) {
-					String modified = templateString.replace("double",swap.dataType);
-					modified = modified.replace("_F64",swap.suffix);
+				for (WordSwaps swap : swaps) {
+					String modified = templateString.replace("double", swap.dataType);
+					modified = modified.replace("_F64", swap.suffix);
 
-					String fileName = templateFile.getName().replace("_F64",swap.suffix);
+					String fileName = templateFile.getName().replace("_F64", swap.suffix);
 
-					FileUtils.write(new File(templateFile.getParent(),fileName),modified,StandardCharsets.UTF_8);
+					FileUtils.write(new File(templateFile.getParent(), fileName), modified, StandardCharsets.UTF_8);
 				}
-			} catch( IOException e ) {
+			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
 		}

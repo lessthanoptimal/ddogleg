@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -107,20 +107,11 @@ import org.jetbrains.annotations.Nullable;
 		if (config == null)
 			config = new ConfigKMeans();
 
-		InitializeKMeans<P> seed;
-
-		switch (config.initializer) {
-			case PLUS_PLUS:
-				seed = new InitializePlusPlus<>();
-				break;
-
-			case STANDARD:
-				seed = new InitializeStandard<>();
-				break;
-
-			default:
-				throw new RuntimeException("Unknown initializer " + config.initializer);
-		}
+		InitializeKMeans<P> seed = switch (config.initializer) {
+			case PLUS_PLUS -> new InitializePlusPlus<>();
+			case STANDARD -> new InitializeStandard<>();
+			default -> throw new RuntimeException("Unknown initializer " + config.initializer);
+		};
 
 		StandardKMeans<P> alg = new StandardKMeans<>(updateMeans, seed, pointDistance, factory);
 		alg.convergeTol = config.convergeTol;
@@ -146,17 +137,12 @@ import org.jetbrains.annotations.Nullable;
 		InitializeKMeans<P> seed;
 
 		switch (config.initializer) {
-			case PLUS_PLUS: {
+			case PLUS_PLUS -> {
 				seed = new InitializePlusPlus_MT<>(factory);
 				((InitializePlusPlus_MT)seed).setMinimumConcurrent(minimumForThreads);
-			} break;
-
-			case STANDARD:
-				seed = new InitializeStandard<>(); // TODO make concurrent
-				break;
-
-			default:
-				throw new RuntimeException("Unknown initializer " + config.initializer);
+			}
+			case STANDARD -> seed = new InitializeStandard<>(); // TODO make concurrent
+			default -> throw new RuntimeException("Unknown initializer " + config.initializer);
 		}
 
 		var alg = new StandardKMeans_MT<>(updateMeans, seed, pointDistance, factory);

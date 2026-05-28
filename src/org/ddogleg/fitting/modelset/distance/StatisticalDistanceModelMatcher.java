@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -119,16 +119,9 @@ public class StatisticalDistanceModelMatcher<Model, Point> implements ModelMatch
 		currParam = modelManager.createModelInstance();
 
 		switch (statistics) {
-			case MEAN:
-				errorAlg = new FitByMeanStatistics<>(pruneThreshold);
-				break;
-
-			case PERCENTILE:
-				errorAlg = new FitByMedianStatistics<>(pruneThreshold);
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unknown statistics selected");
+			case MEAN -> errorAlg = new FitByMeanStatistics<>(pruneThreshold);
+			case PERCENTILE -> errorAlg = new FitByMedianStatistics<>(pruneThreshold);
+			default -> throw new IllegalArgumentException("Unknown statistics selected");
 		}
 	}
 

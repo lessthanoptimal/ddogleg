@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -84,8 +84,8 @@ public class VerboseUtils {
 		// See how many tabs have already been added
 		int numIndents = 0;
 		PrintStream originalOut = out;
-		if (out instanceof PrintStreamInjectIndent) {
-			numIndents = ((PrintStreamInjectIndent)out).getIndentCount();
+		if (out instanceof PrintStreamInjectIndent o ) {
+			numIndents = o.getIndentCount();
 			// This will keep the tabs, but remove previous modifications
 			originalOut = ((PrintStreamInjectIndent)out).getOriginalStream();
 		}

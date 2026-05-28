@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -40,27 +40,15 @@ public class FactoryNearestNeighbor {
 	 * Factory for generic {@link NearestNeighbor}.
 	 */
 	public static <P> NearestNeighbor<P> generic( ConfigNearestNeighborSearch config, KdTreeDistance<P> distance ) {
-		switch (config.type) {
-			case EXHAUSTIVE: {
-				return exhaustive(distance);
-			}
-
-			case KD_TREE: {
-				return kdtree(distance, config.kdtree.maxNodesSearched);
-			}
-
-			case RANDOM_FOREST: {
-				return kdRandomForest(distance, config.randomForest.maxNodesSearched, config.randomForest.numTrees,
-						config.randomForest.numConsiderSplit, config.randomSeed);
-			}
-
-			case VP_TREE: {
-				throw new RuntimeException("VP-Tree needs to be updated to support the generic distance");
-//				return vptree(config.randomSeed);
-			}
-			default:
-				throw new RuntimeException("Unknown Type: " + config.type);
-		}
+		return switch (config.type) {
+			case EXHAUSTIVE -> exhaustive(distance);
+			case KD_TREE -> kdtree(distance, config.kdtree.maxNodesSearched);
+			case RANDOM_FOREST ->
+					kdRandomForest(distance, config.randomForest.maxNodesSearched, config.randomForest.numTrees,
+							config.randomForest.numConsiderSplit, config.randomSeed);
+			case VP_TREE -> throw new RuntimeException("VP-Tree needs to be updated to support the generic distance");
+			default -> throw new RuntimeException("Unknown Type: " + config.type);
+		};
 	}
 
 	/**

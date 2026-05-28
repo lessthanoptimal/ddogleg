@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -52,8 +52,8 @@ public class KdTreeSearchNBbf<P> extends KdTreeSearchBestBinFirst<P> implements 
 
 	@Override
 	public void setTree(Object tree) {
-		if( tree instanceof KdTree ) {
-			setTree((KdTree)tree);
+		if( tree instanceof KdTree tr ) {
+			setTree(tr);
 		} else {
 			setTrees((KdTree[])tree);
 		}

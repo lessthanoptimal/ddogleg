@@ -50,6 +50,14 @@ public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 		assertFalse(alg.isEquals(0, 0, 1, 2, 4));
 	}
 
+	@Test void isEquals_tol() {
+		DogArray_I64 alg = DogArray_I64.array(0, 0, 1, 1, 4);
+		assertTrue(alg.isEquals(DogArray_I64.array(0, 0, 1, 1, 4), 1));
+		assertFalse(alg.isEquals(DogArray_I64.array(0, 0, 1, 1), 1));
+		assertTrue(alg.isEquals(DogArray_I64.array(1, 0, 1, 1, 4), 1));
+		assertFalse(alg.isEquals(DogArray_I64.array(2, 0, 1, 1, 4), 1));
+	}
+
 	@Test void addAll_queue() {
 		DogArray_I64 queue0 = new DogArray_I64(2);
 		DogArray_I64 queue1 = new DogArray_I64(3);
@@ -156,7 +164,7 @@ public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 		assertTrue(alg.data.length >= 10);
 		assertEquals(10, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals((double)1, alg.get(i));
+			assertEquals((long)1, alg.get(i));
 		}
 
 		// It's now larger and the new elements should be initialized
@@ -440,6 +448,11 @@ public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 		}
 	}
 
+	@Test void forIdx() {
+		DogArray_I64 alg = DogArray_I64.array(1, 2, 3, 4, 5);
+		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value, 1e-8));
+	}
+
 	@Test void set_get() {
 		var alg = new DogArray_I64();
 		alg.resize(10, 2L);
@@ -449,11 +462,6 @@ public class TestDogArray_I64 extends ChecksDogArrayPrimitive<DogArray_I64> {
 			alg.unsafe_set(i, 2L*i);
 			assertEquals(2L*i, alg.unsafe_get(i));
 		}
-	}
-
-	@Test void forIdx() {
-		DogArray_I64 alg = DogArray_I64.array(1, 2, 3, 4, 5);
-		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value, 1e-8));
 	}
 
 	@Test void forEach() {

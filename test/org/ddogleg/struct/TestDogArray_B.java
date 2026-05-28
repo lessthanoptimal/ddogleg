@@ -344,4 +344,10 @@ public class TestDogArray_B {
 			assertEquals(alg.get(i + 2), dst[i]);
 		}
 	}
+
+	@Test void format() {
+		DogArray_B alg = DogArray_B.array(false, false, true, true, false);
+		String found = alg.format();
+		assertEquals("{false, false, true, true, false}", found);
+	}
 }

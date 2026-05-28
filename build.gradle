@@ -47,7 +47,7 @@ java {
 // Prevents tons of errors if someone is using ASCII
 tasks.withType(JavaCompile).configureEach { options.encoding = "UTF-8" }
 
-// Creates Java 11 byte code but Java 17 syntax
+// Creates Java 11 byte code but Java 25 syntax
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = 25
     options.release = 11
@@ -166,6 +166,7 @@ dependencies {
     testAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
     benchmarkAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
     examplesAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
+    generateAnnotationProcessor "com.uber.nullaway:nullaway:${project.nullaway_version}"
 
     annotationProcessor "org.projectlombok:lombok:$project.lombok_version" // @Getter @Setter
     testAnnotationProcessor "org.projectlombok:lombok:$project.lombok_version"
@@ -173,7 +174,7 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
-    if (path.contains("compileBenchmark"))
+    if (path.contains("compileBenchmark") || path.contains("generate"))
         return
     if (path.contains("example"))
         return
@@ -187,6 +188,7 @@ tasks.withType(JavaCompile).configureEach {
             "ClassNewInstance", // yes it's deprecated, but new version is more verbose with ignored errors
             "FloatingPointLiteralPrecision", // too many false positives in test code
             "SameNameButDifferent", // false positives. Nullable is confusing it
+            "AssignmentExpression", // Style and I don't consider it an anti-pattern
             "MissingSummary", "UnescapedEntity", "EmptyBlockTag")
     options.errorprone.error("MissingOverride", "MissingCasesInEnumSwitch", "BadInstanceof",
             "EmptyCatch", "NarrowingCompoundAssignment", "JdkObsolete")

@@ -267,8 +267,7 @@ public class DogArray_I16 implements DogArrayPrimitive<DogArray_I16> {
 	 * @return The removed object
 	 */
 	public short removeSwap( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
+		checkBounds(index);
 		short ret = data[index];
 		size -= 1;
 		data[index] = data[size];

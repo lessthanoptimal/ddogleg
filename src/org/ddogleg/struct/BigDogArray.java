@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -70,7 +70,7 @@ public class BigDogArray<T> extends BigDogArrayBase<T[]> {
 	private static class NewObjectArray<T> implements NewArray<T[]> {
 		Class<T> type;
 
-		public NewObjectArray( Class<T> type ) {
+		private NewObjectArray( Class<T> type ) {
 			this.type = type;
 		}
 
