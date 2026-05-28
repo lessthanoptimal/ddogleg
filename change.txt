@@ -3,6 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.25.1
+Date:     2026-???-??
+
+- FactoryOptimization
+  - Solver type was ignored
+
+------------------------------------------------------
 Version:  0.25.0
 Date:     2026-May-15
 

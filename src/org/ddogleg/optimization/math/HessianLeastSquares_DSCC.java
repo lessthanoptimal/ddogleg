@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,8 +24,10 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.data.IGrowArray;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
+import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.CommonOps_MT_DSCC;
+import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.ejml.sparse.csc.mult.Workspace_MT_DSCC;
 import pabeles.concurrency.GrowArray;
 
@@ -33,22 +35,21 @@ import pabeles.concurrency.GrowArray;
  * @author Peter Abeles
  */
 public class HessianLeastSquares_DSCC extends HessianMath_DSCC
-		implements HessianLeastSquares<DMatrixSparseCSC>
-{
+		implements HessianLeastSquares<DMatrixSparseCSC> {
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
-	DMatrixSparseCSC transpose = new DMatrixSparseCSC(1,1);
+	DMatrixSparseCSC transpose = new DMatrixSparseCSC(1, 1);
 
 	protected GrowArray<Workspace_MT_DSCC> concurrentWork = new GrowArray<>(Workspace_MT_DSCC::new);
 
-	public HessianLeastSquares_DSCC() {}
+	public HessianLeastSquares_DSCC() {super(LinearSolverFactory_DSCC.cholesky(FillReducing.NONE));}
 
-	public HessianLeastSquares_DSCC(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver) {
+	public HessianLeastSquares_DSCC( LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solver ) {
 		super(solver);
 	}
 
 	@Override
-	public void updateHessian(DMatrixSparseCSC jacobian) {
+	public void updateHessian( DMatrixSparseCSC jacobian ) {
 		if (DDoglegConcurrency.isUseConcurrent()) {
 			CommonOps_DSCC.transpose(jacobian, transpose, gw);
 			CommonOps_MT_DSCC.mult(transpose, jacobian, hessian, concurrentWork);

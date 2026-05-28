@@ -78,18 +78,9 @@ public class FactoryOptimization {
 			config = new ConfigTrustRegion();
 
 		HessianSchurComplement_DDRM hessian;
-
-		LinearSolverDense<DMatrixRMaj> solverA = null, solverD = null;
-		switch (config.solverType) {
-			// Cholesky is the default
-			case DEFAULT, CHOLESKY -> {
-			}
-			default -> {
-				solverA = LinearSolverFactory_DDRM.create(config.solverType);
-				solverD = LinearSolverFactory_DDRM.create(config.solverType);
-			}
-		}
-		if (solverA != null && solverD != null) {
+		if (config.solverType != LinearSolverType.DEFAULT) {
+			LinearSolverDense<DMatrixRMaj> solverA = LinearSolverFactory_DDRM.create(config.solverType);
+			LinearSolverDense<DMatrixRMaj> solverD = LinearSolverFactory_DDRM.create(config.solverType);
 			hessian = new HessianSchurComplement_DDRM(solverA, solverD);
 		} else {
 			hessian = new HessianSchurComplement_DDRM();
@@ -143,13 +134,11 @@ public class FactoryOptimization {
 		if (config == null)
 			config = new ConfigTrustRegion();
 
-		LinearSolverDense<DMatrixRMaj> solver =
-				switch (config.solverType) {
-					case DEFAULT -> LinearSolverFactory_DDRM.create(LinearSolverType.DEFAULT);
-					default -> LinearSolverFactory_DDRM.create(config.solverType);
-				};
+		HessianLeastSquares_DDRM hessian = switch (config.solverType) {
+			case DEFAULT -> new HessianLeastSquares_DDRM();
+			default -> new HessianLeastSquares_DDRM(LinearSolverFactory_DDRM.create(config.solverType));
+		};
 
-		var hessian = new HessianLeastSquares_DDRM(solver);
 		var math = new MatrixMath_DDRM();
 		var update = new TrustRegionUpdateDogleg_F64<DMatrixRMaj>();
 		var alg = new UnconLeastSqTrustRegion_F64<DMatrixRMaj>(update, hessian, math);
@@ -206,12 +195,11 @@ public class FactoryOptimization {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
 
-		LinearSolverDense<DMatrixRMaj> solver = switch (config.solverType) {
-			case DEFAULT -> LinearSolverFactory_DDRM.create(LinearSolverType.CHOLESKY);
-			default -> LinearSolverFactory_DDRM.create(config.solverType);
+		HessianLeastSquares_DDRM hessian = switch (config.solverType) {
+			case DEFAULT -> new HessianLeastSquares_DDRM();
+			default -> new HessianLeastSquares_DDRM(LinearSolverFactory_DDRM.create(config.solverType));
 		};
 
-		var hessian = new HessianLeastSquares_DDRM(solver);
 		var lm = new UnconLeastSqLevenbergMarquardt_F64<>(new MatrixMath_DDRM(), hessian);
 		lm.configure(config);
 		return lm;
@@ -228,19 +216,10 @@ public class FactoryOptimization {
 		if (config == null)
 			config = new ConfigLevenbergMarquardt();
 
-		LinearSolverDense<DMatrixRMaj> solverA = null, solverD = null;
-		switch (config.solverType) {
-			// Cholesky is the default
-			case DEFAULT, CHOLESKY -> {
-			}
-			default -> {
-				solverA = LinearSolverFactory_DDRM.create(config.solverType);
-				solverD = LinearSolverFactory_DDRM.create(config.solverType);
-			}
-		}
-
 		HessianSchurComplement_DDRM hessian;
-		if (solverA != null && solverD != null) {
+		if (config.solverType != LinearSolverType.DEFAULT) {
+			LinearSolverDense<DMatrixRMaj> solverA = LinearSolverFactory_DDRM.create(config.solverType);
+			LinearSolverDense<DMatrixRMaj> solverD = LinearSolverFactory_DDRM.create(config.solverType);
 			hessian = new HessianSchurComplement_DDRM(solverA, solverD);
 		} else {
 			hessian = new HessianSchurComplement_DDRM();
