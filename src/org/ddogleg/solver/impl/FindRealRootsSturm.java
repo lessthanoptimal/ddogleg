@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -59,13 +59,6 @@ public class FindRealRootsSturm {
 	private int maxBoundIterations;
 	// maximum number of iterations when refining the root
 	private int maxRefineIterations;
-
-	// search regions for roots.  If the search is all numbers then all 3 regions can be searched,
-	// otherwise just the first
-	Bound region0 = new Bound();
-	Bound region1 = new Bound();
-	Bound region2 = new Bound();
-
 
 	/**
 	 * Configures search parameters.
@@ -271,10 +264,4 @@ public class FindRealRootsSturm {
 		if( iter >= maxBoundIterations)
 			throw new RuntimeException("Too many iterations finding upper and lower bounds");
 	}
-
-	private static class Bound
-	{
-		double l,u;
-	}
-
 }

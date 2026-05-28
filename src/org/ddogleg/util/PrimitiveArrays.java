@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -872,7 +872,7 @@ public class PrimitiveArrays {
 
 		double result = 0.0;
 		for (int i = 0; i < length; i++) {
-			result = op.process(i, array[i + offset], result);
+			result = op.process(i, (double)array[i + offset], result);
 		}
 		return result;
 	}

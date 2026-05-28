@@ -20,14 +20,14 @@ package org.ddogleg.struct;
 
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Growable array composed of longs.
- *
- * @author Peter Abeles
  */
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 
 	public long[] data;
@@ -112,6 +112,17 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		return true;
 	}
 
+	/** Checks for equality within the specified tolerance */
+	public boolean isEquals( DogArray_I64 values, long tol ) {
+		if (size != values.size)
+			return false;
+		for (int i = 0; i < size; i++) {
+			if (Math.abs(data[i] - values.data[i]) > tol)
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	public DogArray_I64 reset() {
 		size = 0;
@@ -169,9 +180,10 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	 * @param offset first index
 	 * @param length number of elements to copy
 	 */
-	public void setTo( long[] array, int offset, int length ) {
+	public DogArray_I64 setTo( long[] array, int offset, int length ) {
 		resize(length);
 		System.arraycopy(array, offset, data, 0, length);
+		return this;
 	}
 
 	/**
@@ -338,7 +350,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	/**
-	 * Resizes the array and assigns the default value to every element.
+	 * Resizes the array and assigns the default value to every new element.
 	 *
 	 * @param size New size
 	 * @param value Default value
@@ -462,7 +474,7 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 	}
 
 	@Override public void zero() {
-		Arrays.fill(data, 0, size, (long)0);
+		Arrays.fill(data, 0, size, 0L);
 	}
 
 	@Override public DogArray_I64 copy() {
@@ -589,12 +601,8 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		return total;
 	}
 
-	private void checkBounds( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-	}
-
-	/// Converts array into a string using the row format in a matrix
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
 	///
 	/// @param format Matrix format
 	/// @return formatted string
@@ -608,6 +616,11 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		builder.append(get(size - 1));
 		builder.append(format.rowSuffix);
 		return builder.toString();
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface

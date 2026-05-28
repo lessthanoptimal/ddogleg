@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -42,16 +42,13 @@ public class PolynomialSolver {
 	 * @return Root finding algorithm.
 	 */
 	public static PolynomialRoots createRootFinder( RootFinderType type , int maxDegree ) {
-		switch ( type ) {
-			case EVD:
-				return new RootFinderCompanion();
-
-			case STURM:
-				FindRealRootsSturm sturm = new FindRealRootsSturm(maxDegree,-1,1e-10,30,20);
-				return new WrapRealRootsSturm(sturm);
-		}
-
-		throw new IllegalArgumentException("Unknown type");
+		return switch (type) {
+			case EVD -> new RootFinderCompanion();
+			case STURM -> {
+				FindRealRootsSturm sturm = new FindRealRootsSturm(maxDegree, -1, 1e-10, 30, 20);
+				yield new WrapRealRootsSturm(sturm);
+			}
+		};
 	}
 
 

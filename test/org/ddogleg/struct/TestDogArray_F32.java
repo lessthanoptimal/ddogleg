@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ejml.MatrixPrintFormat;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
@@ -181,7 +182,7 @@ public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
 		assertTrue(alg.data.length >= 12);
 		assertEquals(12, alg.size);
 		for (int i = 0; i < alg.size; i++) {
-			assertEquals((double)i, alg.get(i));
+			assertEquals((float)i, alg.get(i));
 		}
 
 		// If the size has been reduced then there are no new elements to initialize
@@ -448,6 +449,11 @@ public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
 		}
 	}
 
+	@Test void forIdx() {
+		DogArray_F32 alg = DogArray_F32.array(1, 2, 3, 4, 5);
+		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value, 1e-8));
+	}
+
 	@Test void set_get() {
 		var alg = new DogArray_F32();
 		alg.resize(10, 2);
@@ -457,11 +463,6 @@ public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
 			alg.unsafe_set(i, 2*i);
 			assertEquals(2*i, alg.unsafe_get(i));
 		}
-	}
-
-	@Test void forIdx() {
-		DogArray_F32 alg = DogArray_F32.array(1, 2, 3, 4, 5);
-		alg.forIdx(( idx, value ) -> assertEquals(idx + 1, value, 1e-8));
 	}
 
 	@Test void forEach() {
@@ -506,5 +507,11 @@ public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
 		for (int i = 0; i < 3; i++) {
 			assertEquals(alg.get(i + 2), dst[i]);
 		}
+	}
+
+	@Test void format() {
+		DogArray_F32 alg = DogArray_F32.array(1, 2.23f, 3.001f, 4.1234f, 5);
+		String found = alg.format(new MatrixPrintFormat().withPrecision(2));
+		assertEquals("{1, 2.23, 3, 4.12, 5}", found);
 	}
 }

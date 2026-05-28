@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -135,15 +135,15 @@ public class StandardKMeans_MT<P> extends StandardKMeans<P> {
 	}
 
 	private class MatchData {
-		public double sumDistance;
-		public P point;
+		double sumDistance;
+		P point;
 		DogArray_I32 memberCount = new DogArray_I32();
 
-		public MatchData() {
+		private MatchData() {
 			point = factory.newInstance();
 		}
 
-		public void reset() {
+		private void reset() {
 			sumDistance = 0;
 			memberCount.reset();
 		}

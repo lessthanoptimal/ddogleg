@@ -20,14 +20,14 @@ package org.ddogleg.struct;
 
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Growable array composed of booleans.
- *
- * @author Peter Abeles
  */
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 
 	public boolean[] data;
@@ -46,7 +46,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	 * Creates a queue with the specified length as its size filled with false
 	 */
 	public static DogArray_B zeros( int length ) {
-		DogArray_B out = new DogArray_B(length);
+		var out = new DogArray_B(length);
 		out.size = length;
 		return out;
 	}
@@ -80,23 +80,6 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 				total++;
 		}
 		return total;
-	}
-
-	/// Customizable formatting that prints the array out like a Matrix. Column specific
-	/// settings are ignored.
-	///
-	/// @param format Matrix format
-	/// @return formatted string
-	@Override public String format( MatrixPrintFormat format ) {
-		var builder = new StringBuilder();
-		builder.append(format.rowPrefix);
-		for (int i = 0; i < size - 1; i++) {
-			builder.append(get(i));
-			builder.append(format.colSeparator);
-		}
-		builder.append(getTail());
-		builder.append(format.rowSuffix);
-		return builder.toString();
 	}
 
 	/**
@@ -183,7 +166,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 			System.arraycopy(data, 0, temp, 0, size);
 			data = temp;
 		}
-		data[size++] = val;
+		data[size++] = (boolean)val;
 	}
 
 	/**
@@ -429,7 +412,7 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 			this.data = null;
 			this.data = new boolean[amount];
 		} else {
-			boolean[] tmp = new boolean[amount];
+			var tmp = new boolean[amount];
 			System.arraycopy(data, 0, tmp, 0, this.size);
 			data = tmp;
 		}
@@ -562,6 +545,32 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 		}
 	}
 
+	public int count( Filter filter ) {
+		int total = 0;
+		for (int i = 0; i < size; i++) {
+			if (filter.include(data[i]))
+				total++;
+		}
+		return total;
+	}
+
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
+	///
+	/// @param format Matrix format
+	/// @return formatted string
+	@Override public String format( MatrixPrintFormat format ) {
+		var builder = new StringBuilder();
+		builder.append(format.rowPrefix);
+		for (int i = 0; i < size - 1; i++) {
+			builder.append(get(i));
+			builder.append(format.colSeparator);
+		}
+		builder.append(getTail());
+		builder.append(format.rowSuffix);
+		return builder.toString();
+	}
+
 	private void checkBounds( int index ) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
@@ -580,5 +589,10 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 	@FunctionalInterface
 	public interface FunctionApplyIdx {
 		boolean process( int index, boolean value );
+	}
+
+	@FunctionalInterface
+	public interface Filter {
+		boolean include( boolean value );
 	}
 }

@@ -21,14 +21,14 @@ package org.ddogleg.struct;
 import org.ddogleg.sorting.QuickSort_F32;
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Growable array composed of floats.
- *
- * @author Peter Abeles
  */
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	public float[] data;
@@ -142,7 +142,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	public void addAll( float[] array, int startIndex, int endIndex ) {
 		if (endIndex > array.length)
-			throw new IllegalAccessError("endIndex is larger than input array. " + endIndex + " > " + array.length);
+			throw new IndexOutOfBoundsException("endIndex is larger than input array. " + endIndex + " > " + array.length);
 
 		int arraySize = endIndex - startIndex;
 
@@ -261,8 +261,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	 * @return The removed object
 	 */
 	public float removeSwap( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
+		checkBounds(index);
 		float ret = data[index];
 		size -= 1;
 		data[index] = data[size];
@@ -476,7 +475,7 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 	}
 
 	@Override public void zero() {
-		Arrays.fill(data, 0, size, (float)0);
+		Arrays.fill(data, 0, size, 0.0f);
 	}
 
 	@Override public DogArray_F32 copy() {
@@ -649,6 +648,6 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 
 	@FunctionalInterface
 	public interface Filter {
-		boolean include( double value );
+		boolean include( float value );
 	}
 }

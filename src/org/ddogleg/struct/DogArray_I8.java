@@ -20,14 +20,14 @@ package org.ddogleg.struct;
 
 import org.ejml.MatrixPrintFormat;
 
+import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Growable array composed of bytes.
- *
- * @author Peter Abeles
  */
+@Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 
 	public byte[] data;
@@ -267,8 +267,7 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * @return The removed object
 	 */
 	public byte removeSwap( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index=" + index + " max size " + size);
+		checkBounds(index);
 		byte ret = data[index];
 		size -= 1;
 		data[index] = data[size];
@@ -285,7 +284,8 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	}
 
 	public byte get( int index ) {
-		checkBounds(index);		return data[index];
+		checkBounds(index);
+		return data[index];
 	}
 
 	/**
@@ -312,11 +312,13 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 	 * Returns an element starting from the end of the list. 0 = size -1
 	 */
 	public byte getTail( int index ) {
-		checkBounds(index);		return data[size - index - 1];
+		checkBounds(index);
+		return data[size - index - 1];
 	}
 
 	public void setTail( int index, int value ) {
-		checkBounds(index);		data[size - index - 1] = (byte)value;
+		checkBounds(index);
+		data[size - index - 1] = (byte)value;
 	}
 
 	/**
@@ -633,12 +635,8 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		return total;
 	}
 
-	private void checkBounds( int index ) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
-	}
-
-	/// Converts array into a string using the row format in a matrix
+	/// Customizable formatting that prints the array out like a Matrix. Column specific
+	/// settings are ignored.
 	///
 	/// @param format Matrix format
 	/// @return formatted string
@@ -652,6 +650,11 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 		builder.append(get(size - 1));
 		builder.append(format.rowSuffix);
 		return builder.toString();
+	}
+
+	private void checkBounds( int index ) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("index = " + index + "  size = " + size);
 	}
 
 	@FunctionalInterface
@@ -671,6 +674,6 @@ public class DogArray_I8 implements DogArrayPrimitive<DogArray_I8> {
 
 	@FunctionalInterface
 	public interface Filter {
-		boolean include( int value );
+		boolean include( byte value );
 	}
 }

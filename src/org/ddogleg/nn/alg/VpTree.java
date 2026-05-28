@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -306,18 +306,19 @@ public class VpTree implements NearestNeighbor<double[]> {
 	 * @return Euclidean distance
 	 */
 	private static double distance(double[] p1, double[] p2) {
-		switch (p1.length) {
-			case 2: return Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]));
-			case 3: return Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]) + (p1[2] - p2[2]) * (p1[2] - p2[2]));
-			default: {
+		return switch (p1.length) {
+			case 2 -> Math.sqrt((p1[0] - p2[0])*(p1[0] - p2[0]) + (p1[1] - p2[1])*(p1[1] - p2[1]));
+			case 3 ->
+					Math.sqrt((p1[0] - p2[0])*(p1[0] - p2[0]) + (p1[1] - p2[1])*(p1[1] - p2[1]) + (p1[2] - p2[2])*(p1[2] - p2[2]));
+			default -> {
 				double dist = 0;
 				for (int i = p1.length - 1; i >= 0; i--) {
 					final double d = (p1[i] - p2[i]);
-					dist += d * d;
+					dist += d*d;
 				}
-				return Math.sqrt(dist);
+				yield Math.sqrt(dist);
 			}
-		}
+		};
 	}
 
 	/**

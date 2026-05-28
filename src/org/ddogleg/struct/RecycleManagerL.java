@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.struct;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link RecycleManager} which maintains a used list.  Does not allow you to recycle individual elements
@@ -32,7 +33,7 @@ public class RecycleManagerL<T> extends RecycleManager<T> {
 		super(targetClass);
 	}
 
-	public ArrayList<T> getUsed() {
+	public List<T> getUsed() {
 		return used;
 	}
 

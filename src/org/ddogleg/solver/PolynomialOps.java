@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -228,17 +228,14 @@ public class PolynomialOps {
 	 * @return PolynomialRoots
 	 */
 	public static PolynomialRoots createRootFinder( int maxCoefficients , RootFinderType which ) {
-		switch( which ) {
-			case STURM:
-				FindRealRootsSturm sturm = new FindRealRootsSturm(maxCoefficients,-1,1e-10,200,200);
-				return new WrapRealRootsSturm(sturm);
-
-			case EVD:
-				return new RootFinderCompanion();
-
-			default:
-				throw new IllegalArgumentException("Unknown algorithm: "+which);
-		}
+		return switch (which) {
+			case STURM -> {
+				FindRealRootsSturm sturm = new FindRealRootsSturm(maxCoefficients, -1, 1e-10, 200, 200);
+				yield new WrapRealRootsSturm(sturm);
+			}
+			case EVD -> new RootFinderCompanion();
+			default -> throw new IllegalArgumentException("Unknown algorithm: " + which);
+		};
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -90,10 +90,10 @@ public class InitializePlusPlus_MT<P> extends InitializePlusPlus<P> {
 	}
 
 	private class DistanceWork {
-		public double sum;
-		public P point = factoryPoint.newInstance();
+		double sum;
+		P point = factoryPoint.newInstance();
 
-		public void reset() {
+		private void reset() {
 			sum = 0;
 		}
 	}

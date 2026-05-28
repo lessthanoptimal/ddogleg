@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -119,25 +119,22 @@ public abstract class GaussNewtonBase_F64<C extends ConfigGaussNewton, HM extend
 	public boolean iterate() {
 		boolean converged;
 		switch (mode) {
-			case COMPUTE_DERIVATIVES:
+			case COMPUTE_DERIVATIVES -> {
 				totalFullSteps++;
 				converged = updateDerivates();
 				if (!converged) {
 					totalSelectSteps++;
 					converged = computeStep();
 				}
-				break;
-
-			case DETERMINE_STEP:
+			}
+			case DETERMINE_STEP -> {
 				totalSelectSteps++;
 				converged = computeStep();
-				break;
-
-			case CONVERGED:
+			}
+			case CONVERGED -> {
 				return true;
-
-			default:
-				throw new RuntimeException("BUG! mode=" + mode);
+			}
+			default -> throw new RuntimeException("BUG! mode=" + mode);
 		}
 
 		if (converged) {
