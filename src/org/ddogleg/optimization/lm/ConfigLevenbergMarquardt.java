@@ -49,15 +49,7 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 
 	@Deprecated
 	public ConfigLevenbergMarquardt copy() {
-		var c = new ConfigLevenbergMarquardt();
-
-		c.dampeningInitial = dampeningInitial;
-		c.mixture = mixture;
-		c.diagonalMin = diagonalMin;
-		c.diagonalMax = diagonalMax;
-		c.setTo(this);
-
-		return c;
+		return new ConfigLevenbergMarquardt().setTo(this);
 	}
 
 	public ConfigLevenbergMarquardt setTo( ConfigLevenbergMarquardt src ) {
@@ -66,6 +58,7 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 		this.mixture = src.mixture;
 		this.diagonalMin = src.diagonalMin;
 		this.diagonalMax = src.diagonalMax;
+		this.solverType = src.solverType;
 		return this;
 	}
 
@@ -75,5 +68,6 @@ public class ConfigLevenbergMarquardt extends ConfigGaussNewton {
 		this.mixture = 1e-4;
 		this.diagonalMin = 1e-6;
 		this.diagonalMax = 1e32;
+		this.solverType = LinearSolverType.DEFAULT;
 	}
 }
