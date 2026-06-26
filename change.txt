@@ -3,11 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.25.1
-Date:     2026-???-??
+Version:  0.25.1 and 0.25.2
+Date:     2026-Jun-26
 
 - FactoryOptimization
   - Solver type was ignored
+- Fixed ConfigLevenbergMarquard setTo() bug
+- Breaking tweaks to DDogleg for consistency
 
 ------------------------------------------------------
 Version:  0.25.0
