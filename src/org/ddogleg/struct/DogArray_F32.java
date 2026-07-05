@@ -159,6 +159,17 @@ public class DogArray_F32 implements DogArrayPrimitive<DogArray_F32> {
 		push(val);
 	}
 
+	public void add( float val0, float val1 ) {
+		push(val0);
+		push(val1);
+	}
+
+	public void add( float... values ) {
+		for (int i = 0; i < values.length; i++) {
+			push(values[i]);
+		}
+	}
+
 	public void push( float val ) {
 		if (size == data.length) {
 			float[] temp;

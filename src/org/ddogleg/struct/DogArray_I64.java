@@ -158,6 +158,17 @@ public class DogArray_I64 implements DogArrayPrimitive<DogArray_I64> {
 		push(val);
 	}
 
+	public void add( long val0, long val1 ) {
+		push(val0);
+		push(val1);
+	}
+
+	public void add( long... values ) {
+		for (int i = 0; i < values.length; i++) {
+			push(values[i]);
+		}
+	}
+
 	public void push( long val ) {
 		if (size == data.length) {
 			long[] temp;

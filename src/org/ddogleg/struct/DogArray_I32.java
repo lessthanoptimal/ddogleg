@@ -159,6 +159,17 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		push(val);
 	}
 
+	public void add( int val0, int val1 ) {
+		push(val0);
+		push(val1);
+	}
+
+	public void add( int... values ) {
+		for (int i = 0; i < values.length; i++) {
+			push(values[i]);
+		}
+	}
+
 	public void push( int val ) {
 		if (size == data.length) {
 			int[] temp;

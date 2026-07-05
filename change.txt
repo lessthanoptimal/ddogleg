@@ -3,11 +3,18 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  0.25.2
+Date:     2026-
+
+- Primitive DogArray
+ * You can add arbitrary number of elements
+
+------------------------------------------------------
 Version:  0.25.1 and 0.25.2
 Date:     2026-Jun-26
 
 - FactoryOptimization
-  - Solver type was ignored
+  * Solver type was ignored
 - Fixed ConfigLevenbergMarquard setTo() bug
 - Breaking tweaks to DDogleg for consistency
 
