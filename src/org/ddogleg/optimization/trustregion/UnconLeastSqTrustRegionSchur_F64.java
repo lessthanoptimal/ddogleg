@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -74,6 +74,7 @@ public class UnconLeastSqTrustRegionSchur_F64<S extends DMatrix>
 		this.initialize(initial, functionResiduals.getNumOfInputsN(), 0);
 		config.ftol = ftol;
 		config.gtol = gtol;
+		config.checkConfig();
 	}
 
 	@Override

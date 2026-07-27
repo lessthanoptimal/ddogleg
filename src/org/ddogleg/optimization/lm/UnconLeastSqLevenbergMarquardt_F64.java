@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -69,6 +69,7 @@ public class UnconLeastSqLevenbergMarquardt_F64<S extends DMatrix>
 	@Override public void initialize( double[] initial, double ftol, double gtol ) {
 		config.ftol = ftol;
 		config.gtol = gtol;
+		config.checkConfig();
 
 		super.initialize(initial,
 				functionResiduals.getNumOfInputsN(),

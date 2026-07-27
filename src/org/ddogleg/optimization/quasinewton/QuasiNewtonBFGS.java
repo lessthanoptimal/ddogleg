@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.quasinewton;
 
+import org.ddogleg.optimization.ConfigGaussNewton;
 import org.ddogleg.optimization.LineSearch;
 import org.ddogleg.optimization.functions.GradientLineFunction;
 import org.ddogleg.struct.VerbosePrint;
@@ -154,6 +155,7 @@ public class QuasiNewtonBFGS implements VerbosePrint {
 		if (gtol < 0)
 			throw new IllegalArgumentException("gtol < 0");
 
+		ConfigGaussNewton.checkFtol(ftol);
 		this.ftol = ftol;
 		this.gtol = gtol;
 	}
