@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -19,6 +19,7 @@
 package org.ddogleg.optimization.math;
 
 import org.ddogleg.DDoglegConcurrency;
+import org.ejml.LinearSolverSparseSafe;
 import org.ejml.data.DGrowArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -55,7 +56,8 @@ public class HessianSchurComplement_DSCC
 	}
 	public HessianSchurComplement_DSCC(LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverA,
 									   LinearSolverSparse<DMatrixSparseCSC, DMatrixRMaj> solverD) {
-		super(solverA,solverD);
+		// A is used after setA() and must not be modified. D_m is recomputed each call so solverD is fine
+		super(new LinearSolverSparseSafe<>(solverA),solverD);
 	}
 
 	/**
