@@ -31,114 +31,105 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class StandardHessianMathChecks {
 
 	Random rand = new Random(234);
 	HessianMath alg;
 
-	protected StandardHessianMathChecks(HessianMath alg ) {
+	protected StandardHessianMathChecks( HessianMath alg ) {
 		this.alg = alg;
 	}
 
 	protected abstract void setHessian( HessianMath alg, DMatrixRMaj H );
 
-	@Test
-	public void innerVectorHessian() {
-		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10,1,rand);
+	@Test public void innerVectorHessian() {
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10, rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10, 1, rand);
 
-		double expected = VectorVectorMult_DDRM.innerProdA(v,M,v);
+		double expected = VectorVectorMult_DDRM.innerProdA(v, M, v);
 
-		setHessian(alg,M);
+		setHessian(alg, M);
 		double found = alg.innerVectorHessian(v);
 
-		assertEquals(expected,found, UtilEjml.TEST_F64);
+		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void extractDiagonals() {
-		DMatrixRMaj M = RandomMatrices_DDRM.rectangle(6,6,rand);
+	@Test public void extractDiagonals() {
+		DMatrixRMaj M = RandomMatrices_DDRM.rectangle(6, 6, rand);
 
-		setHessian(alg,M);
+		setHessian(alg, M);
 
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6,1,rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6, 1, rand);
 		alg.extractDiagonals(v);
 
 		for (int i = 0; i < M.numRows; i++) {
-			assertEquals(M.get(i,i),v.get(i,0), UtilEjml.TEST_F64);
+			assertEquals(M.get(i, i), v.get(i, 0), UtilEjml.TEST_F64);
 		}
 	}
 
-	@Test
-	public void setDiagonals() {
-		DMatrixRMaj M = RandomMatrices_DDRM.rectangle(6,6,rand);
+	@Test public void setDiagonals() {
+		DMatrixRMaj M = RandomMatrices_DDRM.rectangle(6, 6, rand);
 
-		setHessian(alg,M);
+		setHessian(alg, M);
 
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6,1,rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(6, 1, rand);
 		alg.setDiagonals(v);
 
-		DMatrixRMaj found = RandomMatrices_DDRM.rectangle(6,1,rand);
+		DMatrixRMaj found = RandomMatrices_DDRM.rectangle(6, 1, rand);
 		alg.extractDiagonals(found);
 
 
 		for (int i = 0; i < M.numRows; i++) {
-			assertEquals(found.get(i),v.get(i), UtilEjml.TEST_F64);
+			assertEquals(found.get(i), v.get(i), UtilEjml.TEST_F64);
 		}
 	}
 
-	@Test
-	public void divideRowsCols() {
-		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
-		DMatrixRMaj scale = RandomMatrices_DDRM.rectangle(10,1,0,1,rand);
+	@Test public void divideRowsCols() {
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10, rand);
+		DMatrixRMaj scale = RandomMatrices_DDRM.rectangle(10, 1, 0, 1, rand);
 
 		DMatrixRMaj expected = M.copy();
-		CommonOps_DDRM.divideRows(scale.data,expected);
-		CommonOps_DDRM.divideCols(expected,scale.data);
+		CommonOps_DDRM.divideRows(scale.data, expected);
+		CommonOps_DDRM.divideCols(expected, scale.data);
 
-		setHessian(alg,M);
+		setHessian(alg, M);
 
 		alg.divideRowsCols(scale);
 
 		// Not a great unit test since it doesn't check the off diagonal elements
-		DMatrixRMaj found = RandomMatrices_DDRM.rectangle(10,1,rand);
+		DMatrixRMaj found = RandomMatrices_DDRM.rectangle(10, 1, rand);
 		alg.extractDiagonals(found);
 
 		for (int i = 0; i < M.numRows; i++) {
-			assertEquals(expected.get(i,i),found.get(i), UtilEjml.TEST_F64);
+			assertEquals(expected.get(i, i), found.get(i), UtilEjml.TEST_F64);
 		}
 	}
 
-	@Test
-	public void solve() {
-		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10,rand);
-		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10,1,rand);
+	@Test public void solve() {
+		DMatrixRMaj M = RandomMatrices_DDRM.symmetricPosDef(10, rand);
+		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(10, 1, rand);
 
 		DMatrixRMaj origv = v.copy();
 
 		DMatrixRMaj expected = v.createLike();
-		CommonOps_DDRM.solve(M,v,expected);
+		CommonOps_DDRM.solve(M, v, expected);
 
 		DMatrixRMaj found = v.createLike();
 
 		alg.init(M.numCols);
-		setHessian(alg,M);
+		setHessian(alg, M);
 		assertTrue(alg.initializeSolver());
-		assertTrue(alg.solve(v,found));
+		assertTrue(alg.solve(v, found));
 
 		// make sure it didn't modify the input
-		assertTrue(MatrixFeatures_DDRM.isIdentical(origv,v,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(origv, v, UtilEjml.TEST_F64));
 
 		// check the solution
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 
 		// run it again, if nothing was modified it should produce the same solution
 		assertTrue(alg.initializeSolver());
-		assertTrue(alg.solve(v,found));
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(alg.solve(v, found));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
-
 }

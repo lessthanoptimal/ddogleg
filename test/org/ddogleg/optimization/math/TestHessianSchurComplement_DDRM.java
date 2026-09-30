@@ -30,9 +30,6 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 
 	int M = 10;
@@ -40,14 +37,13 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 	int split = 4;
 	Random rand = new Random(234);
 
+	DMatrixRMaj jacLeft = RandomMatrices_DDRM.rectangle(M, split, -1, 1, rand);
+	DMatrixRMaj jacRight = RandomMatrices_DDRM.rectangle(M, N - split, -1, 1, rand);
 
-	DMatrixRMaj jacLeft = RandomMatrices_DDRM.rectangle(M,split,-1,1,rand);
-	DMatrixRMaj jacRight = RandomMatrices_DDRM.rectangle(M,N-split,-1,1,rand);
+	DMatrixRMaj J = new DMatrixRMaj(M, N);
+	DMatrixRMaj H = new DMatrixRMaj(N, N);
 
-	DMatrixRMaj J = new DMatrixRMaj(M,N);
-	DMatrixRMaj H = new DMatrixRMaj(N,N);
-
-	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M,1,-1,1,rand);
+	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M, 1, -1, 1, rand);
 
 	HessianSchurComplement_DDRM math = new HessianSchurComplement_DDRM();
 
@@ -55,51 +51,47 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		super(new HessianSchurComplement_DDRM(
 				new ScrambleInputSolver.Dense(LinearSolverFactory_DDRM.cholInner(true)),
 				new ScrambleInputSolver.Dense(LinearSolverFactory_DDRM.cholInner(true))));
-		CommonOps_DDRM.concatColumns(jacLeft,jacRight,J);
-		CommonOps_DDRM.multTransA(J,J,H);
+		CommonOps_DDRM.concatColumns(jacLeft, jacRight, J);
+		CommonOps_DDRM.multTransA(J, J, H);
 	}
 
-
-	@Override
-	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
+	@Override protected void setHessian( HessianMath alg, DMatrixRMaj H ) {
 
 		int M = 3;
-		int N = H.numCols-M;
+		int N = H.numCols - M;
 
 		HessianSchurComplement_DDRM hm = (HessianSchurComplement_DDRM)alg;
 
-		hm.A.reshape(M,M);
-		hm.B.reshape(M,N);
-		hm.D.reshape(N,N);
+		hm.A.reshape(M, M);
+		hm.B.reshape(M, N);
+		hm.D.reshape(N, N);
 
-		CommonOps_DDRM.extract(H,0,M,0,M,hm.A,0,0);
-		CommonOps_DDRM.extract(H,0,M,M,M+N,hm.B,0,0);
-		CommonOps_DDRM.extract(H,M,M+N,M,M+N,hm.D,0,0);
+		CommonOps_DDRM.extract(H, 0, M, 0, M, hm.A, 0, 0);
+		CommonOps_DDRM.extract(H, 0, M, M, M + N, hm.B, 0, 0);
+		CommonOps_DDRM.extract(H, M, M + N, M, M + N, hm.D, 0, 0);
 	}
 
-	@Test
-	public void computeGradient() {
-		DMatrixRMaj found = new DMatrixRMaj(N,1);
-		DMatrixRMaj expected = new DMatrixRMaj(N,1);
+	@Test public void computeGradient() {
+		DMatrixRMaj found = new DMatrixRMaj(N, 1);
+		DMatrixRMaj expected = new DMatrixRMaj(N, 1);
 
-		math.computeGradient(jacLeft,jacRight,residuals,found);
+		math.computeGradient(jacLeft, jacRight, residuals, found);
 
-		CommonOps_DDRM.multTransA(J,residuals,expected);
+		CommonOps_DDRM.multTransA(J, residuals, expected);
 
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
-	@Test
-	public void computeHessian() {
-		math.computeHessian(jacLeft,jacRight);
+	@Test public void computeHessian() {
+		math.computeHessian(jacLeft, jacRight);
 
-		DMatrixRMaj found = new DMatrixRMaj(1,1);
+		DMatrixRMaj found = new DMatrixRMaj(1, 1);
 		math.extractDiagonals(found);
 
-		DMatrixRMaj expected = new DMatrixRMaj(1,1);
-		CommonOps_DDRM.extractDiag(H,expected);
+		DMatrixRMaj expected = new DMatrixRMaj(1, 1);
+		CommonOps_DDRM.extractDiag(H, expected);
 
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
 	@Test
