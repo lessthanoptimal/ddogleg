@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -130,7 +130,7 @@ public abstract class StandardHessianMathChecks {
 		assertTrue(alg.solve(v,found));
 
 		// make sure it didn't modify the input
-		assertTrue(MatrixFeatures_DDRM.isIdentical(origv,origv,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(origv,v,UtilEjml.TEST_F64));
 
 		// check the solution
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));

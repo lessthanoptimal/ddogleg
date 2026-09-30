@@ -20,6 +20,7 @@ package org.ddogleg.optimization.math;
 
 import org.ddogleg.DDoglegConcurrency;
 import org.ejml.LinearSolverToSparse;
+import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.CommonOps_MT_DDRM;
@@ -41,7 +42,8 @@ public class HessianSchurComplement_DDRM
 
 	public HessianSchurComplement_DDRM( LinearSolverDense<DMatrixRMaj> solverA,
 	                                    LinearSolverDense<DMatrixRMaj> solverD ) {
-		super(new LinearSolverToSparse<>(solverA), new LinearSolverToSparse<>(solverD));
+		// solverA modifies A in place but A is used after setA(). D_m is recomputed each call so solverD is fine
+		super(new LinearSolverToSparse<>(UtilEjml.safe(solverA)), new LinearSolverToSparse<>(solverD));
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class HessianSchurComplement_DDRM
 
 	@Override
 	protected double innerProduct( double[] a, int offsetA, DMatrixRMaj B, double[] c, int offsetC ) {
-		return MatrixVectorMult_DDRM.innerProduct(a, 0, B, c, offsetC);
+		return MatrixVectorMult_DDRM.innerProduct(a, offsetA, B, c, offsetC);
 	}
 
 	@Override
