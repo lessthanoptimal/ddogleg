@@ -36,9 +36,6 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 
 	int M = 10;
@@ -49,13 +46,13 @@ public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();
 
-	DMatrixSparseCSC jacLeft = RandomMatrices_DSCC.rectangle(M,split,30,-1,1,rand);
-	DMatrixSparseCSC jacRight = RandomMatrices_DSCC.rectangle(M,N-split,14,-1,1,rand);
+	DMatrixSparseCSC jacLeft = RandomMatrices_DSCC.rectangle(M, split, 30, -1, 1, rand);
+	DMatrixSparseCSC jacRight = RandomMatrices_DSCC.rectangle(M, N - split, 14, -1, 1, rand);
 
-	DMatrixSparseCSC J = new DMatrixSparseCSC(M,N,1);
-	DMatrixSparseCSC H = new DMatrixSparseCSC(N,N,1);
+	DMatrixSparseCSC J = new DMatrixSparseCSC(M, N, 1);
+	DMatrixSparseCSC H = new DMatrixSparseCSC(N, N, 1);
 
-	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M,1,-1,1,rand);
+	DMatrixRMaj residuals = RandomMatrices_DDRM.rectangle(M, 1, -1, 1, rand);
 
 	HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
 
@@ -63,59 +60,54 @@ public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 		super(new HessianSchurComplement_DSCC(
 				new ScrambleInputSolver<>(LinearSolverFactory_DSCC.cholesky(FillReducing.NONE)),
 				new ScrambleInputSolver<>(LinearSolverFactory_DSCC.cholesky(FillReducing.NONE))));
-		CommonOps_DSCC.concatColumns(jacLeft,jacRight,J);
-		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J,null,gw);
-		CommonOps_DSCC.mult(J_t,J,H,gw,gx);
+		CommonOps_DSCC.concatColumns(jacLeft, jacRight, J);
+		DMatrixSparseCSC J_t = CommonOps_DSCC.transpose(J, null, gw);
+		CommonOps_DSCC.mult(J_t, J, H, gw, gx);
 	}
 
-
-	@Override
-	protected void setHessian(HessianMath alg, DMatrixRMaj H) {
+	@Override protected void setHessian( HessianMath alg, DMatrixRMaj H ) {
 
 		int M = 3;
-		int N = H.numCols-M;
+		int N = H.numCols - M;
 
 		HessianSchurComplement_DSCC hm = (HessianSchurComplement_DSCC)alg;
 
-		DMatrixSparseCSC SH = new DMatrixSparseCSC(1,1);
-		DConvertMatrixStruct.convert(H,SH);
+		DMatrixSparseCSC SH = new DMatrixSparseCSC(1, 1);
+		DConvertMatrixStruct.convert(H, SH);
 
-		hm.A.reshape(M,M);
-		hm.B.reshape(M,N);
-		hm.D.reshape(N,N);
+		hm.A.reshape(M, M);
+		hm.B.reshape(M, N);
+		hm.D.reshape(N, N);
 
-		CommonOps_DSCC.extract(SH,0,M,0,M,hm.A,0,0);
-		CommonOps_DSCC.extract(SH,0,M,M,M+N,hm.B,0,0);
-		CommonOps_DSCC.extract(SH,M,M+N,M,M+N,hm.D,0,0);
+		CommonOps_DSCC.extract(SH, 0, M, 0, M, hm.A, 0, 0);
+		CommonOps_DSCC.extract(SH, 0, M, M, M + N, hm.B, 0, 0);
+		CommonOps_DSCC.extract(SH, M, M + N, M, M + N, hm.D, 0, 0);
 	}
 
-	@Test
-	public void computeGradient() {
-		DMatrixRMaj found = new DMatrixRMaj(N,1);
-		DMatrixRMaj expected = new DMatrixRMaj(N,1);
+	@Test public void computeGradient() {
+		DMatrixRMaj found = new DMatrixRMaj(N, 1);
+		DMatrixRMaj expected = new DMatrixRMaj(N, 1);
 
-		math.computeGradient(jacLeft,jacRight,residuals,found);
+		math.computeGradient(jacLeft, jacRight, residuals, found);
 
-		CommonOps_DSCC.multTransA(J,residuals,expected,gx);
+		CommonOps_DSCC.multTransA(J, residuals, expected, gx);
 
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
-	@Test
-	public void computeHessian() {
-		math.computeHessian(jacLeft,jacRight);
+	@Test public void computeHessian() {
+		math.computeHessian(jacLeft, jacRight);
 
-		DMatrixRMaj found = new DMatrixRMaj(1,1);
+		DMatrixRMaj found = new DMatrixRMaj(1, 1);
 		math.extractDiagonals(found);
 
-		DMatrixRMaj expected = new DMatrixRMaj(1,1);
-		CommonOps_DSCC.extractDiag(H,expected);
+		DMatrixRMaj expected = new DMatrixRMaj(1, 1);
+		CommonOps_DSCC.extractDiag(H, expected);
 
-		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
+		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
-	@Test
-	public void computeStep() {
+	@Test public void computeStep() {
 		// This is tested in the optimization algorithms
 	}
 }

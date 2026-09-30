@@ -29,11 +29,7 @@ import org.ejml.dense.row.mult.MatrixMultProduct_DDRM;
 import org.ejml.dense.row.mult.MatrixVectorMult_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverDense;
 
-/**
- * Implementation of {@link HessianSchurComplement_Base} for {@link DMatrixRMaj}
- *
- * @author Peter Abeles
- */
+/// Implementation of [HessianSchurComplement_Base] for [DMatrixRMaj]
 public class HessianSchurComplement_DDRM
 		extends HessianSchurComplement_Base<DMatrixRMaj> {
 	public HessianSchurComplement_DDRM() {
@@ -41,17 +37,15 @@ public class HessianSchurComplement_DDRM
 	}
 
 	public HessianSchurComplement_DDRM( LinearSolverDense<DMatrixRMaj> solverA,
-	                                    LinearSolverDense<DMatrixRMaj> solverD ) {
+										LinearSolverDense<DMatrixRMaj> solverD ) {
 		// solverA modifies A in place but A is used after setA(). D_m is recomputed each call so solverD is fine
 		super(new LinearSolverToSparse<>(UtilEjml.safe(solverA)), new LinearSolverToSparse<>(solverD));
 	}
 
-	/**
-	 * Compuets the Hessian in block form
-	 *
-	 * @param jacLeft (Input) Left side of Jacobian
-	 * @param jacRight (Input) Right side of Jacobian
-	 */
+	/// Computes the Hessian in block form
+	///
+	/// @param jacLeft (Input) Left side of Jacobian
+	/// @param jacRight (Input) Right side of Jacobian
 	@Override
 	public void computeHessian( DMatrixRMaj jacLeft, DMatrixRMaj jacRight ) {
 		A.reshape(jacLeft.numCols, jacLeft.numCols);

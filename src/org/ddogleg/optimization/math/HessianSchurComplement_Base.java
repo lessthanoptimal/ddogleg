@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,23 +24,17 @@ import org.ejml.data.ReshapeMatrix;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverSparse;
 
-/**
- * The approximate Hessian matrix (J'*J) is assumed to have the
- * following block triangle form: [A B;C D]. The system being solved for
- * is as follows: [A B;C D] [x_1;x_2] = [b_1;b_2]. Then the following steps
- * are followed to solve it:
- *
- * <ol>
- *     <li>D' = D - C*inv(A)*B and b_2' = b_2 - C*inv(A)*b_1</li>
- *     <li>D'*x_2 = b_2'</li>
- *     <li>A*x_1 = b_1 - B*x_2</li>
- * </ol>
- *
- * [1] Triggs, Bill, et al. "Bundle adjustment—a modern synthesis." International workshop on vision algorithms.
- * Springer, Berlin, Heidelberg, 1999.
- *
- * @author Peter Abeles
- */
+/// The approximate Hessian matrix `(J'\*J)` is assumed to have the
+/// following block triangle form: `[A B;C D]`. The system being solved for
+/// is as follows: `[A B;C D] [x_1;x_2] = [b_1;b_2]`. Then the following steps
+/// are followed to solve it:
+///
+///   1. `D' = D - C*inv(A)*B and b_2' = b_2 - C*inv(A)*b_1`
+///   2. `D'*x_2 = b_2'`
+///   3. `A*x_1 = b_1 - B*x_2`
+///
+/// [1] Triggs, Bill, et al. "Bundle adjustment—a modern synthesis." International workshop on vision algorithms.
+/// Springer, Berlin, Heidelberg, 1999.
 public abstract class HessianSchurComplement_Base<S extends DMatrix>
 		implements HessianSchurComplement<S>
 {
@@ -82,18 +76,18 @@ public abstract class HessianSchurComplement_Base<S extends DMatrix>
 //		solverD.setStructureLocked(false);
 	}
 
-	/**
-	 * Vector matrix inner product of Hessian in block format.
-	 *
-	 * <p>
-	 * [A B;C D]*[x;y] = [c;d]<br>
-	 *  A*x + B*y = c<br>
-	 *  C*x + D*y = d<br>
-	 *  [x;y]<sup>T</sup>[A B;C D]*[x;y] = [x;y]<sup>T</sup>*[c;d]<br>
-	 * </p>
-	 * @param v row vector
-	 * @return v'*H*v = v'*[A B;C D]*v
-	 */
+	/// Vector matrix inner product of Hessian in block format.
+	///
+	/// ```
+	/// [A B;C D]*[x;y] = [c;d]
+	/// A*x + B*y = c
+	/// C*x + D*y = d
+	///
+	/// [x;y]^T[A B;C D]*[x;y] = [x;y]^T*[c;d]
+	/// ```
+	///
+	/// @param v row vector
+	/// @return v'\*H\*v = v'\*[A B;C D]\*v
 	@Override
 	public double innerVectorHessian( DMatrixRMaj v ) {
 		int M = A.getNumRows();
@@ -189,14 +183,12 @@ public abstract class HessianSchurComplement_Base<S extends DMatrix>
 		return true;
 	}
 
-	/**
-	 * Computes the gradient using Schur complement
-	 *
-	 * @param jacLeft (Input) Left side of Jacobian
-	 * @param jacRight (Input) Right side of Jacobian
-	 * @param residuals (Input) Residuals
-	 * @param gradient (Output) Gradient
-	 */
+	/// Computes the gradient using Schur complement
+	///
+	/// @param jacLeft (Input) Left side of Jacobian
+	/// @param jacRight (Input) Right side of Jacobian
+	/// @param residuals (Input) Residuals
+	/// @param gradient (Output) Gradient
 	@Override
 	public void computeGradient(S jacLeft , S jacRight ,
 								DMatrixRMaj residuals, DMatrixRMaj gradient) {
@@ -214,9 +206,9 @@ public abstract class HessianSchurComplement_Base<S extends DMatrix>
 
 	//-------------------- Abstract Linear Algebra Functions
 
-	protected abstract double innerProduct( double a[] , int offsetA ,
+	protected abstract double innerProduct( double[] a, int offsetA ,
 											S B ,
-											double c[] , int offsetC );
+											double[] c, int offsetC );
 
 	protected abstract void extractDiag( S input , DMatrixRMaj output );
 
