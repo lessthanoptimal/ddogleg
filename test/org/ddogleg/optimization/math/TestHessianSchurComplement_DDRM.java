@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,12 +20,10 @@ package org.ddogleg.optimization.math;
 
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
-import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
 import org.ejml.dense.row.RandomMatrices_DDRM;
-import org.ejml.ops.DConvertMatrixStruct;
-import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -54,7 +52,9 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 	HessianSchurComplement_DDRM math = new HessianSchurComplement_DDRM();
 
 	public TestHessianSchurComplement_DDRM() {
-		super(new HessianSchurComplement_DSCC());
+		super(new HessianSchurComplement_DDRM(
+				new ScrambleInputSolver.Dense(LinearSolverFactory_DDRM.cholInner(true)),
+				new ScrambleInputSolver.Dense(LinearSolverFactory_DDRM.cholInner(true))));
 		CommonOps_DDRM.concatColumns(jacLeft,jacRight,J);
 		CommonOps_DDRM.multTransA(J,J,H);
 	}
@@ -66,18 +66,15 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		int M = 3;
 		int N = H.numCols-M;
 
-		HessianSchurComplement_DSCC hm = (HessianSchurComplement_DSCC)alg;
-
-		DMatrixSparseCSC SH = new DMatrixSparseCSC(1,1);
-		DConvertMatrixStruct.convert(H,SH);
+		HessianSchurComplement_DDRM hm = (HessianSchurComplement_DDRM)alg;
 
 		hm.A.reshape(M,M);
 		hm.B.reshape(M,N);
 		hm.D.reshape(N,N);
 
-		CommonOps_DSCC.extract(SH,0,M,0,M,hm.A,0,0);
-		CommonOps_DSCC.extract(SH,0,M,M,M+N,hm.B,0,0);
-		CommonOps_DSCC.extract(SH,M,M+N,M,M+N,hm.D,0,0);
+		CommonOps_DDRM.extract(H,0,M,0,M,hm.A,0,0);
+		CommonOps_DDRM.extract(H,0,M,M,M+N,hm.B,0,0);
+		CommonOps_DDRM.extract(H,M,M+N,M,M+N,hm.D,0,0);
 	}
 
 	@Test
@@ -104,20 +101,6 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected,found,UtilEjml.TEST_F64));
 	}
-
-//
-//	@Test
-//	public void innerVectorHessian() {
-//		HessianSchurComplement_DSCC math = new HessianSchurComplement_DSCC();
-//
-//		DMatrixRMaj v = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);
-//
-//		math.computeHessian(jacLeft,jacRight);
-//		double found = math.innerVectorHessian(v);
-//		double expected = MatrixVectorMult_DSCC.innerProduct(v.data,0,H,v.data,0);
-//
-//		assertEquals(expected,found,UtilEjml.TEST_F64);
-//	}
 
 	@Test
 	public void computeStep() {
