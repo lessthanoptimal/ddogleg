@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -37,27 +37,21 @@ import java.util.Random;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.addSelect;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.randomDraw;
 
-/**
- * <p>
- * Another technique similar to RANSAC known as Least Median of Squares (LMedS).  For each iteration a small
- * number N points are selected. A model is fit to these points and then the error is computed for the whole
- * set.  The model which minimizes the median is selected as the final model.  No pruning or formal
- * selection of inlier set is done.
- * </p>
- *
- * @author Peter Abeles
- */
+/// Another technique similar to RANSAC known as Least Median of Squares (LMedS).  For each iteration a small
+/// number N points are selected. A model is fit to these points and then the error is computed for the whole
+/// set.  The model which minimizes the median is selected as the final model.  No pruning or formal
+/// selection of inlier set is done.
 // TODO Better algorithm for selecting the inlier set.
 // Maybe revert this back to the way it was before and just have it be a separate alg entirely.
 @SuppressWarnings("NullAway.Init")
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Model, Point>, InlierFraction {
-	/** random number generator for selecting points */
+	/// random number generator for selecting points
 	@Getter private final long randSeed;
 
 	// Each trial has its own seed to enable concurrent implementations that will produce identical results
 	protected final FastArray<Random> trialRNG = new FastArray<>(Random.class);
 
-	/** number of times it performs its fit cycle */
+	/// number of times it performs its fit cycle
 	@Getter protected final int totalCycles;
 	// how many points it samples to generate a model from
 	protected int sampleSize;
@@ -65,10 +59,10 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	protected final double maxMedianError;
 	protected final ModelManager<Model> modelManager;
 
-	/** Used to create model generators for each thread */
+	/// Used to create model generators for each thread
 	@Getter @Nullable Factory<ModelGenerator<Model, Point>> factoryGenerator;
 
-	/** Used to create distance functions for each thread */
+	/// Used to create distance functions for each thread
 	@Getter @Nullable Factory<DistanceFromModel<Model, Point>> factoryDistance;
 
 	// list of indexes converting it from match set to input list
@@ -80,25 +74,24 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	protected double errorFraction = 0.5; // 0.5 = median
 
 	protected List<Point> inlierSet;
-	protected final double inlierFrac;
+	/// Fraction of samples which will be considered an inlier. <= 0 disables it
+	@Getter protected final double inlierFrac;
 
 	protected @Nullable TrialHelper helper;
 
-	/** Optional function for initializing generator and distance functions */
+	/// Optional function for initializing generator and distance functions
 	protected @Setter @Nullable Ransac.InitializeModels<Model, Point> initializeModels;
 
 	Class<Model> modelType;
 	Class<Point> pointType;
 
-	/**
-	 * Configures the algorithm.
-	 *
-	 * @param randSeed Random seed used internally.
-	 * @param totalCycles Number of random draws it will make when estimating model parameters.
-	 * @param maxMedianError If the best median error is larger than this it is considered a failure.
-	 * @param inlierFraction Data which is this fraction or lower is considered an inlier and used to
-	 * recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
-	 */
+	/// Configures the algorithm.
+	///
+	/// @param randSeed Random seed used internally.
+	/// @param totalCycles Number of random draws it will make when estimating model parameters.
+	/// @param maxMedianError If the best median error is larger than this it is considered a failure.
+	/// @param inlierFraction Data which is this fraction or lower is considered an inlier and used to
+	/// recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
 	public LeastMedianOfSquares( long randSeed,
 								 int totalCycles,
 								 double maxMedianError,
@@ -124,12 +117,10 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		}
 	}
 
-	/**
-	 * Configures the algorithm.
-	 *
-	 * @param randSeed Random seed used internally.
-	 * @param totalCycles Number of random draws it will make when estimating model parameters.
-	 */
+	/// Configures the algorithm.
+	///
+	/// @param randSeed Random seed used internally.
+	/// @param totalCycles Number of random draws it will make when estimating model parameters.
 	public LeastMedianOfSquares( long randSeed,
 								 int totalCycles,
 								 ModelManager<Model> modelManager,
@@ -146,11 +137,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		sampleSize = helper.modelGenerator.getMinimumPoints();
 	}
 
-	/**
-	 * Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
-	 *
-	 * @param sampleSize Number of points sampled when computing the model.
-	 */
+	/// Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
+	///
+	/// @param sampleSize Number of points sampled when computing the model.
 	public void setSampleSize( int sampleSize ) {
 		this.sampleSize = sampleSize;
 	}
@@ -200,30 +189,25 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		return bestMedian != Double.MAX_VALUE && bestMedian < maxMedianError;
 	}
 
-	protected void computeInlierSet( List<Point> dataSet, int n,
-									 TrialHelper helper ) {
+	protected void computeInlierSet( List<Point> dataSet, int n, TrialHelper helper ) {
 		int numPts = (int)(n*inlierFrac);
+		if (numPts < sampleSize)
+			return;
 
-		if (inlierFrac > 0 && numPts > sampleSize) {
-			inlierSet.clear();
-			helper.modelDistance.setModel(helper.bestParam);
-			helper.modelDistance.distances(dataSet, helper.errors.data);
+		inlierSet.clear();
+		helper.modelDistance.setModel(helper.bestParam);
+		helper.modelDistance.distances(dataSet, helper.errors.data);
 
-			int[] indexes = new int[n];
-			QuickSelect.selectIndex(helper.errors.data, numPts, n, indexes);
-			for (int i = 0; i < numPts; i++) {
-				int origIndex = indexes[i];
-				inlierSet.add(dataSet.get(origIndex));
-				matchToInput[i] = origIndex;
-			}
-		} else {
-			inlierSet = dataSet;
+		int[] indexes = new int[n];
+		QuickSelect.selectIndex(helper.errors.data, numPts, n, indexes);
+		for (int i = 0; i < numPts; i++) {
+			int origIndex = indexes[i];
+			inlierSet.add(dataSet.get(origIndex));
+			matchToInput[i] = origIndex;
 		}
 	}
 
-	/**
-	 * If the maximum number of iterations has changed then re-generate the RNG for each trial
-	 */
+	/// If the maximum number of iterations has changed then re-generate the RNG for each trial
 	protected void checkTrialGenerators() {
 		if (trialRNG.size == totalCycles) {
 			return;
@@ -289,25 +273,24 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		return Objects.requireNonNull(helper).bestParam;
 	}
 
-	/**
-	 * If configured to computer the inlier set it returns the computed inliers.  Otherwise
-	 * it returns the data set orginally passed in.
-	 *
-	 * @return Set of points that are inliers to the returned model parameters..
-	 */
+	/// Returns the inlier set based on [#inlierFrac]. Otherwise throws an exception since its invalid.
+	///
+	/// @return Set of points that are inliers to the returned model parameters.
 	@Override
 	public List<Point> getMatchSet() {
+		if (inlierFrac <= 0.0)
+			throw new IllegalArgumentException("inlierFrac not specified. There is no match set");
 		return inlierSet;
 	}
 
 	@Override
 	public int getInputIndex( int matchIndex ) {
+		if (inlierFrac <= 0.0)
+			throw new IllegalArgumentException("inlierFrac not specified. There is no match set");
 		return matchToInput[matchIndex];
 	}
 
-	/**
-	 * Value of the best median error.
-	 */
+	/// Value of the best median error.
 	@Override
 	public double getFitQuality() {
 		return bestMedian;
