@@ -174,11 +174,11 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = false
-    if (path.contains("compileBenchmark") || path.contains("generate"))
+    // lower case so it isn't sensitive to how Gradle capitalizes source set names in task names
+    def taskName = name.toLowerCase()
+    if (taskName.contains("benchmark") || taskName.contains("generate") || taskName.contains("example"))
         return
-    if (path.contains("example"))
-        return
-    if (name.contains("Test"))
+    if (taskName.contains("test"))
         return
 
     options.errorprone.enabled = true
