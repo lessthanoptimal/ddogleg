@@ -3,13 +3,16 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
-Version:  0.25.2
+Version:  0.25.4
 Date:     2026-
 
 - Primitive DogArray
  * You can add arbitrary number of elements
 - HessianSchurComplement
  * Fix bugs where input matrix was overwritten
+- Least Median of Squares
+ * Revised threshold logic
+ * Threshold via estimated stdev using Rousseeuw
 
 ------------------------------------------------------
 Version:  0.25.1 and 0.25.2

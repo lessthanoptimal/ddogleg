@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -24,13 +24,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * Claims to fit a model but really doesn't
- *
- * @author Peter Abeles
- */
+/// Claims to fit a model but really doesn't
 public class DoNothingModelFitter implements ModelFitter<double[], Double>, ModelGenerator<double[], Double> {
-
 	int minPoints;
 
 	public DoNothingModelFitter( int minPoints ) {
@@ -48,13 +43,7 @@ public class DoNothingModelFitter implements ModelFitter<double[], Double>, Mode
 		return true;
 	}
 
-	@Override
-	public double getFitScore() {
-		return 0;
-	}
+	@Override public double getFitScore() {return 0;}
 
-	@Override
-	public int getMinimumPoints() {
-		return minPoints;
-	}
+	@Override public int getMinimumPoints() {return minPoints;}
 }

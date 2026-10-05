@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -190,6 +191,31 @@ public abstract class GenericModelMatcherPostTests {
 	}
 
 	/**
+	 * The match set must only contain points from the most recent call to process(). Processing a smaller
+	 * input after a larger one makes it easy to see if results from the previous call are returned.
+	 */
+	@Test public void matchSetFromLatestInput() {
+		double tol = 0.2;
+
+		ModelMatcherPost<double[], Double> alg = createModel(1, tol);
+
+		assertTrue(alg.process(createSampleSet(100, 2.5, tol*0.9, 0.1)));
+		assertTrue(alg.getMatchSet().size() > 1);
+
+		// The smallest input it can process
+		List<Double> samples = createSampleSet(alg.getMinimumSize(), 7.0, tol*0.5, 0.0);
+		assertTrue(alg.process(samples));
+
+		List<Double> matchSet = alg.getMatchSet();
+		assertTrue(matchSet.size() <= samples.size());
+		for (int i = 0; i < matchSet.size(); i++) {
+			int index = alg.getInputIndex(i);
+			assertTrue(index >= 0 && index < samples.size());
+			assertSame(samples.get(index), matchSet.get(i));
+		}
+	}
+
+	/**
 	 * Make sure that if reset is called it produces identical results
 	 */
 	@Test public void reset() {
@@ -209,12 +235,13 @@ public abstract class GenericModelMatcherPostTests {
 
 		assertTrue(alg.process(samples));
 		var matchesA = new ArrayList<Double>(alg.getMatchSet());
+		double modelA = alg.getModelParameters()[0];
 
 		assertTrue(alg.process(samples));
 		var matchesB = new ArrayList<Double>(alg.getMatchSet());
 
-		// See if this produces different results
-		boolean matched = matchesA.size() == matchesB.size();
+		// See if this produces different results. The model is checked too since the match set can be every point
+		boolean matched = matchesA.size() == matchesB.size() && modelA == alg.getModelParameters()[0];
 		if (matched) {
 			for (int i = 0; i < matchesA.size(); i++) {
 				if (!matchesA.get(i).equals(matchesB.get(i))) {
@@ -232,6 +259,7 @@ public abstract class GenericModelMatcherPostTests {
 		alg.reset();
 		assertTrue(alg.process(samples));
 		var matchesC = new ArrayList<Double>(alg.getMatchSet());
+		assertEquals(modelA, alg.getModelParameters()[0]);
 		assertEquals(matchesA.size(), matchesC.size());
 		for (int i = 0; i < matchesA.size(); i++) {
 			assertEquals(matchesA.get(i), matchesC.get(i));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -50,7 +50,7 @@ public class ExampleRobustLossLeastSquares {
 
 		// Define the function being optimized and create the optimizer
 		var func = new FunctionLineDistanceEuclidean(points);
-		UnconstrainedLeastSquares<DMatrixRMaj> optimizer = FactoryOptimization.levenbergMarquardt(null, true);
+		UnconstrainedLeastSquares<DMatrixRMaj> optimizer = FactoryOptimization.levenbergMarquardt(null);
 
 		// if no jacobian is specified it will be computed numerically
 		optimizer.setFunction(func, null);

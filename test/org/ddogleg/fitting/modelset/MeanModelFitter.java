@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -22,11 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Computes the mean of a set of points.
- *
- * @author Peter Abeles
- */
+/// Computes the mean of a set of points.
 public class MeanModelFitter implements ModelFitter<double[], Double>, ModelGenerator<double[], Double> {
 	@Override
 	public boolean generate( List<Double> dataSet, double[] param ) {
@@ -48,13 +44,7 @@ public class MeanModelFitter implements ModelFitter<double[], Double>, ModelGene
 		return true;
 	}
 
-	@Override
-	public double getFitScore() {
-		return 0;
-	}
+	@Override public double getFitScore() {return 0;}
 
-	@Override
-	public int getMinimumPoints() {
-		return 1;
-	}
+	@Override public int getMinimumPoints() {return 1;}
 }

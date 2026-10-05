@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -33,11 +33,7 @@ import java.util.Objects;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.addSelect;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.randomDraw;
 
-/**
- * Concurrent version of {@link LeastMedianOfSquares}
- *
- * @author Peter Abeles
- */
+/// Concurrent version of [LeastMedianOfSquares]
 public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<Model, Point> {
 	// Storage for each thread's state
 	final GrowArray<TrialHelper> helpers;
@@ -50,14 +46,11 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 	volatile @Nullable TrialHelper bestHelper;
 	//------------------- END LOCK OWNED
 
-	/**
-	 * @see LeastMedianOfSquares
-	 */
+	/// @see LeastMedianOfSquares
 	public LeastMedianOfSquares_MT( long randSeed, int totalCycles, double maxMedianError,
-									double inlierFraction,
 									ModelManager<Model> modelManager,
 									Class<Point> pointType ) {
-		super(randSeed, totalCycles, maxMedianError, inlierFraction, modelManager, pointType);
+		super(randSeed, totalCycles, maxMedianError, modelManager, pointType);
 
 		// Initialize size is zero. so factories not being defined won't cause problems
 		helpers = new GrowArray<>(TrialHelper::new, ( a ) -> a.initialize(matchToInput.length), (Class)TrialHelper.class);
@@ -67,7 +60,7 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 									int totalCycles,
 									ModelManager<Model> modelManager,
 									Class<Point> pointType ) {
-		this(randSeed, totalCycles, Double.MAX_VALUE, 0, modelManager, pointType);
+		this(randSeed, totalCycles, Double.MAX_VALUE, modelManager, pointType);
 	}
 
 	@Override
@@ -85,6 +78,7 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 		}
 
 		bestMedian = Double.MAX_VALUE;
+		bestHelper = null;
 
 		helpers.reset();
 		DDoglegConcurrency.loopFor(0, totalCycles, 1, helpers, ( helper, trial ) -> {
@@ -98,9 +92,9 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 			helper.modelDistance.setModel(helper.candidate);
 			helper.modelDistance.distances(dataSet, helper.errors.data);
 
-			double median = QuickSelect.select(helper.errors.data, (int)(N*errorFraction + 0.5), N);
+			double median = QuickSelect.select(helper.errors.data, selectThresholdIndex(N, errorFraction), N);
 
-			// see if it could be better and avoid the synchronize
+			// see if it could be better and avoid synchronize
 			if (median > bestMedian) {
 				return;
 			}
@@ -128,8 +122,7 @@ public class LeastMedianOfSquares_MT<Model, Point> extends LeastMedianOfSquares<
 
 		super.helper = bestHelper;
 
-		// if configured to do so compute the inlier set
-		computeInlierSet(dataSet, N, Objects.requireNonNull(super.helper));
+		computeInliers(dataSet, N, Objects.requireNonNull(super.helper));
 
 		// If bestMedian == MAX_VALUE that means no model was found. This needs to fail even if maxMedianError
 		// has been set to MAX_VALUE.
