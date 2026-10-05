@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -279,9 +279,6 @@ public class TestRansac extends GenericModelMatcherPostTests {
 			return true;
 		}
 
-		@Override
-		public int getMinimumPoints() {
-			return 1;
-		}
+		@Override public int getMinimumPoints() {return 1;}
 	}
 }

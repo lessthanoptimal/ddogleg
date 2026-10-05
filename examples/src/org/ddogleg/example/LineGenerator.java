@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -50,8 +50,5 @@ public class LineGenerator implements ModelGenerator<Line2D, Point2D> {
 		return true;
 	}
 
-	@Override
-	public int getMinimumPoints() {
-		return 2;
-	}
+	@Override public int getMinimumPoints() {return 2;}
 }

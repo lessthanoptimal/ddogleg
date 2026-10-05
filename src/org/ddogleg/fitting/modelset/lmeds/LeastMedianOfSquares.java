@@ -37,12 +37,12 @@ import java.util.Random;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.addSelect;
 import static org.ddogleg.fitting.modelset.ransac.Ransac.randomDraw;
 
-/// Another technique similar to RANSAC known as Least Median of Squares (LMedS).  For each iteration a small
+/// Another technique similar to RANSAC known as Least Median of Squares (LMedS). For each iteration a small
 /// number N points are selected. A model is fit to these points and then the error is computed for the whole
-/// set.  The model which minimizes the median is selected as the final model.  No pruning or formal
-/// selection of inlier set is done.
-// TODO Better algorithm for selecting the inlier set.
-// Maybe revert this back to the way it was before and just have it be a separate alg entirely.
+/// set. The model which minimizes the median is selected as the final model.
+///
+/// Inliers are selected using Rousseeuw reweighting by default, this uses the median value to derive
+/// a normal distribution. Alternatively, N-best error fraction can be used to define the inlier set.
 @SuppressWarnings("NullAway.Init")
 public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Model, Point>, InlierFraction {
 	/// random number generator for selecting points
@@ -53,8 +53,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 
 	/// number of times it performs its fit cycle
 	@Getter protected final int totalCycles;
-	// how many points it samples to generate a model from
-	protected int sampleSize;
+	/// how many points it samples to generate a model from
+	@Setter protected int sampleSize;
+
 	// if the best model has more than this error then it is considered a bad match
 	protected final double maxMedianError;
 	protected final ModelManager<Model> modelManager;
@@ -73,9 +74,19 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	// The specifies the error fraction its optimizing against. Almost always this should be 0.5
 	protected double errorFraction = 0.5; // 0.5 = median
 
-	protected List<Point> inlierSet;
+	protected final List<Point> inlierSet = new ArrayList<>();
 	/// Fraction of samples which will be considered an inlier. <= 0 disables it
-	@Getter protected final double inlierFrac;
+	@Getter protected double inlierFraction;
+
+	/// Computes an inlier threshold by assuming the distribution is normal. Sigma defines
+	/// the number of stdev the error can be for it to be an inlier. If inlier fraction is
+	/// specified it will take precedence.
+	@Getter @Setter protected double inlierRouseeuwSigma = 2.5;
+
+	/// Largest error an inlier can have. With [#inlierRouseeuwSigma] it's the computed threshold. With
+	/// [#inlierFraction] or too few points to estimate sigma, it's the error of the worst inlier and points with
+	/// an identical error might have been excluded. NaN until process() has been called.
+	@Getter protected double inlierThreshold = Double.NaN;
 
 	protected @Nullable TrialHelper helper;
 
@@ -90,12 +101,9 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 	/// @param randSeed Random seed used internally.
 	/// @param totalCycles Number of random draws it will make when estimating model parameters.
 	/// @param maxMedianError If the best median error is larger than this it is considered a failure.
-	/// @param inlierFraction Data which is this fraction or lower is considered an inlier and used to
-	/// recompute model parameters at the end.  Set to 0 to turn off. Domain: 0 to 1.
 	public LeastMedianOfSquares( long randSeed,
 								 int totalCycles,
 								 double maxMedianError,
-								 double inlierFraction,
 								 ModelManager<Model> modelManager,
 								 Class<Point> pointType ) {
 		if (totalCycles <= 0)
@@ -104,17 +112,10 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		this.randSeed = randSeed;
 		this.totalCycles = totalCycles;
 		this.maxMedianError = maxMedianError;
-		this.inlierFrac = inlierFraction;
 		this.pointType = pointType;
 		this.modelManager = modelManager;
 
 		this.modelType = (Class)modelManager.createModelInstance().getClass();
-
-		if (inlierFrac > 0.0) {
-			inlierSet = new ArrayList<>();
-		} else if (inlierFrac > 1.0) {
-			throw new IllegalArgumentException("Inlier fraction must be <= 1");
-		}
 	}
 
 	/// Configures the algorithm.
@@ -125,7 +126,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 								 int totalCycles,
 								 ModelManager<Model> modelManager,
 								 Class<Point> pointType ) {
-		this(randSeed, totalCycles, Double.MAX_VALUE, 0, modelManager, pointType);
+		this(randSeed, totalCycles, Double.MAX_VALUE, modelManager, pointType);
 	}
 
 	@Override
@@ -137,11 +138,11 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		sampleSize = helper.modelGenerator.getMinimumPoints();
 	}
 
-	/// Number of points it samples to compute a model from.  Typically this is the minimum number of points needed.
-	///
-	/// @param sampleSize Number of points sampled when computing the model.
-	public void setSampleSize( int sampleSize ) {
-		this.sampleSize = sampleSize;
+	/// Fraction of samples which will be considered an inlier. <= 0 disables it
+	public void setInlierFraction( double inlierFraction ) {
+		if (inlierFraction > 1.0)
+			throw new IllegalArgumentException("Inlier fraction must be <= 1");
+		this.inlierFraction = inlierFraction;
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 			helper.modelDistance.setModel(helper.candidate);
 			helper.modelDistance.distances(dataSet, helper.errors.data);
 
-			double median = QuickSelect.select(helper.errors.data, (int)(N*errorFraction + 0.5), N);
+			double median = QuickSelect.select(helper.errors.data, selectThresholdIndex(N, errorFraction), N);
 
 			if (median < bestMedian) {
 				helper.swapModels();
@@ -181,30 +182,81 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 			}
 		}
 
-		// if configured to do so compute the inlier set
-		computeInlierSet(dataSet, N, helper);
+		computeInliers(dataSet, N, helper);
 
 		// If bestMedian == MAX_VALUE that means no model was found. This needs to fail even if maxMedianError
 		// has been set to MAX_VALUE.
 		return bestMedian != Double.MAX_VALUE && bestMedian < maxMedianError;
 	}
 
-	protected void computeInlierSet( List<Point> dataSet, int n, TrialHelper helper ) {
-		int numPts = (int)(n*inlierFrac);
-		if (numPts < sampleSize)
-			return;
-
+	/// Computes the inlier set for the best model using [#inlierFraction] or [#inlierRouseeuwSigma]
+	protected void computeInliers( List<Point> dataSet, int N, TrialHelper helper ) {
+		inlierThreshold = Double.NaN;
 		inlierSet.clear();
 		helper.modelDistance.setModel(helper.bestParam);
 		helper.modelDistance.distances(dataSet, helper.errors.data);
 
+		if (inlierFraction > 0) {
+			computeInliersFromFraction(dataSet, N, helper);
+		} else {
+			computeInliersFromSigma(dataSet, N, helper);
+		}
+	}
+
+	/// Selects the [#inlierFraction] of points with the smallest error. Assumes errors have been computed.
+	protected void computeInliersFromFraction( List<Point> dataSet, int n, TrialHelper helper ) {
+		// ceil() so there's at least as many inliers as requested. Tolerance avoids rounding up 3.0000000000000004.
+		// Can't exceed n since process() already rejected n < sampleSize
+		int numPts = Math.max(sampleSize, (int)Math.ceil(n*inlierFraction - 1e-12));
+		selectSmallestErrors(dataSet, n, numPts, helper);
+	}
+
+	/// Adds the numPts points with the smallest errors to the inlier set and sets the threshold to the largest error
+	protected void selectSmallestErrors( List<Point> dataSet, int n, int numPts, TrialHelper helper ) {
 		int[] indexes = new int[n];
-		QuickSelect.selectIndex(helper.errors.data, numPts, n, indexes);
+		// k is an index, so the numPts smallest are at 0 to numPts-1
+		QuickSelect.selectIndex(helper.errors.data, numPts - 1, n, indexes);
 		for (int i = 0; i < numPts; i++) {
 			int origIndex = indexes[i];
 			inlierSet.add(dataSet.get(origIndex));
 			matchToInput[i] = origIndex;
 		}
+		inlierThreshold = helper.errors.data[indexes[numPts - 1]];
+	}
+
+	/// Computes inlier using Rousseeuw's reweighting. Assumes errors have been computed.
+	///
+	/// Rousseeuw and Leroy, "Robust Regression and Outlier Detection", 1987
+	protected void computeInliersFromSigma( List<Point> dataSet, int N, TrialHelper helper ) {
+		// p in the paper is the number of points in the minimal sample, which have zero error. Not the model's DOF.
+		// If there are no other points then the noise can't be estimated.
+		if (N <= sampleSize) {
+			selectSmallestErrors(dataSet, N, N, helper);
+			return;
+		}
+
+		// select() will modify the array, so a copy is needed
+		helper.workErrors.setTo(helper.errors.data, 0, N);
+		double median = QuickSelect.select(helper.workErrors.data, selectThresholdIndex(N, 0.5), N);
+
+		// sigma = 1.4826*(1 + 5/(n - p))*sqrt(median(r^2)). Distance is not squared so sqrt(median(r^2)) = median(|r|)
+		// p=sampleSize should be verified more carefully. Original justification is heuristic and obtaining
+		// the model DOF is problematic.
+		double sigma = 1.4826*(1.0 + 5.0/(N - sampleSize))*median;
+		inlierThreshold = inlierRouseeuwSigma*sigma;
+
+		for (int i = 0; i < N; i++) {
+			double error = helper.errors.data[i];
+			if (Math.abs(error) <= inlierThreshold) {
+				matchToInput[inlierSet.size()] = i;
+				inlierSet.add(dataSet.get(i));
+			}
+		}
+	}
+
+	/// Index of the element at the specified fraction. Clamped so it's always a valid index
+	protected static int selectThresholdIndex( int N, double fraction ) {
+		return Math.min(N - 1, (int)(N*fraction + 0.5));
 	}
 
 	/// If the maximum number of iterations has changed then re-generate the RNG for each trial
@@ -239,6 +291,8 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 
 		// stores all the errors for quicker sorting
 		protected final DogArray_F64 errors = new DogArray_F64();
+		// work space for computing the median without modifying errors
+		protected final DogArray_F64 workErrors = new DogArray_F64();
 
 		public void initialize( int datasetSize ) {
 			selectedIdx.reset();
@@ -273,20 +327,17 @@ public class LeastMedianOfSquares<Model, Point> implements ModelMatcherPost<Mode
 		return Objects.requireNonNull(helper).bestParam;
 	}
 
-	/// Returns the inlier set based on [#inlierFrac]. Otherwise throws an exception since its invalid.
+	/// Returns the inlier set. If [#inlierFraction] > 0 then it's that fraction of points with the smallest error,
+	/// otherwise it's found using Rousseeuw's reweighting and [#inlierRouseeuwSigma].
 	///
 	/// @return Set of points that are inliers to the returned model parameters.
 	@Override
 	public List<Point> getMatchSet() {
-		if (inlierFrac <= 0.0)
-			throw new IllegalArgumentException("inlierFrac not specified. There is no match set");
 		return inlierSet;
 	}
 
 	@Override
 	public int getInputIndex( int matchIndex ) {
-		if (inlierFrac <= 0.0)
-			throw new IllegalArgumentException("inlierFrac not specified. There is no match set");
 		return matchToInput[matchIndex];
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,27 +20,17 @@ package org.ddogleg.fitting.modelset;
 
 import java.util.List;
 
-/**
- * Given a set of points create a model hypothesis.  In most applications just a single hypothesis
- * will be generated.  In SFM applications geometric ambiguities can cause multiple hypotheses to be
- * created.
- *
- * @author Peter Abeles
- */
+/// Given a set of points create a model hypothesis.  In most applications just a single hypothesis
+/// will be generated.  In SFM applications geometric ambiguities can cause multiple hypotheses to be
+/// created.
 public interface ModelGenerator<Model, Point> {
-	/**
-	 * Creates a list of hypotheses from the set of sample points.
-	 *
-	 * @param dataSet Set of sample points.  Typically the minimum number possible.
-	 * @param output Storage for generated model.
-	 * @return true if a model was generated, otherwise false is none were
-	 */
+	/// Creates a list of hypotheses from the set of sample points.
+	///
+	/// @param dataSet Set of sample points. Typically, the minimum number possible.
+	/// @param output Storage for generated model.
+	/// @return true if a model was generated, otherwise false is none were
 	boolean generate( List<Point> dataSet, Model output );
 
-	/**
-	 * The minimum number of points required to fit a data set
-	 *
-	 * @return Number of points.
-	 */
+	/// The minimum number of points required to estimate the model
 	int getMinimumPoints();
 }
