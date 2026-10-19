@@ -35,7 +35,6 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 	int M = 10;
 	int N = 6;
 	int split = 4;
-	Random rand = new Random(234);
 
 	DMatrixRMaj jacLeft = RandomMatrices_DDRM.rectangle(M, split, -1, 1, rand);
 	DMatrixRMaj jacRight = RandomMatrices_DDRM.rectangle(M, N - split, -1, 1, rand);

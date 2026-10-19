@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.misc;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.struct.DogArray;
 import org.ddogleg.struct.DogArray_I32;
 import org.ejml.UtilEjml;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-class TestMeanArrayF64 {
+class TestMeanArrayF64 extends DDoglegJUnit {
 	/**
 	 * Create a situation that's easy to hand compute the solution and see if it's right
 	 */

@@ -18,10 +18,11 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.junit.jupiter.api.Test;
 
-public class TestLeastSquaresSwitcher {
+public class TestLeastSquaresSwitcher extends DDoglegJUnit {
 	/**
 	 * Constructs different solvers and sees if it blows up
 	 */

@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.FactoryOptimization;
@@ -44,11 +45,10 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestUnconLeastSqTrustRegionSchur_F64 {
+public class TestUnconLeastSqTrustRegionSchur_F64 extends DDoglegJUnit {
 	int M = 20;
 	int N = 8;
 	int split = 5;
-	Random rand = new Random(234);
 
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();

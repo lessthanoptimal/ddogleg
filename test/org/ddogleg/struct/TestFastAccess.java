@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestFastAccess {
+public class TestFastAccess extends DDoglegJUnit {
 	@Test void find() {
 		var alg = new DogArray<>(DummyData::new);
 		assertNull(alg.find(( a ) -> a.value == 5));

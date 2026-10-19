@@ -18,6 +18,7 @@
 
 package org.ddogleg.stats;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestUtilGaussian {
+public class TestUtilGaussian extends DDoglegJUnit {
 
 	/**
 	 * Test the PDF based on some of its properties

@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.ComputeMeanClusters;
 import org.ddogleg.clustering.PointDistance;
 import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-class TestStandardKMeans_MT {
+class TestStandardKMeans_MT extends DDoglegJUnit {
 	/**
 	 * Create a simple random scenario and compare single to threaded results
 	 */

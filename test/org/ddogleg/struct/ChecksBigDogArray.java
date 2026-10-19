@@ -18,15 +18,15 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class ChecksBigDogArray<Array> {
+public abstract class ChecksBigDogArray<Array> extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth );
 

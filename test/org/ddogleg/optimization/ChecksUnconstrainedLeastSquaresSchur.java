@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.funcs.EvalFunctionBundle2D;
 import org.ejml.data.DMatrix;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Common checks for all least squares implementations */
-public abstract class ChecksUnconstrainedLeastSquaresSchur<M extends DMatrix> {
+public abstract class ChecksUnconstrainedLeastSquaresSchur<M extends DMatrix> extends DDoglegJUnit {
 	protected abstract UnconstrainedLeastSquaresSchur<M> createSearch( double minimumValue );
 
 	protected abstract EvalFunctionBundle2D<M> createEvalFunction();

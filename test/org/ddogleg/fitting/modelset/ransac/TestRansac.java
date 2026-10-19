@@ -144,7 +144,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 
 		List<Integer> selected = new ArrayList<>();
 
-		int numTrials = 10000;
+		int numTrials = 40000;
 		for (int i = 0; i < numTrials; i++) {
 			Ransac.randomDraw(selectedIdx, dataSet.size(), 3, rand);
 			Ransac.addSelect(selectedIdx, 3, dataSet, selected);

@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
@@ -33,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestGaussianGmm_F64 {
+public class TestGaussianGmm_F64 extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test void zero() {
 		var g = new GaussianGmm_F64(3);

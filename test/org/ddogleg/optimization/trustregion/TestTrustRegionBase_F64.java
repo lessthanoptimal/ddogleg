@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.trustregion;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.GaussNewtonBase_F64;
 import org.ddogleg.optimization.OptimizationException;
 import org.ddogleg.optimization.math.HessianMath;
@@ -31,7 +32,7 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestTrustRegionBase_F64 {
+public class TestTrustRegionBase_F64 extends DDoglegJUnit {
 	@Test void initialize() {
 		MockTrustRegionBase_F64 alg = createFixedCost(1, 0.5);
 

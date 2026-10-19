@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestCountingSort {
+public class TestCountingSort extends DDoglegJUnit {
 	@Test
 	public void sort_inplace() {
 		int a[] = new int[]{66,4,2,9,5,4,5,72,20,4,56,94,53,2,55,5,5,5,5,5,7,89,4,3,2};

@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-class TestFastArray {
+class TestFastArray extends DDoglegJUnit {
 	@Test
 	void toList() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);

@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset.lmeds;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.fitting.modelset.DoubleArrayManager;
 import org.ddogleg.fitting.modelset.GenericModelMatcherPostTests;
 import org.ddogleg.fitting.modelset.MeanModelFitter;
@@ -31,7 +32,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestLeastMedianOfSquares_MT {
+class TestLeastMedianOfSquares_MT extends DDoglegJUnit {
 	@Nested class Fraction extends Common {
 		Fraction() {super(0.9);}
 	}

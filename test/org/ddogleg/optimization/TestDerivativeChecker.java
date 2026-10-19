@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.functions.FunctionNtoN;
 import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestDerivativeChecker {
+public class TestDerivativeChecker extends DDoglegJUnit {
 	@Test
 	public void gradient() {
 

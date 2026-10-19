@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.FactoryClustering;
 import org.ddogleg.clustering.kmeans.StandardKMeans;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans;
@@ -38,9 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestSeedFromKMeans_F64 {
+public class TestSeedFromKMeans_F64 extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void selectSeeds() {

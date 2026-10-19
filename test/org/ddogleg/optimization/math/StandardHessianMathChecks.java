@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -31,9 +32,8 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class StandardHessianMathChecks {
+public abstract class StandardHessianMathChecks extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 	HessianMath alg;
 
 	protected StandardHessianMathChecks( HessianMath alg ) {

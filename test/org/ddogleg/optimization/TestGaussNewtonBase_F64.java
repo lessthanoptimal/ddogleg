@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.HessianMath_DDRM;
 import org.ejml.UtilEjml;
@@ -33,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGaussNewtonBase_F64 {
+public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 
-	Random rand = new Random(2345);
 
 	@Test
 	public void initialize() {

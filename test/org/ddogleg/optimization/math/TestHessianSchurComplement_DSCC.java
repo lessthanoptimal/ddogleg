@@ -41,7 +41,6 @@ public class TestHessianSchurComplement_DSCC extends StandardHessianMathChecks {
 	int M = 10;
 	int N = 6;
 	int split = 4;
-	Random rand = new Random(234);
 
 	IGrowArray gw = new IGrowArray();
 	DGrowArray gx = new DGrowArray();

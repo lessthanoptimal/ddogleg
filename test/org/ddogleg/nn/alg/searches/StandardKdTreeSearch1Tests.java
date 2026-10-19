@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeSearch1;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class StandardKdTreeSearch1Tests {
+public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 
 	// DOF of a point
 	public int N = 2;

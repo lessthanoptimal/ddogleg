@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.funcs;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.DerivativeChecker;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.wrap.SchurJacobian_to_NtoMxN;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestEvalFunctionBundle2D_DDRM {
+public class TestEvalFunctionBundle2D_DDRM extends DDoglegJUnit {
 	@Test
 	public void compareToNumerical() {
 		EvalFunctionBundle2D_DDRM eval = new EvalFunctionBundle2D_DDRM(234,20,10,2,3);

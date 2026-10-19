@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver.impl;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
@@ -33,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestRootFinderCompanion {
+public class TestRootFinderCompanion extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void basicTest() {

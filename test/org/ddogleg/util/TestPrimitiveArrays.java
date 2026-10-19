@@ -18,6 +18,7 @@
 
 package org.ddogleg.util;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-class TestPrimitiveArrays {
+class TestPrimitiveArrays extends DDoglegJUnit {
 	@Test void intersection_FindMinMax() {
 		int[] setA = new int[]{8, 7, 6, 3, 1, 0, -2, -5};
 		int[] setB = new int[]{3, 4, 5, -3, 1, 7, -2, -5};
@@ -94,7 +95,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_byte() {
-		Random rand = new Random(234);
 		byte[] values = new byte[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = (byte)i;
@@ -139,7 +139,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_short() {
-		Random rand = new Random(234);
 		short[] values = new short[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = (short)i;
@@ -184,7 +183,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_int() {
-		Random rand = new Random(234);
 		int[] values = new int[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = i;
@@ -229,7 +227,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_long() {
-		Random rand = new Random(234);
 		long[] values = new long[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = i;
@@ -274,7 +271,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_float() {
-		Random rand = new Random(234);
 		float[] values = new float[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = i;
@@ -319,7 +315,6 @@ class TestPrimitiveArrays {
 	}
 
 	@Test void shuffle_double() {
-		Random rand = new Random(234);
 		double[] values = new double[100];
 		for (int i = 0; i < 90; i++) {
 			values[i + 10] = i;

@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -25,8 +26,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class TestStraightInsertionSort {
-    Random rand = new Random(0xfeed);
+public class TestStraightInsertionSort extends DDoglegJUnit {
 
 
     @Test

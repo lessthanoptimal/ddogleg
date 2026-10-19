@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings("NullAway")
-public class TestDogLinkedList {
+public class TestDogLinkedList extends DDoglegJUnit {
 	@Test
 	public void reset() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();

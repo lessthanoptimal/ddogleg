@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.misc;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-class TestEuclideanSqArrayF64 {
+class TestEuclideanSqArrayF64 extends DDoglegJUnit {
 	@Test void distance() {
 		var alg = new EuclideanSqArrayF64(5);
 

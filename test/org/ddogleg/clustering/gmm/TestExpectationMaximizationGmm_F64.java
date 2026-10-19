@@ -43,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64 {
 
-	Random rand = new Random(234);
 	
 	/**
 	 * Computes the expectation for several points and a variable number of Gaussians.  Sees if points which

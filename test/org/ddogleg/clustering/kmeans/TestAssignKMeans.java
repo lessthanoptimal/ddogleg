@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
 import org.ddogleg.struct.FastArray;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"NullAway"})
-public class TestAssignKMeans {
+public class TestAssignKMeans extends DDoglegJUnit {
 	@Test void assign() {
 		var clusters = new FastArray<>(double[].class);
 

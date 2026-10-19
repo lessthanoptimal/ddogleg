@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -28,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestPolynomialOps {
+public class TestPolynomialOps extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void quadraticVertex() {

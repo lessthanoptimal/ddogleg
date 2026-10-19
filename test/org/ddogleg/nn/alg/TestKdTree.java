@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestKdTree {
+public class TestKdTree extends DDoglegJUnit {
 
 	@Test
 	public void isLeaf() {

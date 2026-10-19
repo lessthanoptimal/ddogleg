@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,8 +29,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSortComparator {
-	Random rand = new Random(0xfeed4);
+public class TestQuickSortComparator extends DDoglegJUnit {
 
 	Comparator<Double> comparator = Double::compareTo;
 

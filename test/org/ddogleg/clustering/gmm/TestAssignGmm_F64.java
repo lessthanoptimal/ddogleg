@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAssignGmm_F64 {
+public class TestAssignGmm_F64 extends DDoglegJUnit {
 	@Test void assign() {
 		List<GaussianGmm_F64> clusters = new ArrayList<>();
 

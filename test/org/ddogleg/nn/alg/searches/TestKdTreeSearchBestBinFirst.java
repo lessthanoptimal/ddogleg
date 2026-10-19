@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public class TestKdTreeSearchBestBinFirst {
+public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 
 	/**
 	 * Provide an insufficient number of steps to produce an optimal solution and see if it produces the expected

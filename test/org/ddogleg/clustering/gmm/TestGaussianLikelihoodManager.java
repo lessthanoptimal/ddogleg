@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.struct.FastArray;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.equation.Equation;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestGaussianLikelihoodManager {
+public class TestGaussianLikelihoodManager extends DDoglegJUnit {
 	@Test void likelihood() {
 		int DOF = 3;
 

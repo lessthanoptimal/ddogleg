@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.CallCounterNtoS;
 import org.ddogleg.optimization.TrivialFunctionNtoS;
 import org.ddogleg.optimization.derivative.NumericalGradientForward;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestCachedNumericalGradientLineFunction {
+public class TestCachedNumericalGradientLineFunction extends DDoglegJUnit {
 
 	/**
 	 * Use setInput(double[]) and see if it has the expected behavior

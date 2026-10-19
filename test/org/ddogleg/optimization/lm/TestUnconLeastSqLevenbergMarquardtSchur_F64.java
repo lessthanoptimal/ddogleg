@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
 import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.FactoryOptimization;
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestUnconLeastSqLevenbergMarquardtSchur_F64 {
+public class TestUnconLeastSqLevenbergMarquardtSchur_F64 extends DDoglegJUnit {
 	@Test void functionGradientHessian() {
 		UnconLeastSqLevenbergMarquardtSchur_F64<DMatrixSparseCSC> lm = declare();
 

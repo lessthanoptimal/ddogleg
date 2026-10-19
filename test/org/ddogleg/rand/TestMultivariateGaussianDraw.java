@@ -18,6 +18,7 @@
 
 package org.ddogleg.rand;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
@@ -28,7 +29,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class TestMultivariateGaussianDraw
+public class TestMultivariateGaussianDraw extends DDoglegJUnit
 {
     public static int N = 6000;
 

@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.quasinewton;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.MatrixFeatures_DDRM;
@@ -33,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestEquationsBFGS {
+public class TestEquationsBFGS extends DDoglegJUnit {
 	
-	Random rand = new Random(234);
 
 	@Test
 	public void update() {

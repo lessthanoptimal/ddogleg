@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Peter Abeles
  */
-public class TestAxisSplitRuleRandomK {
+public class TestAxisSplitRuleRandomK extends DDoglegJUnit {
 
 	@Test
 	public void basic() {

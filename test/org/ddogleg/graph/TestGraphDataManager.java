@@ -18,6 +18,7 @@
 
 package org.ddogleg.graph;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestGraphDataManager
+public class TestGraphDataManager extends DDoglegJUnit
 {
 	@Test
 	void reset()

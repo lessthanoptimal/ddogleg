@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.fitting.modelset.distance.DistanceFromMeanModel;
 import org.junit.jupiter.api.Test;
 
@@ -37,9 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericModelMatcherPostTests {
+public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
 
-	protected Random rand = new Random(0x353456);
 
 	// how many of the points is it expected to match
 	protected double minMatchFrac = 1.0;

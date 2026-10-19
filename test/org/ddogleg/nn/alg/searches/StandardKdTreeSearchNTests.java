@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg.searches;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeResult;
 import org.ddogleg.nn.alg.KdTreeSearchN;
@@ -39,12 +40,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class StandardKdTreeSearchNTests {
+public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 
 	public int N = 2;
 	DogArray<KdTreeResult> found = new DogArray<>(KdTreeResult::new);
 
-	Random rand = new Random(234);
 
 	/**
 	 * Creates a KdTreeSearch which will produce optimal results

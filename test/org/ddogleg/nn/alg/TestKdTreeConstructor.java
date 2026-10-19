@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.DogArray_I32;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public class TestKdTreeConstructor {
+public class TestKdTreeConstructor extends DDoglegJUnit {
 
 	KdTreeDistance<double[]> distance = new KdTreeEuclideanSq_F64(2);
 

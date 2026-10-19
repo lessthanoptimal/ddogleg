@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.data.Complex_F64;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestPolynomialSolver {
-    public static Random rand = new Random(234234);
+public class TestPolynomialSolver extends DDoglegJUnit {
 
 	/**
 	 * Provide a simple test case where one of the roots should be real

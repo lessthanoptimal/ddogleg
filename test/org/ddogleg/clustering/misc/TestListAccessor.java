@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.misc;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author Peter Abeles
  */
-class TestListAccessor {
+class TestListAccessor extends DDoglegJUnit {
 	/**
 	 * A few simple tests combined into one function
 	 */

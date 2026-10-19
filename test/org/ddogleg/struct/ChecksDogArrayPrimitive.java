@@ -18,15 +18,15 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> {
+public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> extends DDoglegJUnit {
 
-	protected Random rand = new Random(0xfeed);
 
 	public abstract T declare( int maxsize );
 
