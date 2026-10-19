@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -18,16 +18,25 @@
 
 package org.ddogleg.optimization;
 
+import org.ejml.data.DMatrixSparseCSC;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksUnconstrainedOptimization extends UnconstrainedMinimizationEvaluator {
+public abstract class CommonUnconstrainedLeastSquares_DSCC extends UnconstrainedLeastSquaresEvaluator_DSCC {
+
 	protected boolean checkFastConvergence = true;
 
-	protected CommonChecksUnconstrainedOptimization() {
+	protected CommonUnconstrainedLeastSquares_DSCC() {
 		super(false, false);
+	}
+
+	@Nested class CommonChecks extends CommonUnconstrainedLeastSquares<DMatrixSparseCSC> {
+		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
+			return CommonUnconstrainedLeastSquares_DSCC.this.createSearch(minimumValue);
+		}
 	}
 
 	@Test public void checkPowell() {
@@ -81,7 +90,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
-		assertEquals(1e6, results.x[0], results.x[0]*1e-4);
+		assertEquals(1e6, results.x[0], 1e-4);
 		assertEquals(2e-6, results.x[1], 1e-4);
 		assertEquals(0, results.f, 1e-4);
 	}
@@ -96,4 +105,30 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		}
 		assertEquals(0, results.f, 1e-4);
 	}
+
+	@Test public void checkBundle2D() {
+		NonlinearResults results = bundle2D();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if( checkFastConvergence ) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		assertEquals(0, results.f, 1e-4);
+	}
+
+	@Test public void checkLineOutlier() {
+		NonlinearResults results = lineOutlier();
+
+		// no algorithm to compare it against, just do some sanity checks for changes
+		if (checkFastConvergence) {
+			assertTrue(results.numFunction < 300);
+			assertTrue(results.numGradient < 300);
+		}
+
+		assertEquals(-0.5, results.x[0], 0.02);
+		assertEquals(1.4, results.x[1], 0.02);
+	}
+
 }

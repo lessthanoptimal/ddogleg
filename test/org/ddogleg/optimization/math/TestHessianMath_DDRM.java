@@ -21,7 +21,7 @@ package org.ddogleg.optimization.math;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 
-public class TestHessianMath_DDRM extends StandardHessianMathChecks {
+public class TestHessianMath_DDRM extends CommonHessianMath {
 	public TestHessianMath_DDRM() {
 		super(new HessianMath_DDRM(LinearSolverFactory_DDRM.chol(6)));
 	}

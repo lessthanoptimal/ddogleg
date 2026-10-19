@@ -19,8 +19,8 @@
 package org.ddogleg.fitting.modelset.lmeds;
 
 import org.ddogleg.DDoglegJUnit;
+import org.ddogleg.fitting.modelset.CommonModelMatcherPost;
 import org.ddogleg.fitting.modelset.DoubleArrayManager;
-import org.ddogleg.fitting.modelset.GenericModelMatcherPostTests;
 import org.ddogleg.fitting.modelset.MeanModelFitter;
 import org.ddogleg.fitting.modelset.ModelManager;
 import org.ddogleg.fitting.modelset.ModelMatcherPost;
@@ -42,7 +42,7 @@ class TestLeastMedianOfSquares_MT extends DDoglegJUnit {
 	}
 
 	/** Runs the generic tests with the specified inlier fraction. 0 = sigma */
-	abstract class Common extends GenericModelMatcherPostTests {
+	abstract class Common extends CommonModelMatcherPost {
 		double inlierFraction;
 		int numTrials = 50;
 

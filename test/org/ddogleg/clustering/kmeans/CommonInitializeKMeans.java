@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class StandardInitializeKMeansChecks extends DDoglegJUnit {
+public abstract class CommonInitializeKMeans extends DDoglegJUnit {
 
 	public abstract InitializeKMeans<double[]> createAlg( int dof );
 

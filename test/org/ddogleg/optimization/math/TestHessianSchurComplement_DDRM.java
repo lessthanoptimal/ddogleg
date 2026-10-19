@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
+public class TestHessianSchurComplement_DDRM extends CommonHessianMath {
 
 	int M = 10;
 	int N = 6;

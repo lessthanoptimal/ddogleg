@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestDogArray_F32 extends ChecksDogArrayPrimitive<DogArray_F32> {
+public class TestDogArray_F32 extends CommonDogArrayPrimitive<DogArray_F32> {
 	@Test void range() {
 		DogArray_F32 alg = DogArray_F32.range(-1, 20);
 

@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossHuberSmooth extends CommonChecksLossJacobian {
+class TestLossHuberSmooth extends CommonLossJacobian {
 	@Override public LossFunction createFunction() {
 		return new LossHuberSmooth.Function(2);
 	}

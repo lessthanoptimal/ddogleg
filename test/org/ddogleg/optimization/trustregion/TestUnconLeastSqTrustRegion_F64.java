@@ -21,7 +21,7 @@ package org.ddogleg.optimization.trustregion;
 import org.ddogleg.optimization.*;
 import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
-import org.ddogleg.optimization.wrap.GenericUnconstrainedLeastSquaresTests_F64;
+import org.ddogleg.optimization.wrap.CommonUnconstrainedLeastSquares_F64;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Peter Abeles
  */
-public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
+public class TestUnconLeastSqTrustRegion_F64 extends CommonUnconstrainedLeastSquares_F64 {
 	/**
 	 * Makes sure the specified tolerances are copied into the configuration
 	 */
@@ -72,14 +72,14 @@ public class TestUnconLeastSqTrustRegion_F64 extends GenericUnconstrainedLeastSq
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquares_DDRM {
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			return FactoryOptimization.dogleg(null);
 		}
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquares_DSCC {
 		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			return FactoryOptimizationSparse.dogleg(null);
 		}

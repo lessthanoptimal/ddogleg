@@ -19,8 +19,8 @@
 package org.ddogleg.optimization.lm;
 
 import org.ddogleg.DDoglegJUnit;
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquaresSchur_DDRM;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
@@ -121,7 +121,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquaresSchur_DSCC {
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 
@@ -134,7 +134,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDSCC_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
+	class LeastSquaresDSCC_Scaling extends CommonUnconstrainedLeastSquaresSchur_DSCC {
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 
@@ -150,7 +150,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquaresSchur_DDRM {
 		public LeastSquaresDDRM() {
 			maxIterationsFast = 60;
 		}
@@ -162,7 +162,7 @@ public class TestUnconLeastSqLevenbergMarquardtSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+	class LeastSquaresDDRM_Scaling extends CommonUnconstrainedLeastSquaresSchur_DDRM {
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 

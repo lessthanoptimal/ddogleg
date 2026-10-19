@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestBigDogArray_B extends ChecksBigDogArray<boolean[]> {
+public class TestBigDogArray_B extends CommonBigDogArray<boolean[]> {
 
 	/** resize with a set value */
 	@Test void resizeValue() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2023, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2012-2020, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
+public abstract class CommonModelMatcher extends DDoglegJUnit {
 	// how many of the points is it expected to match
 	protected double minMatchFrac = 1.0;
 	// how close does the parameter set need to be
@@ -118,7 +117,7 @@ public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
 	 * @param mean Mean of the distribution
 	 * @param modelDist How close to the model do the points need to be.
 	 * @param fracOutlier Fraction of the points which will be outliers.
-	 * @return List of sample points
+	 * @return Set of sample points
 	 */
 	protected List<Double> createSampleSet( int numPoints, double mean, double modelDist, double fracOutlier ) {
 		List<Double> ret = new ArrayList<>();
@@ -188,36 +187,10 @@ public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
 	}
 
 	/**
-	 * The match set must only contain points from the most recent call to process(). Processing a smaller
-	 * input after a larger one makes it easy to see if results from the previous call are returned.
-	 */
-	@Test public void matchSetFromLatestInput() {
-		double tol = 0.2;
-
-		ModelMatcherPost<double[], Double> alg = createModel(1, tol);
-
-		assertTrue(alg.process(createSampleSet(100, 2.5, tol*0.9, 0.1)));
-		assertTrue(alg.getMatchSet().size() > 1);
-
-		// The smallest input it can process
-		List<Double> samples = createSampleSet(alg.getMinimumSize(), 7.0, tol*0.5, 0.0);
-		assertTrue(alg.process(samples));
-
-		List<Double> matchSet = alg.getMatchSet();
-		assertTrue(matchSet.size() <= samples.size());
-		for (int i = 0; i < matchSet.size(); i++) {
-			int index = alg.getInputIndex(i);
-			assertTrue(index >= 0 && index < samples.size());
-			assertSame(samples.get(index), matchSet.get(i));
-		}
-	}
-
-	/**
 	 * Make sure that if reset is called it produces identical results
 	 */
 	@Test public void reset() {
 		double mean = 2.5;
-		double tol = 0.2;
 
 		// generate the points with a smaller tolerance to account for fitting error
 		// later on.
@@ -225,20 +198,19 @@ public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
 
 		// Create a uniform sample with multiple just as good solutions so it's unlikely that two random
 		// draws will get the exact same solution
-		var samples = new ArrayList<Double>();
+		List<Double> samples = new ArrayList<>();
 		for (int i = 0; i < 500; i++) {
 			samples.add(mean - (0.5 - i/500.0)*2.0);
 		}
 
 		assertTrue(alg.process(samples));
-		var matchesA = new ArrayList<Double>(alg.getMatchSet());
-		double modelA = alg.getModelParameters()[0];
+		List<Double> matchesA = new ArrayList<>(alg.getMatchSet());
 
 		assertTrue(alg.process(samples));
-		var matchesB = new ArrayList<Double>(alg.getMatchSet());
+		List<Double> matchesB = new ArrayList<>(alg.getMatchSet());
 
-		// See if this produces different results. The model is checked too since the match set can be every point
-		boolean matched = matchesA.size() == matchesB.size() && modelA == alg.getModelParameters()[0];
+		// See if this produces different results
+		boolean matched = matchesA.size() == matchesB.size();
 		if (matched) {
 			for (int i = 0; i < matchesA.size(); i++) {
 				if (!matchesA.get(i).equals(matchesB.get(i))) {
@@ -255,22 +227,25 @@ public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
 		// It should now produce identical results to the first run
 		alg.reset();
 		assertTrue(alg.process(samples));
-		var matchesC = new ArrayList<Double>(alg.getMatchSet());
-		assertEquals(modelA, alg.getModelParameters()[0]);
+		List<Double> matchesC = new ArrayList<>(alg.getMatchSet());
 		assertEquals(matchesA.size(), matchesC.size());
 		for (int i = 0; i < matchesA.size(); i++) {
 			assertEquals(matchesA.get(i), matchesC.get(i));
 		}
 	}
 
-	protected ModelMatcherPost<double[], Double> createModel( int minPoints, double fitThreshold ) {
-		var manager = new DoubleArrayManager(1);
-		ModelMatcherPost<double[], Double> alg = createModelMatcher(manager, minPoints, fitThreshold);
-		alg.setModel(MeanModelFitter::new, DistanceFromMeanModel::new);
-		return alg;
+	protected ModelMatcher<double[], Double> createModel( int minPoints, double fitThreshold ) {
+		DoubleArrayManager manager = new DoubleArrayManager(1);
+		DistanceFromMeanModel dist = new DistanceFromMeanModel();
+		MeanModelFitter fitter = new MeanModelFitter();
+
+		return createModelMatcher(manager, dist, fitter, fitter, minPoints, fitThreshold);
 	}
 
-	public abstract ModelMatcherPost<double[], Double> createModelMatcher(
+	public abstract ModelMatcher<double[], Double> createModelMatcher(
 			ModelManager<double[]> manager,
+			DistanceFromModel<double[], Double> distance,
+			ModelGenerator<double[], Double> generator,
+			ModelFitter<double[], Double> fitter,
 			int minPoints, double fitThreshold );
 }

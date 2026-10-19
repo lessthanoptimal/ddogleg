@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericUnconstrainedLeastSquaresTests_F64 extends DDoglegJUnit {
+public abstract class CommonUnconstrainedLeastSquares_F64 extends DDoglegJUnit {
 
 	public abstract UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm();
 

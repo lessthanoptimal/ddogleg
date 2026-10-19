@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> extends DDoglegJUnit {
+public abstract class CommonDogArrayPrimitive<T extends DogArrayPrimitive<T>> extends DDoglegJUnit {
 	public abstract T declare( int maxsize );
 
 	public abstract void push( T queue, double value );

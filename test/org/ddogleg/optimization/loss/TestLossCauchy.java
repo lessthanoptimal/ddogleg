@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossCauchy extends CommonChecksLossJacobian {
+class TestLossCauchy extends CommonLossJacobian {
 	@Override public LossFunction createFunction() {
 		return new LossCauchy.Function(0.5);
 	}

@@ -19,16 +19,17 @@
 package org.ddogleg.optimization;
 
 import org.ddogleg.DDoglegJUnit;
-import org.ddogleg.optimization.funcs.EvalFuncHelicalValley;
+import org.ddogleg.optimization.funcs.EvalFunctionBundle2D;
 import org.ejml.data.DMatrix;
-import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Common checks for all least squares implementations */
-public abstract class ChecksUnconstrainedLeastSquares<M extends DMatrix> extends DDoglegJUnit {
-	protected abstract UnconstrainedLeastSquares<M> createSearch( double minimumValue );
+public abstract class CommonUnconstrainedLeastSquaresSchur<M extends DMatrix> extends DDoglegJUnit {
+	protected abstract UnconstrainedLeastSquaresSchur<M> createSearch( double minimumValue );
+
+	protected abstract EvalFunctionBundle2D<M> createEvalFunction();
 
 	/** Provide a post update adjustment and see if it has been called */
 	@Test void postUpdateAdjuster() {
@@ -39,12 +40,12 @@ public abstract class ChecksUnconstrainedLeastSquares<M extends DMatrix> extends
 			}
 		};
 
-		UnconstrainedLeastSquares<M> alg = createSearch(0.0);
+		UnconstrainedLeastSquaresSchur<M> alg = createSearch(0.0);
 
-		var func = new EvalFuncHelicalValley<DMatrixRMaj>();
+		EvalFunctionBundle2D<M> func = createEvalFunction();
 
 		alg.setPostUpdate(adjuster);
-		alg.setFunction(func.getFunction(), null);
+		alg.setFunction(func.getFunction(), func.getJacobianSchur());
 		alg.initialize(func.getInitial(), 1e-8, 1e-8);
 
 		int updateCount = 0;

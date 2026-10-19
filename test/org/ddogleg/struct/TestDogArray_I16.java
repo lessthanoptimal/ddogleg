@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestDogArray_I16 extends ChecksDogArrayPrimitive<DogArray_I16> {
+public class TestDogArray_I16 extends CommonDogArrayPrimitive<DogArray_I16> {
 	@Test void range() {
 		var alg = DogArray_I16.range(-1, 20);
 

@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
+public class TestInitializePlusPlus extends CommonInitializeKMeans {
 	/**
 	 * Every point has a duplicate and even though there are more points than seeds it should only
 	 * select 1/2 the points as seeds

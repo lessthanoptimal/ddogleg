@@ -22,7 +22,7 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.ops.DConvertMatrixStruct;
 
-public class TestMatrixMath_DSCC extends StandardMatrixMathChecks<DMatrixSparseCSC> {
+public class TestMatrixMath_DSCC extends CommonMatrixMath<DMatrixSparseCSC> {
 	public TestMatrixMath_DSCC() {
 		super(new MatrixMath_DSCC());
 	}

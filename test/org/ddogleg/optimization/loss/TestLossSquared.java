@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TestLossSquared extends CommonChecksLossJacobian {
+class TestLossSquared extends CommonLossJacobian {
 	{
 		// Seems to be an issue with build up in floating point error. Reducing number of sample points allowed it to
 		// pass

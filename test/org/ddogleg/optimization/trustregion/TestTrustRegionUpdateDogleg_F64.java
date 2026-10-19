@@ -230,7 +230,7 @@ public class TestTrustRegionUpdateDogleg_F64 extends DDoglegJUnit {
 
 	// In the future add support for scaled BFGS
 	@Nested
-	class UnconstrainedBFGS extends CommonChecksUnconstrainedOptimization {
+	class UnconstrainedBFGS extends CommonUnconstrainedOptimization {
 		public UnconstrainedBFGS() {
 			this.checkFastConvergence = false; // TODO remove?
 			this.maxIteration = 10000;
@@ -249,7 +249,7 @@ public class TestTrustRegionUpdateDogleg_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquares_DDRM {
 
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			var config = new ConfigTrustRegion();
@@ -261,7 +261,7 @@ public class TestTrustRegionUpdateDogleg_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM_Scaling extends CommonUnconstrainedLeastSquares_DDRM {
 
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			var config = new ConfigTrustRegion();
@@ -285,7 +285,7 @@ public class TestTrustRegionUpdateDogleg_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquares_DSCC {
 
 		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			var config = new ConfigTrustRegion();

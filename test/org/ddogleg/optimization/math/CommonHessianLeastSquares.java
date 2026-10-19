@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class StandardHessianLeastSquaresChecks extends StandardHessianMathChecks {
-	protected StandardHessianLeastSquaresChecks(HessianMath alg) {
+public abstract class CommonHessianLeastSquares extends CommonHessianMath {
+	protected CommonHessianLeastSquares(HessianMath alg) {
 		super(alg);
 	}
 

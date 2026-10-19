@@ -34,7 +34,7 @@ public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 	 * result
 	 */
 	@Test void checkMaxNodes() {
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
+		KdTree tree = CommonKdTreeSearch1.createTreeA();
 
 		BBF alg = new BBF(0,2);
 		alg.setTree(tree);
@@ -50,7 +50,7 @@ public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 	 */
 	@Test void multiTreeSearch() {
 		KdTree forest[] = new KdTree[2];
-		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
+		forest[0] = CommonKdTreeSearch1.createTreeA();
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2});
 

@@ -20,7 +20,7 @@ package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrixRMaj;
 
-public class TestMatrixMath_DDRM extends StandardMatrixMathChecks<DMatrixRMaj> {
+public class TestMatrixMath_DDRM extends CommonMatrixMath<DMatrixRMaj> {
 	public TestMatrixMath_DDRM() {
 		super(new MatrixMath_DDRM());
 	}

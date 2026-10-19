@@ -27,7 +27,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksLossJacobian extends DDoglegJUnit {
+public abstract class CommonLossJacobian extends DDoglegJUnit {
 	/** Values of residuals are randomly selected from a uniform distribution from -r to r */
 	public double residualRadius = 10;
 

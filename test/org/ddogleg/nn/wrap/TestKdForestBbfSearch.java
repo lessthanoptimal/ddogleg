@@ -18,7 +18,7 @@
 
 package org.ddogleg.nn.wrap;
 
-import org.ddogleg.nn.StandardNearestNeighborTests;
+import org.ddogleg.nn.CommonNearestNeighbor;
 import org.ddogleg.nn.alg.AxisSplitRule;
 import org.ddogleg.nn.alg.AxisSplitRuleRandomK;
 import org.ddogleg.nn.alg.AxisSplitterMedian;
@@ -26,7 +26,7 @@ import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.Random;
 
-public class TestKdForestBbfSearch extends StandardNearestNeighborTests {
+public class TestKdForestBbfSearch extends CommonNearestNeighbor {
 
 	public TestKdForestBbfSearch() {
 		// set the max nodes so it that it will produce perfect results

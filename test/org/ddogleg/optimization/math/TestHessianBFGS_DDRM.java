@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
+public class TestHessianBFGS_DDRM extends CommonHessianMath {
 	public TestHessianBFGS_DDRM() {
 		super(new HessianBFGS_DDRM(true));
 	}

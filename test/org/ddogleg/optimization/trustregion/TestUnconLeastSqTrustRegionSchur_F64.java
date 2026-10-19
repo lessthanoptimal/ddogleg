@@ -19,8 +19,8 @@
 package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.DDoglegJUnit;
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DDRM;
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquaresSchur_DSCC;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquaresSchur_DDRM;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquaresSchur_DSCC;
 import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedLeastSquaresSchur;
 import org.ddogleg.optimization.functions.FunctionNtoM;
@@ -131,7 +131,7 @@ public class TestUnconLeastSqTrustRegionSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquaresSchur_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquaresSchur_DDRM {
 		LeastSquaresDDRM() {
 			// we can do fast convergence check here because dense supports robust solvers like SVD and it
 			// won't get stuck
@@ -149,7 +149,7 @@ public class TestUnconLeastSqTrustRegionSchur_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquaresSchur_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquaresSchur_DSCC {
 
 		public LeastSquaresDSCC() {
 			// because of the matrix being nearly singular it gets stuck doing Cauchy steps.

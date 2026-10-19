@@ -28,7 +28,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestRansac extends GenericModelMatcherPostTests {
+public class TestRansac extends CommonModelMatcherPost {
 
 	public TestRansac() {
 		configure(0.9, 0.05, true);

@@ -18,7 +18,7 @@
 
 package org.ddogleg.fitting.modelset.ransac;
 
-import org.ddogleg.fitting.modelset.GenericModelMatcherMultiTests;
+import org.ddogleg.fitting.modelset.CommonModelMatcherMulti;
 import org.ddogleg.fitting.modelset.ModelMatcherMulti;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestRansacMulti extends GenericModelMatcherMultiTests {
+public class TestRansacMulti extends CommonModelMatcherMulti {
 
 	public TestRansacMulti() {
 		configure(0.9, 0.05, true);

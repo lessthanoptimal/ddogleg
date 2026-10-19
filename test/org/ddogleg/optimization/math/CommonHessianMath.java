@@ -30,11 +30,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class StandardHessianMathChecks extends DDoglegJUnit {
+public abstract class CommonHessianMath extends DDoglegJUnit {
 
 	HessianMath alg;
 
-	protected StandardHessianMathChecks( HessianMath alg ) {
+	protected CommonHessianMath( HessianMath alg ) {
 		this.alg = alg;
 	}
 

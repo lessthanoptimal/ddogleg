@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class GenericClusterChecks_F64 extends DDoglegJUnit {
+public abstract class CommonCluster_F64 extends DDoglegJUnit {
 	/**
 	 * If hint is true then the first 3 elements are good initial seeds for clustering
 	 */
