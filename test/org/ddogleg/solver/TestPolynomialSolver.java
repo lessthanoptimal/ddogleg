@@ -22,21 +22,15 @@ import org.ddogleg.DDoglegJUnit;
 import org.ejml.data.Complex_F64;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestPolynomialSolver extends DDoglegJUnit {
 
 	/**
 	 * Provide a simple test case where one of the roots should be real
 	 */
-	@Test
-	public void polynomialRootsEVD() {
+	@Test void polynomialRootsEVD() {
 		Complex_F64[] roots = PolynomialSolver.polynomialRootsEVD(4, 3, 2, 1);
 
 		int numReal = 0;
@@ -53,8 +47,7 @@ public class TestPolynomialSolver extends DDoglegJUnit {
 	/**
 	 * Computed a root using Sage.  The two other roots are imaginary
 	 */
-	@Test
-	public void cubicRootReal_known() {
+	@Test void cubicRootReal_known() {
 		double root = PolynomialSolver.cubicRootReal(4, 3, 2, 1);
 
 		// test it against a known solution
@@ -67,8 +60,7 @@ public class TestPolynomialSolver extends DDoglegJUnit {
 	 * Create several random polynomials and see if it holds up
 	 */
 	// Commented this out because for some polynomials it will fail
-	@Test
-	public void cubicRootReal_random() {
+	@Test void cubicRootReal_random() {
 		for( int i = 0; i < 20; i++ ) {
 			double a = rand.nextGaussian()*2;
 			double b = rand.nextGaussian()*2;

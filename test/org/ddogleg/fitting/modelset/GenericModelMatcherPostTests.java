@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -39,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 public abstract class GenericModelMatcherPostTests extends DDoglegJUnit {
-
-
 	// how many of the points is it expected to match
 	protected double minMatchFrac = 1.0;
 	// how close does the parameter set need to be

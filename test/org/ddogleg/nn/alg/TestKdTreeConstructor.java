@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 @SuppressWarnings({"NullAway"})
 public class TestKdTreeConstructor extends DDoglegJUnit {
 
@@ -40,8 +37,7 @@ public class TestKdTreeConstructor extends DDoglegJUnit {
 	/**
 	 * Makes sure a branch is created correctly given the results from the splitter
 	 */
-	@Test
-	public void computeBranch_dontTrack() {
+	@Test void computeBranch_dontTrack() {
 		DummySplitter splitter = createSplitter(1,1,false);
 		splitter.splitAxis = 1;
 		splitter.splitPoint = new double[]{2,3};
@@ -64,8 +60,7 @@ public class TestKdTreeConstructor extends DDoglegJUnit {
 	/**
 	 * Same test as above but with associated data
 	 */
-	@Test
-	public void computeBranch_trackIndexes() {
+	@Test void computeBranch_trackIndexes() {
 		DummySplitter splitter = createSplitter(1,1,true);
 		splitter.splitAxis = 1;
 		splitter.splitPoint = new double[]{2,3};
@@ -86,8 +81,7 @@ public class TestKdTreeConstructor extends DDoglegJUnit {
 		assertEquals(n.right.index, splitter.rightIndex.get(0));
 	}
 
-	@Test
-	public void computeChild() {
+	@Test void computeChild() {
 		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(distance);
 
 		List<double[]> points = new ArrayList<>();
@@ -114,8 +108,7 @@ public class TestKdTreeConstructor extends DDoglegJUnit {
 	/**
 	 * Basic tests to see if it can handle different sized input lists.
 	 */
-	@Test
-	public void construct() {
+	@Test void construct() {
 		KdTreeConstructor<double[]> alg = new KdTreeConstructor<>(new KdTreeMemory(),createSplitter(1,1,false));
 
 		// test an empty list

@@ -22,9 +22,6 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.ops.DConvertMatrixStruct;
 
-/**
- * @author Peter Abeles
- */
 public class TestMatrixMath_DSCC extends StandardMatrixMathChecks<DMatrixSparseCSC> {
 	public TestMatrixMath_DSCC() {
 		super(new MatrixMath_DSCC());

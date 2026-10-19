@@ -22,9 +22,6 @@ import org.ddogleg.optimization.quasinewton.LineSearchFletcher86;
 
 import java.util.List;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateLineSearchFletcher86 extends LineSearchEvaluator {
 
 	double c1, c2;

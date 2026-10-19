@@ -18,8 +18,5 @@
 
 package org.ddogleg.optimization.quasinewton;
 
-/**
- * @author Peter Abeles
- */
 public enum SearchStatus {
 }

@@ -31,9 +31,6 @@ import static org.ddogleg.nn.alg.TestKdTreeConstructor.createPoints;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestAxisSplitterMedian extends DDoglegJUnit {
 
 	List<double[]> left = new ArrayList<>();
@@ -51,8 +48,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 		rightData.reset();
 	}
 
-	@Test
-	public void splitData_one() {
+	@Test void splitData_one() {
 		List<double[]> points = createPoints(2, 1,2);
 
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,new DummyRule(0));
@@ -63,8 +59,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 		assertEquals(0,right.size());
 	}
 
-	@Test
-	public void splitData_two() {
+	@Test void splitData_two() {
 		List<double[]> points = createPoints(2, 1,2 , 3,5);
 
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,new DummyRule(0));
@@ -77,8 +72,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 		assertEquals(1,left.get(0)[0],1e-8);
 	}
 
-	@Test
-	public void splitData_three() {
+	@Test void splitData_three() {
 		List<double[]> points = createPoints(2, 1,2 , 3,5 , -3,4);
 
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,new DummyRule(0));
@@ -95,8 +89,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 	/**
 	 * Make sure the split point is returned
 	 */
-	@Test
-	public void splitData_split_point() {
+	@Test void splitData_split_point() {
 		List<double[]> points = createPoints(2, 1,2 , 3,5 , -3,4);
 
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,new DummyRule(1));
@@ -107,8 +100,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 //		assertEquals(2, alg.getSplitIndex());
 	}
 
-	@Test
-	public void splitData_withData() {
+	@Test void splitData_withData() {
 		List<double[]> points = createPoints(2, 1,2 , 3,5 , -3,4);
 		DogArray_I32 data = new DogArray_I32();
 		for( int i = 0; i < points.size(); i++ )
@@ -132,8 +124,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 	/**
 	 * Make two of the points identical and see if things blow up
 	 */
-	@Test
-	public void identical_points() {
+	@Test void identical_points() {
 		List<double[]> points = createPoints(2, 1,2, 1.1,4 , 1,2);
 
 		AxisSplitterMedian<double[]> alg = new AxisSplitterMedian<>(distance,new DummyRule(0));
@@ -149,8 +140,7 @@ public class TestAxisSplitterMedian extends DDoglegJUnit {
 		assertEquals(1.1,right.get(0)[0],1e-8);
 	}
 
-	@Test
-	public void checkRuleSetCalled() {
+	@Test void checkRuleSetCalled() {
 		DummyRule rule = new DummyRule(2);
 		new AxisSplitterMedian<>(distance,rule);
 		assertTrue(rule.calledSetDimension);

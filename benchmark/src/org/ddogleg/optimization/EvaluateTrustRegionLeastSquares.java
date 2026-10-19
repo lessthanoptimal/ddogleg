@@ -22,9 +22,6 @@ import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
 import org.ejml.LinearSolverType;
 import org.ejml.data.DMatrixRMaj;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateTrustRegionLeastSquares extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	public EvaluateTrustRegionLeastSquares( boolean verbose ) {

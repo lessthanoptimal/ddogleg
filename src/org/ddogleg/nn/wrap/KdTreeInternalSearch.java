@@ -26,9 +26,6 @@ import org.ddogleg.nn.alg.KdTreeSearch1;
 import org.ddogleg.nn.alg.KdTreeSearchN;
 import org.ddogleg.struct.DogArray;
 
-/**
- * @author Peter Abeles
- */
 public abstract class KdTreeInternalSearch<P> implements NearestNeighbor.Search<P> {
 	KdTreeSearch1<P> search1;
 	KdTreeSearchN<P> searchN;

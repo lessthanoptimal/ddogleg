@@ -26,9 +26,6 @@ import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
 import java.util.Random;
 
-/**
- * @author Peter Abeles
- */
 public class TestKdForestBbfSearch extends StandardNearestNeighborTests {
 
 	public TestKdForestBbfSearch() {

@@ -46,8 +46,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * Try several searches and see if they all produce good results
 	 */
-	@Test
-	public void findClosest_basic() {
+	@Test public void findClosest_basic() {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeA();
@@ -96,8 +95,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * See if it can handle a null leaf
 	 */
-	@Test
-	public void findClosest_nullLeaf() {
+	@Test public void findClosest_nullLeaf() {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeWithNull();
@@ -126,8 +124,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * The tree is empty and it should always fail
 	 */
-	@Test
-	public void findClosest_empty() {
+	@Test public void findClosest_empty() {
 		KdTreeSearch1<double[]> alg = createAlg();
 		setTree( alg, new KdTree(2) );
 
@@ -138,8 +135,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * The tree is a leaf and should always return the same result
 	 */
-	@Test
-	public void findClosest_leaf() {
+	@Test public void findClosest_leaf() {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2});
 
@@ -155,8 +151,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * See if max distance is being respected
 	 */
-	@Test
-	public void findClosest_maxDistance() {
+	@Test public void findClosest_maxDistance() {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2});
 
@@ -173,8 +168,7 @@ public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
 	/**
 	 * Make sure the distance it returns is correct
 	 */
-	@Test
-	public void checkDistance() {
+	@Test public void checkDistance() {
 		KdTreeSearch1<double[]> alg = createAlg();
 
 		KdTree tree = createTreeA();

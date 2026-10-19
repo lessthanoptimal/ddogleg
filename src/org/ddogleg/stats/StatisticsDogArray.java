@@ -21,9 +21,6 @@ package org.ddogleg.stats;
 import org.ddogleg.sorting.QuickSelect;
 import org.ddogleg.struct.DogArray_F64;
 
-/**
- * @author Peter Abeles
- */
 public class StatisticsDogArray {
 
 	public static double mean( DogArray_F64 list ) {

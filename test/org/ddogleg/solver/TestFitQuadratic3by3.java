@@ -21,22 +21,14 @@ package org.ddogleg.solver;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestFitQuadratic3by3 extends DDoglegJUnit {
-	
-
 	/**
 	 * Impulse function with a peak at zero.  should be no change
 	 */
-	@Test
-	public void impulseAtZero() {
+	@Test void impulseAtZero() {
 		FitQuadratic3by3 alg = new FitQuadratic3by3();
 
 		for( int i = -1; i <= 1; i++ ) {
@@ -55,8 +47,7 @@ public class TestFitQuadratic3by3 extends DDoglegJUnit {
 	/**
 	 * skewed in an x-direction
 	 */
-	@Test
-	public void skewedX() {
+	@Test void skewedX() {
 		FitQuadratic3by3 alg = new FitQuadratic3by3();
 
 		for( int i = -1; i <= 1; i++ ) {
@@ -78,8 +69,7 @@ public class TestFitQuadratic3by3 extends DDoglegJUnit {
 	/**
 	 * skewed in an x-direction
 	 */
-	@Test
-	public void skewedY() {
+	@Test void skewedY() {
 		FitQuadratic3by3 alg = new FitQuadratic3by3();
 
 		for( int i = -1; i <= 1; i++ ) {

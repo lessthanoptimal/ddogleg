@@ -33,7 +33,6 @@ public abstract class CommonChecksLossJacobian extends DDoglegJUnit {
 
 	public int samplePoints = 200;
 
-
 	double tolerance = 1e-4;
 
 	public abstract LossFunction createFunction();

@@ -18,9 +18,6 @@
 
 package org.ddogleg.fitting.modelset;
 
-/**
- * @author Peter Abeles
- */
 public class DoubleArrayManager implements ModelManager<double[]>{
 
 	int length;

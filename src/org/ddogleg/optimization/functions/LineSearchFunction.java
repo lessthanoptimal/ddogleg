@@ -18,9 +18,6 @@
 
 package org.ddogleg.optimization.functions;
 
-/**
- * @author Peter Abeles
- */
 public interface LineSearchFunction extends CoupledDerivative {
 
 	void setLine( double[] start, double[] direction );

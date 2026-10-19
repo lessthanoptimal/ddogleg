@@ -26,13 +26,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestPermute extends DDoglegJUnit {
 
-	@Test
-	public void testSetSize1() {
+	@Test void testSetSize1() {
 		List<Integer> l = new ArrayList<>();
 		l.add(1);
 
@@ -43,8 +39,7 @@ public class TestPermute extends DDoglegJUnit {
 		assertFalse(alg.next());
 	}
 
-	@Test
-	public void testSetSize2() {
+	@Test void testSetSize2() {
 		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
@@ -56,8 +51,7 @@ public class TestPermute extends DDoglegJUnit {
 		checkList(alg, 2);
 	}
 
-	@Test
-	public void testSetSize3() {
+	@Test void testSetSize3() {
 		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
@@ -71,8 +65,7 @@ public class TestPermute extends DDoglegJUnit {
 	}
 
 
-	@Test
-	public void testSetSize4() {
+	@Test void testSetSize4() {
 		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
@@ -86,8 +79,7 @@ public class TestPermute extends DDoglegJUnit {
 		checkList(alg, 24);
 	}
 
-	@Test
-	public void testSetSize5_to_7() {
+	@Test void testSetSize5_to_7() {
 		List<Integer> l = new ArrayList<>();
 		l.add(1);
 		l.add(2);
@@ -109,8 +101,7 @@ public class TestPermute extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void previous() {
+	@Test void previous() {
 		List<Integer> l = new ArrayList<>();
 		for (int size = 0; size < 9; size++) {
 			l.add(size);

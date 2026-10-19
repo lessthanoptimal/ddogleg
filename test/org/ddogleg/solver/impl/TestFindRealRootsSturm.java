@@ -25,9 +25,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Peter Abeles
- */
 public class TestFindRealRootsSturm extends GeneralPolynomialRootReal {
 
 	@Override

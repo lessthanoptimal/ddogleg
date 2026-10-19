@@ -23,9 +23,6 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.CommonOps_MT_DDRM;
 
-/**
- * @author Peter Abeles
- */
 public class MatrixMath_DDRM implements MatrixMath<DMatrixRMaj> {
 	@Override
 	public void divideColumns(DMatrixRMaj divisor, DMatrixRMaj A) {

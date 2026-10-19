@@ -26,8 +26,6 @@ import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
@@ -70,7 +68,7 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		CommonOps_DDRM.extract(H, M, M + N, M, M + N, hm.D, 0, 0);
 	}
 
-	@Test public void computeGradient() {
+	@Test void computeGradient() {
 		DMatrixRMaj found = new DMatrixRMaj(N, 1);
 		DMatrixRMaj expected = new DMatrixRMaj(N, 1);
 
@@ -81,7 +79,7 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
-	@Test public void computeHessian() {
+	@Test void computeHessian() {
 		math.computeHessian(jacLeft, jacRight);
 
 		DMatrixRMaj found = new DMatrixRMaj(1, 1);
@@ -93,8 +91,7 @@ public class TestHessianSchurComplement_DDRM extends StandardHessianMathChecks {
 		assertTrue(MatrixFeatures_DDRM.isIdentical(expected, found, UtilEjml.TEST_F64));
 	}
 
-	@Test
-	public void computeStep() {
+	@Test void computeStep() {
 		// This is tested in the optimization algorithms
 	}
 }

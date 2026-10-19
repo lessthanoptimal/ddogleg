@@ -18,9 +18,6 @@
 
 package org.ddogleg.optimization;
 
-/**
- * @author Peter Abeles
- */
 public class NonlinearResults {
 	// number of iterations it took
 	public int numFunction;

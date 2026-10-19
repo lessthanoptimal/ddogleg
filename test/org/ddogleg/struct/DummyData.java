@@ -18,9 +18,6 @@
 
 package org.ddogleg.struct;
 
-/**
- * @author Peter Abeles
- */
 public class DummyData {
 	public int value;
 

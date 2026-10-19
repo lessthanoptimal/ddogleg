@@ -22,15 +22,12 @@ import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestShellSort extends DDoglegJUnit {
 
-	@Test
-	public void test_F32() {
+	@Test void test_F32() {
 		float[] ret = BenchMarkSort.createRandom_F32(rand,200);
 
 		ShellSort.sort(ret);
@@ -43,8 +40,7 @@ public class TestShellSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testSortingRandom_indexes_F32() {
+	@Test void testSortingRandom_indexes_F32() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			float[] normal = BenchMarkSort.createRandom_F32(rand,20);
@@ -67,8 +63,7 @@ public class TestShellSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void test_F64() {
+	@Test void test_F64() {
 		double[] ret = BenchMarkSort.createRandom_F64(rand,200);
 
 		ShellSort.sort(ret);
@@ -81,8 +76,7 @@ public class TestShellSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testSortingRandom_indexes_F64() {
+	@Test void testSortingRandom_indexes_F64() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			double[] normal = BenchMarkSort.createRandom_F64(rand,20);
@@ -105,8 +99,7 @@ public class TestShellSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void test_S32() {
+	@Test void test_S32() {
 		int[] ret = BenchMarkSort.createRandom_S32(rand,200);
 
 		ShellSort.sort(ret);
@@ -119,8 +112,7 @@ public class TestShellSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testSortingRandom_indexes_S32() {
+	@Test void testSortingRandom_indexes_S32() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			int[] normal = BenchMarkSort.createRandom_S32(rand,20);

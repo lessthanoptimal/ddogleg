@@ -18,9 +18,6 @@
 
 package org.ddogleg.stats;
 
-/**
- * @author Peter Abeles
- */
 public class UtilStatisticsInt 
 {
 	/**

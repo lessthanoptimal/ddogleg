@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @author Peter Abeles
- */
 public class BenchmarkStabilityInitialization {
 
 	int DOF = 2;

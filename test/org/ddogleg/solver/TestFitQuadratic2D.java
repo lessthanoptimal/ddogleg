@@ -21,22 +21,14 @@ package org.ddogleg.solver;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestFitQuadratic2D extends DDoglegJUnit {
-
-	
 	/**
 	 * Impulse function with a peak at zero.  should be no change
 	 */
-	@Test
-	public void impulseAtZero() {
+	@Test void impulseAtZero() {
 		FitQuadratic2D alg = new FitQuadratic2D();
 
 		alg.reset();
@@ -59,8 +51,7 @@ public class TestFitQuadratic2D extends DDoglegJUnit {
 	/**
 	 * Impulse function with a peak at zero.
 	 */
-	@Test
-	public void impulseNotZero() {
+	@Test void impulseNotZero() {
 		FitQuadratic2D alg = new FitQuadratic2D();
 
 		alg.reset();
@@ -80,8 +71,7 @@ public class TestFitQuadratic2D extends DDoglegJUnit {
 		assertEquals(-2, alg.getFoundY(), 1e-8);
 	}
 	
-	@Test
-	public void knownCoefficients() {
+	@Test void knownCoefficients() {
 		double expectedX = 2;
 		double expectedY = -3.5;
 

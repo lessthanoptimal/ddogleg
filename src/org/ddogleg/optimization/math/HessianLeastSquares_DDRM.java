@@ -25,9 +25,6 @@ import org.ejml.dense.row.CommonOps_MT_DDRM;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 import org.ejml.interfaces.linsol.LinearSolverDense;
 
-/**
- * @author Peter Abeles
- */
 public class HessianLeastSquares_DDRM extends HessianMath_DDRM
 		implements HessianLeastSquares<DMatrixRMaj> {
 	public HessianLeastSquares_DDRM() {super(LinearSolverFactory_DDRM.cholInner(true));}

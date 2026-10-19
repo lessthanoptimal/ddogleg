@@ -27,12 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestEvalFunctionBundle2D_DDRM extends DDoglegJUnit {
-	@Test
-	public void compareToNumerical() {
+	@Test public void compareToNumerical() {
 		EvalFunctionBundle2D_DDRM eval = new EvalFunctionBundle2D_DDRM(234,20,10,2,3);
 
 		FunctionNtoMxN<DMatrixRMaj> jac = new SchurJacobian_to_NtoMxN.DDRM(eval.getJacobianSchur());

@@ -21,19 +21,11 @@ package org.ddogleg.sorting;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestApproximateSort_F64 extends DDoglegJUnit {
-
-
-	@Test
-	public void computeRange_primitive() {
+	@Test void computeRange_primitive() {
 		ApproximateSort_F64 alg = new ApproximateSort_F64(12);
 
 		double[] data = random(-5,10,4,200);
@@ -52,8 +44,7 @@ public class TestApproximateSort_F64 extends DDoglegJUnit {
 		assertEquals(max,alg.maxValue,1e-8);
 	}
 
-	@Test
-	public void computeRange_object() {
+	@Test void computeRange_object() {
 		ApproximateSort_F64 alg = new ApproximateSort_F64(12);
 
 		double[] data = random(-5,10,4,200);
@@ -73,8 +64,7 @@ public class TestApproximateSort_F64 extends DDoglegJUnit {
 		assertEquals(max,alg.maxValue,1e-8);
 	}
 
-	@Test
-	public void sortIndex() {
+	@Test void sortIndex() {
 		int numBins = 150;
 		double tolerance = 15.0/numBins;
 		double[] data = random(-5, 10, 4, 200);
@@ -98,8 +88,7 @@ public class TestApproximateSort_F64 extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void sortObject() {
+	@Test void sortObject() {
 		int numBins = 150;
 		double tolerance = 15.0/numBins;
 		double[] data = random(-5,10,4,200);

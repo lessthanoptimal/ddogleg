@@ -25,12 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestDerivativeChecker extends DDoglegJUnit {
-	@Test
-	public void gradient() {
+	@Test void gradient() {
 
 		SimpleS f = new SimpleS();
 		SimpleGradient g = new SimpleGradient();

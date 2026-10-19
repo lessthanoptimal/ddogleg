@@ -23,13 +23,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestCircularArray extends DDoglegJUnit {
 
-	@Test
-	public void popHead() {
+	@Test void popHead() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -41,8 +37,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void popTail() {
+	@Test void popTail() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -54,8 +49,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void head() {
+	@Test void head() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -64,8 +58,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(1, alg.head().value);
 	}
 
-	@Test
-	public void head_offset() {
+	@Test void head_offset() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 
 		alg.start = 2;
@@ -77,8 +70,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(1, alg.head().value);
 	}
 
-	@Test
-	public void tail() {
+	@Test void tail() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -87,8 +79,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(3, alg.tail().value);
 	}
 
-	@Test
-	public void tail_offset() {
+	@Test void tail_offset() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.start = 2;
@@ -100,8 +91,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(3, alg.tail().value);
 	}
 
-	@Test
-	public void removeHead() {
+	@Test void removeHead() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -114,8 +104,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void removeTail() {
+	@Test public void removeTail() {
 		CircularArray<A> alg = new CircularArray<A>(A.class);
 
 		alg.grow().value = 1;
@@ -128,8 +117,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(0, alg.size());
 	}
 
-	@Test
-	public void get() {
+	@Test void get() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 2);
 		assertEquals(2, alg.data.length);
 
@@ -148,8 +136,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(3, alg.get(1).value);
 	}
 
-	@Test
-	public void add() {
+	@Test void add() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 		assertEquals(3, alg.data.length);
 
@@ -191,8 +178,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(3, alg.size);
 	}
 
-	@Test
-	public void addW() {
+	@Test void addW() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 		assertEquals(3, alg.data.length);
 
@@ -223,8 +209,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(3, alg.size);
 	}
 
-	@Test
-	public void isEmpty() {
+	@Test public void isEmpty() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 
 		assertTrue(alg.isEmpty());
@@ -234,8 +219,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertTrue(alg.isEmpty());
 	}
 
-	@Test
-	public void reset() {
+	@Test public void reset() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 
 		alg.start = 2;
@@ -247,8 +231,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertEquals(0, alg.start);
 	}
 
-	@Test
-	public void grow() {
+	@Test void grow() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 
 		alg.grow().value = 1;
@@ -271,8 +254,7 @@ public class TestCircularArray extends DDoglegJUnit {
 		assertTrue(null == alg.data[2]);
 	}
 
-	@Test
-	public void growW() {
+	@Test void growW() {
 		CircularArray<A> alg = new CircularArray<A>(A.class, 3);
 
 		alg.growW().value = 1;

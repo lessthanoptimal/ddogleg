@@ -31,19 +31,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestSeedFromKMeans_F64 extends DDoglegJUnit {
-
-
-	@Test
-	public void selectSeeds() {
+	@Test public void selectSeeds() {
 		int dof = 2;
 		// first 2 points will act as the initial seed for K-Means
 		// rest will be in a known Gaussian distribution

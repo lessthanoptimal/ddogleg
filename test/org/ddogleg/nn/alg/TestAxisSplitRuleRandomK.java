@@ -26,13 +26,9 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * @author Peter Abeles
- */
 public class TestAxisSplitRuleRandomK extends DDoglegJUnit {
 
-	@Test
-	public void basic() {
+	@Test void basic() {
 
 		AxisSplitRuleRandomK alg = new AxisSplitRuleRandomK(new Random(234),3);
 
@@ -72,8 +68,7 @@ public class TestAxisSplitRuleRandomK extends DDoglegJUnit {
 	 * It's told to consider more options than the dimension of the data point.  If this isn't handled an out
 	 * of bounds exception will be thrown.
 	 */
-	@Test
-	public void splitExceedsDimension() {
+	@Test void splitExceedsDimension() {
 		AxisSplitRuleRandomK alg = new AxisSplitRuleRandomK(new Random(234),10);
 
 		alg.setDimension(3);

@@ -21,13 +21,9 @@ package org.ddogleg.struct;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> extends DDoglegJUnit {
-
-
 	public abstract T declare( int maxsize );
 
 	public abstract void push( T queue, double value );
@@ -36,7 +32,7 @@ public abstract class ChecksDogArrayPrimitive<T extends DogArrayPrimitive<T>> ex
 
 	public abstract void check( T queue, int index, double value );
 
-	@Test void insert() {
+	@Test public void insert() {
 		T alg = declare(10);
 
 		// insert with no array resize

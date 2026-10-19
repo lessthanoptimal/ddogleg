@@ -24,12 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestStatisticsDogArray extends DDoglegJUnit {
-	@Test
-	public void mean_F64() {
+	@Test void mean_F64() {
 		DogArray_F64 l = new DogArray_F64();
 		l.add(0);
 		l.add(1);
@@ -41,8 +37,7 @@ public class TestStatisticsDogArray extends DDoglegJUnit {
 		assertEquals(2,found,1e-8);
 	}
 
-	@Test
-	public void variance_F64() {
+	@Test void variance_F64() {
 		DogArray_F64 l = new DogArray_F64();
 		l.add(0);
 		l.add(1);
@@ -54,8 +49,7 @@ public class TestStatisticsDogArray extends DDoglegJUnit {
 		assertEquals(2.5,found,1e-8);
 	}
 
-	@Test
-	public void fraction_F64() {
+	@Test void fraction_F64() {
 
 		DogArray_F64 l = new DogArray_F64();
 		for (int i = 0; i < 100; i++) {

@@ -22,9 +22,6 @@ import org.ddogleg.nn.FactoryNearestNeighbor;
 import org.ddogleg.nn.StandardNearestNeighborTests;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
-/**
- * @author Peter Abeles
- */
 public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
 
 	public TestKdTreeNearestNeighbor() {

@@ -25,15 +25,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-/**
- * @author Peter Abeles
- */
 public class TestFitByMedianStatistics extends DDoglegJUnit {
-
-
-	@Test
-	public void metric_and_prune() {
+	@Test void metric_and_prune() {
 		List<PointIndex<Double>> list = new ArrayList<>(200);
 
 		for (int i = 0; i < 200; i++) {

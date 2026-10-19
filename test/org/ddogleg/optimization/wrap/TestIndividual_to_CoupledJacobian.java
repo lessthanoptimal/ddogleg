@@ -26,14 +26,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 @SuppressWarnings({"NullAway"})
 public class TestIndividual_to_CoupledJacobian extends DDoglegJUnit {
 
-	@Test
-	public void trivial() {
+	@Test void trivial() {
 		DummyFunction f = new DummyFunction();
 		DummyJacobian g = new DummyJacobian();
 		Individual_to_CoupledJacobian alg = new Individual_to_CoupledJacobian(f,g);

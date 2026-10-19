@@ -24,9 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestDogArray_F64 extends ChecksDogArrayPrimitive<DogArray_F64> {
 	@Test void range() {
 		DogArray_F64 alg = DogArray_F64.range(-1, 20);

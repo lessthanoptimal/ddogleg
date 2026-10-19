@@ -21,9 +21,6 @@ package org.ddogleg.nn.wrap;
 import org.ddogleg.nn.FactoryNearestNeighbor;
 import org.ddogleg.nn.StandardNearestNeighborTests;
 
-/**
- * @author Karel Petránek
- */
 public class TestVpTreeNearestNeighbor extends StandardNearestNeighborTests {
 	public TestVpTreeNearestNeighbor() {
 		setAlg(FactoryNearestNeighbor.vptree(345345));

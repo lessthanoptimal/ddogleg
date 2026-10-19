@@ -23,13 +23,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestSearchInterpolate extends DDoglegJUnit {
 
-	@Test
-	public void quadratic() {
+	@Test void quadratic() {
 		double a = 2;
 		double b = -3;
 		double c = 1;
@@ -46,8 +42,7 @@ public class TestSearchInterpolate extends DDoglegJUnit {
 		assertEquals(expected, found, 1e-8);
 	}
 
-	@Test
-	public void quadratic2() {
+	@Test void quadratic2() {
 		double a = 2;
 		double b = -3;
 //		double c = 1;
@@ -71,8 +66,7 @@ public class TestSearchInterpolate extends DDoglegJUnit {
 		return 2*a*x + b;
 	}
 
-	@Test
-	public void cubic() {
+	@Test void cubic() {
 		double a = 2;
 		double b = -3;
 		double c = 1;
@@ -91,8 +85,7 @@ public class TestSearchInterpolate extends DDoglegJUnit {
 		assertEquals(expected, found, 1e-8);
 	}
 
-	@Test
-	public void cubic2() {
+	@Test void cubic2() {
 		double a = 2;
 		double b = -3;
 		double c = 1;
@@ -114,8 +107,7 @@ public class TestSearchInterpolate extends DDoglegJUnit {
 	/**
 	 * Cubic safe with a well defined cubic
 	 */
-	@Test
-	public void cubicSafe_nominal() {
+	@Test void cubicSafe_nominal() {
 		double a = 2;
 		double b = -3;
 		double c = 1;
@@ -137,8 +129,7 @@ public class TestSearchInterpolate extends DDoglegJUnit {
 	/**
 	 * Give it a cubic that
 	 */
-	@Test
-	public void cubicSafe_infinity() {
+	@Test void cubicSafe_infinity() {
 		double a = 2;
 		double b = 0;
 		double c = 1;

@@ -47,8 +47,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 	 * Give it a very simple function and see if it finds the minimum approximately.  More
 	 * robustness and correctness tests are found in benchmark directory.
 	 */
-	@Test
-	public void checkBasic() {
+	@Test void checkBasic() {
 		double expected = 10;
 		FunctionStoS f = new TrivialQuadraticStoS(expected);
 		FunctionStoS d = new TrivialQuadraticDerivStoS(expected);
@@ -80,8 +79,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		assertEquals(expected, foundTight, 1e-5);
 	}
 
-	@Test
-	public void compareMore1() {
+	@Test void compareMore1() {
 		List<Results> results = eval.more1();
 
 		testResults(results.get(0),6,1.365);
@@ -90,8 +88,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		testResults(results.get(3),4,36.88760696396662);
 	}
 
-	@Test
-	public void compareMore2() {
+	@Test void compareMore2() {
 		List<Results> results = eval.more2();
 
 		testResults(results.get(0),12,1.596);
@@ -100,8 +97,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		testResults(results.get(3),11,1.596);
 	}
 
-	@Test
-	public void compareMore3() {
+	@Test void compareMore3() {
 		List<Results> results = eval.more3();
 
 		testResults(results.get(0),12,1);
@@ -110,8 +106,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		testResults(results.get(3),13,1);
 	}
 
-	@Test
-	public void compareMore4() {
+	@Test void compareMore4() {
 		List<Results> results = eval.more4();
 
 		testResults(results.get(0),4,0.085);
@@ -120,8 +115,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		testResults(results.get(3),4,0.8294012431694555);
 	}
 
-	@Test
-	public void compareMore5() {
+	@Test void compareMore5() {
 		List<Results> results = eval.more5();
 
 		testResults(results.get(0),6,0.0750108706000682);
@@ -130,8 +124,7 @@ public class TestLineSearchMore94 extends DDoglegJUnit {
 		testResults(results.get(3),8,0.07615927320140908);
 	}
 
-	@Test
-	public void compareMore6() {
+	@Test void compareMore6() {
 		List<Results> results = eval.more6();
 
 		testResults(results.get(0),13,0.9279032286385813);

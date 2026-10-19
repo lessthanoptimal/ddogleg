@@ -21,9 +21,6 @@ package org.ddogleg.optimization;
 import org.ddogleg.optimization.funcs.*;
 import org.ejml.data.DMatrixSparseCSC;
 
-/**
- * @author Peter Abeles
- */
 public abstract class UnconstrainedLeastSquaresEvaluator_DSCC
 		extends UnconstrainedLeastSquaresEvaluator<DMatrixSparseCSC> {
 	protected UnconstrainedLeastSquaresEvaluator_DSCC( boolean verbose, boolean printSummary ) {

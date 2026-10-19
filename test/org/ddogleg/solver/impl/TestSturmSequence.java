@@ -25,19 +25,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestSturmSequence extends DDoglegJUnit {
-
-
-	@Test
-	public void countRealRoots() {
+	@Test void countRealRoots() {
 		Polynomial poly = Polynomial.wrap(-1,0,3,1);
 
 		assertEquals(1, countRealRoots(poly, -3, -2));
@@ -70,8 +63,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 	/**
 	 * Check sequence against a hand selected sequence
 	 */
-	@Test
-	public void checkSequence() {
+	@Test void checkSequence() {
 		Polynomial poly = Polynomial.wrap(-1,0,3,1,5,-3);
 
 		SturmSequence alg = new SturmSequence(10);
@@ -88,8 +80,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void checkCount() {
+	@Test void checkCount() {
 		SturmSequence alg = new SturmSequence(10);
 
 		alg.f = new double[]{0,1,1,-1,0,-1,-1,0,1,1};
@@ -106,8 +97,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 	/**
 	 * Compare the computed sequence against randomly generated polynomials of different length
 	 */
-	@Test
-	public void checkSequence_Random() {
+	@Test void checkSequence_Random() {
 		for( int i = 3; i < 20; i++ ) {
 			Polynomial p = new Polynomial(i);
 
@@ -128,8 +118,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 	/**
 	 * Several consistency checks on random polynomials to the number of roots within a random interval
 	 */
-	@Test
-	public void rootCountConsistency_Random() {
+	@Test void rootCountConsistency_Random() {
 		for( int i = 3; i < 20; i++ ) {
 			Polynomial p = new Polynomial(i);
 
@@ -161,8 +150,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 	/**
 	 * Examine a case which was found to cause problems
 	 */
-	@Test
-	public void checkSpecificPoly01() {
+	@Test void checkSpecificPoly01() {
 		Polynomial poly = Polynomial.wrap(-41.118263303597175,-120.95384505825373,-417.8477600492497,-634.5308297409192,
 				-347.7885168491812,6.771313016808563,79.70258790927392,31.68212813610444,5.0248961592587875,
 				0.2879701466217739,0.0);
@@ -185,8 +173,7 @@ public class TestSturmSequence extends DDoglegJUnit {
 	/**
 	 * Examine a case which was found to cause problems.  It would get stuck in a loop indefinitely
 	 */
-	@Test
-	public void checkSpecificPoly02() {
+	@Test void checkSpecificPoly02() {
 		Polynomial poly = Polynomial.wrap(-0.3497655753671151,2.9621784756210587,-12.9131723419964320,
 				8.0038345403612960,31.0841473414231300,-90.1765840283034800,62.2630323196965500,
 				-17.4634213565573200,1.4562328842432635,0.1227493996590678,-0.0133645583045475);

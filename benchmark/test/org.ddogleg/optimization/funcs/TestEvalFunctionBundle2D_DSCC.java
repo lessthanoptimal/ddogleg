@@ -27,12 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestEvalFunctionBundle2D_DSCC extends DDoglegJUnit {
-	@Test
-	public void compareToNumerical() {
+	@Test public void compareToNumerical() {
 		EvalFunctionBundle2D_DSCC eval = new EvalFunctionBundle2D_DSCC(234,20,10,2,3);
 
 		FunctionNtoMxN<DMatrixSparseCSC> jac = new SchurJacobian_to_NtoMxN.DSCC(eval.getJacobianSchur());

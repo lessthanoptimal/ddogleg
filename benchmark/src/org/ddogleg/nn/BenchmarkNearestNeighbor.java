@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @author Peter Abeles
- */
 // TODO spawn new JVM for each benchmark...
 public class BenchmarkNearestNeighbor {
 

@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/**
- * @author Peter Abeles
- */
 class TestListAccessor extends DDoglegJUnit {
 	/**
 	 * A few simple tests combined into one function

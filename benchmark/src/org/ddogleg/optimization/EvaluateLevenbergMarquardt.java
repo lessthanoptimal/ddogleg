@@ -20,9 +20,6 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.lm.ConfigLevenbergMarquardt;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateLevenbergMarquardt extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	public EvaluateLevenbergMarquardt( boolean verbose ) {

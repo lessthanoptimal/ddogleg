@@ -22,9 +22,6 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 
-/**
- * @author Peter Abeles
- */
 public class TestHessianLeastSquares_DDRM extends StandardHessianLeastSquaresChecks {
 	public TestHessianLeastSquares_DDRM() {
 		super(new HessianLeastSquares_DDRM(

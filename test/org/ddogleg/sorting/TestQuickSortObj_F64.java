@@ -26,14 +26,8 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * @author Peter Abeles
- */
 public class TestQuickSortObj_F64 extends DDoglegJUnit {
-
-
-	@Test
-	public void testSortingRandom() {
+	@Test void testSortingRandom() {
 		SortableParameter_F64[] ret = createRandom(rand,200);
 
 		double preTotal = sum(ret);
@@ -55,8 +49,7 @@ public class TestQuickSortObj_F64 extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testSortingRandom_indexes() {
+	@Test void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
 			SortableParameter_F64[] normal = createRandom(rand,20);
 			SortableParameter_F64[] original = copy(normal);

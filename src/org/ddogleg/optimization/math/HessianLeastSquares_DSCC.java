@@ -31,9 +31,6 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.ejml.sparse.csc.mult.Workspace_MT_DSCC;
 import pabeles.concurrency.GrowArray;
 
-/**
- * @author Peter Abeles
- */
 public class HessianLeastSquares_DSCC extends HessianMath_DSCC
 		implements HessianLeastSquares<DMatrixSparseCSC> {
 	IGrowArray gw = new IGrowArray();

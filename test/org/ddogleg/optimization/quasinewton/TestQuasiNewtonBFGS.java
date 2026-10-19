@@ -27,16 +27,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization {
 
 	/**
 	 * Basic test that is easily solved.
 	 */
-	@Test
-	public void basicTest() {
+	@Test public void basicTest() {
 		QuasiNewtonBFGS alg = createAlg(new TrivialFunctionNtoS());
 		
 		alg.initialize(new double[]{1,1,1});

@@ -23,13 +23,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestUtilDouble extends DDoglegJUnit {
 
-	@Test
-	public void sum_F64() {
+	@Test void sum_F64() {
 		double total[] = new double[10];
 		double expected = 0;
 		for( int i = 0; i < total.length; i++ ) {
@@ -42,8 +38,7 @@ public class TestUtilDouble extends DDoglegJUnit {
 		assertEquals(expected,found,1e-8);
 	}
 
-	@Test
-	public void sum_F32() {
+	@Test void sum_F32() {
 		float total[] = new float[10];
 		float expected = 0;
 		for( int i = 0; i < total.length; i++ ) {

@@ -27,18 +27,10 @@ import org.ejml.equation.Equation;
 import org.ejml.simple.SimpleMatrix;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestEquationsBFGS extends DDoglegJUnit {
-	
-
-	@Test
-	public void update() {
+	@Test void update() {
 		Equation eq = new Equation();
 		eq.process("H=rand(5,5)");
 		eq.process("y=rand(5,1)");
@@ -88,8 +80,7 @@ public class TestEquationsBFGS extends DDoglegJUnit {
 		H.setTo(M.getMatrix());
 	}
 
-	@Test
-	public void inverseUpdate() {
+	@Test void inverseUpdate() {
 		int N = 6;
 		DMatrixRMaj H = RandomMatrices_DDRM.symmetric(N,-1,1,rand);
 		DMatrixRMaj s = RandomMatrices_DDRM.rectangle(N,1,-1,1,rand);

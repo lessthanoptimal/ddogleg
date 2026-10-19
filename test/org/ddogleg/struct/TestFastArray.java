@@ -25,12 +25,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 class TestFastArray extends DDoglegJUnit {
-	@Test
-	void toList() {
+	@Test void toList() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
@@ -47,8 +43,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertEquals(1, l.get(1).value);
 	}
 
-	@Test
-	void removeTail() {
+	@Test void removeTail() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		alg.add(new DummyData());
@@ -57,8 +52,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertEquals(0, alg.size);
 	}
 
-	@Test
-	void remove() {
+	@Test void remove() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
@@ -89,8 +83,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertNull(alg.data[2]);
 	}
 
-	@Test
-	void removeSwap() {
+	@Test void removeSwap() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class, 10);
 
 		List<DummyData> l = alg.toList();
@@ -115,8 +108,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertNull(alg.data[3]);
 	}
 
-	@Test
-	void reverse() {
+	@Test void reverse() {
 		DogArray<DummyData> alg = new DogArray<>(2, DummyData::new);
 
 		// 0 items
@@ -172,8 +164,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertEquals(4, alg.get(3).value);
 	}
 
-	@Test
-	void add() {
+	@Test void add() {
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class);
 
 		DummyData a = new DummyData();
@@ -181,8 +172,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertSame(a, alg.data[0]);
 	}
 
-	@Test
-	void addAll() {
+	@Test void addAll() {
 		DogArray<DummyData> alg = new DogArray<>(DummyData::new);
 		alg.grow();
 		alg.grow();
@@ -195,8 +185,7 @@ class TestFastArray extends DDoglegJUnit {
 		assertSame(alg.get(1), alg2.get(1));
 	}
 
-	@Test
-	void resize_fill() {
+	@Test void resize_fill() {
 		DummyData data0 = new DummyData();
 
 		FastArray<DummyData> alg = new FastArray<>(DummyData.class);

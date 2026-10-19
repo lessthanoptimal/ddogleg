@@ -30,9 +30,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 class TestInitializePlusPlus_MT extends DDoglegJUnit {
 	/**
 	 * Create a random scenario and compare toe single threaded results

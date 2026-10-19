@@ -20,9 +20,6 @@ package org.ddogleg.optimization.math;
 
 import org.ejml.data.DMatrix;
 
-/**
- * @author Peter Abeles
- */
 public interface HessianLeastSquares<S extends DMatrix> extends HessianMath {
 
 	void updateHessian(S jacobian );

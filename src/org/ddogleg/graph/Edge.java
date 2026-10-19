@@ -20,9 +20,6 @@ package org.ddogleg.graph;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Peter Abeles
- */
 public class Edge<N,E>
 {
 	@Nullable E data;

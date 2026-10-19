@@ -18,9 +18,6 @@
 
 package org.ddogleg.optimization;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateQuasiNewtonBFGS extends UnconstrainedMinimizationEvaluator {
 
 	public EvaluateQuasiNewtonBFGS( boolean verbose, boolean printScore ) {

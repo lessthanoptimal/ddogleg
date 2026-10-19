@@ -33,9 +33,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 class TestStandardKMeans_MT extends DDoglegJUnit {
 	/**
 	 * Create a simple random scenario and compare single to threaded results

@@ -27,18 +27,10 @@ import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.equation.Equation;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
-
-
-	@Test
-	public void initialize() {
+	@Test void initialize() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 
 		alg.totalFullSteps = 10;
@@ -58,8 +50,7 @@ public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 		assertEquals(GaussNewtonBase_F64.Mode.COMPUTE_DERIVATIVES,alg.mode);
 	}
 
-	@Test
-	public void computePredictedReduction() {
+	@Test void computePredictedReduction() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 		DMatrixRMaj H = ((HessianMath_DDRM)alg.hessian).getHessian();
 		H.reshape(2,2);
@@ -80,8 +71,7 @@ public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 		assertEquals(expected, found, UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void checkConvergenceGTest() {
+	@Test void checkConvergenceGTest() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 
 		alg.config.gtol = 1e-5;
@@ -99,8 +89,7 @@ public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 		assertTrue(alg.checkConvergenceGTest(g));
 	}
 
-	@Test
-	public void computeHessianScaling() {
+	@Test void computeHessianScaling() {
 		double d[] = {1,2,3,-0.001,0};
 		DMatrixRMaj m = new DMatrixRMaj(d.length,1,true,d);
 
@@ -117,8 +106,7 @@ public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void applyHessianScaling() {
+	@Test void applyHessianScaling() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 
 		DMatrixRMaj H = ((HessianMath_DDRM)alg.hessian).getHessian();
@@ -144,8 +132,7 @@ public class TestGaussNewtonBase_F64 extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void undoHessianScalingOnParameters() {
+	@Test void undoHessianScalingOnParameters() {
 		MockGaussNewtonBase_F64 alg = new MockGaussNewtonBase_F64();
 		alg.hessianScaling = new DMatrixRMaj(new double[][]{{1},{0.1},{2},{0.6}});
 

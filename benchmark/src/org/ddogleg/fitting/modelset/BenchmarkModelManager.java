@@ -21,9 +21,6 @@ package org.ddogleg.fitting.modelset;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Peter Abeles
- */
 public class BenchmarkModelManager {
 
 	public static final int N = 10;

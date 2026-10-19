@@ -20,10 +20,6 @@ package org.ddogleg.sorting;
 
 import java.util.Random;
 
-
-/**
- * @author Peter Abeles
- */
 public class BenchMarkSelect {
     public void process( int num ) {
         double[] data;

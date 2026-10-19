@@ -24,12 +24,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestRecycleManager extends DDoglegJUnit {
-	@Test
-	public void requestInstance_recycleInstance() {
+	@Test void requestInstance_recycleInstance() {
 		RecycleManager<Dummy> manager = new RecycleManager<Dummy>(Dummy.class);
 
 		Dummy first = manager.requestInstance();

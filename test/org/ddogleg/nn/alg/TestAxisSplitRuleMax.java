@@ -23,12 +23,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestAxisSplitRuleMax extends DDoglegJUnit {
-	@Test
-	public void basic() {
+	@Test void basic() {
 
 		double[] var = new double[]{1,2,3,10,4,5,5,6};
 

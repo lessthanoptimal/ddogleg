@@ -23,13 +23,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestGraphDataManager extends DDoglegJUnit
 {
-	@Test
-	void reset()
+	@Test void reset()
 	{
 		GraphDataManager alg = new GraphDataManager();
 
@@ -54,8 +50,7 @@ public class TestGraphDataManager extends DDoglegJUnit
 		assertTrue(((Node)alg.unusedNodes.getFirst()).edges.size != 0 );
 	}
 
-	@Test
-	void resetHard()
+	@Test void resetHard()
 	{
 		GraphDataManager alg = new GraphDataManager();
 
@@ -80,8 +75,7 @@ public class TestGraphDataManager extends DDoglegJUnit
 		assertEquals(((Node) alg.unusedNodes.getFirst()).edges.size, 0);
 	}
 
-	@Test
-	void createEdge()
+	@Test void createEdge()
 	{
 		GraphDataManager<?,?> alg = new GraphDataManager<>();
 
@@ -96,8 +90,7 @@ public class TestGraphDataManager extends DDoglegJUnit
 		assertEquals(0,alg.unusedEdges.size());
 	}
 
-	@Test
-	void recycleEdge()
+	@Test void recycleEdge()
 	{
 		GraphDataManager alg = new GraphDataManager();
 
@@ -111,8 +104,7 @@ public class TestGraphDataManager extends DDoglegJUnit
 		assertEquals(1,alg.unusedEdges.size());
 	}
 
-	@Test
-	void createNode()
+	@Test void createNode()
 	{
 		GraphDataManager alg = new GraphDataManager();
 
@@ -126,8 +118,7 @@ public class TestGraphDataManager extends DDoglegJUnit
 		assertEquals(1, alg.unusedNodes.size());
 	}
 
-	@Test
-	void recycleNode()
+	@Test void recycleNode()
 	{
 		GraphDataManager alg = new GraphDataManager();
 

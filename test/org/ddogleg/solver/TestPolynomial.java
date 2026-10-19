@@ -23,13 +23,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestPolynomial extends DDoglegJUnit {
 
-	@Test
-	public void evaluate() {
+	@Test void evaluate() {
 		assertEquals(5,Polynomial.wrap(1,2).evaluate(2),1e-8);
 		assertEquals(5,Polynomial.wrap(1,2,0).evaluate(2),1e-8);
 		assertEquals(10,Polynomial.wrap(0,1,2).evaluate(2),1e-8);
@@ -58,8 +54,7 @@ public class TestPolynomial extends DDoglegJUnit {
 		assertEquals(8,p.evaluate(2),1e-8);
 	}
 
-	@Test
-	public void computeDegree() {
+	@Test void computeDegree() {
 		assertEquals(-1,Polynomial.wrap().computeDegree());
 		assertEquals(-1,Polynomial.wrap(0).computeDegree());
 		assertEquals(-1,Polynomial.wrap(0,0).computeDegree());
@@ -71,8 +66,7 @@ public class TestPolynomial extends DDoglegJUnit {
 		assertEquals(2,Polynomial.wrap(-0,-1,-2,-0).computeDegree());
 	}
 
-	@Test
-	public void setTo() {
+	@Test public void setTo() {
 		Polynomial a = new Polynomial(10);
 		Polynomial b = Polynomial.wrap(1,2,3,4);
 
@@ -83,8 +77,7 @@ public class TestPolynomial extends DDoglegJUnit {
 			assertEquals(a.c[i],b.c[i],1e-8);
 	}
 
-	@Test
-	public void resize() {
+	@Test void resize() {
 		Polynomial a = new Polynomial(10);
 
 		assertEquals(10,a.size());
@@ -95,8 +88,7 @@ public class TestPolynomial extends DDoglegJUnit {
 		assertEquals(15,a.c.length);
 	}
 
-	@Test
-	public void identical() {
+	@Test void identical() {
 		Polynomial a = Polynomial.wrap(0,1,2);
 
 		assertTrue(a.isIdentical(Polynomial.wrap(0, 1, 2), 1e-8));
@@ -110,8 +102,7 @@ public class TestPolynomial extends DDoglegJUnit {
 		assertFalse(a.isIdentical(Polynomial.wrap(0, 1, 2, 3), 1e-8));
 	}
 
-	@Test
-	public void truncateZeros() {
+	@Test void truncateZeros() {
 
 		Polynomial a = Polynomial.wrap(0,1,2,0);
 		Polynomial b = Polynomial.wrap(0,1,2,1e-15);
