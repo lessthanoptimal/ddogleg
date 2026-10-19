@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
+public abstract class CommonKdTreeSearchN extends DDoglegJUnit {
 
 	public int N = 2;
 	DogArray<KdTreeResult> found = new DogArray<>(KdTreeResult::new);
@@ -57,7 +57,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	@Test public void findClosest_basic_1() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
+		KdTree tree = CommonKdTreeSearch1.createTreeA();
 		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
@@ -89,7 +89,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	@Test public void findClosest_nullLeaf() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeWithNull();
+		KdTree tree = CommonKdTreeSearch1.createTreeWithNull();
 		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 
@@ -106,7 +106,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	@Test public void randomTests() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
+		KdTree tree = CommonKdTreeSearch1.createTreeA();
 		setTree(alg,tree);
 
 		List<double[]> data = new ArrayList<>();
@@ -190,7 +190,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	@Test public void checkDistance() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
+		KdTree tree = CommonKdTreeSearch1.createTreeA();
 		setTree(alg,tree);
 		alg.setMaxDistance(Double.MAX_VALUE);
 

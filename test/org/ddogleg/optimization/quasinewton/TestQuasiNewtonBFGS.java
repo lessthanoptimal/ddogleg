@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestQuasiNewtonBFGS extends CommonChecksUnconstrainedOptimization {
+public class TestQuasiNewtonBFGS extends CommonUnconstrainedOptimization {
 
 	/**
 	 * Basic test that is easily solved.

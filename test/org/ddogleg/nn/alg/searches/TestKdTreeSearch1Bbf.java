@@ -22,7 +22,7 @@ import org.ddogleg.nn.alg.KdTree;
 import org.ddogleg.nn.alg.KdTreeSearch1;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
-public class TestKdTreeSearch1Bbf extends StandardKdTreeSearch1Tests {
+public class TestKdTreeSearch1Bbf extends CommonKdTreeSearch1 {
 	@Override
 	public KdTreeSearch1<double[]> createAlg() {
 		// specify so many max nodes that it will be optimal

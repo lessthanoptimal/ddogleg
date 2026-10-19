@@ -22,7 +22,7 @@ import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
 
-public class TestHessianLeastSquares_DDRM extends StandardHessianLeastSquaresChecks {
+public class TestHessianLeastSquares_DDRM extends CommonHessianLeastSquares {
 	public TestHessianLeastSquares_DDRM() {
 		super(new HessianLeastSquares_DDRM(
 				LinearSolverFactory_DDRM.qrp(true,false)

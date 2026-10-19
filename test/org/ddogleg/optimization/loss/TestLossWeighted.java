@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossWeighted extends CommonChecksLossJacobian {
+class TestLossWeighted extends CommonLossJacobian {
 
 	LossWeighted function = new LossWeighted();
 

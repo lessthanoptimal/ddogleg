@@ -57,7 +57,7 @@ class TestLeastMedianOfSquares extends DDoglegJUnit {
 	}
 
 	/** Runs the generic tests with the specified inlier fraction. 0 = sigma */
-	abstract class Common extends GenericModelMatcherPostTests {
+	abstract class Common extends CommonModelMatcherPost {
 		double inlierFraction;
 
 		Common( double inlierFraction ) {

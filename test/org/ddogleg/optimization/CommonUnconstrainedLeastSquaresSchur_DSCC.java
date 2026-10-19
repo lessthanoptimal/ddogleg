@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksUnconstrainedLeastSquaresSchur_DSCC extends UnconstrainedLeastSquaresSchurEvaluator_DSCC {
+public abstract class CommonUnconstrainedLeastSquaresSchur_DSCC extends UnconstrainedLeastSquaresSchurEvaluator_DSCC {
 
 	protected boolean checkFastConvergence = true;
 
-	protected CommonChecksUnconstrainedLeastSquaresSchur_DSCC() {
+	protected CommonUnconstrainedLeastSquaresSchur_DSCC() {
 		super(false, false);
 	}
 
-	@Nested class CommonChecks extends ChecksUnconstrainedLeastSquaresSchur<DMatrixSparseCSC> {
+	@Nested class CommonChecks extends CommonUnconstrainedLeastSquaresSchur<DMatrixSparseCSC> {
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixSparseCSC> createSearch( double minimumValue ) {
-			return CommonChecksUnconstrainedLeastSquaresSchur_DSCC.this.createSearch(minimumValue);
+			return CommonUnconstrainedLeastSquaresSchur_DSCC.this.createSearch(minimumValue);
 		}
 
 		@Override protected EvalFunctionBundle2D<DMatrixSparseCSC> createEvalFunction() {

@@ -18,9 +18,9 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.clustering.CommonCluster_F64;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.ComputeMeanClusters;
-import org.ddogleg.clustering.GenericClusterChecks_F64;
 import org.ddogleg.clustering.PointDistance;
 import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
 import org.ddogleg.clustering.misc.ListAccessor;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Peter Abeles
  */
-public class TestStandardKMeans extends GenericClusterChecks_F64 {
+public class TestStandardKMeans extends CommonCluster_F64 {
 	int DOF = 4;
 
 	@Test void matchPointsToClusters() {

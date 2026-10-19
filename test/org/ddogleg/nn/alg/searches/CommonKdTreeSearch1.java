@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class StandardKdTreeSearch1Tests extends DDoglegJUnit {
+public abstract class CommonKdTreeSearch1 extends DDoglegJUnit {
 
 	// DOF of a point
 	public int N = 2;

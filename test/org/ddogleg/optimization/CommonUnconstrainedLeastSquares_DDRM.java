@@ -18,24 +18,24 @@
 
 package org.ddogleg.optimization;
 
-import org.ejml.data.DMatrixSparseCSC;
+import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends UnconstrainedLeastSquaresEvaluator_DSCC {
+public abstract class CommonUnconstrainedLeastSquares_DDRM extends UnconstrainedLeastSquaresEvaluator_DDRM {
 
 	protected boolean checkFastConvergence = true;
 
-	protected CommonChecksUnconstrainedLeastSquares_DSCC() {
+	protected CommonUnconstrainedLeastSquares_DDRM() {
 		super(false, false);
 	}
 
-	@Nested class CommonChecks extends ChecksUnconstrainedLeastSquares<DMatrixSparseCSC> {
-		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
-			return CommonChecksUnconstrainedLeastSquares_DSCC.this.createSearch(minimumValue);
+	@Nested class CommonChecks extends CommonUnconstrainedLeastSquares<DMatrixRMaj> {
+		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
+			return CommonUnconstrainedLeastSquares_DDRM.this.createSearch(minimumValue);
 		}
 	}
 
@@ -43,7 +43,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = powell();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 300);
 			assertTrue(results.numGradient < 300);
 		}
@@ -59,7 +59,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = helicalValley();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -73,7 +73,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = rosenbrock();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -86,7 +86,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = badlyScaledBrown();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
@@ -99,10 +99,11 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = trigonometric();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 100);
 			assertTrue(results.numGradient < 100);
 		}
+
 		assertEquals(0, results.f, 1e-4);
 	}
 
@@ -110,7 +111,7 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		NonlinearResults results = bundle2D();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
-		if( checkFastConvergence ) {
+		if (checkFastConvergence) {
 			assertTrue(results.numFunction < 300);
 			assertTrue(results.numGradient < 300);
 		}
@@ -130,5 +131,4 @@ public abstract class CommonChecksUnconstrainedLeastSquares_DSCC extends Unconst
 		assertEquals(-0.5, results.x[0], 0.02);
 		assertEquals(1.4, results.x[1], 0.02);
 	}
-
 }

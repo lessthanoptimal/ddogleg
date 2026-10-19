@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestRansac_MT extends GenericModelMatcherPostTests {
+public class TestRansac_MT extends CommonModelMatcherPost {
 
 	int numTrials = 50;
 

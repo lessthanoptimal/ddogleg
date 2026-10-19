@@ -33,7 +33,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"NullAway"})
-public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
+public abstract class CommonNearestNeighbor extends DDoglegJUnit {
 
 	public int N = 2;
 	private final KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);

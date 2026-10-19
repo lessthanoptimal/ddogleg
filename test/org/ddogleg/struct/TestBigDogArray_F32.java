@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestBigDogArray_F32 extends ChecksBigDogArray<float[]> {
+public class TestBigDogArray_F32 extends CommonBigDogArray<float[]> {
 
 	/** resize with a set value */
 	@Test void resizeValue() {

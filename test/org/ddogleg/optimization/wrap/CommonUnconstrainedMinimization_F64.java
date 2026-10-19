@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class GenericUnconstrainedMinimizationTests_F64 extends DDoglegJUnit {
+public abstract class CommonUnconstrainedMinimization_F64 extends DDoglegJUnit {
 
 	public abstract UnconstrainedMinimization createAlgorithm();
 

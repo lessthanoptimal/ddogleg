@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TestLossIdentity extends CommonChecksLossJacobian {
+class TestLossIdentity extends CommonLossJacobian {
 	@Test void compareToManual() {
 		double[] residuals = randomArray(20, 5, rand);
 

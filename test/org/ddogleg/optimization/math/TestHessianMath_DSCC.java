@@ -23,7 +23,7 @@ import org.ejml.ops.DConvertMatrixStruct;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
-public class TestHessianMath_DSCC extends StandardHessianMathChecks {
+public class TestHessianMath_DSCC extends CommonHessianMath {
 	public TestHessianMath_DSCC() {
 		super(new HessianMath_DSCC(LinearSolverFactory_DSCC.cholesky(FillReducing.NONE)));
 	}

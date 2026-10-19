@@ -146,7 +146,7 @@ public class TestTrustRegionUpdateCauchy_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class UnconstrainedBFGS extends CommonChecksUnconstrainedOptimization {
+	class UnconstrainedBFGS extends CommonUnconstrainedOptimization {
 		public UnconstrainedBFGS() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
@@ -166,7 +166,7 @@ public class TestTrustRegionUpdateCauchy_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquares_DDRM {
 		public LeastSquaresDDRM() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
@@ -183,7 +183,7 @@ public class TestTrustRegionUpdateCauchy_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDDRM_Scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM_Scaling extends CommonUnconstrainedLeastSquares_DDRM {
 		public LeastSquaresDDRM_Scaling() {
 			this.checkFastConvergence = false;
 			this.maxIteration = 10000;
@@ -203,7 +203,7 @@ public class TestTrustRegionUpdateCauchy_F64 extends DDoglegJUnit {
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquares_DSCC {
 
 		public LeastSquaresDSCC() {
 			this.checkFastConvergence = false;

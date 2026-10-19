@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class ChecksBigDogArray<Array> extends DDoglegJUnit {
+public abstract class CommonBigDogArray<Array> extends DDoglegJUnit {
 	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth );
 
 	public abstract void fillRandom( BigDogArrayBase<Array> array );

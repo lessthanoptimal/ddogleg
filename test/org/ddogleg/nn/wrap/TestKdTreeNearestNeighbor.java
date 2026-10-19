@@ -18,11 +18,11 @@
 
 package org.ddogleg.nn.wrap;
 
+import org.ddogleg.nn.CommonNearestNeighbor;
 import org.ddogleg.nn.FactoryNearestNeighbor;
-import org.ddogleg.nn.StandardNearestNeighborTests;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 
-public class TestKdTreeNearestNeighbor extends StandardNearestNeighborTests {
+public class TestKdTreeNearestNeighbor extends CommonNearestNeighbor {
 
 	public TestKdTreeNearestNeighbor() {
 		setAlg(FactoryNearestNeighbor.kdtree(new KdTreeEuclideanSq_F64(N)));

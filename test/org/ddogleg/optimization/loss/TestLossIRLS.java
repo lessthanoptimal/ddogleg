@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossIRLS extends CommonChecksLossJacobian {
+class TestLossIRLS extends CommonLossJacobian {
 
 	LossIRLS function = new LossIRLS();
 

@@ -18,7 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
-class TestLossHuber extends CommonChecksLossJacobian {
+class TestLossHuber extends CommonLossJacobian {
 	public TestLossHuber() {
 		tolerance = 5e-3;
 	}

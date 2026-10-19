@@ -18,10 +18,10 @@
 
 package org.ddogleg.nn.wrap;
 
+import org.ddogleg.nn.CommonNearestNeighbor;
 import org.ddogleg.nn.FactoryNearestNeighbor;
-import org.ddogleg.nn.StandardNearestNeighborTests;
 
-public class TestVpTreeNearestNeighbor extends StandardNearestNeighborTests {
+public class TestVpTreeNearestNeighbor extends CommonNearestNeighbor {
 	public TestVpTreeNearestNeighbor() {
 		setAlg(FactoryNearestNeighbor.vptree(345345));
 	}

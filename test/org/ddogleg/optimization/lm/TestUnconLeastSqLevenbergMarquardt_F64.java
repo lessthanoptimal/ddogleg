@@ -18,8 +18,8 @@
 
 package org.ddogleg.optimization.lm;
 
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquares_DDRM;
-import org.ddogleg.optimization.CommonChecksUnconstrainedLeastSquares_DSCC;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquares_DDRM;
+import org.ddogleg.optimization.CommonUnconstrainedLeastSquares_DSCC;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ddogleg.optimization.lm.TestUnconLeastSqLevenbergMarquardtSchur_F64.MockResiduals;
@@ -27,7 +27,7 @@ import org.ddogleg.optimization.math.HessianLeastSquares_DDRM;
 import org.ddogleg.optimization.math.HessianLeastSquares_DSCC;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DSCC;
-import org.ddogleg.optimization.wrap.GenericUnconstrainedLeastSquaresTests_F64;
+import org.ddogleg.optimization.wrap.CommonUnconstrainedLeastSquares_F64;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.factory.LinearSolverFactory_DDRM;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"NullAway"})
-public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrainedLeastSquaresTests_F64 {
+public class TestUnconLeastSqLevenbergMarquardt_F64 extends CommonUnconstrainedLeastSquares_F64 {
 	@Test void computeGradientHessian() {
 		UnconLeastSqLevenbergMarquardt_F64<DMatrixRMaj> lm = createLM();
 
@@ -92,14 +92,14 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 	}
 
 	@Nested
-	class LeastSquaresDDRM extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM extends CommonUnconstrainedLeastSquares_DDRM {
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			return createLM();
 		}
 	}
 
 	@Nested
-	class LeastSquaresDSCC extends CommonChecksUnconstrainedLeastSquares_DSCC {
+	class LeastSquaresDSCC extends CommonUnconstrainedLeastSquares_DSCC {
 		@Override protected UnconstrainedLeastSquares<DMatrixSparseCSC> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 
@@ -112,7 +112,7 @@ public class TestUnconLeastSqLevenbergMarquardt_F64 extends GenericUnconstrained
 	}
 
 	@Nested
-	class LeastSquaresDDRM_scaling extends CommonChecksUnconstrainedLeastSquares_DDRM {
+	class LeastSquaresDDRM_scaling extends CommonUnconstrainedLeastSquares_DDRM {
 		@Override protected UnconstrainedLeastSquares<DMatrixRMaj> createSearch( double minimumValue ) {
 			var config = new ConfigLevenbergMarquardt();
 

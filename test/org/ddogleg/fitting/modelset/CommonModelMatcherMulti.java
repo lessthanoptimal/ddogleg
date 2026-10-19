@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway.Init"})
-public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherTests{
+public abstract class CommonModelMatcherMulti extends CommonModelMatcher{
 	/**
 	 * Wrapper to provide support for single ModelMatcher tests
 	 */

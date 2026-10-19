@@ -21,7 +21,7 @@ package org.ddogleg.optimization.wrap;
 import org.ddogleg.optimization.FactoryOptimization;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 
-public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends GenericUnconstrainedMinimizationTests_F64{
+public class TestQuasiNewtonBFGS_to_UnconstrainedMinimization extends CommonUnconstrainedMinimization_F64{
 
 	@Override
 	public UnconstrainedMinimization createAlgorithm() {

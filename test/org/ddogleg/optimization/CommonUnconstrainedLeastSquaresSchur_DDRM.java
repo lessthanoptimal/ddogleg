@@ -27,18 +27,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksUnconstrainedLeastSquaresSchur_DDRM extends UnconstrainedLeastSquaresSchurEvaluator_DDRM {
+public abstract class CommonUnconstrainedLeastSquaresSchur_DDRM extends UnconstrainedLeastSquaresSchurEvaluator_DDRM {
 
 	protected boolean checkFastConvergence = true;
 	protected int maxIterationsFast = 50;
 
-	protected CommonChecksUnconstrainedLeastSquaresSchur_DDRM() {
+	protected CommonUnconstrainedLeastSquaresSchur_DDRM() {
 		super(false, false);
 	}
 
-	@Nested class CommonChecks extends ChecksUnconstrainedLeastSquaresSchur<DMatrixRMaj> {
+	@Nested class CommonChecks extends CommonUnconstrainedLeastSquaresSchur<DMatrixRMaj> {
 		@Override protected UnconstrainedLeastSquaresSchur<DMatrixRMaj> createSearch( double minimumValue ) {
-			return CommonChecksUnconstrainedLeastSquaresSchur_DDRM.this.createSearch(minimumValue);
+			return CommonUnconstrainedLeastSquaresSchur_DDRM.this.createSearch(minimumValue);
 		}
 
 		@Override protected EvalFunctionBundle2D<DMatrixRMaj> createEvalFunction() {

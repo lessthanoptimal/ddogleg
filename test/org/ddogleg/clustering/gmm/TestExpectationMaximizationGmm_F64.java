@@ -18,10 +18,10 @@
 
 package org.ddogleg.clustering.gmm;
 
+import org.ddogleg.clustering.CommonCluster_F64;
 import org.ddogleg.clustering.ComputeClusters;
 import org.ddogleg.clustering.ConfigKMeans;
 import org.ddogleg.clustering.FactoryClustering;
-import org.ddogleg.clustering.GenericClusterChecks_F64;
 import org.ddogleg.clustering.gmm.ExpectationMaximizationGmm_F64.PointInfo;
 import org.ddogleg.clustering.kmeans.StandardKMeans;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans;
@@ -37,7 +37,7 @@ import static org.ddogleg.clustering.gmm.TestGaussianLikelihoodManager.computeLi
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestExpectationMaximizationGmm_F64 extends GenericClusterChecks_F64 {
+public class TestExpectationMaximizationGmm_F64 extends CommonCluster_F64 {
 	/**
 	 * Computes the expectation for several points and a variable number of Gaussians.  Sees if points which
 	 * are at the mean of the Gaussians have a peak at the expected location

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class StandardMatrixMathChecks<T extends DMatrix> extends DDoglegJUnit {
+public abstract class CommonMatrixMath<T extends DMatrix> extends DDoglegJUnit {
 	public abstract T convertA( DMatrixRMaj A );
 
 	public abstract DMatrixRMaj convertB( T A );
@@ -39,7 +39,7 @@ public abstract class StandardMatrixMathChecks<T extends DMatrix> extends DDogle
 
 	MatrixMath<T> alg;
 
-	protected StandardMatrixMathChecks( MatrixMath<T> alg ) {
+	protected CommonMatrixMath( MatrixMath<T> alg ) {
 		this.alg = alg;
 	}
 

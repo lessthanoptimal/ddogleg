@@ -20,7 +20,7 @@ package org.ddogleg.optimization.trustregion;
 
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.math.HessianBFGS_DDRM;
-import org.ddogleg.optimization.wrap.GenericUnconstrainedMinimizationTests_F64;
+import org.ddogleg.optimization.wrap.CommonUnconstrainedMinimization_F64;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public class TestUnconMinTrustRegionBFGS_F64 extends GenericUnconstrainedMinimizationTests_F64 {
+public class TestUnconMinTrustRegionBFGS_F64 extends CommonUnconstrainedMinimization_F64 {
 
 	@Test void wolfeCondition() {
 		UnconMinTrustRegionBFGS_F64 alg = createAlg();

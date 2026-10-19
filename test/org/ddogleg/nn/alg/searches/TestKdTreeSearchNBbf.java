@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"NullAway"})
-public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
+public class TestKdTreeSearchNBbf extends CommonKdTreeSearchN {
 	@Override
 	public KdTreeSearchN<double[]> createAlg() {
 		// specify so many max nodes that it will be optimal
@@ -44,7 +44,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	 * result
 	 */
 	@Test void checkMaxNodes() {
-		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
+		KdTree tree = CommonKdTreeSearch1.createTreeA();
 
 		KdTreeSearch1Bbf<double[]> alg = new KdTreeSearch1Bbf<>(new KdTreeEuclideanSq_F64(2),0);
 		alg.setTree(tree);
@@ -60,7 +60,7 @@ public class TestKdTreeSearchNBbf extends StandardKdTreeSearchNTests {
 	 */
 	@Test void multiTreeSearch() {
 		KdTree[] forest = new KdTree[2];
-		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
+		forest[0] = CommonKdTreeSearch1.createTreeA();
 		forest[1] = new KdTree(2);
 		forest[1].root = new KdTree.Node(new double[]{12,2});
 

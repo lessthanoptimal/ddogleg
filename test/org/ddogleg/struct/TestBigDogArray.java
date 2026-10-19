@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestBigDogArray extends ChecksBigDogArray<TestBigDogArray.Foo[]> {
+public class TestBigDogArray extends CommonBigDogArray<TestBigDogArray.Foo[]> {
 	/** resize with a set value */
 	@Test void resizeValue() {
 		checkResizeValue(BigDogGrowth.GROW_FIRST);
