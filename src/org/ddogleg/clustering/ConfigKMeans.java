@@ -39,12 +39,13 @@ public class ConfigKMeans {
 	/** Change in distance criteria when testing for convergence */
 	public double convergeTol = 1e-8;
 
-	public void setTo( ConfigKMeans src ) {
+	public ConfigKMeans setTo( ConfigKMeans src ) {
 		this.initializer = src.initializer;
 		this.maxIterations = src.maxIterations;
 		this.reseedAfterIterations = src.reseedAfterIterations;
 		this.maxReSeed = src.maxReSeed;
 		this.convergeTol = src.convergeTol;
+		return this;
 	}
 
 	public void checkValidity() {
