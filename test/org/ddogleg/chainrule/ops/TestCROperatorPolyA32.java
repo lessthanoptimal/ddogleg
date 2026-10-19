@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
+ *
+ * This file is part of DDogleg (http://ddogleg.org).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.ddogleg.chainrule.ops;
+
+import org.ddogleg.DDoglegJUnit;
+import org.ddogleg.chainrule.CROperatorPolyA32;
+import org.ddogleg.chainrule.CommonCROperatorBackwardsGrad.GradientCase;
+import org.ddogleg.chainrule.CommonCROperatorBackwardsGrad;
+import org.ddogleg.chainrule.CommonCROperatorBackwardsJac.JacobianCase;
+import org.ddogleg.chainrule.CommonCROperatorBackwardsJac;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class TestCROperatorPolyA32 extends DDoglegJUnit {
+	@TestFactory Stream<DynamicTest> gradient() {
+		return new CommonCROperatorBackwardsGrad<double[]>(this::gradientVariants, rand).tests();
+	}
+
+	List<GradientCase<double[]>> gradientVariants() {
+		var variants = new ArrayList<GradientCase<double[]>>();
+
+		variants.add(new GradientCase<>(new CROperatorPolyA32()).in(1, -2, 3).in(500, 200, 400));
+		return variants;
+	}
+
+	@TestFactory Stream<DynamicTest> jacobian() {
+		return new CommonCROperatorBackwardsJac<double[]>(this::jacobianVariants, rand).tests();
+	}
+
+	List<JacobianCase<double[]>> jacobianVariants() {
+		var variants = new ArrayList<JacobianCase<double[]>>();
+		variants.add(new JacobianCase<>(new CROperatorPolyA32()).in(1, -2, 3).in(500, 200, 400));
+		return variants;
+	}
+}

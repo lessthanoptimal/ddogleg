@@ -18,6 +18,7 @@
 
 package org.ddogleg;
 
+import org.ddogleg.struct.DogArray_F64;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,50 @@ public class DDoglegJUnit {
 		System.setErr(systemErr);
 		assertFalse(out.used, "stdout was written to which is forbidden by default");
 		assertFalse(err.used, "stderr was written to which is forbidden by default");
+	}
+
+	/** Random number from -1 to 1 */
+	protected double uniform() {
+		return 2.0*rand.nextDouble() - 1.0;
+	}
+
+	/** Random number from -range to range */
+	protected double uniform( double range ) {
+		return (rand.nextDouble() - 0.5)*2.0*range;
+	}
+
+	/** Fills dst with 'count' random numbers from -1 to 1 */
+	protected void random( int count, DogArray_F64 dst ) {
+		dst.reset().reserve(count);
+		for (int i = 0; i < count; i++) {
+			dst.add(uniform());
+		}
+	}
+
+	/** Copies src into dst, stopping at the end of the shorter one */
+	protected void write( double[] dst, double... src ) {
+		System.arraycopy(src, 0, dst, 0, Math.min(dst.length, src.length));
+	}
+
+	/**
+	 * Checks that reset() returns an instance to its initial state, by resetting instances whose fields were
+	 * all changed and comparing them to a new instance
+	 */
+	protected void checkReset( Class<?> type ) {
+		try {
+			Method reset = type.getMethod("reset");
+			Object initialState = type.getConstructor().newInstance();
+
+			// Several times so dumb luck is less likely to cause a false pass
+			for (int trial = 0; trial < 5; trial++) {
+				Object found = createNotDefault(type);
+				reset.invoke(found);
+
+				assertSameFields(type, initialState, found, "Field not reset: ");
+			}
+		} catch (Exception e) {
+			fail("checkReset failed: " + e.getMessage());
+		}
 	}
 
 	@Test public void setTo() {
@@ -132,7 +177,7 @@ public class DDoglegJUnit {
 
 			// Verify src actually differs from dst (i.e. createNotDefault worked)
 			for (Field f : type.getFields()) {
-				if (skipField(f)) continue;
+				if (skipField(f) || !isValueType(f.getType())) continue;
 				assertFalse(Objects.deepEquals(f.get(src), f.get(dst)),
 						"createNotDefault did not change field: " + f.getName());
 			}
@@ -143,11 +188,7 @@ public class DDoglegJUnit {
 			assertSame(dst, ret, "setTo() must return 'this' for chaining");
 
 			// All fields must now match
-			for (Field f : type.getFields()) {
-				if (skipField(f)) continue;
-				assertTrue(Objects.deepEquals(f.get(src), f.get(dst)),
-						"Field not copied by setTo(): " + f.getName());
-			}
+			assertSameFields(type, src, dst, "Field not copied by setTo(): ");
 		} catch (Exception e) {
 			fail("checkSetTo failed: " + e.getMessage());
 		}
@@ -159,6 +200,39 @@ public class DDoglegJUnit {
 	 */
 	protected boolean skipField( Field f ) {
 		return Modifier.isStatic(f.getModifiers()) || f.getType().isArray();
+	}
+
+	/** Primitives, their boxed types, Strings, and enums. Values createNotDefault() can always change */
+	protected static boolean isValueType( Class<?> type ) {
+		return type.isPrimitive() || type.isEnum() || type == String.class || Number.class.isAssignableFrom(type) ||
+				type == Boolean.class || type == Character.class;
+	}
+
+	/**
+	 * Asserts the public fields of 'expected' and 'found' have the same values. Fields which are objects with a
+	 * setTo() are compared field by field, since they often don't implement equals()
+	 */
+	protected void assertSameFields( Class<?> type, Object expected, Object found, String message )
+			throws IllegalAccessException {
+		for (Field f : type.getFields()) {
+			if (skipField(f)) continue;
+			Object a = f.get(expected);
+			Object b = f.get(found);
+			if (a != null && b != null && !isValueType(f.getType()) && hasSetTo(a.getClass())) {
+				assertSameFields(a.getClass(), a, b, message + f.getName() + ".");
+			} else {
+				assertTrue(Objects.deepEquals(a, b), message + f.getName());
+			}
+		}
+	}
+
+	private static boolean hasSetTo( Class<?> type ) {
+		try {
+			findCompatibleSetTo(type);
+			return true;
+		} catch (NoSuchMethodException e) {
+			return false;
+		}
 	}
 
 	/** Creates an instance where all non-static fields differ from their default values */
