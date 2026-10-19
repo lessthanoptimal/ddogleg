@@ -22,9 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-/**
- * @author Peter Abeles
- */
 public class GenerateQuickSelect {
 	String className = "QuickSelect";
 

@@ -26,9 +26,6 @@ import java.util.Random;
 
 import static org.ddogleg.nn.BenchmarkNearestNeighbor.createData;
 
-/**
- * @author Peter Abeles
- */
 public class BenchmarkNearestNeighborCorrect {
 
 	int dimen;

@@ -25,12 +25,8 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestCountingSort extends DDoglegJUnit {
-	@Test
-	public void sort_inplace() {
+	@Test void sort_inplace() {
 		int a[] = new int[]{66,4,2,9,5,4,5,72,20,4,56,94,53,2,55,5,5,5,5,5,7,89,4,3,2};
 		int copy[] = a.clone();
 
@@ -44,8 +40,7 @@ public class TestCountingSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void sort_in_out() {
+	@Test void sort_in_out() {
 		int a[] = new int[]{66,4,2,9,5,4,5,72,20,4,56,94,53,2,55,5,5,5,5,5,7,89,4,3,2};
 		int b[] = new int[a.length];
 
@@ -61,8 +56,7 @@ public class TestCountingSort extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void sortIndex() {
+	@Test void sortIndex() {
 		int a[] = new int[]{123,66,4,2,9,5,4,5,72,20,4,56,94,53,2,55,5,5,5,5,5,7,89,4,3,2};
 		int indexes[] = new int[a.length-1];
 

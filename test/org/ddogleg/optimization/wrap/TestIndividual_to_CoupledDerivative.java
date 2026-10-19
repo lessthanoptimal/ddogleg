@@ -24,16 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestIndividual_to_CoupledDerivative extends DDoglegJUnit {
 
 	/**
 	 * Sanity check to see if it blows up
 	 */
-	@Test
-	public void trivial() {
+	@Test void trivial() {
 		TrivialQuadraticStoS f = new TrivialQuadraticStoS(5);
 		TrivialQuadraticStoS g = new TrivialQuadraticStoS(2);
 		Individual_to_CoupledDerivative alg = new Individual_to_CoupledDerivative(f,g);

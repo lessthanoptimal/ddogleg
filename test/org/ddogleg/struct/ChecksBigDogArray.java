@@ -21,13 +21,9 @@ package org.ddogleg.struct;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ChecksBigDogArray<Array> extends DDoglegJUnit {
-
-
 	public abstract BigDogArrayBase<Array> createBigDog( int initialAllocation, int blockSize, BigDogGrowth growth );
 
 	public abstract void fillRandom( BigDogArrayBase<Array> array );

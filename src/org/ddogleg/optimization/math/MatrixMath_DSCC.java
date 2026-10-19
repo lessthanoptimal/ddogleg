@@ -26,9 +26,6 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.sparse.csc.CommonOps_MT_DSCC;
 import pabeles.concurrency.GrowArray;
 
-/**
- * @author Peter Abeles
- */
 public class MatrixMath_DSCC implements MatrixMath<DMatrixSparseCSC> {
 	DGrowArray workArray = new DGrowArray();
 	GrowArray<DGrowArray> concurrentArrays = new GrowArray<>(DGrowArray::new);

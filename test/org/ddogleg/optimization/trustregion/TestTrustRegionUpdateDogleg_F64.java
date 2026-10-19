@@ -35,17 +35,10 @@ import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.ddogleg.optimization.trustregion.TestTrustRegionUpdateCauchy_F64.setGradient;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestTrustRegionUpdateDogleg_F64 extends DDoglegJUnit {
-
-
 	/**
 	 * See if it correctly identifies a non SPD matrix
 	 */

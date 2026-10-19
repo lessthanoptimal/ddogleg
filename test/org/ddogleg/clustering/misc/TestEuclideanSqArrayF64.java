@@ -24,9 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 class TestEuclideanSqArrayF64 extends DDoglegJUnit {
 	@Test void distance() {
 		var alg = new EuclideanSqArrayF64(5);

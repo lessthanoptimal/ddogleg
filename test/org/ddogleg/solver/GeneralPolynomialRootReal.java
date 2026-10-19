@@ -22,20 +22,12 @@ import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class GeneralPolynomialRootReal extends DDoglegJUnit {
-
-
-
-	@Test
-	public void rootsSmallReal() {
+	@Test public void rootsSmallReal() {
 		for( int numCoef = 2; numCoef < 6; numCoef++ ) {
 			Polynomial poly = new Polynomial(numCoef);
 
@@ -59,8 +51,7 @@ public abstract class GeneralPolynomialRootReal extends DDoglegJUnit {
 	}
 
 
-	@Test
-	public void rootsLargeReal() {
+	@Test public void rootsLargeReal() {
 		for( int numCoef = 10; numCoef < 15; numCoef++ ) {
 			Polynomial poly = new Polynomial(numCoef);
 

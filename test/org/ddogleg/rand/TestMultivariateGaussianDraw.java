@@ -28,7 +28,6 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class TestMultivariateGaussianDraw extends DDoglegJUnit
 {
     public static int N = 6000;
@@ -37,8 +36,7 @@ public class TestMultivariateGaussianDraw extends DDoglegJUnit
      * Do a lot of draws on the distribution and see if a similar distribution is computed
      * in the end.
      */
-    @Test
-    public void testStatistics() {
+    @Test void testStatistics() {
         DMatrixRMaj orig_x = new DMatrixRMaj(new double[][]{{4},{-2}});
         DMatrixRMaj orig_P = new DMatrixRMaj(new double[][]{{6,-2},{-2,10}});
 

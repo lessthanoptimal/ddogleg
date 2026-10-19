@@ -21,16 +21,10 @@ package org.ddogleg.sorting;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 public class TestStraightInsertionSort extends DDoglegJUnit {
-
-
-    @Test
-    public void testSortDouble() {
+    @Test void testSortDouble() {
         double[] ret = BenchMarkSort.createRandom_F64(rand,200);
 
         StraightInsertionSort.sort(ret);

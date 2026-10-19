@@ -80,8 +80,7 @@ public class TestQuickSortComparator extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testSortingRandom_indexes() {
+	@Test void testSortingRandom_indexes() {
 		for( int a = 0; a < 20; a++ ) {
 			Double[] normal = createRandom(rand,20);
 			Double[] original = normal.clone();

@@ -24,13 +24,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestKdTreeMemory extends DDoglegJUnit {
 
-	@Test
-	void requestNode() {
+	@Test void requestNode() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		// Empty unused list
@@ -46,8 +42,7 @@ public class TestKdTreeMemory extends DDoglegJUnit {
 		assertTrue(n==m);
 	}
 
-	@Test
-	void requestNode_leaf() {
+	@Test void requestNode_leaf() {
 		// create a node with values that need to be changed
 		KdTree.Node n = new KdTree.Node();
 		n.point = new double[2];
@@ -65,8 +60,7 @@ public class TestKdTreeMemory extends DDoglegJUnit {
 		assertTrue(m.split==-1);
 	}
 
-	@Test
-	void requestTree() {
+	@Test void requestTree() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		// Empty unused list
@@ -80,8 +74,7 @@ public class TestKdTreeMemory extends DDoglegJUnit {
 		assertTrue(n==m);
 	}
 
-	@Test
-	void recycle() {
+	@Test void recycle() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		KdTree.Node n = new KdTree.Node();
@@ -115,8 +108,7 @@ public class TestKdTreeMemory extends DDoglegJUnit {
 		assertEquals(5,alg.unusedNodes.size());
 	}
 
-	@Test
-	void recycleGraph_nullRoot() {
+	@Test void recycleGraph_nullRoot() {
 		KdTreeMemory alg = new KdTreeMemory();
 
 		KdTree tree = new KdTree();

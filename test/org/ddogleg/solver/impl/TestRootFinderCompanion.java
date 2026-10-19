@@ -26,19 +26,12 @@ import org.ejml.data.Complex_F64;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestRootFinderCompanion extends DDoglegJUnit {
-
-
-	@Test
-	public void basicTest() {
+	@Test public void basicTest() {
 		for( int numCoef = 2; numCoef < 6; numCoef++ ) {
 			Polynomial poly = new Polynomial(numCoef);
 			for( int i = 0; i < numCoef; i++ ) {

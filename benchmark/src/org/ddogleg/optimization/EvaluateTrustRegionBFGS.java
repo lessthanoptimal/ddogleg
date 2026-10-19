@@ -20,9 +20,6 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.trustregion.ConfigTrustRegion;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateTrustRegionBFGS extends UnconstrainedMinimizationEvaluator {
 
 	public EvaluateTrustRegionBFGS( boolean verbose, boolean printScore ) {

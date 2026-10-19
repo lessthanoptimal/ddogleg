@@ -26,17 +26,10 @@ import org.ejml.dense.row.RandomMatrices_DDRM;
 import org.ejml.equation.Equation;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestGaussianGmm_F64 extends DDoglegJUnit {
-
-
 	@Test void zero() {
 		var g = new GaussianGmm_F64(3);
 

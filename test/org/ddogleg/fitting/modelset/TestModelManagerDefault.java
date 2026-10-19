@@ -24,12 +24,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestModelManagerDefault extends DDoglegJUnit {
-	@Test
-	public void basic() {
+	@Test void basic() {
 		ModelManagerDefault<Dummy> alg = new ModelManagerDefault<Dummy>(Dummy.class);
 
 		Dummy a = alg.createModelInstance();

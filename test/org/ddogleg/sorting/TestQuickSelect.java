@@ -22,7 +22,6 @@ import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,8 +31,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 	 * Creates a random array then sorts it.  It then requests that the specified element be found
 	 * and compares it against the sorted array.
 	 */
-	@Test
-	public void testWithQuickSort() {
+	@Test void testWithQuickSort() {
 		Double[] orig = new Double[100];
 		Double[] copy = new Double[orig.length];
 		Double[] sorted = new Double[orig.length];
@@ -54,8 +52,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSort_offset() {
+	@Test void testWithQuickSort_offset() {
 		int offset = 20;
 		Double[] orig = new Double[100];
 		Double[] copy = new Double[orig.length];
@@ -78,8 +75,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSortIndex() {
+	@Test void testWithQuickSortIndex() {
 		Double[] orig = new Double[100];
 		Double[] copy = new Double[orig.length];
 		Double[] sorted = new Double[orig.length];
@@ -105,8 +101,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 	 * Creates a random array then sorts it.  It then requests that the specified element be found
 	 * and compares it against the sorted array.
 	 */
-	@Test
-	public void testWithQuickSort_F64() {
+	@Test void testWithQuickSort_F64() {
 		double[] orig = new double[100];
 		double[] copy = new double[orig.length];
 		double[] sorted = new double[orig.length];
@@ -135,8 +130,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSort_offset_F64() {
+	@Test void testWithQuickSort_offset_F64() {
 		int offset = 20;
 
 		double[] orig = new double[100];
@@ -173,8 +167,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSort_I32() {
+	@Test void testWithQuickSort_I32() {
 		int[] orig = new int[100];
 		int[] copy = new int[orig.length];
 		int[] sorted = new int[orig.length];
@@ -203,8 +196,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSort_I64() {
+	@Test void testWithQuickSort_I64() {
 		long[] orig = new long[100];
 		long[] copy = new long[orig.length];
 		long[] sorted = new long[orig.length];
@@ -237,8 +229,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 	 * Creates a random array then sorts it.  It then requests that the specified element be found
 	 * and compares it against the sorted array.
 	 */
-	@Test
-	public void testWithQuickSortIndex_F64() {
+	@Test void testWithQuickSortIndex_F64() {
 		double[] orig = new double[100];
 		double[] copy = new double[orig.length];
 		double[] sorted = new double[orig.length];
@@ -276,8 +267,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSortIndex_I32() {
+	@Test void testWithQuickSortIndex_I32() {
 		int[] orig = new int[100];
 		int[] copy = new int[orig.length];
 		int[] sorted = new int[orig.length];
@@ -315,8 +305,7 @@ public class TestQuickSelect extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void testWithQuickSortIndex_I64() {
+	@Test void testWithQuickSortIndex_I64() {
 		long[] orig = new long[100];
 		long[] copy = new long[orig.length];
 		long[] sorted = new long[orig.length];

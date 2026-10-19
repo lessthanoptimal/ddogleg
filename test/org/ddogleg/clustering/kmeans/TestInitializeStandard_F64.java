@@ -18,9 +18,6 @@
 
 package org.ddogleg.clustering.kmeans;
 
-/**
- * @author Peter Abeles
- */
 public class TestInitializeStandard_F64 extends StandardInitializeKMeansChecks {
 	@Override
 	public InitializeKMeans<double[]> createAlg(int dof) {

@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,8 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 public abstract class GenericModelMatcherTests extends DDoglegJUnit {
-
-
 	// how many of the points is it expected to match
 	protected double minMatchFrac = 1.0;
 	// how close does the parameter set need to be
@@ -64,8 +61,7 @@ public abstract class GenericModelMatcherTests extends DDoglegJUnit {
 	 * Sees if it can correctly select a model set and determine the best fit parameters for
 	 * a simple test case.
 	 */
-	@Test
-	public void performSimpleModelFit() {
+	@Test public void performSimpleModelFit() {
 		double mean = 2.5;
 		double tol = 0.2;
 
@@ -88,8 +84,7 @@ public abstract class GenericModelMatcherTests extends DDoglegJUnit {
 	 * Multiple data sets are processed in an attempt to see if it is properly reinitializing
 	 * itself and returns the correct solutions.
 	 */
-	@Test
-	public void runMultipleTimes() {
+	@Test public void runMultipleTimes() {
 		double mean = 2.5;
 		double tol = 0.2;
 
@@ -159,8 +154,7 @@ public abstract class GenericModelMatcherTests extends DDoglegJUnit {
 	/**
 	 * Make sure the function getInputIndex() returns the original index
 	 */
-	@Test
-	public void checkMatchSetToInputIndex() {
+	@Test public void checkMatchSetToInputIndex() {
 		double mean = 2.5;
 		double tol = 0.2;
 
@@ -195,8 +189,7 @@ public abstract class GenericModelMatcherTests extends DDoglegJUnit {
 	/**
 	 * Make sure that if reset is called it produces identical results
 	 */
-	@Test
-	public void reset() {
+	@Test public void reset() {
 		double mean = 2.5;
 
 		// generate the points with a smaller tolerance to account for fitting error

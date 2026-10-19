@@ -21,9 +21,6 @@ package org.ddogleg.graph;
 import org.ddogleg.struct.DogArray;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Peter Abeles
- */
 public class Node<N,E>
 {
    @Nullable N data;

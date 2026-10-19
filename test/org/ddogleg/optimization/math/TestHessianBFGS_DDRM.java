@@ -27,12 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
-
-
 	public TestHessianBFGS_DDRM() {
 		super(new HessianBFGS_DDRM(true));
 	}
@@ -45,8 +40,7 @@ public class TestHessianBFGS_DDRM extends StandardHessianMathChecks {
 		CommonOps_DDRM.invert(H,a.hessianInverse);
 	}
 
-	@Test
-	public void initialize() {
+	@Test void initialize() {
 		alg.init(8);
 
 		HessianBFGS_DDRM a = (HessianBFGS_DDRM)alg;

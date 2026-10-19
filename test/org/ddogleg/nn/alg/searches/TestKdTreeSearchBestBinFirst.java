@@ -26,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 @SuppressWarnings({"NullAway"})
 public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 
@@ -36,8 +33,7 @@ public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 	 * Provide an insufficient number of steps to produce an optimal solution and see if it produces the expected
 	 * result
 	 */
-	@Test
-	public void checkMaxNodes() {
+	@Test void checkMaxNodes() {
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
 
 		BBF alg = new BBF(0,2);
@@ -52,8 +48,7 @@ public class TestKdTreeSearchBestBinFirst extends DDoglegJUnit {
 	/**
 	 * Provide multiple trees for input and see if it finds the best one
 	 */
-	@Test
-	public void multiTreeSearch() {
+	@Test void multiTreeSearch() {
 		KdTree forest[] = new KdTree[2];
 		forest[0] = StandardKdTreeSearch1Tests.createTreeA();
 		forest[1] = new KdTree(2);

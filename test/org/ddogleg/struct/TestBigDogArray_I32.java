@@ -22,9 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestBigDogArray_I32 extends ChecksBigDogArray<int[]> {
 
 	/** resize with a set value */

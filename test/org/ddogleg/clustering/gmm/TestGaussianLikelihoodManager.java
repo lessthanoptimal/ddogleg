@@ -26,9 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestGaussianLikelihoodManager extends DDoglegJUnit {
 	@Test void likelihood() {
 		int DOF = 3;

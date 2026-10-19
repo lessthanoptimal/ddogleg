@@ -30,9 +30,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 class TestMeanArrayF64 extends DDoglegJUnit {
 	/**
 	 * Create a situation that's easy to hand compute the solution and see if it's right

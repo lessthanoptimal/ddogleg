@@ -20,9 +20,6 @@ package org.ddogleg.optimization.functions;
 
 import org.ejml.data.DMatrix;
 
-/**
- * @author Peter Abeles
- */
 public interface CoupledJacobian<S extends DMatrix> extends FunctionInOut {
 
 	/**

@@ -21,13 +21,8 @@ package org.ddogleg.struct;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestDogArray_B extends DDoglegJUnit {
 
 	@Test void isEquals() {

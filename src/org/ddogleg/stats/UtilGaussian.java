@@ -18,9 +18,6 @@
 
 package org.ddogleg.stats;
 
-/**
- * @author Peter Abeles
- */
 public class UtilGaussian {
 
     public static double SQRT_2_PI = Math.sqrt(2*Math.PI);

@@ -27,9 +27,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestRansacMulti extends GenericModelMatcherMultiTests {
 
 	public TestRansacMulti() {
@@ -60,8 +57,7 @@ public class TestRansacMulti extends GenericModelMatcherMultiTests {
 	/**
 	 * See if it will select models with more of the correct points in it
 	 */
-	@Test
-	public void selectMatchSet() {
+	@Test void selectMatchSet() {
 		double modelVal = 50;
 
 		List<Integer> dataSet = new ArrayList<Integer>();

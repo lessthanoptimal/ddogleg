@@ -30,8 +30,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		super(false, false);
 	}
 
-	@Test
-	public void checkPowell() {
+	@Test public void checkPowell() {
 		NonlinearResults results = powell();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -47,8 +46,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkHelicalValley() {
+	@Test public void checkHelicalValley() {
 		NonlinearResults results = helicalValley();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -62,8 +60,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkRosenbrock() {
+	@Test public void checkRosenbrock() {
 		NonlinearResults results = rosenbrock();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -76,8 +73,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkBadlyScaledBrown() {
+	@Test public void checkBadlyScaledBrown() {
 		NonlinearResults results = badlyScaledBrown();
 
 		// no algorithm to compare it against, just do some sanity checks for changes
@@ -90,8 +86,7 @@ public abstract class CommonChecksUnconstrainedOptimization extends Unconstraine
 		assertEquals(0, results.f, 1e-4);
 	}
 
-	@Test
-	public void checkTrigonometric() {
+	@Test public void checkTrigonometric() {
 		NonlinearResults results = trigonometric();
 
 		// no algorithm to compare it against, just do some sanity checks for changes

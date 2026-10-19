@@ -26,7 +26,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * Generic tests for implementations of {@link ModelMatcherMulti}.  Performs all the tests for
  * the single model equivalent plus additional tests to see if it is selecting the correct model.
@@ -64,8 +63,7 @@ public abstract class GenericModelMatcherMultiTests extends GenericModelMatcherT
 	/**
 	 * Create two models.  One will generate larger errors than the other.  See if it selects the right one.
 	 */
-	@Test
-	public void checkSelectModel() {
+	@Test public void checkSelectModel() {
 		List<ModelInfo> models = new ArrayList<ModelInfo>();
 
 		ModelInfo model0 = new ModelInfo();

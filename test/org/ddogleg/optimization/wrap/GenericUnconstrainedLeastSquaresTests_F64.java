@@ -43,8 +43,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 extends DDoglegJ
 	/**
 	 * Simple optimization which checks several different aspects of its behavior
 	 */
-	@Test
-	public void basicTest() {
+	@Test public void basicTest() {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
@@ -91,8 +90,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 extends DDoglegJ
 	 * Makes sure if the jacobian is null that the numerical differentiation is done and that it uses the expected
 	 * one
 	 */
-	@Test
-	public void checkNumerical() {
+	@Test public void checkNumerical() {
 		double a = 2;
 		double b = 0.1;
 		FunctionNtoM residual = new TrivialLeastSquaresResidual(a,b);
@@ -122,8 +120,7 @@ public abstract class GenericUnconstrainedLeastSquaresTests_F64 extends DDoglegJ
 	/**
 	 * The function can modify the input parameters and
 	 */
-	@Test
-	public void checkAcceptModified() {
+	@Test public void checkAcceptModified() {
 		ModifyInputFunctions residuals = new ModifyInputFunctions();
 
 		UnconstrainedLeastSquares<DMatrixRMaj> alg = createAlgorithm();

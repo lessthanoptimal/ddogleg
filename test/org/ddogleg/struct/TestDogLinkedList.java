@@ -26,13 +26,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 @SuppressWarnings("NullAway")
 public class TestDogLinkedList extends DDoglegJUnit {
-	@Test
-	public void reset() {
+	@Test public void reset() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		alg.pushHead(1);
@@ -46,8 +42,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void isEmpty() {
+	@Test public void isEmpty() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		assertTrue(alg.isEmpty());
@@ -57,8 +52,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertTrue(alg.isEmpty());
 	}
 
-	@Test
-	public void getElement() {
+	@Test void getElement() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushTail(1);
@@ -74,8 +68,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(e0, alg.getElement(2, false));
 	}
 
-	@Test
-	public void pushHead() {
+	@Test void pushHead() {
 
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
@@ -95,8 +88,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void pushTail() {
+	@Test void pushTail() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushTail(1);
@@ -116,8 +108,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void insertAfter() {
+	@Test void insertAfter() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushHead(1);
@@ -135,8 +126,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void insertBefore() {
+	@Test void insertBefore() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushHead(1);
@@ -154,8 +144,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void swap() {
+	@Test void swap() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.pushTail(1);
@@ -196,8 +185,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(alg.last, e3);
 	}
 
-	@Test
-	public void remove() {
+	@Test void remove() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0, e1;
@@ -232,8 +220,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void removeHead() {
+	@Test void removeHead() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		alg.pushHead(1);
@@ -250,8 +237,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void removeTail() {
+	@Test public void removeTail() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		alg.pushHead(1);
@@ -268,8 +254,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void find() {
+	@Test void find() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		assertNull(alg.find(1));
@@ -284,8 +269,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(e1, alg.find(e1.object));
 	}
 
-	@Test
-	public void getHead() {
+	@Test void getHead() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		assertNull(alg.getHead());
@@ -293,8 +277,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(e, alg.getHead());
 	}
 
-	@Test
-	public void getTail() {
+	@Test void getTail() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		assertNull(alg.getHead());
@@ -304,8 +287,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(e, alg.getTail());
 	}
 
-	@Test
-	public void addAll_List() {
+	@Test void addAll_List() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		List<Integer> list0 = new ArrayList<>();
@@ -333,8 +315,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		assertSame(3, alg.getTail().object);
 	}
 
-	@Test
-	public void addAll_array() {
+	@Test void addAll_array() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		Integer[] array0 = new Integer[0];
@@ -362,8 +343,7 @@ public class TestDogLinkedList extends DDoglegJUnit {
 		checkList(alg);
 	}
 
-	@Test
-	public void requestNew() {
+	@Test void requestNew() {
 		DogLinkedList<Integer> alg = new DogLinkedList<>();
 
 		DogLinkedList.Element<Integer> e0 = alg.requestNew();

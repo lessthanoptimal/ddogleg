@@ -21,19 +21,11 @@ package org.ddogleg.solver;
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestPolynomialOps extends DDoglegJUnit {
-
-
-	@Test
-	public void quadraticVertex() {
+	@Test void quadraticVertex() {
 		double a = -0.5;
 		double b = 2.0;
 
@@ -44,8 +36,7 @@ public class TestPolynomialOps extends DDoglegJUnit {
 		assertEquals(x, found, 1e-8);
 	}
 
-	@Test
-	public void derivative() {
+	@Test void derivative() {
 		Polynomial p = Polynomial.wrap(2,3,4,5);
 		p.size = 2;
 
@@ -60,14 +51,12 @@ public class TestPolynomialOps extends DDoglegJUnit {
 	}
 
 
-	@Test
-	public void refineRoot() {
+	@Test void refineRoot() {
 
 	}
 
 
-	@Test
-	public void divide() {
+	@Test void divide() {
 		// numerator and denominator, intentionally add trailing zeros to skew things up
 		Polynomial n = Polynomial.wrap(1,2,3,0);
 		Polynomial d = Polynomial.wrap(-3,1,0);
@@ -89,8 +78,7 @@ public class TestPolynomialOps extends DDoglegJUnit {
 		assertTrue(expectedR.isIdentical(r, 1e-8));
 	}
 
-	@Test
-	public void multiply() {
+	@Test void multiply() {
 		Polynomial a = PolynomialOps.multiply(Polynomial.wrap(2), Polynomial.wrap(3), null);
 		Polynomial b = PolynomialOps.multiply(Polynomial.wrap(),Polynomial.wrap(3),null);
 		Polynomial c = PolynomialOps.multiply(Polynomial.wrap(),Polynomial.wrap(),null);
@@ -110,8 +98,7 @@ public class TestPolynomialOps extends DDoglegJUnit {
 	 * Randomly generate polynomials.  First divide then multiply them back together to reconstruct
 	 * the original.
 	 */
-	@Test
-	public void divide_then_multiply() {
+	@Test void divide_then_multiply() {
 
 		for( int i = 2; i < 10; i++ ) {
 			Polynomial n = createRandom(i);
@@ -132,8 +119,7 @@ public class TestPolynomialOps extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	public void add() {
+	@Test void add() {
 		Polynomial a = PolynomialOps.add(Polynomial.wrap(0.5,1,1),Polynomial.wrap(0.5,1,2),null);
 		Polynomial b = PolynomialOps.add(Polynomial.wrap(0.5,1),Polynomial.wrap(0.5,1,2),null);
 		Polynomial c = PolynomialOps.add(Polynomial.wrap(0.5,1,1),Polynomial.wrap(0.5,1),null);
@@ -153,8 +139,7 @@ public class TestPolynomialOps extends DDoglegJUnit {
 		return ret;
 	}
 
-	@Test
-	public void cubicRealRoot() {
+	@Test void cubicRealRoot() {
 		Polynomial p = Polynomial.wrap(4,-5,2,1.3);
 
 		double root = PolynomialOps.cubicRealRoot(p.c[0],p.c[1],p.c[2],p.c[3]);

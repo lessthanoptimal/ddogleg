@@ -23,9 +23,6 @@ import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.SchurJacobian;
 import org.ejml.data.DMatrix;
 
-/**
- * @author Peter Abeles
- */
 public abstract class UnconstrainedLeastSquaresSchurEvaluator<M extends DMatrix> {
 
 	protected boolean verbose = true;

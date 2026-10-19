@@ -28,9 +28,6 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestRansac extends GenericModelMatcherPostTests {
 
 	public TestRansac() {
@@ -51,8 +48,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 	 * much smaller than the data set size
 	 */
 	@SuppressWarnings({"NumberEquality"})
-	@Test
-	public void randomDraw() {
+	@Test void randomDraw() {
 		randomDraw_sanity(200, 15);
 		randomDraw_sanity(200, 150);
 	}
@@ -102,8 +98,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 	/**
 	 * Checks the histogram of selected items to see if it is a uniformly random distribution
 	 */
-	@Test
-	public void randomDraw_Histogram() {
+	@Test void randomDraw_Histogram() {
 		List<Integer> dataSet = new ArrayList<>();
 
 		for (int i = 0; i < 30; i++) {
@@ -132,8 +127,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 	/**
 	 * Checks the histogram of selected items to see if it is a uniformly random distribution
 	 */
-	@Test
-	public void randomDraw_integer_Histogram() {
+	@Test void randomDraw_integer_Histogram() {
 		DogArray_I32 selectedIdx = new DogArray_I32();
 
 		List<Integer> dataSet = new ArrayList<>();
@@ -168,8 +162,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 	/**
 	 * See if it will select models with more of the correct points in it
 	 */
-	@Test
-	public void selectMatchSet() {
+	@Test void selectMatchSet() {
 		double modelVal = 50;
 
 		List<Integer> dataSet = new ArrayList<>();
@@ -192,8 +185,7 @@ public class TestRansac extends GenericModelMatcherPostTests {
 	/**
 	 * Checks to see if it will abort if it can't possibly beat the best model
 	 */
-	@Test
-	public void selectMatchSet_abort() {
+	@Test void selectMatchSet_abort() {
 		double modelVal = 50;
 
 		List<Integer> dataSet = new ArrayList<>();

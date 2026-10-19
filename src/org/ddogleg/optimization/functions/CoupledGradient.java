@@ -18,9 +18,6 @@
 
 package org.ddogleg.optimization.functions;
 
-/**
- * @author Peter Abeles
- */
 public interface CoupledGradient {
 	
 	int getN();

@@ -20,9 +20,6 @@ package org.ddogleg.fitting.modelset.distance;
 
 import org.ddogleg.fitting.modelset.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestStatisticalDistanceModelMatcher extends GenericModelMatcherTests {
 
 	public TestStatisticalDistanceModelMatcher() {

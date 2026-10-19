@@ -26,9 +26,6 @@ import org.ddogleg.optimization.functions.FunctionNtoS;
 import org.ddogleg.optimization.wrap.LsToNonLinear;
 import org.ddogleg.optimization.wrap.LsToNonLinearDeriv;
 
-/**
- * @author Peter Abeles
- */
 public abstract class UnconstrainedMinimizationEvaluator {
 
 	protected boolean verbose;

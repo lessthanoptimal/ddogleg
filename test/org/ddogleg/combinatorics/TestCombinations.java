@@ -26,13 +26,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestCombinations extends DDoglegJUnit {
 	
-	@Test
-	public void next_1_1() {
+	@Test void next_1_1() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		
@@ -42,8 +38,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertFalse(alg.next());
 	}
 
-	@Test
-	public void next_1_2() {
+	@Test void next_1_2() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
@@ -57,8 +52,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertFalse(alg.next());
 	}
 
-	@Test
-	public void next_2_2() {
+	@Test void next_2_2() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
@@ -71,8 +65,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertFalse(alg.next());
 	}
 
-	@Test
-	public void next_2_3() {
+	@Test void next_2_3() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
@@ -92,8 +85,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertFalse(alg.next());
 	}
 
-	@Test
-	public void previous() {
+	@Test void previous() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
@@ -125,8 +117,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertEquals(3, (int)alg.get(1));
 	}
 
-	@Test
-	public void getList_getOutside() {
+	@Test void getList_getOutside() {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
@@ -159,8 +150,7 @@ public class TestCombinations extends DDoglegJUnit {
 		assertEquals(2,(int)b.get(0));
 	}
 
-	@Test
-	public void computeNumShuffles() {
+	@Test void computeNumShuffles() {
 //		assertEquals(1,computeNumShuffles(1,1));
 		assertEquals(2,computeNumShuffles(1,2));
 		assertEquals(1,computeNumShuffles(2,2));

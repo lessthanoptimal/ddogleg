@@ -18,9 +18,6 @@
 
 package org.ddogleg;
 
-/**
- * @author Peter Abeles
- */
 public interface Performer {
 
     public void process();

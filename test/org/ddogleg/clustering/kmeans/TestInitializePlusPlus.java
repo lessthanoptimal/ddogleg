@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestInitializePlusPlus extends StandardInitializeKMeansChecks {
 	/**
 	 * Every point has a duplicate and even though there are more points than seeds it should only

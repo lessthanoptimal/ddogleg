@@ -31,13 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTrustRegionUpdateCauchy_F64 extends DDoglegJUnit {
-
-
 	@Test void initializeUpdate() {
 		var owner = new MockOwner(null);
 		var alg = new TrustRegionUpdateCauchy_F64<DMatrixRMaj>();

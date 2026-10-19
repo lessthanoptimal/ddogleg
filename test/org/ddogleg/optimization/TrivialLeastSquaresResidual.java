@@ -20,9 +20,6 @@ package org.ddogleg.optimization;
 
 import org.ddogleg.optimization.functions.FunctionNtoM;
 
-/**
- * @author Peter Abeles
- */
 public class TrivialLeastSquaresResidual implements FunctionNtoM {
 	
 	double f[] = new double[3];

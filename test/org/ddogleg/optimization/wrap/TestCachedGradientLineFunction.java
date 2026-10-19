@@ -27,16 +27,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestCachedGradientLineFunction extends DDoglegJUnit {
 
 	/**
 	 * Use setInput(double[]) and see if it has the expected behavior
 	 */
-	@Test
-	public void testSetInput_vector() {
+	@Test void testSetInput_vector() {
 		CallCounterNtoS func = new CallCounterNtoS(new TrivialFunctionNtoS());
 		CallCounterNtoN gradient = new CallCounterNtoN(new NumericalGradientForward(new TrivialFunctionNtoS()));
 
@@ -82,8 +78,7 @@ public class TestCachedGradientLineFunction extends DDoglegJUnit {
 	/**
 	 * Use line search interface and see if it has the expected behavior
 	 */
-	@Test
-	public void testSetInput_step() {
+	@Test void testSetInput_step() {
 		CallCounterNtoS func = new CallCounterNtoS(new TrivialFunctionNtoS());
 		CallCounterNtoN gradient = new CallCounterNtoN(new NumericalGradientForward(new TrivialFunctionNtoS()));
 

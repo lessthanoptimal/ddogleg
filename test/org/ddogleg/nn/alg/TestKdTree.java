@@ -24,13 +24,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestKdTree extends DDoglegJUnit {
 
-	@Test
-	public void isLeaf() {
+	@Test void isLeaf() {
 		KdTree.Node n = new KdTree.Node();
 
 		n.split = -1;

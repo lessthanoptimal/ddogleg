@@ -24,12 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestKdTreeEuclideanSq_F64 extends DDoglegJUnit {
-	@Test
-	public void distance() {
+	@Test void distance() {
 		double a[] = {1,2,3,4};
 		double b[] = {1,2,3,7};
 
@@ -37,8 +33,7 @@ public class TestKdTreeEuclideanSq_F64 extends DDoglegJUnit {
 		assertEquals( 9,alg.distance(a,b) , UtilEjml.TEST_F64);
 	}
 
-	@Test
-	public void valueAt() {
+	@Test void valueAt() {
 		KdTreeEuclideanSq_F64 alg = new KdTreeEuclideanSq_F64(4);
 
 		double a[] = {1,2,3,4};

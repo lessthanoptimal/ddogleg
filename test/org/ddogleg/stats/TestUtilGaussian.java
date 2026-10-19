@@ -24,16 +24,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestUtilGaussian extends DDoglegJUnit {
 
 	/**
 	 * Test the PDF based on some of its properties
 	 */
-	@Test
-	public void computePDF() {
+	@Test void computePDF() {
 		double max = UtilGaussian.computePDF(2,1.5,2);
 
 		assertTrue( UtilGaussian.computePDF(2,1.5,1) < max );
@@ -44,8 +40,7 @@ public class TestUtilGaussian extends DDoglegJUnit {
 		assertTrue( UtilGaussian.computePDF(2,1,2) > max );
 	}
 
-	@Test
-	public void derivative1() {
+	@Test void derivative1() {
 
 		// numerical derivative
 		double expected = deriv1(1.5, 2, 1.8);
@@ -53,24 +48,21 @@ public class TestUtilGaussian extends DDoglegJUnit {
 		assertEquals(expected,UtilGaussian.derivative1(1.5, 2, 1.8),1e-4);
 	}
 
-	@Test
-	public void derivative2() {
+	@Test void derivative2() {
 		// numerical derivative.. test is very crude
 		double expected = deriv2(1.5, 2, 1.8);
 
 		assertEquals(expected, UtilGaussian.derivative2(1.5, 2, 1.8), 1e-3);
 	}
 
-	@Test
-	public void derivative3() {
+	@Test void derivative3() {
 		// numerical derivative.. test is very crude
 		double expected = deriv3(1.5, 2, 1.8);
 
 		assertEquals(expected, UtilGaussian.derivative3(1.5, 2, 1.8), 1e-3);
 	}
 
-	@Test
-	public void derivative4() {
+	@Test void derivative4() {
 		// numerical derivative.. test is very crude
 		double expected = deriv4(1.5, 2, 1.8);
 

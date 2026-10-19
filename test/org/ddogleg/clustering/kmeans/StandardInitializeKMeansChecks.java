@@ -25,7 +25,6 @@ import org.ddogleg.struct.DogArray;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -153,7 +152,7 @@ public abstract class StandardInitializeKMeansChecks extends DDoglegJUnit {
 	/**
 	 * Makes sure the seeds that it selects are unique
 	 */
-	@Test void uniqueSeeds() {
+	@Test public void uniqueSeeds() {
 		// extremely unlikely that it will select each one uniquely if random
 		uniqueSeeds(4, 4);
 		// The standard algorithm switches technique when the ratio of points to seeds become

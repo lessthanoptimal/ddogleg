@@ -22,9 +22,6 @@ import org.ddogleg.optimization.quasinewton.LineSearchMore94;
 
 import java.util.List;
 
-/**
- * @author Peter Abeles
- */
 public class EvaluateLineSearchMore94 extends LineSearchEvaluator {
 
 	double ftol, gtol, xtol = 1e-10;

@@ -28,13 +28,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 class TestFastArrayList extends DDoglegJUnit {
 
-	@Test
-	void size() {
+	@Test void size() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 
 		List<Double> list = queue.toList();
@@ -46,8 +42,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(1, list.size());
 	}
 
-	@Test
-	void isEmpty() {
+	@Test void isEmpty() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 
 		List<Double> list = queue.toList();
@@ -59,8 +54,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertFalse(list.isEmpty());
 	}
 
-	@Test
-	void contains() {
+	@Test void contains() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		Double d = 1.0;
 
@@ -73,8 +67,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertTrue(list.contains(d));
 	}
 
-	@Test
-	void iterator() {
+	@Test void iterator() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);
@@ -90,8 +83,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test
-	void toArray() {
+	@Test void toArray() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);
@@ -109,8 +101,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(2, array.length);
 	}
 
-	@Test
-	void add() {
+	@Test void add() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		List<Double> list = queue.toList();
 
@@ -120,8 +111,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(5.0, queue.get(0), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	void containsAll() {
+	@Test void containsAll() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);
@@ -137,8 +127,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertFalse(queue.toList().containsAll(list));
 	}
 
-	@Test
-	void addAll() {
+	@Test void addAll() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		List<Double> list = queue.toList();
 		List<Double> stuff = new ArrayList<>();
@@ -153,8 +142,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(10.0, queue.get(1), UtilEjml.TEST_F64);
 	}
 
-	@Test
-	void get() {
+	@Test void get() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);
@@ -162,8 +150,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(2.0, queue.toList().get(1));
 	}
 
-	@Test
-	void set() {
+	@Test void set() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);
@@ -174,8 +161,7 @@ class TestFastArrayList extends DDoglegJUnit {
 		assertEquals(3.0, list.get(0));
 	}
 
-	@Test
-	void indexOf_lastIndexOf() {
+	@Test void indexOf_lastIndexOf() {
 		FastArray<Double> queue = new FastArray<>(Double.class, 100);
 		queue.add(1.0);
 		queue.add(2.0);

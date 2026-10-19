@@ -29,15 +29,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestExhaustiveNeighbor extends DDoglegJUnit {
 
 	KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(2);
 
-	@Test
-	public void findClosest_zero() {
+	@Test void findClosest_zero() {
 		List<double[]> list = new ArrayList<double[]>();
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -46,8 +42,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 		assertEquals(alg.findClosest(new double[]{1, 2}, 10), -1);
 	}
 
-	@Test
-	public void findClosest_one() {
+	@Test void findClosest_one() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2);
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -57,8 +52,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 		assertNotEquals(0, alg.findClosest(new double[]{1, 200}, 10));
 	}
 
-	@Test
-	public void findClosest_two() {
+	@Test void findClosest_two() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -67,8 +61,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 		assertEquals(0, alg.findClosest(new double[]{1, 2.1}, 10));
 	}
 
-	@Test
-	public void findClosest_three() {
+	@Test void findClosest_three() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4,  6,7);
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -77,8 +70,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 		assertEquals(1, alg.findClosest(new double[]{3.1, 3.9}, 10));
 	}
 
-	@Test
-	public void findClosestN_zero() {
+	@Test void findClosestN_zero() {
 		List<double[]> list = new ArrayList<double[]>();
 
 		ExhaustiveNeighbor<double[]>  alg = new ExhaustiveNeighbor<>(distance);
@@ -96,8 +88,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 	/**
 	 * Request more inliers than there are
 	 */
-	@Test
-	public void findClosestN_toomany() {
+	@Test void findClosestN_toomany() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -118,8 +109,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 	/**
 	 * Request more inliers than there are within the allowed distance
 	 */
-	@Test
-	public void findClosestN_toomany_distance() {
+	@Test void findClosestN_toomany_distance() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4);
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -137,8 +127,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 		assertEquals(0,outputDistance.get(0),1e-8);
 	}
 
-	@Test
-	public void findClosestN_standard() {
+	@Test void findClosestN_standard() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4 , 4,5, 6,7 , 8,9 );
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);
@@ -160,8 +149,7 @@ public class TestExhaustiveNeighbor extends DDoglegJUnit {
 	/**
 	 * Make sure it works after multiple calls
 	 */
-	@Test
-	public void findClosestN_multiple_calls() {
+	@Test void findClosestN_multiple_calls() {
 		List<double[]> list = TestKdTreeConstructor.createPoints(2,  1,2,  3,4 , 4,5, 6,7 , 8,9 );
 
 		ExhaustiveNeighbor<double[]> alg = new ExhaustiveNeighbor<>(distance);

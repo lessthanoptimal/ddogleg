@@ -27,9 +27,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 class TestPrimitiveArrays extends DDoglegJUnit {
 	@Test void intersection_FindMinMax() {
 		int[] setA = new int[]{8, 7, 6, 3, 1, 0, -2, -5};

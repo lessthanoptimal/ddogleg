@@ -24,15 +24,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class TestQuickSort_S32 extends DDoglegJUnit {
 
-	@Test
-	void testSortingRandom() {
+	@Test void testSortingRandom() {
 		int[] ret = BenchMarkSort.createRandom_S32(rand,200);
 
 		int preTotal = sum(ret);
@@ -62,8 +60,7 @@ class TestQuickSort_S32 extends DDoglegJUnit {
 		return total;
 	}
 
-	@Test
-	void testSortingRandom_indexes() {
+	@Test void testSortingRandom_indexes() {
 		int offset = 10;
 		for( int a = 0; a < 20; a++ ) {
 			int[] normal = BenchMarkSort.createRandom_S32(rand,20);
@@ -87,8 +84,7 @@ class TestQuickSort_S32 extends DDoglegJUnit {
 		}
 	}
 
-	@Test
-	void testSortingRandom_List() {
+	@Test void testSortingRandom_List() {
 		for( int a = 0; a < 20; a++ ) {
 			int[] arrayA = BenchMarkSort.createRandom_S32(rand,20);
 			int[] arrayB = arrayA.clone();

@@ -25,15 +25,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestNumericalJacobianForward_DDRM extends DDoglegJUnit {
 
 	double tol = 1e-6;
 
-	@Test
-	public void simple() {
+	@Test void simple() {
 		// give it a function where one variable does not effect the output
 		// to make the test more interesting
 		SimpleFunction f = new SimpleFunction();

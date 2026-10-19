@@ -28,14 +28,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 @SuppressWarnings({"NullAway"})
 public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 
@@ -50,8 +46,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		this.alg = alg;
 	}
 
-	@Test
-	void findNearest_zero() {
+	@Test void findNearest_zero() {
 		List<double[]> points = new ArrayList<>();
 
 		alg.setPoints(points,false);
@@ -59,8 +54,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertFalse(search.findNearest(new double[]{1, 2}, 10, found));
 	}
 
-	@Test
-	void findNearest_one() {
+	@Test void findNearest_one() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 
@@ -71,8 +65,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertSame(points.get(0), found.point);
 	}
 
-	@Test
-	void findNearest_two() {
+	@Test void findNearest_two() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -84,8 +77,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertSame(points.get(1), found.point);
 	}
 
-	@Test
-	void findNearest_checkData() {
+	@Test void findNearest_checkData() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -97,8 +89,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertEquals(1, found.index);
 	}
 
-	@Test
-	void findNearest_compareToNaive() {
+	@Test void findNearest_compareToNaive() {
 		for( int numPoints = 10; numPoints <= 100; numPoints += 10 ) {
 //			System.out.println("numPoints = "+numPoints);
 
@@ -131,8 +122,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	/**
 	 * Make sure distances < 0 are treated as having no limit and other properties
 	 */
-	@Test
-	void checkSetMaxDistance() {
+	@Test void checkSetMaxDistance() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -161,8 +151,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	/**
 	 * Makes sure the maximum distance is inclusive for findNearest()
 	 */
-	@Test
-	void checkSetMaxDistance_inclusive() {
+	@Test void checkSetMaxDistance_inclusive() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -185,8 +174,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	/**
 	 * Makes sure the maximum distance is inclusive for findNearestN()
 	 */
-	@Test
-	void checkSetMaxDistance_inclusiveN() {
+	@Test void checkSetMaxDistance_inclusiveN() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -211,8 +199,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	}
 
 	// make sure the return distance is correct
-	@Test
-	void findNearest_checkDistance() {
+	@Test void findNearest_checkDistance() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -233,8 +220,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	}
 
 	// make sure the return distance is correct
-	@Test
-	void findNearestN_checkDistance() {
+	@Test void findNearestN_checkDistance() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -256,8 +242,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertEquals(d0*d0 + d1*d1,foundN.get(0).distance,1e-8);
 	}
 
-	@Test
-	void findNearestN_checkData() {
+	@Test void findNearestN_checkData() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -274,8 +259,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	/**
 	 * Makes sure the algorithm first clears the results
 	 */
-	@Test
-	void findNearestN_resultsCleared() {
+	@Test void findNearestN_resultsCleared() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{6,8});
@@ -289,8 +273,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 		assertEquals(1,foundN.size);
 	}
 
-	@Test
-	void findNearestN_compareToNaive() {
+	@Test void findNearestN_compareToNaive() {
 
 		DogArray_I32 outputIndex = new DogArray_I32();
 		DogArray_F64 outputDistance = new DogArray_F64();
@@ -344,8 +327,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	/**
 	 * Input data has duplicate values.  Make sure they are handled correctly
 	 */
-	@Test
-	void findNearestN_duplicates() {
+	@Test void findNearestN_duplicates() {
 		List<double[]> points = new ArrayList<>();
 		points.add(new double[]{3,4});
 		points.add(new double[]{3,4});
@@ -378,8 +360,7 @@ public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 	 * Compare single threaded results to multi-threaded results. This won't catch all problems but will
 	 * catch glaring errors
 	 */
-	@Test
-	void threadSafe() {
+	@Test void threadSafe() {
 		int count = 200;
 		List<double[]> points = new ArrayList<>();
 		for (int i = 0; i < count; i++) {

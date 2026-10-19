@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +44,6 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	public int N = 2;
 	DogArray<KdTreeResult> found = new DogArray<>(KdTreeResult::new);
 
-
 	/**
 	 * Creates a KdTreeSearch which will produce optimal results
 	 */
@@ -56,8 +54,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * Try several searches and see if they all produce good results.  Just fine the nearest-neighbor
 	 */
-	@Test
-	public void findClosest_basic_1() {
+	@Test public void findClosest_basic_1() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
@@ -89,8 +86,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * See if it can handle a null leaf
 	 */
-	@Test
-	public void findClosest_nullLeaf() {
+	@Test public void findClosest_nullLeaf() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeWithNull();
@@ -107,8 +103,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * Randomly generate several searches and check the result
 	 */
-	@Test
-	public void randomTests() {
+	@Test public void randomTests() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
@@ -140,8 +135,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * The tree is empty and it should always fail
 	 */
-	@Test
-	public void findClosest_empty() {
+	@Test public void findClosest_empty() {
 		KdTreeSearchN<double[]> alg = createAlg();
 		setTree(alg, new KdTree(2) );
 
@@ -153,8 +147,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * The tree is a leaf and should always return the same result
 	 */
-	@Test
-	public void findClosest_leaf() {
+	@Test public void findClosest_leaf() {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2});
 
@@ -174,8 +167,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * See if max distance is being respected
 	 */
-	@Test
-	public void findClosest_maxDistance() {
+	@Test public void findClosest_maxDistance() {
 		KdTree tree = new KdTree(2);
 		tree.root = new KdTree.Node(new double[]{1,2});
 
@@ -195,8 +187,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * Make sure the distance it returns is correct
 	 */
-	@Test
-	public void checkDistance() {
+	@Test public void checkDistance() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = StandardKdTreeSearch1Tests.createTreeA();
@@ -217,8 +208,7 @@ public abstract class StandardKdTreeSearchNTests extends DDoglegJUnit {
 	/**
 	 * See of it can handle duplicate values correctly
 	 */
-	@Test
-	public void checkDuplicates() {
+	@Test public void checkDuplicates() {
 		KdTreeSearchN<double[]> alg = createAlg();
 
 		KdTree tree = createTreeDuplicates();

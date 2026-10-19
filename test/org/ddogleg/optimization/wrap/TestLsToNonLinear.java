@@ -24,13 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Peter Abeles
- */
 public class TestLsToNonLinear extends DDoglegJUnit {
 
-	@Test
-	public void compareToNumeric() {
+	@Test void compareToNumeric() {
 		TestLsToNonLinearDeriv.FuncLS funcLS = new TestLsToNonLinearDeriv.FuncLS();
 		FunctionNtoS func = new LsToNonLinear(funcLS);
 

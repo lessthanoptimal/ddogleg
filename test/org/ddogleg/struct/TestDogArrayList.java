@@ -27,13 +27,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Peter Abeles
- */
 public class TestDogArrayList extends DDoglegJUnit {
 
-	@Test
-	public void size() {
+	@Test void size() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 
 		List<Dummy> list = queue.toList();
@@ -45,8 +41,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertEquals(1, list.size());
 	}
 
-	@Test
-	public void isEmpty() {
+	@Test public void isEmpty() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 
 		List<Dummy> list = queue.toList();
@@ -58,8 +53,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertFalse(list.isEmpty());
 	}
 
-	@Test
-	public void contains() {
+	@Test void contains() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		List<Dummy> list = queue.toList();
 
@@ -70,8 +64,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertTrue(list.contains(d));
 	}
 
-	@Test
-	public void iterator() {
+	@Test void iterator() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
@@ -87,8 +80,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test
-	public void toArray() {
+	@Test void toArray() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
@@ -106,8 +98,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertEquals(2, array.length);
 	}
 
-	@Test
-	public void containsAll() {
+	@Test void containsAll() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;
@@ -123,8 +114,7 @@ public class TestDogArrayList extends DDoglegJUnit {
 		assertFalse(queue.toList().containsAll(list));
 	}
 
-	@Test
-	public void get() {
+	@Test void get() {
 		DogArray<Dummy> queue = new DogArray<>(100, () -> new Dummy(0));
 		queue.grow().value = 1.0;
 		queue.grow().value = 2.0;

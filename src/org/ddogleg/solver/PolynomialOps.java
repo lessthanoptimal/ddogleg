@@ -24,9 +24,6 @@ import org.ddogleg.solver.impl.SturmSequence;
 import org.ddogleg.solver.impl.WrapRealRootsSturm;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Peter Abeles
- */
 public class PolynomialOps {
 
 	/**

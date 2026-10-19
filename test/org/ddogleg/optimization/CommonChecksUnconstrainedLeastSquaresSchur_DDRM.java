@@ -27,9 +27,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class CommonChecksUnconstrainedLeastSquaresSchur_DDRM extends UnconstrainedLeastSquaresSchurEvaluator_DDRM {
 
 	protected boolean checkFastConvergence = true;
@@ -49,8 +46,7 @@ public abstract class CommonChecksUnconstrainedLeastSquaresSchur_DDRM extends Un
 		}
 	}
 
-	@Test
-	public void checkBundle2D() {
+	@Test public void checkBundle2D() {
 		NonlinearResults results = bundle2D();
 
 		// no algorithm to compare it against, just do some sanity checks for changes

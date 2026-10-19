@@ -25,9 +25,6 @@ import org.ejml.ops.DConvertMatrixStruct;
 import org.ejml.sparse.FillReducing;
 import org.ejml.sparse.csc.factory.LinearSolverFactory_DSCC;
 
-/**
- * @author Peter Abeles
- */
 public class TestHessianLeastSquares_DSCC extends StandardHessianLeastSquaresChecks {
 	public TestHessianLeastSquares_DSCC() {
 		super(new HessianLeastSquares_DSCC(

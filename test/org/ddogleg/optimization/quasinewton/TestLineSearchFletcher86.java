@@ -29,9 +29,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public class TestLineSearchFletcher86 extends DDoglegJUnit {
 
 	EvaluateLineSearchFletcher86 eval = new EvaluateLineSearchFletcher86(false);
@@ -40,8 +37,7 @@ public class TestLineSearchFletcher86 extends DDoglegJUnit {
 	 * Give it a very simple function and see if it finds the minimum approximately.  More
 	 * robustness and correctness tests are found in benchmark directory.
 	 */
-	@Test
-	public void checkBasic() {
+	@Test void checkBasic() {
 		double expected = 10;
 		FunctionStoS f = new TrivialQuadraticStoS(expected);
 		FunctionStoS d = new TrivialQuadraticDerivStoS(expected);
@@ -74,8 +70,7 @@ public class TestLineSearchFletcher86 extends DDoglegJUnit {
 		assertEquals(expected, foundTight, 1e-8);
 	}
 
-	@Test
-	public void compareFletcher1() {
+	@Test void compareFletcher1() {
 		List<LineSearchEvaluator.Results> results = eval.fletcher1();
 		
 		TestLineSearchMore94.testResults(results.get(0), 3, 0.16);

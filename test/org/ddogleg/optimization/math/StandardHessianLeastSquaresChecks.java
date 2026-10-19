@@ -28,9 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Peter Abeles
- */
 public abstract class StandardHessianLeastSquaresChecks extends StandardHessianMathChecks {
 	protected StandardHessianLeastSquaresChecks(HessianMath alg) {
 		super(alg);
@@ -38,8 +35,7 @@ public abstract class StandardHessianLeastSquaresChecks extends StandardHessianM
 
 	protected abstract DMatrix convert( DMatrixRMaj M );
 
-	@Test
-	public void updateHessian() {
+	@Test public void updateHessian() {
 		DMatrixRMaj J = RandomMatrices_DDRM.rectangle(30,6,rand);
 		DMatrixRMaj H = new DMatrixRMaj(1,1);
 
