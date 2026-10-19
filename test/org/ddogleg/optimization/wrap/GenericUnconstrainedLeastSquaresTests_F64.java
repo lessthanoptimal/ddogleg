@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.TrivialLeastSquaresResidual;
 import org.ddogleg.optimization.UnconstrainedLeastSquares;
 import org.ddogleg.optimization.derivative.NumericalJacobianForward_DDRM;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Peter Abeles
  */
-public abstract class GenericUnconstrainedLeastSquaresTests_F64 {
+public abstract class GenericUnconstrainedLeastSquaresTests_F64 extends DDoglegJUnit {
 
 	public abstract UnconstrainedLeastSquares<DMatrixRMaj> createAlgorithm();
 

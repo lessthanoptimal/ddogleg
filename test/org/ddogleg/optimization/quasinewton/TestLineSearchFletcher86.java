@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.quasinewton;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.*;
 import org.ddogleg.optimization.functions.FunctionStoS;
 import org.ddogleg.optimization.wrap.Individual_to_CoupledDerivative;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestLineSearchFletcher86 {
+public class TestLineSearchFletcher86 extends DDoglegJUnit {
 
 	EvaluateLineSearchFletcher86 eval = new EvaluateLineSearchFletcher86(false);
 	

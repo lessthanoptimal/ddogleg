@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,8 +28,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestQuickSortComparable {
-	Random rand = new Random(0xfeed4);
+public class TestQuickSortComparable extends DDoglegJUnit {
 
 	@Test void sort_array() {
 		Double[] ret = createRandom(rand, 200);

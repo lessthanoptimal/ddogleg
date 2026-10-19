@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.TrivialFunctionNtoS;
 import org.ddogleg.optimization.UnconstrainedMinimization;
 import org.ddogleg.optimization.derivative.NumericalGradientForward;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class GenericUnconstrainedMinimizationTests_F64 {
+public abstract class GenericUnconstrainedMinimizationTests_F64 extends DDoglegJUnit {
 
 	public abstract UnconstrainedMinimization createAlgorithm();
 

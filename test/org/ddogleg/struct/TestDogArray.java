@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestDogArray {
+class TestDogArray extends DDoglegJUnit {
 	/**
 	 * makes sure reset function is called when the grow command is used
 	 */

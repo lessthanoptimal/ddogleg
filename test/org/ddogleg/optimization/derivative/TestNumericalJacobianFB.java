@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.derivative;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ejml.data.DMatrixRMaj;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestNumericalJacobianFB {
+public class TestNumericalJacobianFB extends DDoglegJUnit {
 
 	double tol = 1e-16;
 

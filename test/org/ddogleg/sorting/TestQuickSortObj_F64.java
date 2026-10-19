@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -28,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Peter Abeles
  */
-public class TestQuickSortObj_F64 {
+public class TestQuickSortObj_F64 extends DDoglegJUnit {
 
-	Random rand = new Random(0xfeed4);
 
 	@Test
 	public void testSortingRandom() {

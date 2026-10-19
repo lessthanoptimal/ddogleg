@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver.impl;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.solver.Polynomial;
 import org.ddogleg.solver.PolynomialOps;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestSturmSequence {
+public class TestSturmSequence extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void countRealRoots() {

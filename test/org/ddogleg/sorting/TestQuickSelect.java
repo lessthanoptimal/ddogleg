@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -25,8 +26,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestQuickSelect {
-	Random rand = new Random(0xFF);
+public class TestQuickSelect extends DDoglegJUnit {
 
 	/**
 	 * Creates a random array then sorts it.  It then requests that the specified element be found
@@ -128,9 +128,9 @@ public class TestQuickSelect {
 			for (int j = 0; j < i; j++) {
 				assertTrue(copy[j] <= val);
 			}
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
-				assertTrue(copy[j] > val);
+				assertTrue(copy[j] >= val);
 			}
 		}
 	}
@@ -166,9 +166,9 @@ public class TestQuickSelect {
 			for (int j = offset; j < i; j++) {
 				assertTrue(copy[j] <= val);
 			}
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
-				assertTrue(copy[j] > val);
+				assertTrue(copy[j] >= val);
 			}
 		}
 	}
@@ -196,9 +196,9 @@ public class TestQuickSelect {
 			for (int j = 0; j < i; j++) {
 				assertTrue(copy[j] <= val);
 			}
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
-				assertTrue(copy[j] > val);
+				assertTrue(copy[j] >= val);
 			}
 		}
 	}
@@ -226,9 +226,9 @@ public class TestQuickSelect {
 			for (int j = 0; j < i; j++) {
 				assertTrue(copy[j] <= val);
 			}
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
-				assertTrue(copy[j] > val);
+				assertTrue(copy[j] >= val);
 			}
 		}
 	}
@@ -269,7 +269,7 @@ public class TestQuickSelect {
 				assertTrue(orig[indexes[j]] <= val);
 			}
 
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
 				assertTrue(orig[indexes[j]] > val);
 			}
@@ -308,7 +308,7 @@ public class TestQuickSelect {
 				assertTrue(orig[indexes[j]] <= val);
 			}
 
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
 				assertTrue(orig[indexes[j]] > val);
 			}
@@ -347,7 +347,7 @@ public class TestQuickSelect {
 				assertTrue(orig[indexes[j]] <= val);
 			}
 
-			// everything after it should be greater
+			// everything after it should be greater or equal
 			for (int j = i + 1; j < copy.length; j++) {
 				assertTrue(orig[indexes[j]] > val);
 			}

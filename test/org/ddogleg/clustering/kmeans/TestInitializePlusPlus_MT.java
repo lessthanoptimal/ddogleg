@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
 import org.ddogleg.clustering.misc.ListAccessor;
 import org.ddogleg.struct.DogArray;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-class TestInitializePlusPlus_MT {
+class TestInitializePlusPlus_MT extends DDoglegJUnit {
 	/**
 	 * Create a random scenario and compare toe single threaded results
 	 */

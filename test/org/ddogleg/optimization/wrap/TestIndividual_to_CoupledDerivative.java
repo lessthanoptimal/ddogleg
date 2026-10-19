@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.TrivialQuadraticStoS;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestIndividual_to_CoupledDerivative {
+public class TestIndividual_to_CoupledDerivative extends DDoglegJUnit {
 
 	/**
 	 * Sanity check to see if it blows up

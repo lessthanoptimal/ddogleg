@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.kmeans.TestStandardKMeans;
 import org.ddogleg.clustering.misc.ListAccessor;
 import org.junit.jupiter.api.Test;
@@ -31,9 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public abstract class GenericClusterChecks_F64 {
+public abstract class GenericClusterChecks_F64 extends DDoglegJUnit {
 
-	protected Random rand = new Random(234);
 
 	/**
 	 * If hint is true then the first 3 elements are good initial seeds for clustering

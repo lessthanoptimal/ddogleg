@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.derivative;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.functions.FunctionStoS;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestNumericalDerivativeFB {
+public class TestNumericalDerivativeFB extends DDoglegJUnit {
 
 	@Test
 	public void simple() {

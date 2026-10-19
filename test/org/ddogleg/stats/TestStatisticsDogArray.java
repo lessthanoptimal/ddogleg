@@ -18,6 +18,7 @@
 
 package org.ddogleg.stats;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.struct.DogArray_F64;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestStatisticsDogArray {
+public class TestStatisticsDogArray extends DDoglegJUnit {
 	@Test
 	public void mean_F64() {
 		DogArray_F64 l = new DogArray_F64();

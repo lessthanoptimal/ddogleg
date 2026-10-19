@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestModelManagerDefault {
+public class TestModelManagerDefault extends DDoglegJUnit {
 	@Test
 	public void basic() {
 		ModelManagerDefault<Dummy> alg = new ModelManagerDefault<Dummy>(Dummy.class);

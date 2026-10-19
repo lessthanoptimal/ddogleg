@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.ExhaustiveNeighbor;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.DogArray;
@@ -36,8 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public abstract class StandardNearestNeighborTests {
-	private final Random rand = new Random(234);
+public abstract class StandardNearestNeighborTests extends DDoglegJUnit {
 
 	public int N = 2;
 	private final KdTreeEuclideanSq_F64 distance = new KdTreeEuclideanSq_F64(N);

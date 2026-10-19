@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.nn.alg.distance.KdTreeEuclideanSq_F64;
 import org.ddogleg.struct.DogArray_I32;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestAxisSplitterMedian {
+public class TestAxisSplitterMedian extends DDoglegJUnit {
 
 	List<double[]> left = new ArrayList<>();
 	List<double[]> right = new ArrayList<>();

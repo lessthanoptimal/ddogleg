@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestPolynomial {
+public class TestPolynomial extends DDoglegJUnit {
 
 	@Test
 	public void evaluate() {

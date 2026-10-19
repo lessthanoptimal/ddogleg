@@ -18,6 +18,7 @@
 
 package org.ddogleg.solver;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,9 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public abstract class GeneralPolynomialRootReal {
+public abstract class GeneralPolynomialRootReal extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 
 	@Test

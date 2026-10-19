@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.loss;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.DerivativeChecker;
 import org.junit.jupiter.api.Test;
 
@@ -26,13 +27,12 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class CommonChecksLossJacobian {
+public abstract class CommonChecksLossJacobian extends DDoglegJUnit {
 	/** Values of residuals are randomly selected from a uniform distribution from -r to r */
 	public double residualRadius = 10;
 
 	public int samplePoints = 200;
 
-	protected Random rand = new Random(243);
 
 	double tolerance = 1e-4;
 
@@ -89,10 +89,15 @@ public abstract class CommonChecksLossJacobian {
 		assertTrue(DerivativeChecker.gradient(function, gradient, residuals, tolerance));
 	}
 
+	/**
+	 * Random residuals with magnitudes from 0.1 to radius. Values closer to zero make the forward difference step
+	 * so small that round off in the summed loss exceeds the tolerance.
+	 */
 	public static double[] randomArray(int count, double radius, Random rand ) {
 		var array = new double[count];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = 2.0*radius*(rand.nextDouble() - 0.5);
+			double magnitude = 0.1 + (radius - 0.1)*rand.nextDouble();
+			array[i] = rand.nextBoolean() ? magnitude : -magnitude;
 		}
 		return array;
 	}

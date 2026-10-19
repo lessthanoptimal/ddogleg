@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.derivative.NumericalGradientForward;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestLsToNonLinearDeriv {
+public class TestLsToNonLinearDeriv extends DDoglegJUnit {
 
 	@Test
 	public void compareToNumeric() {

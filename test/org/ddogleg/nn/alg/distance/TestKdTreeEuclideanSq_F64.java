@@ -18,6 +18,7 @@
 
 package org.ddogleg.nn.alg.distance;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestKdTreeEuclideanSq_F64 {
+public class TestKdTreeEuclideanSq_F64 extends DDoglegJUnit {
 	@Test
 	public void distance() {
 		double a[] = {1,2,3,4};

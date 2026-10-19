@@ -18,6 +18,7 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -27,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestDogArray_B {
-	Random rand = new Random(29394);
+public class TestDogArray_B extends DDoglegJUnit {
 
 	@Test void isEquals() {
 		DogArray_B alg = DogArray_B.array(0, 0, 1, 1, 0);

@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.quasinewton;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestSearchInterpolate {
+public class TestSearchInterpolate extends DDoglegJUnit {
 
 	@Test
 	public void quadratic() {

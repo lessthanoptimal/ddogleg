@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset.distance;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -28,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestFitByMeanStatistics {
+public class TestFitByMeanStatistics extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void metric_and_prune() {

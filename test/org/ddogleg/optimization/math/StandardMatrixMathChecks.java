@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.math;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ejml.UtilEjml;
 import org.ejml.data.DMatrix;
 import org.ejml.data.DMatrixRMaj;
@@ -31,14 +32,13 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class StandardMatrixMathChecks<T extends DMatrix> {
+public abstract class StandardMatrixMathChecks<T extends DMatrix> extends DDoglegJUnit {
 	public abstract T convertA( DMatrixRMaj A );
 
 	public abstract DMatrixRMaj convertB( T A );
 
 	public abstract T create( int numRows, int numCols );
 
-	Random rand = new Random(234);
 	MatrixMath<T> alg;
 
 	protected StandardMatrixMathChecks( MatrixMath<T> alg ) {

@@ -18,6 +18,7 @@
 
 package org.ddogleg.util;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Peter Abeles
  */
-public class TestUtilDouble {
+public class TestUtilDouble extends DDoglegJUnit {
 
 	@Test
 	public void sum_F64() {

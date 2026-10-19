@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.lm;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.math.HessianMath;
 import org.ddogleg.optimization.math.HessianMath_DDRM;
 import org.ddogleg.optimization.math.MatrixMath_DDRM;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestLevenbergMarquardt_F64 {
+public class TestLevenbergMarquardt_F64 extends DDoglegJUnit {
 	@Test void computeStep_solve_failed() {
 		var alg = new MockLevenbergMarquardt() {
 			@Override protected boolean computeStep( double lambda, DMatrixRMaj gradient, DMatrixRMaj step ) {

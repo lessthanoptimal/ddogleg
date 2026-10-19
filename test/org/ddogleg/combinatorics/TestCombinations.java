@@ -18,6 +18,7 @@
 
 package org.ddogleg.combinatorics;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Peter Abeles
  */
-public class TestCombinations {
+public class TestCombinations extends DDoglegJUnit {
 	
 	@Test
 	public void next_1_1() {

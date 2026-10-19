@@ -18,6 +18,7 @@
 
 package org.ddogleg.fitting.modelset.lmeds;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.fitting.modelset.*;
 import org.ddogleg.fitting.modelset.distance.DistanceFromMeanModel;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +29,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestLeastMedianOfSquares {
-	Random rand = new Random(0xBEEF);
+class TestLeastMedianOfSquares extends DDoglegJUnit {
 
 	@Nested class Fraction extends Common {
 		Fraction() {super(0.9);}

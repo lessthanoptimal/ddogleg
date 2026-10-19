@@ -18,11 +18,12 @@
 
 package org.ddogleg.struct;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCircularArray_I64 {
+public class TestCircularArray_I64 extends DDoglegJUnit {
 	@Test void indexOf() {
 		// go through all possible start values to excite edge conditions in the loop
 		for (int i = 0; i < 5; i++) {

@@ -18,6 +18,7 @@
 
 package org.ddogleg.sorting;
 
+import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -28,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Peter Abeles
  */
-public class TestApproximateSort_F32 {
+public class TestApproximateSort_F32 extends DDoglegJUnit {
 
-	Random rand = new Random(234);
 
 	@Test
 	public void computeRange_primitive() {

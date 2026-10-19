@@ -18,6 +18,7 @@
 
 package org.ddogleg.optimization.wrap;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.optimization.functions.FunctionNtoM;
 import org.ddogleg.optimization.functions.FunctionNtoMxN;
 import org.ejml.data.DMatrixRMaj;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Peter Abeles
  */
 @SuppressWarnings({"NullAway"})
-public class TestIndividual_to_CoupledJacobian {
+public class TestIndividual_to_CoupledJacobian extends DDoglegJUnit {
 
 	@Test
 	public void trivial() {

@@ -18,6 +18,7 @@
 
 package org.ddogleg.clustering.kmeans;
 
+import org.ddogleg.DDoglegJUnit;
 import org.ddogleg.clustering.misc.EuclideanSqArrayF64;
 import org.ddogleg.clustering.misc.ListAccessor;
 import org.ddogleg.struct.DogArray;
@@ -28,8 +29,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class StandardInitializeKMeansChecks {
-	protected Random rand = new Random(234);
+public abstract class StandardInitializeKMeansChecks extends DDoglegJUnit {
 
 	public abstract InitializeKMeans<double[]> createAlg( int dof );
 
