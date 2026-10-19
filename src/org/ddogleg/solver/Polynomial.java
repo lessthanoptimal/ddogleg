@@ -102,14 +102,16 @@ public class Polynomial {
 		return total;
 	}
 
-	public void setTo( Polynomial source ) {
+	public Polynomial setTo( Polynomial source ) {
 		this.size = source.size;
 		System.arraycopy(source.c,0,c,0,size);
+		return this;
 	}
 
-	public void setTo( double[] coefficients, int size ) {
+	public Polynomial setTo( double[] coefficients, int size ) {
 		this.size = size;
 		System.arraycopy(coefficients,0,c,0,size);
+		return this;
 	}
 
 	/**

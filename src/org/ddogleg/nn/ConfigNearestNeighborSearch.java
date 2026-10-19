@@ -41,11 +41,12 @@ public class ConfigNearestNeighborSearch {
 		kdtree.checkValidity();
 	}
 
-	public void setTo( ConfigNearestNeighborSearch src ) {
+	public ConfigNearestNeighborSearch setTo( ConfigNearestNeighborSearch src ) {
 		this.type = src.type;
 		this.randomForest.setTo(src.randomForest);
 		this.kdtree.setTo(src.kdtree);
 		this.randomSeed = src.randomSeed;
+		return this;
 	}
 
 	public static class RandomForest {
@@ -67,10 +68,11 @@ public class ConfigNearestNeighborSearch {
 				throw new IllegalArgumentException("numConsiderSplit must be positive");
 		}
 
-		public void setTo( RandomForest src ) {
+		public RandomForest setTo( RandomForest src ) {
 			this.maxNodesSearched = src.maxNodesSearched;
 			this.numTrees = src.numTrees;
 			this.numConsiderSplit = src.numConsiderSplit;
+			return this;
 		}
 	}
 
@@ -83,8 +85,9 @@ public class ConfigNearestNeighborSearch {
 				throw new IllegalArgumentException("maxNodesSearched can't be negative");
 		}
 
-		public void setTo( KDTree src ) {
+		public KDTree setTo( KDTree src ) {
 			this.maxNodesSearched = src.maxNodesSearched;
+			return this;
 		}
 	}
 
