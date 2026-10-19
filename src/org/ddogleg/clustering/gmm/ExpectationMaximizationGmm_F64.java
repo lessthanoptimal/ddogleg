@@ -93,8 +93,6 @@ public class ExpectationMaximizationGmm_F64 implements ComputeClusters<double[]>
 
 		info = new DogArray<>(()->new PointInfo(pointDimension));
 		mixture = new DogArray<>(()->new GaussianGmm_F64(pointDimension));
-
-		System.err.println("WARNING:  GMM-EM is a work in progress!  Might not work in your situation");
 	}
 
 	@Override
