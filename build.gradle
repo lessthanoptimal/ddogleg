@@ -13,7 +13,7 @@ apply plugin: 'signing'
 
 group = 'org.ddogleg'
 version = '0.25.4-SNAPSHOT'
-project.archivesBaseName = 'ddogleg'
+base { archivesName = 'ddogleg' }
 
 project.ext.commons_io_version = '2.16.1'
 project.ext.lombok_version = '1.18.42'
@@ -91,10 +91,10 @@ test {
     reports.html.setRequired(false)
     // Make the error logging verbose to make debugging on CI easier
     testLogging.showStandardStreams = true
-    testLogging.exceptionFormat TestExceptionFormat.FULL
-    testLogging.showCauses true
-    testLogging.showExceptions true
-    testLogging.showStackTraces true
+    testLogging.exceptionFormat = TestExceptionFormat.FULL
+    testLogging.showCauses = true
+    testLogging.showExceptions = true
+    testLogging.showStackTraces = true
 }
 
 repositories {
@@ -131,7 +131,7 @@ sourceSets {
 
 dependencies {
     ['ejml-core', 'ejml-fdense', 'ejml-ddense', 'ejml-simple', 'ejml-dsparse'].each { String a ->
-        api group: 'org.ejml', name: a, version: "$project.ejml_version"
+        api "org.ejml:$a:$project.ejml_version"
     }
 
     compileOnly "org.projectlombok:lombok:$project.lombok_version"
@@ -145,6 +145,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$project.junit_version")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$project.junit_version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$project.junit_version")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     generateImplementation "commons-io:commons-io:$project.commons_io_version"
     testImplementation project.sourceSets.benchmark.output
@@ -275,8 +276,8 @@ publishing {
             def snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             credentials {
-                username ossrhUsername
-                password ossrhPassword
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
