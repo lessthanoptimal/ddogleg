@@ -13,7 +13,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = 'org.ddogleg'
-version = '1.0.0'
+version = '1.0.1-SNAPSHOT'
 base { archivesName = 'ddogleg' }
 
 project.ext.commons_io_version = '2.16.1'
