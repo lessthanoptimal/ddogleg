@@ -5,7 +5,7 @@ DDogleg Numerics is a high performance Java library for non-linear optimization,
 
 ===================   =====================
 **Latest Version**    v\ |ddogleg_version|
-**Released**          August 23, 2026
+**Released**          October 22, 2026
 **Source Code**       `GitHub <https://github.com/lessthanoptimal/ddogleg>`_
 **License**           `Apache 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_
 ===================   =====================
@@ -32,6 +32,7 @@ Functionality
 
 * **Unconstrained minimization:** Quasi-Newton BFGS, linear search More94 (MINPACK-2), line search Fletcher 86
 * **Unconstrained least-squares:** Dense and Sparse, Levenberg-Marquardt, Trust-Region (Dogleg)
+* **Automatic Differentiation:** Procedural and Symbolic for Minimization
 * **Polynomial root finding:** Sturm sequence, Eigenvalue Decomposition, and iterative root refinement.
 * **Robust Model Fitting:** RANSAC, LMedS, and some strange one.
 * **Nearest Neighbor:** Exhaustive, K-D Trees, Best-Bin-First K-D Trees, Random Forest, VpTree

@@ -17,6 +17,7 @@ Several examples are included with the source code and can be found in the "ddog
 
 List of Example Code:
 
+* :doc:`/AutomaticDiffSymbolic`
 * :doc:`/BigDogArray`
 * :doc:`/Clustering`
 * :doc:`/Combinatorics`
