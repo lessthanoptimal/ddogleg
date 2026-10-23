@@ -16,8 +16,8 @@ group = 'org.ddogleg'
 version = '1.0.1-SNAPSHOT'
 base { archivesName = 'ddogleg' }
 
-project.ext.commons_io_version = '2.16.1'
-project.ext.lombok_version = '1.18.42'
+project.ext.commons_io_version = '2.22.0'
+project.ext.lombok_version = '1.18.48'
 project.ext.ejml_version = '0.46.1'
 project.ext.errorprone_version = '2.41.0'
 project.ext.nullaway_version = '0.12.10'
