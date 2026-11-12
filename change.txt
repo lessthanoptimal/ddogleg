@@ -3,6 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  1.0.1
+Date:     2026-Nov-11
+
+- test fixture dependency
+ * Specifies an allowed range of values instead of a fixed value
+
+------------------------------------------------------
 Version:  1.0.0
 Date:     2026-Oct-22
 

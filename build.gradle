@@ -24,7 +24,7 @@ project.ext.nullaway_version = '0.12.10'
 project.ext.guava_version = '31.1-jre'
 project.ext.jabel_version = '1.0.1-1'
 project.ext.jetnull_version = '23.0.0'
-project.ext.junit_version = '5.11.4'
+project.ext.junit_version = '5.14.4'
 project.ext.jsr250_version = '1.0'
 project.ext.jsr305_version = '3.0.2'
 project.ext.trove_version = '3.0.3'
@@ -156,7 +156,15 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$project.junit_version")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    testFixturesApi("org.junit.jupiter:junit-jupiter-api:$project.junit_version")
+//  Below is what 'should' be used but there's a bug in failOnVersionConflict() which doesn't handle prefer correctly
+//    testFixturesApi("org.junit.jupiter:junit-jupiter-api") {
+//        version { require("[5.11.0,6.0)"); prefer(project.junit_version) }
+//    }
+//  This works but the down stream consumer must specify a version
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api:[5.11.0,6.0)")
+    configurations.configureEach {
+        resolutionStrategy { force("org.junit.jupiter:junit-jupiter-api:$project.junit_version") }
+    }
     testFixturesCompileOnly "org.jetbrains:annotations:$project.jetnull_version"
 
     generateImplementation "commons-io:commons-io:$project.commons_io_version"
