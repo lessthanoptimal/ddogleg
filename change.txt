@@ -3,6 +3,13 @@ Change log for DDogleg Numerics
 Date Format: YEAR-MONTH-DAY
 
 ------------------------------------------------------
+Version:  1.0.2
+Date:     2026-
+
+- PrimitiveDogArrays
+ * Added releaseInternalArray()
+
+------------------------------------------------------
 Version:  1.0.1
 Date:     2026-Nov-11
 

@@ -28,9 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestDogArray extends DDoglegJUnit {
-	/**
-	 * makes sure reset function is called when the grow command is used
-	 */
+	/// makes sure reset function is called when the grow command is used
 	@Test void reset_grow() {
 		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
@@ -41,9 +39,7 @@ class TestDogArray extends DDoglegJUnit {
 		assertEquals(5, alg.size);
 	}
 
-	/**
-	 * makes sure reset function is called when the grow command is used
-	 */
+	/// makes sure reset function is called when the grow command is used
 	@Test void reset_resize() {
 		var alg = new DogArray<>(DummyData::new, ( d ) -> d.value = 2);
 
@@ -321,9 +317,7 @@ class TestDogArray extends DDoglegJUnit {
 		assertEquals(1, alg.size);
 	}
 
-	/**
-	 * Checks to see if pop automatically grows correctly
-	 */
+	/// Checks to see if pop automatically grows correctly
 	@Test void pop_grow() {
 		var alg = new DogArray<>(1, DummyData::new);
 

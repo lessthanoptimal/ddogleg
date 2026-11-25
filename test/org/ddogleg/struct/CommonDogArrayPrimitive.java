@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2024, Peter Abeles. All Rights Reserved.
+ * Copyright (c) 2026, Peter Abeles. All Rights Reserved.
  *
  * This file is part of DDogleg (http://ddogleg.org).
  *
@@ -20,6 +20,8 @@ package org.ddogleg.struct;
 
 import org.ddogleg.DDoglegJUnit;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Array;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,5 +142,13 @@ public abstract class CommonDogArrayPrimitive<T extends DogArrayPrimitive<T>> ex
 		alg.resize(0);
 		assertTrue(alg.isEmpty());
 		assertFalse(alg.isNotEmpty());
+	}
+
+	@Test void releaseInternalArray() {
+		T alg = declare(2);
+		assertTrue(Array.getLength(alg.getDataArray()) > 0);
+		alg.releaseInternalArray();
+		assertEquals(0, Array.getLength(alg.getDataArray()));
+		assertEquals(0, alg.size());
 	}
 }

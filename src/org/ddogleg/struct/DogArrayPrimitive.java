@@ -20,63 +20,50 @@ package org.ddogleg.struct;
 
 import org.ejml.MatrixFormattable;
 
-/**
- * Interface for growable queues of primitive types
- *
- * @author Peter Abeles
- */
+/// Interface for growable queues of primitive types
 public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> extends MatrixFormattable {
 
-	/**
-	 * Sets the size to zero.
-	 *
-	 * @return Returns 'this' to allow chaining of operations.
-	 */
+	/// Sets the size to zero.
+	///
+	/// @return Returns 'this' to allow chaining of operations.
 	T reset();
 
-	/**
-	 * Returns true if the specified array index is outside the allowed value range
-	 */
+	/// Returns true if the specified array index is outside the allowed value range
 	default boolean isIndexOutOfBounds( int index ) {
 		return index < 0 || index >= size();
 	}
 
-	/**
-	 * Turns 'this' into a copy of 'original'
-	 *
-	 * @param original queue that is to be copied
-	 * @return Returns 'this' to allow chaining of operations.
-	 */
+	/// Turns 'this' into a copy of 'original'
+	///
+	/// @param original queue that is to be copied
+	/// @return Returns 'this' to allow chaining of operations.
 	T setTo( T original );
 
-	/**
-	 * <p>Ensures that the internal array is at least this size. Value of elements previously in the array will
-	 * not be changed. If the size is increased then the value of new elements in undefined.</p>
-	 *
-	 * If you wish to resize the array and avoid copying over past values for performance reasons, then you must
-	 * either resize(0) or call {@link #reset} first.
-	 *
-	 * @param size desired new size
-	 * @return Returns 'this' to allow chaining of operations.
-	 */
+	/// Ensures that the internal array is at least this size. Value of elements previously in the array will
+	/// not be changed. If the size is increased then the value of new elements in undefined.
+	///
+	/// If you wish to resize the array and avoid copying over past values for performance reasons, then you must
+	/// either resize(0) or call [#reset] first.
+	///
+	/// @param size desired new size
+	/// @return Returns 'this' to allow chaining of operations.
 	T resize( int size );
 
-	/**
-	 * Changes the array to the specified size. If there is not enough storage, a new internal array is created
-	 * and the elements copied over. This is the same as: a.reserve(size);a.size = size;
-	 *
-	 * @param size desired new size
-	 */
+	/// Changes the array to the specified size. If there is not enough storage, a new internal array is created
+	/// and the elements copied over. This is the same as: a.reserve(size);a.size = size;
+	///
+	/// @param size desired new size
 	void extend( int size );
 
-	/**
-	 * Ensures that the internal array's length is at least this size. Size is left unchanged. If the array
-	 * is not empty and it needs to grow then the existing array is copied into the new array.
-	 *
-	 * @param amount minimum size of internal array
-	 * @return Returns 'this' to allow chaining of operations.
-	 */
+	/// Ensures that the internal array's length is at least this size. Size is left unchanged. If the array
+	/// is not empty and it needs to grow then the existing array is copied into the new array.
+	///
+	/// @param amount minimum size of internal array
+	/// @return Returns 'this' to allow chaining of operations.
 	T reserve( int amount );
+
+	/// Replaces the internal array with a new one that is of size 0.
+	void releaseInternalArray();
 
 	/// Removes set of elements within the specified range. Order of elements will be preserved. O(N) operation.
 	/// The "M" at the end indicates that this has been optimized to reduce memory overhead and no additional
@@ -86,47 +73,37 @@ public interface DogArrayPrimitive<T extends DogArrayPrimitive<T>> extends Matri
 	/// @param idx1 upper extent, exclusive
 	void removeRangeM( int idx0, int idx1 );
 
-	/**
-	 * Ensures that the reserve is at lease the current {@link #size} plus the specified amount. This is
-	 * exactly the same as doing `reserve(size() + amount)`
-	 *
-	 * @param amount How much you wish the ensure the size is increased by
-	 */
+	/// Ensures that the reserve is at lease the current [#size] plus the specified amount. This is
+	/// exactly the same as doing \`reserve(size() + amount)\`
+	///
+	/// @param amount How much you wish the ensure the size is increased by
 	default T reserveIncrease( int amount ) {return reserve(size() + amount);}
 
-	/**
-	 * Flips the elements such that a[i] = a[N-i-1] where N is the number of elements.
-	 */
+	/// Flips the elements such that a\[i\] = a\[N-i-1\] where N is the number of elements.
 	void flip();
 
-	/**
-	 * Number of elements in the queue
-	 *
-	 * @return size of queue
-	 */
+	/// Number of elements in the queue
+	///
+	/// @return size of queue
 	int size();
 
-	/**
-	 * Sets all elements to 0 or False for binary queues
-	 */
+	/// Sets all elements to 0 or False for binary queues
 	void zero();
 
 	T copy();
 
-	/**
-	 * Sorts the data from smallest to largest
-	 */
+	/// Sorts the data from smallest to largest
 	void sort();
 
-	/** Returns the internal data array */
+	/// Returns the internal data array
 	<D>D getDataArray();
 
-	/** True if the container has no elements */
+	/// True if the container has no elements
 	default boolean isEmpty() {
 		return size() == 0;
 	}
 
-	/** True if the container has elements in it */
+	/// True if the container has elements in it
 	default boolean isNotEmpty() {
 		return size() > 0;
 	}
