@@ -24,9 +24,7 @@ import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- * Growable array composed of booleans.
- */
+/// Growable array composed of booleans.
 @Generated("org.ddogleg.struct.GenerateDogArray")
 public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 
@@ -417,6 +415,11 @@ public class DogArray_B implements DogArrayPrimitive<DogArray_B> {
 			data = tmp;
 		}
 		return this;
+	}
+
+	@Override public void releaseInternalArray() {
+		data = new boolean[0];
+		size = 0;
 	}
 
 	@Override public void removeRangeM( int idx0, int idx1 ) {

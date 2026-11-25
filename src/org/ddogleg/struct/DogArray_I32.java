@@ -445,6 +445,11 @@ public class DogArray_I32 implements DogArrayPrimitive<DogArray_I32> {
 		return this;
 	}
 
+	@Override public void releaseInternalArray() {
+		this.data = new int[0];
+		this.size = 0;
+	}
+
 	@Override public void removeRangeM( int idx0, int idx1 ) {
 		if (idx1 < idx0)
 			throw new IllegalArgumentException("Upper extent can't be less than lower extent");
